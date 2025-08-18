@@ -1,0 +1,588 @@
+/*
+ * Copyright 2020-2025 University of Oxford and NHS England
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+package uk.nhs.datadictionary
+
+import groovy.util.logging.Slf4j
+import org.maurodata.dita.elements.langref.base.DitaMap
+import org.maurodata.dita.elements.langref.base.Topic
+import org.maurodata.dita.elements.langref.base.XRef
+import org.maurodata.dita.helpers.HtmlHelper
+import org.maurodata.dita.meta.SpaceSeparatedStringList
+import org.maurodata.domain.model.AdministeredItem
+import uk.nhs.datadictionary.publish.structure.AliasesRow
+import uk.nhs.datadictionary.publish.structure.AliasesSection
+import uk.nhs.datadictionary.publish.structure.ChangeLogRow
+import uk.nhs.datadictionary.publish.structure.ChangeLogSection
+import uk.nhs.datadictionary.publish.structure.DescriptionSection
+import uk.nhs.datadictionary.publish.structure.DictionaryItem
+import uk.nhs.datadictionary.publish.structure.ItemLink
+import uk.nhs.datadictionary.publish.structure.WhereUsedRow
+import uk.nhs.datadictionary.publish.structure.WhereUsedSection
+import uk.nhs.datadictionary.utils.DDHelperFunctions
+
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
+@Slf4j
+trait NhsDataDictionaryComponent <T extends AdministeredItem > {
+
+    abstract String getStereotype()
+    abstract String getStereotypeForPreview()
+    abstract String getPluralStereotypeForWebsite()
+
+    NhsDataDictionary dataDictionary
+
+    T catalogueItem
+    UUID catalogueItemId
+    UUID branchId
+    String catalogueItemModelId
+    String catalogueItemParentId
+
+    String name
+    String definition = ""
+
+    Map<String, String> otherProperties = [:]
+
+    Map<NhsDataDictionaryComponent, String> whereUsed = [:]
+
+    List<NhsDDChangeLog> changeLog = []
+    String changeLogHeaderText = ""
+    String changeLogFooterText = ""
+
+    abstract String calculateShortDescription()
+
+    boolean isRetired() {
+        "true" == otherProperties["isRetired"]
+    }
+
+    boolean isPreparatory() {
+        "true" == otherProperties["isPreparatory"]
+    }
+
+    boolean isActivePage() {
+        !isRetired() && !isPreparatory()
+    }
+
+    String getUin() {
+        otherProperties["uin"]
+    }
+
+    String getShortDescription() {
+        if(otherProperties["shortDescription"] && isActivePage()){
+            return otherProperties["shortDescription"]
+        } else {
+            return calculateShortDescription()
+        }
+    }
+
+    String getTitleCaseName() {
+        otherProperties["titleCaseName"]
+    }
+
+    void setShortDescription() {
+        String shortDescription = calculateShortDescription()
+        if(!shortDescription) {
+            log.error("Null short description! ${name}")
+            shortDescription = name
+        }
+        //shortDescription = shortDescription.replaceAll("\\\\r", " ")
+        shortDescription = shortDescription.replaceAll("\\s+", " ")
+        shortDescription = shortDescription.replaceAll("\\\\n", " ")
+        shortDescription = shortDescription.replaceAll("\\\\r", " ")
+        otherProperties["shortDescription"] = shortDescription
+    }
+
+    void fromXml(def xml, NhsDataDictionary dataDictionary) {
+        if(xml.name.size() > 0 && xml.name.text()) {
+            this.name = xml.name[0].text().replace("_", " ")
+        } else { // This should only apply for dataSetConstraints
+            this.name = xml."class".name.text().replace("_", " ")
+        }
+
+        /*  We're doing capitalised items now
+        if(xml.TitleCaseName.text()) {
+            this.name = xml.TitleCaseName[0].text()
+        } else { // This should only apply for dataSetConstraints
+            this.name = xml."class".websitePageHeading.text()
+        }*/
+
+/*        String cleanedDefinition = xml.definition.text().
+            replace("&amp;", "&").
+            replaceAll( "&([^;]+(?!(?:\\w|;)))", "&amp;\$1" ).
+            replace("<", "&lt;").
+            replace(">", "&gt;").
+            replace("\u00a0", " ")
+        definition = DDHelperFunctions.parseHtml(cleanedDefinition)
+        definition = definition.replaceAll("\\s+", " ")
+*/
+        definition = (DDHelperFunctions.parseHtml(xml.definition[0])).replace("\u00a0", " ")
+
+        NhsDataDictionary.METADATA_FIELD_MAPPING.entrySet().each {entry ->
+            Node xmlValue = xml[entry.value][0]
+            if((!xmlValue || xmlValue.text() == "") && xml."class"[entry.value]) {
+                xmlValue = xml."class"[entry.value][0]
+            }
+            if(xmlValue && xmlValue.text() != "") {
+                otherProperties[entry.key] = xmlValue.text()
+            }
+        }
+    }
+
+    boolean isValidXmlNode(def xmlNode) {
+        return true
+    }
+
+    abstract String getXmlNodeName()
+
+    void addWhereUsed(NhsDataDictionaryComponent component, String description) {
+        whereUsed[component] = description
+    }
+
+    boolean hasNoAliases() {
+        return getAliases().size() == 0
+    }
+
+    Map<String, String> getAliases() {
+        Map<String, String> aliases = [:]
+        NhsDataDictionary.aliasFields.each {aliasKey, aliasValue ->
+
+            String alias = otherProperties[aliasKey]
+            if(alias) {
+                aliases[aliasValue] = alias
+            }
+        }
+        return aliases
+    }
+
+    Map<String, String> getUrlReplacements() {
+        String ddUrl = this.otherProperties["ddUrl"]
+
+        return [
+            (ddUrl) : this.mauroPath
+        ]
+    }
+
+    String getNameWithoutNonAlphaNumerics() {
+        name.replaceAll("[^A-Za-z0-9- ]", "").replace(" ", "_")
+    }
+
+    abstract String getMauroPath()
+
+    String getDitaKey() {
+        String key = getStereotype().replace(" ", "_") + "_" + getNameWithoutNonAlphaNumerics()
+        if(isRetired()) {
+            key += "_retired"
+        }
+        key.toLowerCase()
+    }
+
+    String getDescription() {
+        if(dataDictionary && isRetired()) {
+            return dataDictionary.retiredItemText
+        } else if(dataDictionary && isPreparatory()) {
+            return dataDictionary.preparatoryItemText
+        } else {
+            return definition
+        }
+    }
+
+
+    String getNameWithRetired() {
+        if(isRetired()) {
+            return this.name + " (Retired)"
+        } else {
+            return this.name
+        }
+}
+
+    String getDataDictionaryUrl() {
+        String domain = NhsDataDictionary.WEBSITE_URL
+        String stereotype = getPluralStereotypeForWebsite()
+        String itemPage = "${getNameWithoutNonAlphaNumerics().toLowerCase()}.html"
+
+        if (this.itemState == DictionaryItem.DictionaryItemState.RETIRED) {
+            return "${domain}/${stereotype}/retired/${itemPage}"
+        }
+
+        return "${domain}/${stereotype}/${itemPage}"
+    }
+
+    DitaMap generateMap() {
+        DitaMap.build(
+                id: getDitaKey()
+        ) {
+            title getNameWithRetired()
+        }
+    }
+
+    LocalDate getToDate() {
+        if(otherProperties["validTo"]) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            return LocalDate.parse(otherProperties["validTo"] as CharSequence, formatter);
+        }
+        return null
+    }
+
+    LocalDate getFromDate() {
+        if(otherProperties["validFrom"]) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            return LocalDate.parse(otherProperties["validFrom"] as CharSequence, formatter);
+        }
+        return null
+    }
+
+    DictionaryItem.DictionaryItemState getItemState() {
+        isRetired()
+            ? DictionaryItem.DictionaryItemState.RETIRED
+            : isPreparatory()
+            ? DictionaryItem.DictionaryItemState.PREPARATORY
+            : DictionaryItem.DictionaryItemState.ACTIVE
+    }
+
+    DictionaryItem getPublishStructure() {
+        DictionaryItem dictionaryItem = DictionaryItem.create(this)
+
+        addDescriptionSection(dictionaryItem)
+
+        if (itemState == DictionaryItem.DictionaryItemState.ACTIVE) {
+            addAliasesSection(dictionaryItem)
+            addWhereUsedSection(dictionaryItem)
+        }
+
+        addChangeLogSection(dictionaryItem)
+
+        dictionaryItem
+    }
+
+    void addDescriptionSection(DictionaryItem dictionaryItem) {
+        dictionaryItem.addSection(new DescriptionSection(dictionaryItem, description))
+    }
+
+    void addAliasesSection(DictionaryItem dictionaryItem) {
+        if (aliases) {
+            List<AliasesRow> aliasesRows = getAliases()
+                .collect {context, alias -> new AliasesRow(context, alias)}
+
+            dictionaryItem.addSection(new AliasesSection(dictionaryItem, aliasesRows))
+        }
+    }
+
+    void addWhereUsedSection(DictionaryItem dictionaryItem) {
+        if (whereUsed) {
+            List<WhereUsedRow> whereUsedRows = whereUsed
+                .findAll { it.key.itemState != DictionaryItem.DictionaryItemState.RETIRED }
+                .sort { it.key.name }
+                .collect { component, text ->
+                    new WhereUsedRow(component.stereotype, ItemLink.create(component), text)
+                }
+
+            dictionaryItem.addSection(new WhereUsedSection(dictionaryItem, whereUsedRows))
+        }
+    }
+
+    void addChangeLogSection(DictionaryItem dictionaryItem) {
+        List<ChangeLogRow> changeLogRows = changeLog.collect {entry -> new ChangeLogRow(entry) }
+        dictionaryItem.addSection(new ChangeLogSection(dictionaryItem, changeLogHeaderText, changeLogFooterText, changeLogRows))
+    }
+
+    List<Topic> getWebsiteTopics() {
+        List<Topic> topics = []
+        topics.add(descriptionTopic())
+        if (isActivePage()) {
+            if (getAliases()) {
+                topics.add(aliasesTopic())
+            }
+            if (whereUsed) {
+                topics.add(whereUsedTopic())
+            }
+        }
+        topics.add(changeLogTopic())
+        return topics
+    }
+
+    Topic generateTopic() {
+        String titleOutputClass = getOutputClass()
+        Topic.build(
+            id: getDitaKey()
+        ) {
+            title (outputClass: titleOutputClass)  {
+                text getNameWithRetired()
+            }
+            shortdesc getShortDescription()
+            getWebsiteTopics().each {
+                topic it
+            }
+        }
+    }
+
+    Topic descriptionTopic() {
+        Topic.build (id: getDitaKey() + "_description") {
+            title "Description"
+            body {
+                if(definition) {
+                    div HtmlHelper.replaceHtmlWithDita(definition.replace('<table', '<table class=\"table-striped\"'))
+                }
+            }
+        }
+    }
+
+    Topic whereUsedTopic() {
+        Topic.build (id: getDitaKey() + "_whereUsed") {
+            title "Where Used"
+            body {
+                simpletable(relColWidth: new SpaceSeparatedStringList (["1*", "3*", "2*"]), outputClass: "table table-sm table-striped") {
+                    stHead (outputClass: "thead-light") {
+                        stentry "Type"
+                        stentry "Link"
+                        stentry "How used"
+                    }
+                    whereUsed
+                        .findAll { !it.key.isRetired() }
+                        .sort { it.key.name }
+                        .each {component, text ->
+                            strow {
+                                stentry component.stereotype
+                                stentry {
+                                    xRef component.calculateXRef()
+                                }
+                                stentry text
+                            }
+                        }
+                }
+            }
+        }
+    }
+
+    Topic aliasesTopic() {
+        Topic.build (id: getDitaKey() + "_aliases") {
+            title "Also Known As"
+            body {
+                p "This ${getStereotype()} is also known by these names:"
+                simpletable(relColWidth: new SpaceSeparatedStringList (["1*","2*"]), outputClass: "table table-sm table-striped") {
+                    stHead (outputClass: "thead-light") {
+                        stentry "Context"
+                        stentry "Alias"
+                    }
+                    getAliases().each {context, alias ->
+                        strow {
+                            stentry context
+                            stentry alias
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Topic changeLogTopic() {
+        Topic.build(id: getDitaKey() + "_changeLog") {
+            title "Change Log"
+            body {
+                if (changeLog && !changeLog.empty && changeLogHeaderText) {
+                    div HtmlHelper.replaceHtmlWithDita(changeLogHeaderText)
+                }
+                if (changeLog && !changeLog.empty) {
+                    simpletable(relColWidth: new SpaceSeparatedStringList (["2*", "5*", "3*"]), outputClass: "table table-sm table-striped") {
+                        stHead (outputClass: "thead-light") {
+                            stentry "Change Request"
+                            stentry "Change Request Description"
+                            stentry "Implementation Date"
+                        }
+                        changeLog.each { entry ->
+                            strow {
+                                stentry {
+                                    if (entry.referenceUrl) {
+                                        xRef getExternalXRef(entry.referenceUrl, entry.reference)
+                                    }
+                                    else {
+                                        txt entry.reference
+                                    }
+                                }
+                                stentry entry.description
+                                stentry entry.implementationDate
+                            }
+                        }
+                    }
+                }
+                if (changeLogFooterText) {
+                    div HtmlHelper.replaceHtmlWithDita(changeLogFooterText)
+                }
+            }
+        }
+    }
+
+    XRef calculateXRef() {
+        XRef.build(
+            outputClass: getOutputClass(),
+            keyRef: getDitaKey(),
+            format: "html"
+        ) {
+            txt getNameWithRetired()
+        }
+    }
+
+    XRef getExternalXRef(String url, String text) {
+        XRef.build(
+            scope: Scope.EXTERNAL,
+            format: "html",
+            href: url
+        ) {
+            txt text
+        }
+    }
+
+    String getOutputClass() {
+        String outputClass = getStereotypeForPreview()
+        if(isRetired()) {
+            outputClass += " retired"
+        }
+
+        return outputClass
+    }
+
+    void replaceLinksInDefinition(Map<String, NhsDataDictionaryComponent> pathLookup) {
+        if(definition) {
+            definition = replaceLinksInString(description, pathLookup)
+        }
+    }
+
+    String replaceLinksInString(String source, Map<String, NhsDataDictionaryComponent> pathLookup) {
+        NhsDataDictionary.replaceLinksInStringAndUpdateWhereUsed(source, pathLookup, this)
+    }
+
+    static List<String> calculateSentences(String html) {
+        Node xml = HtmlHelper.tidyAndConvertToNode(html)
+        if(xml.children().find { childNode ->
+            childNode instanceof String || childNode.name().toString().toLowerCase() == 'a' // An indicator that there are no paragraphs
+        }) {
+            return xml.text().split("\\.")
+        }
+
+        List<String> response = this.getNodeSentences(xml)
+
+        response.removeAll {it.trim() == ""}
+        return response
+    }
+
+    static List<String> getNodeSentences(String str) {
+        return str.split("\\.")
+    }
+
+    static List<String> getNodeSentences(Node xml) {
+        List<String> response = []
+        xml.children().each { childNode ->
+            if (childNode instanceof String) {
+                response.add((String) childNode)
+            } else {
+                switch (childNode.name().toString().toLowerCase()) {
+                    case 'img':
+                    case 'br':
+                        break
+                    case 'ul':
+                    case 'table':
+                    case 'div':
+                        childNode.children().each { child ->
+                            response.addAll(getNodeSentences(child))
+                        }
+                        break
+                    case 'p':
+                    case 'span':
+                    case 'strong':
+                    default:
+                        response.addAll(childNode.text().split("\\."))
+                        break
+
+
+                }
+            }
+        }
+        return response
+    }
+
+
+    String getFirstSentence(String html = this.getDescription()) {
+        getSentence(html, 0)
+    }
+
+    String getSentence(String html = this.definition, int i) {
+        if(!html) {
+            return null
+        }
+        String sentence = this.calculateSentences(html)[i]
+        if (!sentence) {
+            return null
+        }
+        return tidyShortDescription(sentence) + "."
+    }
+
+    String tidyShortDescription(String sentence) {
+        if(!sentence) {
+            return null
+        }
+        String response = sentence.replace("_", " ")
+        response = response.replaceAll("\\s+", " ")
+        return response
+    }
+
+    List<String> getWebPath() {
+        if(otherProperties["baseUri"]) {
+            // This is really for when we're ingesting
+            List<String> path = []
+            try {
+                path.addAll(DDHelperFunctions.getPath(otherProperties["baseUri"], "Messages", ".txaClass20"))
+            } catch (Exception e) {
+                path.addAll(DDHelperFunctions.getPath(otherProperties["baseUri"], "Web_Site_Content", ".txaClass20"))
+            }
+            path.removeAll {it.equalsIgnoreCase("Data_Sets")}
+            path.removeAll {it.equalsIgnoreCase("Content")}
+
+            if(name.startsWith("CDS") && !(isRetired())) {
+                path.add(0, "Commissioning Data Sets")
+            }
+            if (isRetired()) {
+                path.add(0, "Retired")
+            }
+            path = path.collect {DDHelperFunctions.tidyLabel(it)}
+            return path
+        } else {
+            // otherwise, get the path from the folder hierarchy -
+            // TODO this with inheritance
+            if(this instanceof NhsDDDataSet) {
+                return ((NhsDDDataSet)this).path
+            }
+        }
+    }
+
+    /*
+    Helper functions to resolve type checking issues in grails views
+     */
+
+    String getCatalogueItemIdAsString() {
+        return catalogueItem.id.toString()
+    }
+
+    String getCatalogueItemDomainTypeAsString() {
+        return catalogueItem.domainType.toString()
+    }
+
+    void updateWhereUsed() {
+
+    }
+
+
+}

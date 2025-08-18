@@ -1,0 +1,1470 @@
+<p>The name of an area of work.</p>
+<p>An area of work is an area, function or specialty where work activity takes place.</p>
+<p>An area of work is categorised into three hierarchical levels. Each Primary value is included in the list of Secondary values, and each Secondary value is included in the list of Tertiary values.</p>
+<p>
+    The <strong>Primary</strong>
+    area of work is a high level grouping of clinical specialties e.g. Medicine, Surgery, Psychiatry; or support functions e.g. Estates, Facilities; or other broad grouping e.g. Primary Care, Clinical Support. </p>
+<p>
+    The <strong>Secondary</strong>
+    area of work includes each recognised clinical specialty, e.g. Neurology, Ophthalmology; other values identify major areas e.g. Outpatients or functions e.g. Catering, Finance, Pharmacy, where work is undertaken. </p>
+<p>
+    The <strong>Tertiary</strong>
+    area of work includes each clinical sub-specialty recognised by the Postgraduate Medical Education and Training Board (PMETB) e.g. Metabolic Medicine; other values identify subsidiary work areas or functions where work is undertaken. </p>
+<p>
+    Note that this is essentially <a href="te:Supporting Information|tm:Electronic Staff Record">Electronic Staff Record</a>
+    ( <a href="te:Supporting Information|tm:Electronic Staff Record">ESR</a>
+    ) terminology to facilitate workforce planning, and has no direct connection to Primary Care, Secondary Care, Intermediate Care, etc. </p>
+<p>
+    Note: This item does not adhere to the Data Design Authority Principles of <a href="te:NHS Business Definitions|tm:NHS England">NHS England</a>
+    and the <a href="te:Supporting Information|tm:NHS Data Model and Dictionary Service">NHS Data Model and Dictionary Service</a>
+    but cannot be changed for this version of the data set. It will be reviewed in the next version of the <a href="dm:National Workforce Data Set">National Workforce Data Set</a>
+    . </p>
+<table border="1" cellpadding="2" cellspacing="1" width="100%">
+    <tbody>
+    <tr>
+        <td valign="top" width="35%">
+            <strong>Primary</strong>
+        </td>
+        <td valign="top" width="35%">
+            <strong>Secondary</strong>
+        </td>
+        <td valign="top" width="35%">
+            <strong>Tertiary</strong>
+        </td>
+    </tr>
+    <tr>
+        <td rowspan="67" valign="top" width="35%">Medicine</td>
+        <td rowspan="3" valign="top" width="35%">Medicine</td>
+        <td valign="top">Medicine</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Vascular Medicine</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Clinical Embryology</td>
+    </tr>
+    <tr>
+        <td rowspan="3" valign="top" width="35%">General Medicine</td>
+        <td valign="top" width="35%">General Medicine</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">Acute Medicine (Retired 30 June 2021)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Acute Internal Medicine</td>
+    </tr>
+    <tr>
+        <td rowspan="13" valign="top" width="35%">Paediatrics</td>
+        <td valign="top" width="35%">Paediatrics</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Paediatric Community Child Health</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Paediatric Endocrinology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Paediatric Gastroenterology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Paediatric Infectious Diseases and Immunology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Paediatric Clinical Pharmacology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Paediatric Intensive Care Medicine</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Paediatric Nephrology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Paediatric Neurology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Paediatric Neonatal Medicine</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Paediatric Oncology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Paediatric Respiratory Medicine</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Paediatric Rheumatology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Infectious Diseases</td>
+        <td valign="top" width="35%">Infectious Diseases</td>
+    </tr>
+    <tr>
+        <td rowspan="3" valign="top" width="35%">Respiratory Medicine</td>
+        <td valign="top" width="35%">Respiratory Medicine</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Respiratory Physiology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Sleep Physiology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Dermatology</td>
+        <td valign="top" width="35%">Dermatology</td>
+    </tr>
+    <tr>
+        <td rowspan="2" valign="top" width="35%">Neurology</td>
+        <td valign="top" width="35%">Neurology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Autonomic Science</td>
+    </tr>
+    <tr>
+        <td rowspan="2" valign="top" width="35%">Cardiology</td>
+        <td valign="top" width="35%">Cardiology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Cardiac Physiology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Rheumatology</td>
+        <td valign="top" width="35%">Rheumatology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Genito-urinary Medicine</td>
+        <td valign="top" width="35%">Genito-urinary Medicine</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Clinical Pharmacology and Therapeutics</td>
+        <td valign="top" width="35%">Clinical Pharmacology and Therapeutics</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Pharmaceutical Medicine</td>
+        <td valign="top" width="35%">Pharmaceutical Medicine</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Elderly Care Medicine</td>
+        <td valign="top" width="35%">Elderly Care Medicine</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Medical Oncology</td>
+        <td valign="top" width="35%">Medical Oncology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Clinical Physiology</td>
+        <td valign="top" width="35%">Clinical Physiology</td>
+    </tr>
+    <tr>
+        <td rowspan="2" valign="top" width="35%">Clinical Neurophysiology</td>
+        <td valign="top" width="35%">Clinical Neurophysiology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Neurophysiology</td>
+    </tr>
+    <tr>
+        <td rowspan="2" valign="top" width="35%">Renal Medicine</td>
+        <td valign="top" width="35%">Renal Medicine</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Renal Technology</td>
+    </tr>
+    <tr>
+        <td rowspan="2" valign="top" width="35%">Endocrinology and Diabetes Mellitus</td>
+        <td valign="top" width="35%">Endocrinology and Diabetes Mellitus</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Diabetes</td>
+    </tr>
+    <tr>
+        <td rowspan="4" valign="top" width="35%">Gastro-enterology</td>
+        <td valign="top" width="35%">Gastro-enterology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">GI Physiology (Retired 01 December 2012)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Endoscopy</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Hepatology</td>
+    </tr>
+    <tr>
+        <td rowspan="2" valign="top" width="35%">
+            <font color="gray">Audiovestibular Medicine (Retired 01 October 2017)</font>
+        </td>
+        <td valign="top" width="35%">
+            <font color="gray">Audiovestibular Medicine (Retired 01 October 2017)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">Audiological Measurement (Retired 01 December 2012)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Audio Vestibular Medicine</td>
+        <td valign="top" width="35%">Audio Vestibular Medicine</td>
+    </tr>
+    <tr>
+        <td rowspan="2" valign="top" width="35%">Clinical Genetics</td>
+        <td valign="top" width="35%">Clinical Genetics</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Cancer Clinical Genetics</td>
+    </tr>
+    <tr>
+        <td rowspan="4" valign="top" width="35%">Clinical Cytogenetics and Molecular Genetics</td>
+        <td valign="top" width="35%">Clinical Cytogenetics and Molecular Genetics</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Clinical Cytogenetics</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Molecular Genetics</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Cancer Molecular Genetics</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Tropical Medicine</td>
+        <td valign="top" width="35%">Tropical Medicine</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Allergy</td>
+        <td valign="top" width="35%">Allergy</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Intensive Care Medicine</td>
+        <td valign="top" width="35%">Intensive Care Medicine</td>
+    </tr>
+    <tr>
+        <td rowspan="4" valign="top" width="35%">Rehabilitation</td>
+        <td valign="top" width="35%">Rehabilitation</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Intermediate Care</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Neurorehabilitation</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Stroke</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Palliative Medicine</td>
+        <td valign="top" width="35%">Palliative Medicine</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Medical Ophthalmology</td>
+        <td valign="top" width="35%">Medical Ophthalmology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Paediatric Cardiology</td>
+        <td valign="top" width="35%">Paediatric Cardiology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Clinical Haematology</td>
+        <td valign="top" width="35%">Clinical Haematology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Sport and Exercise Medicine</td>
+        <td valign="top" width="35%">Sport and Exercise Medicine</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Aviation and Space Medicine</td>
+        <td valign="top" width="35%">Aviation and Space Medicine</td>
+    </tr>
+    <tr>
+        <td rowspan="44" valign="top" width="35%">Pathology</td>
+        <td rowspan="7" valign="top" width="35%">Pathology</td>
+        <td valign="top">Pathology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Phlebotomy</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Blood Transfusion</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Pathology External Quality Assurance</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Genetic Counselling</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Molecular Pathology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Cancer Genomics</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">General Pathology</td>
+        <td valign="top" width="35%">General Pathology</td>
+    </tr>
+    <tr>
+        <td rowspan="3" valign="top" width="35%">Chemical Pathology</td>
+        <td valign="top" width="35%">Chemical Pathology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Toxicology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Metabolic Medicine</td>
+    </tr>
+    <tr>
+        <td rowspan="3" valign="top" width="35%">Haematology</td>
+        <td valign="top" width="35%">Haematology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Haemostasis and Thrombosis</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Haemato-oncology</td>
+    </tr>
+    <tr>
+        <td rowspan="15" valign="top" width="35%">Histopathology</td>
+        <td valign="top" width="35%">Histopathology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Anatomical Pathology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Cervical Cytology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Cytopathology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Forensic Pathology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Neuropathology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Paediatric Pathology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Electron Microscopy</td>
+    </tr>
+    <tr>
+        <td valign="top">Diagnostic Neuropathology</td>
+    </tr>
+    <tr>
+        <td valign="top">Paediatric and Perinatal Pathology</td>
+    </tr>
+    <tr>
+        <td valign="top">Forensic Histopathology</td>
+    </tr>
+    <tr>
+        <td valign="top">Histological Dissection</td>
+    </tr>
+    <tr>
+        <td valign="top">Gastrointestinal Pathology Reporting</td>
+    </tr>
+    <tr>
+        <td valign="top">Gynaecological Pathology Reporting</td>
+    </tr>
+    <tr>
+        <td valign="top">Dermatopathology Reporting</td>
+    </tr>
+    <tr>
+        <td rowspan="3" valign="top" width="35%">Medical Microbiology and Virology</td>
+        <td valign="top" width="35%">Medical Microbiology and Virology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Medical Microbiology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Medical Virology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Immunology</td>
+        <td valign="top" width="35%">Immunology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Histocompatibility and Immunogenetics</td>
+        <td valign="top" width="35%">Histocompatibility and Immunogenetics</td>
+    </tr>
+    <tr>
+        <td rowspan="3" valign="top" width="35%">Blood Sciences</td>
+        <td valign="top" width="35%">Blood Sciences</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Clinical Biochemistry</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Point of Care Testing</td>
+    </tr>
+    <tr>
+        <td rowspan="2" valign="top" width="35%">Infection Sciences</td>
+        <td valign="top" width="35%">Infection Sciences</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Decontamination Science</td>
+    </tr>
+    <tr>
+        <td rowspan="2" valign="top" width="35%">Cellular Sciences</td>
+        <td valign="top" width="35%">Cellular Sciences</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">Reproductive Science (Retired 31 July 2022)</font>
+        </td>
+    </tr>
+    <tr>
+        <td rowspan="3" valign="top" width="35%">Reproductive Sciences</td>
+        <td valign="top" width="35%">Reproductive Sciences</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Andrology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Embryology</td>
+    </tr>
+    <tr>
+        <td rowspan="2" valign="top" width="35%">Clinical Oncology</td>
+        <td rowspan="2" valign="top" width="35%">Clinical Oncology</td>
+        <td valign="top">Clinical Oncology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Radiotherapy Physics</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Clinical Radiology</td>
+        <td valign="top" width="35%">Clinical Radiology</td>
+        <td valign="top">Clinical Radiology</td>
+    </tr>
+    <tr>
+        <td rowspan="10" valign="top" width="35%">Imaging</td>
+        <td rowspan="6" valign="top" width="35%">Imaging</td>
+        <td valign="top" width="35%">Imaging</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Ultrasound</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">CT</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">MRI</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Mammography</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Angiography</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Breast Screening</td>
+        <td valign="top" width="35%">Breast Screening</td>
+    </tr>
+    <tr>
+        <td rowspan="3" valign="top" width="35%">Nuclear Medicine</td>
+        <td valign="top" width="35%">Nuclear Medicine</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Radiopharmacy</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Ionising Radiation</td>
+    </tr>
+    <tr>
+        <td rowspan="24" valign="top" width="35%">Dental/Oral</td>
+        <td valign="top">Dental/Oral</td>
+        <td valign="top">Dental/Oral</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">Surgical Dentistry (Retired 01 December 2012)</font>
+        </td>
+        <td valign="top" width="35%">
+            <font color="gray">Surgical Dentistry (Retired 01 December 2012)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Oral and Maxillofacial Surgery</td>
+        <td valign="top" width="35%">Oral and Maxillofacial Surgery</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Orthodontics</td>
+        <td valign="top" width="35%">Orthodontics</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Restorative Dentistry</td>
+        <td valign="top" width="35%">Restorative Dentistry</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Paediatric Dentistry</td>
+        <td valign="top" width="35%">Paediatric Dentistry</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">Dental Health (Retired 01 January 2019)</font>
+        </td>
+        <td valign="top" width="35%">
+            <font color="gray">Dental Health (Retired 01 January 2019)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Oral Surgery</td>
+        <td valign="top" width="35%">Oral Surgery</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Endodontics</td>
+        <td valign="top" width="35%">Endodontics</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Periodontics</td>
+        <td valign="top" width="35%">Periodontics</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Prosthodontics</td>
+        <td valign="top" width="35%">Prosthodontics</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Oral Hygiene</td>
+        <td valign="top" width="35%">Oral Hygiene</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Public Health Dentistry</td>
+        <td valign="top" width="35%">Public Health Dentistry</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Dental Technology</td>
+        <td valign="top" width="35%">Dental Technology</td>
+    </tr>
+    <tr>
+        <td rowspan="5" valign="top" width="35%">
+            <font color="gray">Additional Dental Specialties (Retired 01 January 2019)</font>
+        </td>
+        <td valign="top" width="35%">
+            <font color="gray">Additional Dental Specialties (Retired 01 January 2019)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">Oral Medicine (Retired 01 January 2019)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">Oral Microbiology (Retired 01 January 2019)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">Oral and Maxillofacial Pathology (Retired 01 January 2019)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">Dental and Maxillofacial Radiology (Retired 01 January 2019)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Special Care Dentistry</td>
+        <td valign="top" width="35%">Special Care Dentistry</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Oral Medicine</td>
+        <td valign="top" width="35%">Oral Medicine</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Oral Microbiology</td>
+        <td valign="top" width="35%">Oral Microbiology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Oral and Maxillofacial Pathology</td>
+        <td valign="top" width="35%">Oral and Maxillofacial Pathology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Dental and Maxillofacial Radiology</td>
+        <td valign="top" width="35%">Dental and Maxillofacial Radiology</td>
+    </tr>
+    <tr>
+        <td rowspan="23" valign="top" width="35%">Surgery</td>
+        <td valign="top" width="35%">Surgery</td>
+        <td valign="top">Surgery</td>
+    </tr>
+    <tr>
+        <td rowspan="4" valign="top" width="35%">General Surgery</td>
+        <td valign="top" width="35%">General Surgery</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Head and Neck Surgery</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Breast Surgery</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Vascular Surgery</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Paediatric Surgery</td>
+        <td valign="top" width="35%">Paediatric Surgery</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Otolaryngology</td>
+        <td valign="top" width="35%">Otolaryngology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Trauma and Orthopaedic Surgery</td>
+        <td valign="top" width="35%">Trauma and Orthopaedic Surgery</td>
+    </tr>
+    <tr>
+        <td rowspan="2" valign="top" width="35%">Ophthalmology</td>
+        <td valign="top" width="35%">Ophthalmology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">Ophthalmic and Vision Science (Retired 01 December 2012)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Urology</td>
+        <td valign="top" width="35%">Urology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Plastic Surgery</td>
+        <td valign="top" width="35%">Plastic Surgery</td>
+    </tr>
+    <tr>
+        <td rowspan="2" valign="top" width="35%">Cardio-thoracic Surgery</td>
+        <td valign="top" width="35%">Cardio-thoracic Surgery</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Clinical Perfusion</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Neurosurgery</td>
+        <td valign="top" width="35%">Neurosurgery</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Anaesthetics</td>
+        <td valign="top" width="35%">Anaesthetics</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Pain Management</td>
+        <td valign="top" width="35%">Pain Management</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Intensive Care</td>
+        <td valign="top" width="35%">Intensive Care</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Stoma Care</td>
+        <td valign="top" width="35%">Stoma Care</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Wound Management</td>
+        <td valign="top" width="35%">Wound Management</td>
+    </tr>
+    <tr>
+        <td rowspan="2" valign="top" width="35%">Operating Department</td>
+        <td valign="top" width="35%">Operating Department</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Day Case Unit</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Burns Care</td>
+        <td valign="top" width="35%">Burns Care</td>
+    </tr>
+    <tr>
+        <td rowspan="11" valign="top" width="35%">Obstetrics and Gynaecology</td>
+        <td rowspan="7" valign="top" width="35%">Obstetrics and Gynaecology</td>
+        <td valign="top">Obstetrics and Gynaecology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Community Gynaecology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Community Sexual and Reproductive Health</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Gynaecological Oncology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Maternal and Fetal Medicine</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Sexual and Reproductive Medicine</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Urogynaecology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Obstetrics</td>
+        <td valign="top" width="35%">Obstetrics</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Gynaecology</td>
+        <td valign="top" width="35%">Gynaecology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Maternity</td>
+        <td valign="top" width="35%">Maternity</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Neonatal Intensive Care</td>
+        <td valign="top" width="35%">Neonatal Intensive Care</td>
+    </tr>
+    <tr>
+        <td rowspan="11" valign="top" width="35%">Psychiatry</td>
+        <td valign="top">Psychiatry</td>
+        <td valign="top">Psychiatry</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Psychiatry of Learning Disability</td>
+        <td valign="top" width="35%">Psychiatry of Learning Disability</td>
+    </tr>
+    <tr>
+        <td rowspan="4" valign="top" width="35%">General Psychiatry</td>
+        <td valign="top" width="35%">General Psychiatry</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Liaison Psychiatry</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Rehabilitation Psychiatry</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Substance Misuse Psychiatry</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Child and Adolescent Psychiatry</td>
+        <td valign="top" width="35%">Child and Adolescent Psychiatry</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Forensic Psychiatry</td>
+        <td valign="top" width="35%">Forensic Psychiatry</td>
+    </tr>
+    <tr>
+        <td rowspan="2" valign="top" width="35%">Medical Psychotherapy</td>
+        <td valign="top" width="35%">Medical Psychotherapy</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">Child Psychotherapy (Retired 01 January 2019)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Old Age Psychiatry</td>
+        <td valign="top" width="35%">Old Age Psychiatry</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Occupational Health</td>
+        <td valign="top" width="35%">Occupational Health</td>
+        <td valign="top" width="35%">Occupational Health</td>
+    </tr>
+    <tr>
+        <td rowspan="15" valign="top" width="35%">Primary Care</td>
+        <td rowspan="3" valign="top" width="35%">Primary Care</td>
+        <td valign="top">Primary Care</td>
+    </tr>
+    <tr>
+        <td valign="top">Marie Curie Nursing</td>
+    </tr>
+    <tr>
+        <td valign="top">MacMillan Nursing</td>
+    </tr>
+    <tr>
+        <td rowspan="8" valign="top" width="35%">Community Health Services</td>
+        <td valign="top" width="35%">Community Health Services</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Health Visiting</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">District Nursing</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">School Nursing</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Sexual and Reproductive Health</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">Learning Disabilities (Retired 01 January 2019)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Family Nurse Partnership</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Social Care</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">NHS Direct (Retired 01 January 2016)</font>
+        </td>
+        <td valign="top" width="35%">
+            <font color="gray">NHS Direct (Retired 01 January 2016)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top">General Practice</td>
+        <td valign="top">General Practice</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">Walk in Centre (Retired 30 June 2024)</font>
+        </td>
+        <td valign="top" width="35%">
+            <font color="gray">Walk in Centre (Retired 30 June 2024)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top">Urgent Treatment Centre</td>
+        <td valign="top">Urgent Treatment Centre</td>
+    </tr>
+    <tr>
+        <td rowspan="3" valign="top" width="35%">Public Health Medicine</td>
+        <td valign="top" width="35%">Public Health Medicine</td>
+        <td valign="top">Public Health Medicine</td>
+    </tr>
+    <tr>
+        <td rowspan="2" valign="top" width="35%">Health Promotion</td>
+        <td valign="top" width="35%">Health Promotion</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Teenage Pregnancy</td>
+    </tr>
+    <tr>
+        <td rowspan="8" valign="top" width="35%">Public Health</td>
+        <td valign="top" width="35%">Public Health</td>
+        <td valign="top">Public Health</td>
+    </tr>
+    <tr>
+        <td rowspan="7" valign="top" width="35%">Public Health Sciences</td>
+        <td valign="top" width="35%">Public Health Sciences</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Social Sciences</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Nutritional Sciences</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Behavioural Sciences</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Field Epidemiology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Environmental Sciences</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Radiation Sciences</td>
+    </tr>
+    <tr>
+        <td rowspan="72" valign="top" width="35%">Clinical Support</td>
+        <td rowspan="12" valign="top" width="35%">Clinical Support</td>
+        <td valign="top">Clinical Support</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Child Protection</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">Substance Abuse (Retired 01 January 2019)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Tissue Banking</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Audiological Science</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Gastrointestinal Physiology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Urodynamics</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Vascular Science</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Maxillofacial Prosthetics</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Simulation Technology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Musculoskeletal</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Radiotherapy Quality Management or Quality Assurance</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Outpatients</td>
+        <td valign="top" width="35%">Outpatients</td>
+    </tr>
+    <tr>
+        <td rowspan="5" valign="top" width="35%">Cancer Support</td>
+        <td valign="top" width="35%">Cancer Support</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Radiotherapy</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Radiotherapy Patient Review</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Radiotherapy Pre-Treatment or Planning</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Radiotherapy Research</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Chiropody/Podiatry</td>
+        <td valign="top" width="35%">Chiropody/Podiatry</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Dietetics</td>
+        <td valign="top" width="35%">Dietetics</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Occupational Therapy</td>
+        <td valign="top" width="35%">Occupational Therapy</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Optometry</td>
+        <td valign="top" width="35%">Optometry</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Orthoptics</td>
+        <td valign="top" width="35%">Orthoptics</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Ophthalmic and Vision Science</td>
+        <td valign="top" width="35%">Ophthalmic and Vision Science</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Physiotherapy</td>
+        <td valign="top" width="35%">Physiotherapy</td>
+    </tr>
+    <tr>
+        <td rowspan="4" valign="top" width="35%">Art/Music/Dramatherapy</td>
+        <td valign="top" width="35%">Art/Music/Dramatherapy</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Art Therapy</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Dramatherapy</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Music Therapy</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Speech and Language Therapy</td>
+        <td valign="top" width="35%">Speech and Language Therapy</td>
+    </tr>
+    <tr>
+        <td rowspan="7" valign="top" width="35%">Ambulance Services</td>
+        <td valign="top" width="35%">Ambulance Services</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Emergency Services</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Emergency Control</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Patient Transport Services</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Non-Emergency Control</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">NHS 111</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Integrated Urgent Care</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Prosthetics and Orthotics</td>
+        <td valign="top" width="35%">Prosthetics and Orthotics</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Social Services</td>
+        <td valign="top" width="35%">Social Services</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Complementary Medicine/Therapy</td>
+        <td valign="top" width="35%">Complementary Medicine/Therapy</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Counselling</td>
+        <td valign="top" width="35%">Counselling</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">Clinical Psychology (Retired 01 January 2019)</font>
+        </td>
+        <td valign="top" width="35%">
+            <font color="gray">Clinical Psychology (Retired 01 January 2019)</font>
+        </td>
+    </tr>
+    <tr>
+        <td rowspan="2" valign="top" width="35%">Clinical Informatics</td>
+        <td valign="top" width="35%">Clinical Informatics</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Patient Record and Coding Services</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Chaplaincy</td>
+        <td valign="top" width="35%">Chaplaincy</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Voluntary Services</td>
+        <td valign="top" width="35%">Voluntary Services</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Medical Illustration</td>
+        <td valign="top" width="35%">Medical Illustration</td>
+    </tr>
+    <tr>
+        <td rowspan="8" valign="top" width="35%">Medical Physics</td>
+        <td valign="top" width="35%">Medical Physics</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Clinical Measurement</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Medical Physics Computing</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Radiation Safety</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Diagnostic Radiology Support</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Non-Ionising Radiation</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Diagnostic and Interventional Radiology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Clinical Pharmaceutical Science</td>
+    </tr>
+    <tr>
+        <td rowspan="8" valign="top" width="35%">Clinical Engineering</td>
+        <td valign="top" width="35%">Clinical Engineering</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Electronics and Biomedical Engineering</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Biomechanical Engineering</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Medical Engineering Design</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Rehabilitation Engineering</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Medical Equipment Manager</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Radiation Engineering</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Reconstructive Science</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Sterile Services</td>
+        <td valign="top" width="35%">Sterile Services</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Pharmacy</td>
+        <td valign="top" width="35%">Pharmacy</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">Improving Access to Psychological Therapies (Retired 01 January 2019)</font>
+        </td>
+        <td valign="top" width="35%">
+            <font color="gray">Improving Access to Psychological Therapies (Retired 01 January 2019)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Cardiac, Vascular, Respiratory and Sleep Sciences</td>
+        <td valign="top" width="35%">Cardiac, Vascular, Respiratory and Sleep Sciences</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Neurosensory Sciences</td>
+        <td valign="top" width="35%">Neurosensory Sciences</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Gastrointestinal and Urodynamic Sciences</td>
+        <td valign="top" width="35%">Gastrointestinal and Urodynamic Sciences</td>
+    </tr>
+    <tr>
+        <td rowspan="3" valign="top" width="35%">Clinical Bioinformatics</td>
+        <td valign="top" width="35%">Clinical Bioinformatics</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Genomics</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Health Informatics Science</td>
+    </tr>
+    <tr>
+        <td rowspan="9" valign="top" width="35%">General Acute</td>
+        <td rowspan="4" valign="top" width="35%">General Acute</td>
+        <td valign="top">General Acute</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Private Patients</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Bank</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Nights</td>
+    </tr>
+    <tr>
+        <td rowspan="3" valign="top" width="35%">Accident and Emergency</td>
+        <td valign="top" width="35%">Accident and Emergency</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Paediatric Accident and Emergency</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Accident and Emergency Streaming</td>
+    </tr>
+    <tr>
+        <td rowspan="2" valign="top" width="35%">Intensive Care</td>
+        <td valign="top" width="35%">Intensive Care</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Critical Care</td>
+    </tr>
+    <tr>
+        <td rowspan="7" valign="top" width="35%">Estates</td>
+        <td valign="top">Estates</td>
+        <td valign="top">Estates</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Building Services</td>
+        <td valign="top" width="35%">Building Services</td>
+    </tr>
+    <tr>
+        <td rowspan="3" valign="top" width="35%">Engineering</td>
+        <td valign="top" width="35%">Engineering</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Estates Mechanical Engineering</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Estates Electrical Engineering</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Grounds and Gardens</td>
+        <td valign="top" width="35%">Grounds and Gardens</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Sustainability</td>
+        <td valign="top" width="35%">Sustainability</td>
+    </tr>
+    <tr>
+        <td rowspan="15" valign="top" width="35%">Facilities</td>
+        <td valign="top" width="35%">Facilities</td>
+        <td valign="top">Facilities</td>
+    </tr>
+    <tr>
+        <td rowspan="3" valign="top" width="35%">Catering</td>
+        <td valign="top" width="35%">Catering</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Dining Room</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Kitchen</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Domestic Services</td>
+        <td valign="top" width="35%">Domestic Services</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Portering Services</td>
+        <td valign="top" width="35%">Portering Services</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Security</td>
+        <td valign="top" width="35%">Security</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Transport</td>
+        <td valign="top" width="35%">Transport</td>
+    </tr>
+    <tr>
+        <td rowspan="3" valign="top" width="35%">Linen Services</td>
+        <td valign="top" width="35%">Linen Services</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Laundry</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Sewing Room</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Telephone Services</td>
+        <td valign="top" width="35%">Telephone Services</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Health and Safety</td>
+        <td valign="top" width="35%">Health and Safety</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Staff Facilities</td>
+        <td valign="top" width="35%">Staff Facilities</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Waste Management</td>
+        <td valign="top" width="35%">Waste Management</td>
+    </tr>
+    <tr>
+        <td rowspan="44" valign="top" width="35%">Corporate</td>
+        <td rowspan="3" valign="top" width="35%">Corporate</td>
+        <td valign="top">Corporate</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Legal</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Communication</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Administration</td>
+        <td valign="top" width="35%">Administration</td>
+    </tr>
+    <tr>
+        <td rowspan="5" valign="top" width="35%">Clinical Governance</td>
+        <td valign="top" width="35%">Clinical Governance</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Patient Safety</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Quality and Patient Care</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Clinical Audit</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Health Advocacy</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Performance Management</td>
+        <td valign="top" width="35%">Performance Management</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Service Planning</td>
+        <td valign="top" width="35%">Service Planning</td>
+    </tr>
+    <tr>
+        <td rowspan="5" valign="top" width="35%">Finance</td>
+        <td valign="top" width="35%">Finance</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Audit</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Financial Services</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Financial Management</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Payroll</td>
+    </tr>
+    <tr>
+        <td rowspan="3" valign="top" width="35%">Human Resources</td>
+        <td valign="top" width="35%">Human Resources</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Medical Staffing</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Training</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Education</td>
+        <td valign="top" width="35%">Education</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Research and Development</td>
+        <td valign="top" width="35%">Research and Development</td>
+    </tr>
+    <tr>
+        <td rowspan="10" valign="top" width="35%">Informatics</td>
+        <td>Informatics</td>
+    </tr>
+    <tr>
+        <td>Knowledge and Library Management</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">Coding (Retired 27 September 2013)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">Informatics Education and Training (Retired 30 June 2024)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">Informatics Strategy and Development (Retired 30 June 2024)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">Information Management (Retired 30 June 2024)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">Knowledge Management (Retired 30 June 2021)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">Information and Communication Technology (Retired 30 June 2024)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">Library and Knowledge Management (Retired 31 July 2022)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">Programmes and Projects (Retired 30 June 2024)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Purchasing and Supplies</td>
+        <td valign="top" width="35%">Purchasing and Supplies</td>
+    </tr>
+    <tr>
+        <td rowspan="12" valign="top" width="35%">Digital, Data and Technology</td>
+        <td valign="top" width="35%">Digital, Data and Technology</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Digital and Data – Product and Delivery</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Digital and Data – Information Technology Operations</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Digital and Data – User Centred Design</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Digital and Data – Quality Assurance Testing</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Digital and Data – Software Development</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Digital and Data – Architecture</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Digital and Data – Information Governance</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Digital and Data – Cyber Security</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Digital and Data – Data and Analytics</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Digital and Data – Strategy and Development</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Digital and Data – Education, Training and Development</td>
+    </tr>
+    <tr>
+        <td rowspan="19" valign="top" width="35%">Mental Health</td>
+        <td rowspan="9" valign="top" width="35%">Mental Health</td>
+        <td valign="top">Mental Health</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Mental Health Eating Disorders</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Mental Health Forensic</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Mental Health Liaison</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Mental Health Perinatal Care</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Mental Health Promotion or Public Mental Health</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Mental Health Substance Misuse</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Mental Health Early Intervention in Psychosis</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Mental Health Crisis Care and Home Treatment Team</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Mental Health Child and Adolescent</td>
+        <td valign="top" width="35%">Mental Health Child and Adolescent</td>
+    </tr>
+    <tr>
+        <td rowspan="2" valign="top" width="35%">Learning Disability Other</td>
+        <td valign="top" width="35%">Learning Disability Other</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Learning Disability Mental Health</td>
+    </tr>
+    <tr>
+        <td rowspan="2" valign="top" width="35%">Mental Health Adult</td>
+        <td valign="top" width="35%">Mental Health Adult</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Mental Health Older People</td>
+    </tr>
+    <tr>
+        <td rowspan="4" valign="top" width="35%">Mental Health Primary Care</td>
+        <td valign="top" width="35%">Mental Health Primary Care</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Mental Health Primary Care – NHS Talking Therapies for anxiety and depression</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">
+            <font color="gray">Community Mental Health (Retired 30 June 2021)</font>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Mental Health - Community</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Mental and Physical Health Integrated Care</td>
+        <td valign="top" width="35%">Mental and Physical Health Integrated Care</td>
+    </tr>
+    <tr>
+        <td valign="top" width="35%">Healthcare Science</td>
+        <td valign="top" width="35%">Healthcare Science</td>
+        <td valign="top">Healthcare Science</td>
+    </tr>
+    </tbody>
+</table>

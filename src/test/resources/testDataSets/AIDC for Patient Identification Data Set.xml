@@ -1,0 +1,226 @@
+      <definition>
+         <br/>
+         <table border="1" cellpadding="2" cellspacing="1" width="100%">
+            <tbody>
+               <tr>
+                  <th class="duckblue" width="90%">IDENTIFIERS</th>
+               </tr>
+            </tbody>
+         </table>
+         <br/>
+         <table border="1" cellpadding="2" cellspacing="1" width="100%">
+            <tbody>
+               <tr>
+                  <td class="skyblue" colspan="2" valign="top">
+                     <strong>To carry details for the GS1 Global Service Relation Number.<br/>One occurrence of this group is permitted.</strong>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center" class="skyblue" width="10%">
+                     <strong>M/R/O</strong>
+                  </td>
+                  <td align="center" class="skyblue" width="90%">
+                     <strong>Data Set Data Elements</strong>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">M</td>
+                  <td class="linenlbg" width="90%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/gs1_application_identifier__global_.html">GS1_APPLICATION_IDENTIFIER_(GLOBAL)</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">M</td>
+                  <td class="linenlbg" width="90%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/gs1_unique_organisation_prefix_number.html">GS1_UNIQUE_ORGANISATION_PREFIX_NUMBER</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">R</td>
+                  <td>
+                     <a href="https://datadictionary.nhs.uk/data_elements/nhs_number.html">NHS_NUMBER</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">M</td>
+                  <td>
+                     <a href="https://datadictionary.nhs.uk/data_elements/gs1_global_service_relation_number_check_digit.html">GS1_GLOBAL_SERVICE_RELATION_NUMBER_CHECK_DIGIT</a>
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+         <br/>
+         <table border="1" cellpadding="2" cellspacing="1" width="100%">
+            <tbody>
+               <tr>
+                  <td class="skyblue" colspan="2" valign="top">
+                     <strong>To carry details for the GS1 Service Relation Instance Number.<br/>One occurrence of this group is permitted.</strong>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center" class="skyblue" width="10%">
+                     <strong>M/R/O</strong>
+                  </td>
+                  <td align="center" class="skyblue" width="90%">
+                     <strong>Data Set Data Elements</strong>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">O</td>
+                  <td>
+                     <a href="https://datadictionary.nhs.uk/data_elements/gs1_application_identifier__global_.html">GS1_APPLICATION_IDENTIFIER_(GLOBAL)</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">O</td>
+                  <td>
+                     <a href="https://datadictionary.nhs.uk/data_elements/gs1_service_relation_instance_number.html">GS1_SERVICE_RELATION_INSTANCE_NUMBER</a>
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+         <br/>
+         <table border="1" cellpadding="2" cellspacing="1" width="100%">
+            <tbody>
+               <tr>
+                  <td class="skyblue" colspan="2" valign="top">
+                     <strong>To carry details of the hospital identifiers.<br/>One occurrence of this group is permitted.</strong>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center" class="skyblue" width="10%">
+                     <strong>M/R/O</strong>
+                  </td>
+                  <td align="center" class="skyblue" width="90%">
+                     <strong>Data Set Data Elements</strong>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">M</td>
+                  <td>
+                     <a href="https://datadictionary.nhs.uk/data_elements/gs1_application_identifier__internal_.html">GS1_APPLICATION_IDENTIFIER_(INTERNAL)</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">M</td>
+                  <td>
+                     <a href="https://datadictionary.nhs.uk/data_elements/organisation_identifier__code_of_provider_.html">ORGANISATION_IDENTIFIER_(CODE_OF_PROVIDER)</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">M</td>
+                  <td>
+                     <a href="https://datadictionary.nhs.uk/data_elements/local_patient_identifier__extended_.html">LOCAL_PATIENT_IDENTIFIER_(EXTENDED)</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">O</td>
+                  <td>
+                     <a href="https://datadictionary.nhs.uk/data_elements/gs1_global_location_number.html">GS1_GLOBAL_LOCATION_NUMBER</a>
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+         <br/>
+         <table border="1" cellpadding="2" cellspacing="1" width="100%">
+            <tbody>
+               <tr>
+                  <th class="duckblue" colspan="2" valign="top">PATIENT DETAILS</th>
+               </tr>
+            </tbody>
+         </table>
+         <br/>
+         <table border="1" cellpadding="2" cellspacing="1" width="100%">
+            <tbody>
+               <tr>
+                  <th align="left" class="skyblue" colspan="2" width="100%">To carry the patient descriptive details.<br/>One occurrence of this group is permitted.</th>
+               </tr>
+               <tr>
+                  <td align="center" class="skyblue" width="10%">
+                     <strong>M/R/O</strong>
+                  </td>
+                  <td align="center" class="skyblue" width="90%">
+                     <strong>Data Set Data Elements</strong>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">R</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/gs1_application_identifier__internal_.html">GS1_APPLICATION_IDENTIFIER_(INTERNAL)</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">R</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/person_family_name.html">PERSON_FAMILY_NAME</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">R</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/person_given_name.html">PERSON_GIVEN_NAME</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">R</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/date_of_birth__patient_identification_.html">DATE_OF_BIRTH_(PATIENT_IDENTIFICATION)</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">R</td>
+                  <td>
+                     <a href="https://datadictionary.nhs.uk/data_elements/time_of_birth__patient_identification_.html">TIME_OF_BIRTH_(PATIENT_IDENTIFICATION)</a>
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+         <br/>
+         <table border="1" cellpadding="2" cellspacing="1" width="100%">
+            <tbody>
+               <tr>
+                  <th class="duckblue" colspan="2" valign="top">BABY DETAILS</th>
+               </tr>
+            </tbody>
+         </table>
+         <br/>
+         <table border="1" cellpadding="2" cellspacing="1" width="100%">
+            <tbody>
+               <tr>
+                  <th align="left" class="skyblue" colspan="2" width="100%">To carry details if the patient is a neonate or newborn baby. <br/>One occurrence of this group is permitted.</th>
+               </tr>
+               <tr>
+                  <td align="center" class="skyblue" width="10%">
+                     <strong>M/R/O</strong>
+                  </td>
+                  <td align="center" class="skyblue" width="90%">
+                     <strong>Data Set Data Elements</strong>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">R</td>
+                  <td>
+                     <a href="https://datadictionary.nhs.uk/data_elements/gs1_application_identifier__internal_.html">GS1_APPLICATION_IDENTIFIER_(INTERNAL)</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">R</td>
+                  <td>
+                     <a href="https://datadictionary.nhs.uk/data_elements/number_of_babies_identification_code__patient_identification_.html">NUMBER_OF_BABIES_IDENTIFICATION_CODE_(PATIENT_IDENTIFICATION)</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">R</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/person_family_name__mother_of_baby_.html">PERSON_FAMILY_NAME_(MOTHER_OF_BABY)</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">O</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/person_given_name__mother_of_baby_.html">PERSON_GIVEN_NAME_(MOTHER_OF_BABY)</a>
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+      </definition>

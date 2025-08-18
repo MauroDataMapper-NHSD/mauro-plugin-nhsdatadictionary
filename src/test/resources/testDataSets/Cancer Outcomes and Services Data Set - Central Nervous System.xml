@@ -1,0 +1,302 @@
+<definition>
+    <br/>
+    <table border="1" cellpadding="2" cellspacing="1" width="100%">
+        <tbody>
+            <tr>
+                <th class="duckblue" colspan="2" valign="top">IMAGING - CENTRAL NERVOUS SYSTEM (CNS)</th>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <table border="1" cellpadding="2" cellspacing="1" width="100%">
+        <tbody>
+            <tr>
+                <td class="skyblue" colspan="2" valign="top">
+                    <strong>To carry imaging details for Central Nervous System (CNS) cancer.<br/>One occurrence of this group is permitted per Core Imaging.</strong>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" class="skyblue" width="10%">
+                    <strong>M/R</strong>
+                </td>
+                <td align="center" class="skyblue" width="90%">
+                    <strong>Data Set Data Elements</strong>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">R</td>
+                <td class="linenlbg" width="90%">
+                    <a href="https://datadictionary.nhs.uk/data_elements/lesion_location__radiological_.html">LESION_LOCATION_(RADIOLOGICAL)</a>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">R</td>
+                <td class="linenlbg" width="90%">
+                    <a href="https://datadictionary.nhs.uk/data_elements/number_of_lesions__radiological_.html">NUMBER_OF_LESIONS_(RADIOLOGICAL)</a>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">R</td>
+                <td class="linenlbg" width="90%">
+                    <a href="https://datadictionary.nhs.uk/data_elements/lesion_size__radiological_.html">LESION_SIZE_(RADIOLOGICAL)</a>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">R</td>
+                <td class="linenlbg" width="90%">
+                    <a href="https://datadictionary.nhs.uk/data_elements/principal_diagnostic_imaging_type.html">PRINCIPAL_DIAGNOSTIC_IMAGING_TYPE</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <table border="1" cellpadding="2" cellspacing="1" width="100%">
+        <tbody>
+            <tr>
+                <th class="duckblue" width="90%">CANCER CARE PLAN - CENTRAL NERVOUS SYSTEM (CNS)</th>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <table border="1" cellpadding="2" cellspacing="1" width="100%">
+        <tbody>
+            <tr>
+                <td class="skyblue" colspan="2" valign="top">
+                    <strong>To carry cancer care plan details for Central Nervous System (CNS) cancer.<br/>One occurrence of this group is permitted Core Cancer Care Plan.</strong>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" class="skyblue" width="10%">
+                    <strong>M/R</strong>
+                </td>
+                <td align="center" class="skyblue" width="90%">
+                    <strong>Data Set Data Elements</strong>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">R</td>
+                <td class="linenlbg" width="90%">
+                    <a href="https://datadictionary.nhs.uk/data_elements/provisional_diagnosis__icd_.html">PROVISIONAL_DIAGNOSIS_(ICD)</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <table border="1" cellpadding="2" cellspacing="1" width="100%">
+        <tbody>
+            <tr>
+                <th class="duckblue" width="90%">SURGERY - TREATMENT - CENTRAL NERVOUS SYSTEM (CNS)</th>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <table border="1" cellpadding="2" cellspacing="1" width="100%">
+        <tbody>
+            <tr>
+                <td class="skyblue" colspan="2" valign="top">
+                    <strong>To carry surgery details for Central Nervous System (CNS) cancer.<br/>One occurrence of this group is permitted per Core Treatment Surgery.</strong>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" class="skyblue" width="10%">
+                    <strong>M/R</strong>
+                </td>
+                <td align="center" class="skyblue" width="90%">
+                    <strong>Data Set Data Elements</strong>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">R</td>
+                <td class="linenlbg" width="90%">
+                    <a href="https://datadictionary.nhs.uk/data_elements/tumour_location__surgical_.html">TUMOUR_LOCATION_(SURGICAL)</a>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">R</td>
+                <td class="linenlbg" width="90%">
+                    <a href="https://datadictionary.nhs.uk/data_elements/biopsy_type__central_nervous_system_tumours_.html">BIOPSY_TYPE_(CENTRAL_NERVOUS_SYSTEM_TUMOURS)</a>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">R</td>
+                <td class="linenlbg" width="90%">
+                    <a href="https://datadictionary.nhs.uk/data_elements/excision_type__central_nervous_system_tumours_.html">EXCISION_TYPE_(CENTRAL_NERVOUS_SYSTEM_TUMOURS)</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <table border="1" cellpadding="2" cellspacing="1" width="100%">
+        <tbody>
+            <tr>
+                <th class="duckblue" width="90%">SURGERY - TREATMENT: CHILDREN, TEENAGERS AND YOUNG ADULTS (CTYA) - CENTRAL NERVOUS SYSTEM (CNS)</th>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <table border="1" cellpadding="2" cellspacing="1" width="100%">
+        <tbody>
+            <tr>
+                <td class="skyblue" colspan="2" valign="top">
+                    <strong>To carry surgery details for Children, Teenagers and Young Adults (CTYA) for Central Nervous System (CNS) cancer.<br/>One occurrence of this group is permitted per Core Treatment Surgery.</strong>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" class="skyblue" width="10%">
+                    <strong>M/R</strong>
+                </td>
+                <td align="center" class="skyblue" width="90%">
+                    <strong>Data Set Data Elements</strong>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">R</td>
+                <td class="linenlbg" width="90%">
+                    <a href="https://datadictionary.nhs.uk/data_elements/resection_status.html">RESECTION_STATUS</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <table border="1" cellpadding="2" cellspacing="1" width="100%">
+        <tbody>
+            <tr>
+                <th class="duckblue" colspan="2" valign="top">DIAGNOSIS: LOW GRADE GLIOMA - CENTRAL NERVOUS SYSTEM (CNS)</th>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <table border="1" cellpadding="2" cellspacing="1" width="100%">
+        <tbody>
+            <tr>
+                <td class="skyblue" colspan="2" valign="top">
+                    <strong>To carry diagnostic Low Grade Glioma details for Central Nervous System (CNS) cancer.<br/>One occurrence of this group is permitted per Core Diagnosis</strong>.</td>
+            </tr>
+            <tr>
+                <td align="center" class="skyblue" width="10%">
+                    <strong>M/R</strong>
+                </td>
+                <td align="center" class="skyblue" width="90%">
+                    <strong>Data Set Data Elements</strong>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">R</td>
+                <td class="linenlbg" width="90%">
+                    <a href="https://datadictionary.nhs.uk/data_elements/visual_acuity_test_result__at_diagnosis_.html">VISUAL_ACUITY_TEST_RESULT_(AT_DIAGNOSIS)</a>
+                    <br/>Multiple occurrences of this item are permitted</td>
+            </tr>
+            <tr>
+                <td align="center">R</td>
+                <td class="linenlbg" width="90%">
+                    <a href="https://datadictionary.nhs.uk/data_elements/visual_field_test_result__at_diagnosis_.html">VISUAL_FIELD_TEST_RESULT_(AT_DIAGNOSIS)</a>
+                    <br/>Multiple occurrences of this item are permitted</td>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <table border="1" cellpadding="2" cellspacing="1" width="100%">
+        <tbody>
+            <tr>
+                <th class="duckblue" width="90%">SITE SPECIFIC STAGING: CEREBROSPINAL FLUID (CSF) - CENTRAL NERVOUS SYSTEM (CNS)</th>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <table border="1" cellpadding="2" cellspacing="1" width="100%">
+        <tbody>
+            <tr>
+                <td class="skyblue" colspan="2" valign="top">
+                    <strong>To carry site specific staging Cerebrospinal Fluid (CSF) details for Central Nervous System (CNS) cancer</strong>.<br/>
+                    <strong>One occurrence of this group is required per Core Site Specific Staging.</strong>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" class="skyblue" width="10%">
+                    <strong>M/R</strong>
+                </td>
+                <td align="center" class="skyblue" width="90%">
+                    <strong>Data Set Data Elements</strong>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">M</td>
+                <td class="linenlbg" width="90%">
+                    <a href="https://datadictionary.nhs.uk/data_elements/chang_staging_system_stage.html">CHANG_STAGING_SYSTEM_STAGE</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <table border="1" cellpadding="2" cellspacing="1" width="100%">
+        <tbody>
+            <tr>
+                <th class="duckblue" colspan="2" valign="top">LABORATORY RESULTS: GERM CELL CENTRAL NERVOUS SYSTEM (CNS) TUMOURS CHOICE - CENTRAL NERVOUS SYSTEM (CNS)</th>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <table border="1" cellpadding="2" cellspacing="1" width="100%">
+        <tbody>
+            <tr>
+                <td colspan="2">
+                    <strong>One occurrence of this group is permitted per Core Laboratory Results<br/>
+                    </strong>
+                    <strong>One of the following Germ Cell Central Nervous System (CNS) tumour laboratory result details MUST be provided per Core Laboratory Results</strong>
+                </td>
+            </tr>
+            <tr>
+                <td class="skyblue" colspan="2" valign="top">
+                    <strong>CHOICE 1 - ALPHA FETOPROTEIN</strong>
+                </td>
+            </tr>
+            <tr>
+                <td class="skyblue" colspan="2" valign="top">
+                    <strong>To carry Germ Cell Central Nervous System (CNS) tumour laboratory result details.<br/>One occurrence of this group is required per Core Laboratory Results if selected as the choice</strong>.</td>
+            </tr>
+            <tr>
+                <td align="center" class="skyblue" width="10%">
+                    <strong>M/R</strong>
+                </td>
+                <td align="center" class="skyblue" width="90%">
+                    <strong>Data Set Data Elements</strong>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">M</td>
+                <td class="linenlbg" width="90%">
+                    <a href="https://datadictionary.nhs.uk/data_elements/alpha_fetoprotein__cerebrospinal_fluid_.html">ALPHA_FETOPROTEIN_(CEREBROSPINAL_FLUID)</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <strong>OR</strong>
+    <br/>
+    <table border="1" cellpadding="2" cellspacing="1" width="100%">
+        <tbody>
+            <tr>
+                <td class="skyblue" colspan="2" valign="top">
+                    <strong>CHOICE 2 - BETA HUMAN CHORIONIC GONADOTROPIN</strong>
+                </td>
+            </tr>
+            <tr>
+                <td class="skyblue" colspan="2" valign="top">
+                    <strong>To carry Germ Cell Central Nervous System (CNS) tumour laboratory result details.<br/>One occurrence of this group is required per Core Laboratory Results if selected as the choice</strong>.</td>
+            </tr>
+            <tr>
+                <td align="center" class="skyblue" width="10%">
+                    <strong>M/R</strong>
+                </td>
+                <td align="center" class="skyblue" width="90%">
+                    <strong>Data Set Data Elements</strong>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">M</td>
+                <td class="linenlbg" width="90%">
+                    <a href="https://datadictionary.nhs.uk/data_elements/beta_human_chorionic_gonadotropin__cerebrospinal_fluid_.html">BETA_HUMAN_CHORIONIC_GONADOTROPIN_(CEREBROSPINAL_FLUID)</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</definition>

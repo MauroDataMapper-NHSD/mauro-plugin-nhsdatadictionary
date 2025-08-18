@@ -1,0 +1,88 @@
+<definition>
+    <br/>
+    <table border="1" cellpadding="2" cellspacing="1" width="100%">
+        <tbody>
+            <tr>
+                <th class="duckblue" width="90%">SUBMISSION IDENTIFIER</th>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <table border="1" cellpadding="2" cellspacing="1" width="100%">
+        <tbody>
+            <tr>
+                <td class="skyblue" colspan="2" valign="top">
+                    <strong>To carry the submission identifier details.<br/>One occurrence of this group is required.</strong>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" class="skyblue" width="10%">
+                    <strong>M</strong>
+                </td>
+                <td align="center" class="skyblue" width="90%">
+                    <strong>Data Set Data Elements</strong>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">M</td>
+                <td class="linenlbg" width="90%">
+                    <a href="https://datadictionary.nhs.uk/data_elements/organisation_identifier__code_of_provider_.html">ORGANISATION_IDENTIFIER_(CODE_OF_PROVIDER)</a>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">M</td>
+                <td>
+                    <a href="https://datadictionary.nhs.uk/data_elements/reporting_period_start_date.html">REPORTING_PERIOD_START_DATE</a>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">M</td>
+                <td class="linenlbg" width="90%">
+                    <a href="https://datadictionary.nhs.uk/data_elements/reporting_period_end_date.html">REPORTING_PERIOD_END_DATE</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <table border="1" cellpadding="2" cellspacing="1" width="100%">
+        <tbody>
+            <tr>
+                <th class="duckblue" width="90%">VENOUS THROMBOEMBOLISM RISK ASSESSMENTS</th>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <table border="1" cellpadding="2" cellspacing="1" width="100%">
+        <tbody>
+            <tr>
+                <td class="skyblue" colspan="2" valign="top">
+                    <div align="left">
+                        <strong>Venous Thromboembolism Risk Assessments:</strong>
+                    </div>
+                    <div align="left">
+                        <strong>To carry the numbers of Venous Thromboembolism Risk Assessments carried out in the month and the total patients admitted</strong>.</div>
+                </td>
+            </tr>
+            <tr>
+                <td align="center" class="skyblue" width="10%">
+                    <strong>M</strong>
+                </td>
+                <td align="center" class="skyblue" width="90%">
+                    <strong>Data Set Data Elements</strong>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">M</td>
+                <td class="linenlbg" width="90%">
+                    <a href="https://datadictionary.nhs.uk/data_elements/admitted_patients_risk_assessed_for_venous_thromboembolism_in_month_total.html">ADMITTED_PATIENTS_RISK_ASSESSED_FOR_VENOUS_THROMBOEMBOLISM_IN_MONTH_TOTAL</a>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">M</td>
+                <td class="linenlbg" width="90%">
+                    <a href="https://datadictionary.nhs.uk/data_elements/admitted_patients_in_month_total.html">ADMITTED_PATIENTS_IN_MONTH_TOTAL</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</definition>

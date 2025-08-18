@@ -1,0 +1,215 @@
+<definition>
+         <br/>
+         <table border="1" cellpadding="2" cellspacing="1" width="100%">
+            <tbody>
+               <tr>
+                  <th class="skyblue" width="7%">Mandation</th>
+                  <th class="skyblue" width="93%">Data Set Data Elements</th>
+               </tr>
+               <tr>
+                  <th align="left" class="skyblue" colspan="2" width="100%">Patient details:<br/>To carry patient demographic details</th>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/person_family_name.html">PERSON_FAMILY_NAME</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/person_given_name.html">PERSON_GIVEN_NAME</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/person_title.html">PERSON_TITLE</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/correspondence_address.html">CORRESPONDENCE_ADDRESS</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/postcode_of_correspondence_address.html">POSTCODE_OF_CORRESPONDENCE_ADDRESS</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/person_birth_date.html">PERSON_BIRTH_DATE</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/nhs_number.html">NHS_NUMBER</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/local_patient_identifier.html">LOCAL_PATIENT_IDENTIFIER</a> </td>
+               </tr>
+               <tr>
+                  <th align="left" class="skyblue" colspan="2" width="100%">Patient contact details:<br/>The contact details of the patient or lead contact as applicable. If the name of a lead contact for the patient is present, the contact details apply to the lead contact and not the patient</th>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">O</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/person_full_name__patient_lead_contact_.html">PERSON_FULL_NAME_(PATIENT_LEAD_CONTACT)</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">O</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/contact_telephone_number__home_.html">CONTACT_TELEPHONE_NUMBER_(HOME)</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">O</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/contact_telephone_number__work_.html">CONTACT_TELEPHONE_NUMBER_(WORK)</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">O</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/contact_telephone_number__mobile_.html">CONTACT_TELEPHONE_NUMBER_(MOBILE)</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">O</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/contact_email_address__patient_or_lead_contact_.html">CONTACT_EMAIL_ADDRESS_(PATIENT_OR_LEAD_CONTACT)</a> </td>
+               </tr>
+               <tr>
+                  <th align="left" class="skyblue" colspan="2" width="100%">General Practitioner Details:<br/>To carry details of the patient's specified General Medical Practitioner</th>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/person_name__specified_general_medical_practitioner_.html">PERSON_NAME_(SPECIFIED_GENERAL_MEDICAL_PRACTITIONER)</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/general_medical_practice_code__patient_registration_.html">GENERAL_MEDICAL_PRACTICE_CODE_(PATIENT_REGISTRATION)</a> </td>
+               </tr>
+               <tr>
+                  <th align="left" class="skyblue" colspan="2" width="100%">Referring Organisation</th>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/organisation_name__referring_.html">ORGANISATION_NAME_(REFERRING)</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/referring_organisation_code.html">REFERRING_ORGANISATION_CODE</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/care_professional_name__referring_.html">CARE_PROFESSIONAL_NAME_(REFERRING)</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/referrer_code.html">REFERRER_CODE</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/treatment_function_code__referring_service_.html">TREATMENT_FUNCTION_CODE_(REFERRING_SERVICE)</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/person_full_name__referrer_contact_.html">PERSON_FULL_NAME_(REFERRER_CONTACT)</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">O</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/contact_telephone_number__referring_organisation_.html">CONTACT_TELEPHONE_NUMBER_(REFERRING_ORGANISATION)</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">O</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/contact_email_address__referring_organisation_.html">CONTACT_EMAIL_ADDRESS_(REFERRING_ORGANISATION)</a> </td>
+               </tr>
+               <tr>
+                  <th align="left" class="skyblue" colspan="2" width="100%">Referral To Treatment:<br/>To carry details of the patient's Referral To Treatment Status and Patient Pathway Information</th>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/patient_pathway_identifier.html">PATIENT_PATHWAY_IDENTIFIER</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/organisation_code__patient_pathway_identifier_issuer_.html">ORGANISATION_CODE_(PATIENT_PATHWAY_IDENTIFIER_ISSUER)</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/referral_to_treatment_period_status__inter-provider_transfer_.html">REFERRAL_TO_TREATMENT_PERIOD_STATUS_(INTER-PROVIDER_TRANSFER)</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/decision_to_refer_date__inter-provider_transfer_.html">DECISION_TO_REFER_DATE_(INTER-PROVIDER_TRANSFER)</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/referral_to_treatment_period_start_date.html">REFERRAL_TO_TREATMENT_PERIOD_START_DATE</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/referral_raised_reason__inter-provider_transfer_.html">REFERRAL_RAISED_REASON_(INTER-PROVIDER_TRANSFER)</a> </td>
+               </tr>
+               <tr>
+                  <th align="left" class="skyblue" colspan="2" width="100%">Organisation along the Patient Pathway - Repeating group to carry all the Organisations involved in the Pathway up until this Service Request</th>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/organisation_code__on_pathway_.html">ORGANISATION_CODE_(ON_PATHWAY)</a> </td>
+               </tr>
+               <tr>
+                  <th align="left" class="skyblue" colspan="2" width="100%">Receiving Organisation:<br/>To carry details of the receiving Organisation and Care Professional</th>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/organisation_name__receiving_.html">ORGANISATION_NAME_(RECEIVING)</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/organisation_code__receiving_.html">ORGANISATION_CODE_(RECEIVING)</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">O</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/care_professional_name__receiving_.html">CARE_PROFESSIONAL_NAME_(RECEIVING)</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/treatment_function_code__receiving_service_.html">TREATMENT_FUNCTION_CODE_(RECEIVING_SERVICE)</a> </td>
+               </tr>
+               <tr>
+                  <th align="left" class="skyblue" colspan="2" width="100%">Details of the dates of the transfer information was sent and received</th>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">M</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/service_requested_date__inter-provider_transfer_.html">SERVICE_REQUESTED_DATE_(INTER-PROVIDER_TRANSFER)</a> </td>
+               </tr>
+               <tr>
+                  <td align="center" width="7%">O</td>
+                  <td width="93%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/referral_request_received_date__inter-provider_transfer_.html">REFERRAL_REQUEST_RECEIVED_DATE_(INTER-PROVIDER_TRANSFER)</a> </td>
+               </tr>
+            </tbody>
+         </table>
+      </definition>

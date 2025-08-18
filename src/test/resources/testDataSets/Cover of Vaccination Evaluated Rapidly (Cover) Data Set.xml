@@ -1,0 +1,292 @@
+<definition>
+         <br/>
+         <table border="1" cellpadding="2" cellspacing="1" width="100%">
+            <tbody>
+               <tr>
+                  <th class="duckblue" width="90%">SUBMISSION IDENTIFIER</th>
+               </tr>
+            </tbody>
+         </table>
+         <br/>
+         <table border="1" cellpadding="2" cellspacing="1" width="100%">
+            <tbody>
+               <tr>
+                  <td class="skyblue" colspan="2" valign="top">
+                     <strong>To carry the details of the providing organisation and reporting period.<br/>One occurrence of this group is required.</strong>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center" class="skyblue" width="10%">
+                     <strong>M</strong>
+                  </td>
+                  <td align="center" class="skyblue" width="90%">
+                     <strong>Data Set Data Elements</strong>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">M</td>
+                  <td class="linenlbg" width="90%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/organisation_identifier__residence_responsibility_.html">ORGANISATION_IDENTIFIER_(RESIDENCE_RESPONSIBILITY)</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">M</td>
+                  <td class="linenlbg" width="90%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/general_medical_practice_code__patient_registration_.html">GENERAL_MEDICAL_PRACTICE_CODE_(PATIENT_REGISTRATION)</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">M</td>
+                  <td class="linenlbg" width="90%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/reporting_period_start_date.html">REPORTING_PERIOD_START_DATE</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">M</td>
+                  <td class="linenlbg" width="90%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/reporting_period_end_date.html">REPORTING_PERIOD_END_DATE</a>
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+         <br/>
+         <table border="1" cellpadding="2" cellspacing="1" width="100%">
+            <tbody>
+               <tr>
+                  <th class="duckblue" width="90%">PRIMARY IMMUNISATIONS 12 MONTH COHORT</th>
+               </tr>
+            </tbody>
+         </table>
+         <br/>
+         <table border="1" cellpadding="2" cellspacing="1" width="100%">
+            <tbody>
+               <tr>
+                  <td class="skyblue" colspan="2" valign="top">
+                     <strong>To carry details of completed primary immunisations at 12 months.<br/>Multiple occurrences of this group are permitted, one for each Childhood Immunisation Type reported.</strong>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center" class="skyblue" width="10%">
+                     <strong>M</strong>
+                  </td>
+                  <td align="center" class="skyblue" width="90%">
+                     <strong>Data Set Data Elements</strong>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">M</td>
+                  <td class="linenlbg" width="90%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/childhood_immunisation_type__cover_.html">CHILDHOOD_IMMUNISATION_TYPE_(COVER)</a>
+                     <br/>
+                     <em>or</em>
+                     <br/>
+                     <a href="https://datadictionary.nhs.uk/data_elements/childhood_immunisation_type_combined__cover_.html">CHILDHOOD_IMMUNISATION_TYPE_COMBINED_(COVER)</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">M</td>
+                  <td class="linenlbg" width="90%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/eligible_population_total__cover_.html">ELIGIBLE_POPULATION_TOTAL_(COVER)</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">M</td>
+                  <td class="linenlbg" width="90%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/eligible_population_immunised_percentage__cover_.html">ELIGIBLE_POPULATION_IMMUNISED_PERCENTAGE_(COVER)</a>
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+         <br/>
+         <table border="1" cellpadding="2" cellspacing="1" width="100%">
+            <tbody>
+               <tr>
+                  <th class="duckblue" width="90%">PRIMARY IMMUNISATIONS 24 MONTH COHORT</th>
+               </tr>
+            </tbody>
+         </table>
+         <br/>
+         <table border="1" cellpadding="2" cellspacing="1" width="100%">
+            <tbody>
+               <tr>
+                  <td class="skyblue" colspan="2" valign="top">
+                     <strong>To carry details of completed primary immunisations at 24 months.<br/>Multiple occurrences of this group are permitted, one for each Childhood Immunisation Type reported.</strong>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center" class="skyblue" width="10%">
+                     <strong>M</strong>
+                  </td>
+                  <td align="center" class="skyblue" width="90%">
+                     <strong>Data Set Data Elements</strong>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">M</td>
+                  <td class="linenlbg" width="90%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/childhood_immunisation_type__cover_.html">CHILDHOOD_IMMUNISATION_TYPE_(COVER)</a>
+                     <br/>
+                     <em>or</em>
+                     <br/>
+                     <a href="https://datadictionary.nhs.uk/data_elements/childhood_immunisation_type_combined__cover_.html">CHILDHOOD_IMMUNISATION_TYPE_COMBINED_(COVER)</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">M</td>
+                  <td class="linenlbg" width="90%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/eligible_population_total__cover_.html">ELIGIBLE_POPULATION_TOTAL_(COVER)</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">M</td>
+                  <td class="linenlbg" width="90%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/eligible_population_immunised_percentage__cover_.html">ELIGIBLE_POPULATION_IMMUNISED_PERCENTAGE_(COVER)</a>
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+         <br/>
+         <table border="1" cellpadding="2" cellspacing="1" width="100%">
+            <tbody>
+               <tr>
+                  <th class="duckblue" width="90%">PRIMARY IMMUNISATIONS and BOOSTERS 5 YEAR COHORT</th>
+               </tr>
+            </tbody>
+         </table>
+         <br/>
+         <table border="1" cellpadding="2" cellspacing="1" width="100%">
+            <tbody>
+               <tr>
+                  <td class="skyblue" colspan="2" valign="top">
+                     <strong>To carry details of completed primary immunisations and boosters at 5 years.<br/>Multiple occurrences of this group are permitted, one for each Childhood Immunisation Type reported.</strong>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center" class="skyblue" width="10%">
+                     <strong>M</strong>
+                  </td>
+                  <td align="center" class="skyblue" width="90%">
+                     <strong>Data Set Data Elements</strong>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">M</td>
+                  <td class="linenlbg" width="90%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/childhood_immunisation_type__cover_.html">CHILDHOOD_IMMUNISATION_TYPE_(COVER)</a>
+                     <br/>
+                     <em>or</em>
+                     <br/>
+                     <a href="https://datadictionary.nhs.uk/data_elements/childhood_immunisation_type_combined__cover_.html">CHILDHOOD_IMMUNISATION_TYPE_COMBINED_(COVER)</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">M</td>
+                  <td class="linenlbg" width="90%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/eligible_population_total__cover_.html">ELIGIBLE_POPULATION_TOTAL_(COVER)</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">M</td>
+                  <td class="linenlbg" width="90%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/eligible_population_immunised_percentage__cover_.html">ELIGIBLE_POPULATION_IMMUNISED_PERCENTAGE_(COVER)</a>
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+         <br/>
+         <table border="1" cellpadding="2" cellspacing="1" width="100%">
+            <tbody>
+               <tr>
+                  <th class="duckblue" width="90%">HEPATITIS B SURFACE ANTIGEN POSITIVE MOTHERS 12 MONTH COHORT</th>
+               </tr>
+            </tbody>
+         </table>
+         <br/>
+         <table border="1" cellpadding="2" cellspacing="1" width="100%">
+            <tbody>
+               <tr>
+                  <td class="skyblue" colspan="2" valign="top">
+                     <strong>To carry details of Neonatal Hepatitis B coverage at 12 months.<br/>Multiple occurrences of this group are permitted, one for each Childhood Immunisation Type reported.</strong>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center" class="skyblue" width="10%">
+                     <strong>M</strong>
+                  </td>
+                  <td align="center" class="skyblue" width="90%">
+                     <strong>Data Set Data Elements</strong>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">M</td>
+                  <td class="linenlbg" width="90%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/childhood_immunisation_type__cover_hepatitis_b_surface_antigen_positive_mother_.html">CHILDHOOD_IMMUNISATION_TYPE_(COVER_HEPATITIS_B_SURFACE_ANTIGEN_POSITIVE_MOTHER)</a>
+                     <br/>
+                     <em>or</em>
+                     <br/>
+                     <a href="https://datadictionary.nhs.uk/data_elements/childhood_immunisation_type_combined__cover_hepatitis_b_surface_antigen_positive_mother_.html">CHILDHOOD_IMMUNISATION_TYPE_COMBINED_(COVER_HEPATITIS_B_SURFACE_ANTIGEN_POSITIVE_MOTHER)</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">M</td>
+                  <td class="linenlbg" width="90%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/eligible_population_total__cover_hepatitis_b_surface_antigen_positive_mother_.html">ELIGIBLE_POPULATION_TOTAL_(COVER_HEPATITIS_B_SURFACE_ANTIGEN_POSITIVE_MOTHER)</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">M</td>
+                  <td class="linenlbg" width="90%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/eligible_population_immunised_percentage__cover_hepatitis_b_surface_antigen_positive_mother_.html">ELIGIBLE_POPULATION_IMMUNISED_PERCENTAGE_(COVER_HEPATITIS_B_SURFACE_ANTIGEN_POSITIVE_MOTHER)</a>
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+         <br/>
+         <table border="1" cellpadding="2" cellspacing="1" width="100%">
+            <tbody>
+               <tr>
+                  <th class="duckblue" width="90%">HEPATITIS B SURFACE ANTIGEN POSITIVE MOTHERS 24 MONTH COHORT</th>
+               </tr>
+            </tbody>
+         </table>
+         <br/>
+         <table border="1" cellpadding="2" cellspacing="1" width="100%">
+            <tbody>
+               <tr>
+                  <td class="skyblue" colspan="2" valign="top">
+                     <strong>To carry details of Neonatal Hepatitis B coverage at 24 months.<br/>Multiple occurrences of this group are permitted, one for each Childhood Immunisation Type reported.</strong>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center" class="skyblue" width="10%">
+                     <strong>M</strong>
+                  </td>
+                  <td align="center" class="skyblue" width="90%">
+                     <strong>Data Set Data Elements</strong>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">M</td>
+                  <td class="linenlbg" width="90%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/childhood_immunisation_type__cover_hepatitis_b_surface_antigen_positive_mother_.html">CHILDHOOD_IMMUNISATION_TYPE_(COVER_HEPATITIS_B_SURFACE_ANTIGEN_POSITIVE_MOTHER)</a>
+                     <br/>
+                     <em>or</em>
+                     <br/>
+                     <a href="https://datadictionary.nhs.uk/data_elements/childhood_immunisation_type_combined__cover_hepatitis_b_surface_antigen_positive_mother_.html">CHILDHOOD_IMMUNISATION_TYPE_COMBINED_(COVER_HEPATITIS_B_SURFACE_ANTIGEN_POSITIVE_MOTHER)</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">M</td>
+                  <td class="linenlbg" width="90%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/eligible_population_total__cover_hepatitis_b_surface_antigen_positive_mother_.html">ELIGIBLE_POPULATION_TOTAL_(COVER_HEPATITIS_B_SURFACE_ANTIGEN_POSITIVE_MOTHER)</a>
+                  </td>
+               </tr>
+               <tr>
+                  <td align="center">M</td>
+                  <td class="linenlbg" width="90%">
+                     <a href="https://datadictionary.nhs.uk/data_elements/eligible_population_immunised_percentage__cover_hepatitis_b_surface_antigen_positive_mother_.html">ELIGIBLE_POPULATION_IMMUNISED_PERCENTAGE_(COVER_HEPATITIS_B_SURFACE_ANTIGEN_POSITIVE_MOTHER)</a>
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+      </definition>

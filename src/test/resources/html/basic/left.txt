@@ -1,0 +1,2 @@
+<p>The name of an area of work.</p>
+<p>An area of work is an area, function or specialty where work activity takes place.</p>

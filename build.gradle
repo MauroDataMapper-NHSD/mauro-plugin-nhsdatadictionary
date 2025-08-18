@@ -1,0 +1,115 @@
+plugins {
+    id("groovy")
+    //    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("io.micronaut.library") version "4.4.5"
+    id("io.micronaut.aot") version "4.4.5"
+    id("maven-publish")
+}
+
+group = 'org.maurodata.plugins'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenLocal()
+    maven { url "https://mauro-repository.com/libs-snapshot-local" }
+    maven { url "https://mauro-repository.com/libs-release-local" }
+
+    // For DaisyDiff
+    maven {url "https://packages.atlassian.com/mvn/maven-atlassian-external"}
+    // For org.cyberneko:html
+    maven {url "https://repository.ow2.org/nexus/content/repositories/public/"}
+
+    mavenCentral()
+
+    // For snapshot versions of mauro-domain
+    // maven {url "https://mauro-repository.com/libs-snapshot-local"}
+}
+
+dependencies {
+    implementation("io.micronaut.groovy:micronaut-runtime-groovy")
+    implementation("io.micronaut:micronaut-jackson-databind")
+    compileOnly("io.micronaut.security:micronaut-security-annotations")
+    implementation("io.micronaut.security:micronaut-security-session")
+    compileOnly("io.micronaut:micronaut-inject-groovy")
+    compileOnly("io.micronaut.data:micronaut-data-processor")
+    implementation("io.micronaut.data:micronaut-data-jdbc")
+    runtimeOnly("org.yaml:snakeyaml")
+    implementation("org.apache.groovy:groovy-xml")
+    implementation("org.apache.groovy:groovy-json")
+    implementation('commons-io:commons-io:2.20.0')
+
+    //testImplementation("io.micronaut:micronaut-jdbc-hikari")
+    testRuntimeOnly("org.postgresql:postgresql")
+    testRuntimeOnly("org.flywaydb:flyway-database-postgresql")
+    testImplementation("io.micronaut.test:micronaut-test-spock")
+    testImplementation("io.micronaut.sql:micronaut-jdbc-hikari:2.2.6")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.2.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.2.0")
+
+    implementation('org.maurodata:mauro-domain:0.0.1-SNAPSHOT')
+    implementation('org.maurodata:mauro-persistence:0.0.1-SNAPSHOT')
+    implementation("org.maurodata:dita-dsl:2.0.0-SNAPSHOT")
+
+    implementation("org.maurodata:iso11179-domain:2.0.0-SNAPSHOT") {
+        exclude group: "com.sun.xml.bind", module: "jaxb-impl"
+    }
+
+    // Daisy Diff and transitive dependencies.  Used in the generation of change requests
+    implementation group: 'org.outerj.daisy', name: 'daisydiff', version: '1.2.3-atlassian-hosted'
+
+    implementation 'org.cyberneko:html:1.9.8'
+    implementation 'xerces:xercesImpl:2.12.0'
+    implementation "xml-apis:xml-apis:1.4.01"
+
+    // Required for Daisy Diff (NPE when using Saxon)
+    implementation group: 'xalan', name: 'xalan', version: '2.7.1'
+
+    testImplementation("junit:junit:4.13.2")
+
+}
+
+micronaut {
+    runtime("netty")
+    testRuntime("spock2")
+    processing {
+        incremental(true)
+        annotations("org.maurodata.*")
+    }
+    aot {
+        // Please review carefully the optimizations enabled below
+        // Check https://micronaut-projects.github.io/micronaut-aot/latest/guide/ for more details
+        optimizeServiceLoading = false
+        convertYamlToJava = false
+        precomputeOperations = true
+        cacheEnvironment = true
+        optimizeClassLoading = true
+        deduceEnvironment = true
+        optimizeNetty = true
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.toVersion("17")
+    targetCompatibility = JavaVersion.toVersion("17")
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "MauroSnapshotRepository"
+            url = "https://mauro-repository.com/libs-snapshot-local"
+            credentials(PasswordCredentials)
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+    }
+}
