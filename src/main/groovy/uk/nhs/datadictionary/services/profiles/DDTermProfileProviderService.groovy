@@ -30,7 +30,7 @@ class DDTermProfileProviderService extends JsonBasedProfile {
 
     @Override
     String getJsonFileName() {
-        return 'termProfile.json'
+        return 'profiles/termProfile.json'
     }
 
     @Override

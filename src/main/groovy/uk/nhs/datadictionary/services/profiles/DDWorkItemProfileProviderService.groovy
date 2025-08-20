@@ -19,9 +19,11 @@ package uk.nhs.datadictionary.services.profiles
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import groovy.util.logging.Slf4j
+import jakarta.inject.Singleton
 import org.maurodata.profile.JsonBasedProfile
 
 @Slf4j
+@Singleton
 class DDWorkItemProfileProviderService extends JsonBasedProfile {
 
     DDWorkItemProfileProviderService(ObjectMapper objectMapper) {
@@ -30,7 +32,7 @@ class DDWorkItemProfileProviderService extends JsonBasedProfile {
 
     @Override
     String getJsonFileName() {
-        return 'workItemProfile.json'
+        return 'profiles/workItemProfile.json'
     }
 
     @Override

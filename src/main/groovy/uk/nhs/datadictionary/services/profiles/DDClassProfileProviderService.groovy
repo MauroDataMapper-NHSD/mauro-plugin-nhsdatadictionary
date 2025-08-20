@@ -40,7 +40,7 @@ class DDClassProfileProviderService extends JsonBasedProfile {
 
     @Override
     String getJsonFileName() {
-        return 'classProfile.json'
+        return 'profiles/classProfile.json'
     }
 
     @Override

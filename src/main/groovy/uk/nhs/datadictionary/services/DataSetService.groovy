@@ -20,9 +20,11 @@ package uk.nhs.datadictionary.services
 import groovy.util.logging.Slf4j
 import groovy.xml.XmlParser
 import io.micronaut.transaction.annotation.Transactional
+import jakarta.inject.Singleton
 import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataModel
+import org.maurodata.domain.datamodel.DataModelType
 import org.maurodata.domain.facet.Edit
 import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.folder.Folder
@@ -31,6 +33,8 @@ import uk.nhs.datadictionary.NhsDDDataSet
 import uk.nhs.datadictionary.NhsDDDataSetClass
 import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.NhsDataDictionaryComponent
+import uk.nhs.datadictionary.datasets.parser.CDSDataSetParser
+import uk.nhs.datadictionary.datasets.parser.DataSetParser
 import uk.nhs.datadictionary.publish.MauroCatalogueItemPathResolver
 import uk.nhs.datadictionary.publish.PublishContext
 import uk.nhs.datadictionary.publish.structure.DictionaryItem
@@ -38,7 +42,7 @@ import uk.nhs.datadictionary.publish.structure.Section
 import uk.nhs.datadictionary.publish.structure.datasets.DataSetSection
 
 @Slf4j
-@Transactional
+@Singleton
 class DataSetService extends DataDictionaryComponentService<DataModel, NhsDDDataSet> {
 
     static XmlParser xmlParser = new XmlParser(false, false)
@@ -593,12 +597,11 @@ class DataSetService extends DataDictionaryComponentService<DataModel, NhsDDData
             return result.toString()
         }
     */
-    void persistDataSets(NhsDataDictionary dataDictionary,
-                         Folder dictionaryFolder, DataModel coreDataModel, CatalogueUser currentUser) {
+    void persistDataSets(NhsDataDictionary dataDictionary, Folder dictionaryFolder, DataModel coreDataModel) {
 
-        Folder dataSetsFolder = getFolderAtPath(dictionaryFolder, [NhsDataDictionary.DATA_SETS_FOLDER_NAME], currentUser.emailAddress)
+        Folder dataSetsFolder = getFolderAtPath(dictionaryFolder, [NhsDataDictionary.DATA_SETS_FOLDER_NAME])
         dataDictionary.dataSets.each {name, dataSet ->
-            createAndSaveDataModel(dataSet, dataSetsFolder, dictionaryFolder, currentUser, dataDictionary)
+            createAndSaveDataModel(dataSet, dataSetsFolder, dictionaryFolder, dataDictionary)
         }
     }
 
@@ -620,24 +623,18 @@ class DataSetService extends DataDictionaryComponentService<DataModel, NhsDDData
     }
      */
 
-    void createAndSaveDataModel(NhsDDDataSet dataSet, Folder dataSetsFolder, Folder dictionaryFolder, CatalogueUser currentUser,
+    void createAndSaveDataModel(NhsDDDataSet dataSet, Folder dataSetsFolder, Folder dictionaryFolder,
                                 NhsDataDictionary nhsDataDictionary) {
-        long startTime = System.currentTimeMillis()
-        Folder folder = getFolderAtPath(dataSetsFolder, dataSet.path, currentUser.emailAddress)
-        log.info('Get Folder complete in {}', Utils.timeTaken(startTime))
-
-        log.debug('Ingesting {}', dataSet.name)
+        Folder folder = getFolderAtPath(dataSetsFolder, dataSet.path)
 
         DataModel dataSetDataModel = new DataModel(
             label: dataSet.name,
             description: dataSet.definition,
-            createdBy: currentUser.emailAddress,
-            type: DataModelType.DATA_STANDARD,
-            authority: authorityService.defaultAuthority,
+            dataModelType: DataModelType.DATA_STANDARD,
             folder: folder,
             branchName: nhsDataDictionary.branchName
         )
-        startTime = System.currentTimeMillis()
+        folder.dataModels.add(dataSetDataModel)
         Node definition = xmlParser.parseText(dataSet.definitionAsXml)
 
         if (dataSet.name.startsWith('CDS') || dataSet.name.startsWith('ECDS') || dataSet.name.startsWith('Emergency Care Data Set')) {
@@ -645,45 +642,15 @@ class DataSetService extends DataDictionaryComponentService<DataModel, NhsDDData
         } else {
             DataSetParser.parseDataSet(definition, dataSetDataModel, nhsDataDictionary)
         }
-        log.info('Parse data set complete in {}', Utils.timeTaken(startTime))
-
-        startTime = System.currentTimeMillis()
-        addMetadataFromComponent(dataSetDataModel, dataSet, currentUser.emailAddress)
-        log.info('Add Metadata complete in {}', Utils.timeTaken(startTime))
-
-        //System.err.println("Saving: " + dataSet.name)
-        // Fix the created by field and any other associations
-        startTime = System.currentTimeMillis()
-        dataModelService.checkImportedDataModelAssociations(currentUser, dataSetDataModel)
-        log.info('Checking complete in {}', Utils.timeTaken(startTime))
-
-        startTime = System.currentTimeMillis()
-        dataModelService.validate(dataSetDataModel)
-        log.info('Validating complete in {}', Utils.timeTaken(startTime))
-
-        if (dataSetDataModel.hasErrors()) {
-            GormUtils.outputDomainErrors(messageSource, dataSetDataModel)
-            log.error("Error validating")
-            log.error(messageSource.toString())
-            //        TODO throw an exception instead???    throw new ApiInvalidModelException('NHSDD', 'Invalid model', validated.errors)
-        } else {
-            log.info("Saving dataset: " + dataSetDataModel.label)
-            startTime = System.currentTimeMillis()
-            try {
-                dataModelService.saveModelWithContent(dataSetDataModel)
-            } catch(Exception e) {
-                e.printStackTrace()
-            }
-
-            log.info('Save dataset complete in {}', Utils.timeTaken(startTime))
-
-        }
+        addMetadataFromComponent(dataSetDataModel, dataSet)
     }
 
+/*
     void addDataClassToDataModel(DataClass dataClass, DataModel dataModel) {
-        dataModel.addToDataClasses(dataClass)
+        dataModel.childDataClasses.add(dataClass)
         dataClass.dataClasses.each {childDataClass -> addDataClassToDataModel(childDataClass, dataModel)}
     }
+*/
 
     NhsDDDataSet getByCatalogueItemId(UUID catalogueItemId, NhsDataDictionary nhsDataDictionary) {
         nhsDataDictionary.dataSets.values().find {

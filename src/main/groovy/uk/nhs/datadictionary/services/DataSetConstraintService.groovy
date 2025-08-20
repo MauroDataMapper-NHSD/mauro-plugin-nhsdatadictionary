@@ -20,6 +20,7 @@ package uk.nhs.datadictionary.services
 
 import groovy.util.logging.Slf4j
 import io.micronaut.transaction.annotation.Transactional
+import jakarta.inject.Singleton
 import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.terminology.Term
@@ -28,7 +29,7 @@ import uk.nhs.datadictionary.NhsDDDataSetConstraint
 import uk.nhs.datadictionary.NhsDataDictionary
 
 @Slf4j
-@Transactional
+@Singleton
 class DataSetConstraintService extends DataDictionaryComponentService<Term, NhsDDDataSetConstraint> {
 
     @Override
@@ -68,16 +69,13 @@ class DataSetConstraintService extends DataDictionaryComponentService<Term, NhsD
         return dataSetConstraint
     }
 
-    void persistDataSetConstraints(NhsDataDictionary dataDictionary,
-                                    Folder dictionaryFolder, String currentUserEmailAddress) {
+    void persistDataSetConstraints(NhsDataDictionary dataDictionary, Folder dictionaryFolder) {
 
         Terminology terminology = new Terminology(
             label: NhsDataDictionary.DATA_SET_CONSTRAINTS_TERMINOLOGY_NAME,
             folder: dictionaryFolder,
-            createdBy: currentUserEmailAddress,
-            authority: authorityService.defaultAuthority,
             branchName: dataDictionary.branchName)
-
+        dictionaryFolder.terminologies.add(terminology)
         TreeMap<String, Term> allTerms = new TreeMap<>()
         dataDictionary.dataSetConstraints.each {name, dataSetConstraint ->
 
@@ -93,25 +91,17 @@ class DataSetConstraintService extends DataDictionaryComponentService<Term, NhsD
                     // Leave Url blank for now
                     // url: businessDefinition.otherProperties["ddUrl"].replaceAll(" ", "%20"),
                     description: dataSetConstraint.definition,
-                    createdBy: currentUserEmailAddress,
                     depth: 1,
                     terminology: terminology)
 
-                addMetadataFromComponent(term, dataSetConstraint, currentUserEmailAddress)
+                addMetadataFromComponent(term, dataSetConstraint)
 
                 allTerms[name] = term
             }
         }
         allTerms.values().each { term ->
-            terminology.addToTerms(term)
+            terminology.terms.add(term)
         }
-
-        if (terminologyService.validate(terminology)) {
-            terminology = terminologyService.saveModelWithContent(terminology)
-        } else {
-            GormUtils.outputDomainErrors(messageSource, terminology) // TODO throw exception???
-        }
-
     }
 
     NhsDDDataSetConstraint getByCatalogueItemId(UUID catalogueItemId, NhsDataDictionary nhsDataDictionary) {

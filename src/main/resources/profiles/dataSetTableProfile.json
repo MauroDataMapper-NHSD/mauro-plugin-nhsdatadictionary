@@ -1,0 +1,131 @@
+[
+  {
+    "sectionName": "Ordering",
+    "sectionDescription": "To order the table or table elements",
+    "fields": [
+      {
+        "fieldName": "Web Order",
+        "metadataPropertyName": "webOrder",
+        "description": "The order in which this item should appear on the website",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "int"
+      }
+    ]
+  },
+  {
+    "sectionName": "Values",
+    "sectionDescription": "Values",
+    "fields": [
+      {
+        "fieldName": "Mandation",
+        "metadataPropertyName": "mandation",
+        "description": "Define the mandation of a table element",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "enumeration",
+        "allowedValues": ["Mandatory", "Required", "Optional", "Pilot"]
+      },
+      {
+        "fieldName": "Group repeats",
+        "metadataPropertyName": "groupRepeats",
+        "description": "Defines the multiplicity of a group e.g. \"0..1\"",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "string"
+      },
+      {
+        "fieldName": "Rules",
+        "metadataPropertyName": "rules",
+        "description": "defines the values in a \"Rules\" column. This is a semi-colon separated list e.g. \"F;I2\"",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "string"
+      },
+      {
+        "fieldName": "Multiplicity text",
+        "metadataPropertyName": "multiplicity",
+        "description": "Multiplicity text",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "string"
+      }
+    ]
+  },
+  {
+    "sectionName": "Choice",
+    "sectionDescription": "Choice",
+    "fields": [
+      {
+        "fieldName": "Choice",
+        "metadataPropertyName": "choice",
+        "description": "State whether this table element presents a choice with the child elements below. This defaults to \"or\" unless one of the other options are selected.",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "boolean"
+      },
+      {
+        "fieldName": "And",
+        "metadataPropertyName": "and",
+        "description": "State whether this table element presents a choice between child elements in an \"and\" relationship.",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "boolean"
+      },
+      {
+        "fieldName": "Inclusive or",
+        "metadataPropertyName": "inclusiveOr",
+        "description": "State whether this table element presents a choice between child elements in an \"and/or\" relationship.",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "boolean"
+      }
+    ]
+  },
+  {
+    "sectionName": "Miscellaneous",
+    "sectionDescription": "Miscellaneous",
+    "fields": [
+      {
+        "fieldName": "Address Choice",
+        "metadataPropertyName": "addressChoice",
+        "description": "Address choice",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "boolean"
+      },
+      {
+        "fieldName": "Name Choice",
+        "metadataPropertyName": "nameChoice",
+        "description": "Name choice",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "string"
+      },
+      {
+        "fieldName": "Data Set Reference",
+        "metadataPropertyName": "dataSetReference",
+        "description": "State whether this table element references another data set. If so, fill in the \"Data Set Reference To\" field with the data set name.",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "boolean"
+      },
+      {
+        "fieldName": "Data Set Reference To",
+        "metadataPropertyName": "dataSetReferenceTo",
+        "description": "The name of the data set to reference and produce a link in the data set table element.",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "string"
+      },
+      {
+        "fieldName": "Not option",
+        "metadataPropertyName": "notOption",
+        "description": "State whether this table element presents a negated choice.",
+        "minMultiplicity": 0,
+        "maxMultiplicity": 1,
+        "dataType": "boolean"
+      }
+    ]
+  }
+]

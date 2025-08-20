@@ -22,6 +22,7 @@ import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataModel
 import uk.nhs.datadictionary.NhsDataDictionary
+import uk.nhs.datadictionary.utils.DDHelperFunctions
 
 import java.time.Duration
 import java.time.Instant
@@ -38,7 +39,7 @@ class CDSDataSetParser {
         log.debug('Initial parse data set complete in {}', Duration.between(startTime, Instant.now()).toString())
         startTime = Instant.now()
         dataClasses.eachWithIndex {dataClass, index ->
-            dataModel.addToDataClasses(dataClass)
+            dataModel.childDataClasses.add(dataClass)
             if(!dataClass.label || dataClass.label == "") {
                 log.error("Class with unset label: ${dataModel.label}")
                 log.error(dataClass.toString())
@@ -64,7 +65,7 @@ class CDSDataSetParser {
             }
             if (ors.size() == 1 && sect.size() == 3) {
                 DataClass choiceClass = new DataClass(label: "Choice")
-                dataModel.addToDataClasses(choiceClass)
+                dataModel.childDataClasses.add(choiceClass)
                 DataSetParser.setChoice(choiceClass)
                 List<DataClass> classes1 = parseCDSSection(sect, dataModel, dataDictionary)
                 sectIdx++
@@ -74,8 +75,8 @@ class CDSDataSetParser {
                 if (classes1.size() != 1 || classes2.size() != 1) {
                     log.warn("Oh no!  More than one CDS class returned!")
                 } else {
-                    choiceClass.addToDataClasses(classes1.get(0))
-                    choiceClass.addToDataClasses(classes2.get(0))
+                    choiceClass.dataClasses.add(classes1.get(0))
+                    choiceClass.dataClasses.add(classes2.get(0))
                 }
                 returnDataClasses.add(choiceClass)
             } else {
@@ -114,7 +115,7 @@ class CDSDataSetParser {
             DataSetParser.setMRO(childClass, firstRow.td[0].text())
             DataSetParser.setGroupRepeats(childClass, firstRow.td[1].text())
             DataSetParser.setOrder(childClass, position)
-            currentClass.addToDataClasses(childClass)
+            currentClass.dataClasses.add(childClass)
             Integer noRows = 1
             if (firstRow.td[0].@rowspan) {
                 noRows = Integer.parseInt(firstRow.td[0].@rowspan)
@@ -135,7 +136,7 @@ class CDSDataSetParser {
             //DataSetParser.setMRO(childClass, firstRow.td[0].text())
             DataSetParser.setGroupRepeats(childClass, firstRow.td[0].text())
             DataSetParser.setOrder(childClass, position)
-            currentClass.addToDataClasses(childClass)
+            currentClass.dataClasses.add(childClass)
             tableRows = tableRows.drop(1)
 
             parseCDSElementTable(tableRows, childClass, dataModel, dataDictionary, 1)
@@ -155,7 +156,7 @@ class CDSDataSetParser {
             DataClass choiceClass = getClassFromTD(tableRows[0].td[0], dataDictionary, dataModel)
             DataSetParser.setOrder(choiceClass, position)
             DataSetParser.setChoice(choiceClass)
-            currentClass.addToDataClasses(choiceClass)
+            currentClass.dataClasses.add(choiceClass)
             tableRows = tableRows.drop(1)
             List<List<Node>> partitions =
                 DataSetParser.partitionList(tableRows,
@@ -200,7 +201,7 @@ class CDSDataSetParser {
 
     static DataClass getClassFromTD(Node td, NhsDataDictionary dataDictionary, DataModel dataModel) {
         DataClass dataClass = new DataClass(label: "")
-        dataModel.addToDataClasses(dataClass)
+        dataModel.childDataClasses.add(dataClass)
 
         // Issue where the trimmed content == NBSP so we need to trim it then check that for NBSP
         def firstStringNode = td.depthFirst().find {
@@ -247,7 +248,7 @@ class CDSDataSetParser {
 
 
     static List<DataClass> parseCDSSection(List<Node> components, DataModel dataModel, NhsDataDictionary dataDictionary) {
-        long startTime = System.currentTimeMillis()
+        Instant startTime = Instant.now()
         List<DataClass> returnClasses = []
         DataClass currentClass = null
         int classWebOrder = 0
@@ -259,7 +260,7 @@ class CDSDataSetParser {
         components.each {component ->
             if (component instanceof Node && component.name() == "table" && DDHelperFunctions.tableIsClassHeader(component)) {
                 currentClass = new DataClass(label: component.tbody.tr[0].td[1].text())
-                dataModel.addToDataClasses(currentClass)
+                dataModel.childDataClasses.add(currentClass)
                 currentClass.label = currentClass.label.replaceFirst("DATA GROUP:", "").trim()
 
                 Node tdNode = null
@@ -315,9 +316,9 @@ class CDSDataSetParser {
                         log.error("" + tr.td[1] + " " + tr.td[2])
                     }
                     DataClass andClass = new DataClass(label: "And")
-                    dataModel.addToDataClasses(andClass)
+                    dataModel.dataClasses.add(andClass)
                     DataSetParser.setAnd(andClass)
-                    currentClass.addToDataClasses(andClass)
+                    currentClass.dataClasses.add(andClass)
                     List<Node> tableRows = []
                     component.tbody.tr.each {tr -> tableRows.add(tr)}
                     parseCDSElementTable(tableRows, andClass, dataModel, dataDictionary, classWebOrder)
@@ -349,7 +350,7 @@ class CDSDataSetParser {
 
 
             DataClass andClass = new DataClass(label: "And")
-            dataModel.addToDataClasses(andClass)
+            dataModel.childDataClasses.add(andClass)
             DataSetParser.setOrder(andClass, 2)
             DataSetParser.setAnd(andClass)
             List<DataElement> deList = [dataElement1]
@@ -358,14 +359,14 @@ class CDSDataSetParser {
                 DataSetParser.setOrder(dataElement, i)
                 deList.add(dataElement)
             }
-            currentClass.addToDataClasses(andClass)
+            currentClass.dataClasses.add(andClass)
             DataSetParser.getAndSetMRO(tr.td[0], deList, currentClass)
             DataSetParser.getAndSetRepeats(tr.td[1], deList, currentClass)
             DataSetParser.getAndSetRules(tr.td[3], deList, currentClass)
         } else if (tr.td[2].a.size() == 4) {
             // Address
             DataClass choiceClass = new DataClass(label: "Choice")
-            dataModel.addToDataClasses(choiceClass)
+            dataModel.childDataClasses.add(choiceClass)
             DataSetParser.setOrder(choiceClass, position)
             DataSetParser.setChoice(choiceClass)
             if (tr.td[2].a[0].text().contains("NAME")) {
@@ -382,13 +383,13 @@ class CDSDataSetParser {
             DataSetParser.setOrder(dataElement1, 1)
             //setOrder(dataElement2, 2)
             //choiceClass.addToImportedDataElements(dataElement2)
-            currentClass.addToDataClasses(choiceClass)
+            currentClass.dataClasses.add(choiceClass)
 
 
         } else if ((tr.td[2].em && tr.td[2].em.text().equalsIgnoreCase("Or")) ||
                    (tr.td[2].strong && tr.td[2].strong.text().equalsIgnoreCase("OR"))) {
             DataClass choiceClass = new DataClass(label: "Choice")
-            dataModel.addToDataClasses(choiceClass)
+            dataModel.childDataClasses.add(choiceClass)
             DataSetParser.setOrder(choiceClass, position)
             DataSetParser.setChoice(choiceClass)
             DataElement dataElement1 = DataSetParser.getElementFromText(tr.td[2].a[0], dataModel, dataDictionary, choiceClass)
@@ -400,7 +401,7 @@ class CDSDataSetParser {
 
             DataSetParser.setOrder(dataElement1, 1)
             DataSetParser.setOrder(dataElement2, 2)
-            currentClass.addToDataClasses(choiceClass)
+            currentClass.dataClasses.add(choiceClass)
         } else {
             if (tr.td.size() == 6) {
                 // rare occurrence with unmerged first columns

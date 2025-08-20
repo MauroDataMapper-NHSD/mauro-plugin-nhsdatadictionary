@@ -19,6 +19,7 @@ package uk.nhs.datadictionary.services
 
 import groovy.util.logging.Slf4j
 import io.micronaut.transaction.annotation.Transactional
+import jakarta.inject.Singleton
 import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.terminology.Term
@@ -27,7 +28,7 @@ import uk.nhs.datadictionary.NhsDDSupportingInformation
 import uk.nhs.datadictionary.NhsDataDictionary
 
 @Slf4j
-@Transactional
+@Singleton
 class SupportingInformationService extends DataDictionaryComponentService<Term, NhsDDSupportingInformation> {
 
     @Override
@@ -63,16 +64,13 @@ class SupportingInformationService extends DataDictionaryComponentService<Term, 
         return supportingInformation
     }
 
-    void persistSupportingInformation(NhsDataDictionary dataDictionary,
-                                      Folder dictionaryFolder, String currentUserEmailAddress) {
+    void persistSupportingInformation(NhsDataDictionary dataDictionary, Folder dictionaryFolder) {
 
         Terminology terminology = new Terminology(
             label: NhsDataDictionary.SUPPORTING_DEFINITIONS_TERMINOLOGY_NAME,
             folder: dictionaryFolder,
-            createdBy: currentUserEmailAddress,
-            authority: authorityService.defaultAuthority,
             branchName: dataDictionary.branchName)
-
+        dictionaryFolder.terminologies.add(terminology)
         TreeMap<String, Term> allTerms = new TreeMap<>()
         dataDictionary.supportingInformation.each {name, supportingInformation ->
 
@@ -88,23 +86,16 @@ class SupportingInformationService extends DataDictionaryComponentService<Term, 
                     // Leave Url blank for now
                     // url: businessDefinition.otherProperties["ddUrl"].replaceAll(" ", "%20"),
                     description: supportingInformation.definition,
-                    createdBy: currentUserEmailAddress,
                     depth: 1,
                     terminology: terminology)
 
-                addMetadataFromComponent(term, supportingInformation, currentUserEmailAddress)
+                addMetadataFromComponent(term, supportingInformation)
 
                 allTerms[name] = term
             }
         }
         allTerms.values().each { term ->
-            terminology.addToTerms(term)
-        }
-
-        if (terminologyService.validate(terminology)) {
-            terminology = terminologyService.saveModelWithContent(terminology)
-        } else {
-            GormUtils.outputDomainErrors(messageSource, terminology) // TODO throw exception???
+            terminology.terms.add(term)
         }
     }
 

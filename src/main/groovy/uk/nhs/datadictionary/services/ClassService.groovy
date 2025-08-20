@@ -19,6 +19,7 @@ package uk.nhs.datadictionary.services
 
 import groovy.util.logging.Slf4j
 import io.micronaut.transaction.annotation.Transactional
+import jakarta.inject.Singleton
 import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataModel
@@ -33,7 +34,7 @@ import uk.nhs.datadictionary.NhsDataDictionary
 import javax.lang.model.type.PrimitiveType
 
 @Slf4j
-@Transactional
+@Singleton
 class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass> {
 
     AttributeService attributeService
@@ -120,31 +121,33 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
         return clazz
     }
 
-    void persistClasses(NhsDataDictionary dataDictionary, DataModel classesDataModel, String currentUserEmailAddress,
+    void createClassesModel(NhsDataDictionary dataDictionary, DataModel classesDataModel,
                         Map<String, DataClass> attributeClassesByUin, Set<String> attributeUinIsKey) {
 
         DataClass retiredDataClass = new DataClass(
             label: "Retired",
-            createdBy: currentUserEmailAddress,
             dataModel: classesDataModel)
-        classesDataModel.addToDataClasses(retiredDataClass)
+
+        classesDataModel.childDataClasses.add(retiredDataClass)
+        classesDataModel.allDataClasses.add(retiredDataClass)
 
         TreeMap<String, DataClass> classesByUin = new TreeMap<>()
 
         dataDictionary.classes.each {name, clazz ->
             DataClass dataClass = new DataClass(
                 label: name,
-                description: clazz.definition,
-                createdBy: currentUserEmailAddress,
+                description: clazz.definition
             )
 
             // TODO unnecessary as the or statement above excludes all non-retired DCs
+            classesDataModel.allDataClasses.add(dataClass)
             if (clazz.isRetired()) {
-                classesDataModel.addToDataClasses(dataClass)
-                retiredDataClass.addToDataClasses(dataClass)
+                retiredDataClass.dataClasses.add(dataClass)
+
             } else {
-                classesDataModel.addToDataClasses(dataClass)
+                classesDataModel.childDataClasses.add(dataClass)
             }
+
             // We used to link the attributes here, but now that's all done in the attribute
             // service because they're stored directly there.
             // However, since the classes contain the information about which attribute appears in which class,
@@ -156,7 +159,7 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
             clazz.keyAttributes.each {
                 attributeUinIsKey.add(it.uin)
             }
-            addMetadataFromComponent(dataClass, clazz, currentUserEmailAddress)
+            addMetadataFromComponent(dataClass, clazz)
 
             classesByUin[clazz.getUin()] = dataClass
         }
@@ -178,11 +181,10 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
 
                             targetReferenceType = new DataType(
                                 label: "${targetDataClass.label} Reference",
-                                createdBy: currentUserEmailAddress,
                                 referenceClass: targetDataClass,
                                 dataTypeKind: DataType.DataTypeKind.REFERENCE_TYPE)
-                            targetDataClass.addToReferenceTypes(targetReferenceType)
-                            classesDataModel.addToDataTypes(targetReferenceType)
+                            //targetDataClass.addToReferenceTypes(targetReferenceType)
+                            classesDataModel.dataTypes.add(targetReferenceType)
                             classReferenceTypesByName[targetDataClass.label] = targetReferenceType
                         }
 
@@ -190,10 +192,10 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
                         if (!sourceReferenceType) {
                             sourceReferenceType = new DataType(
                                 label: "${thisDataClass.label} Reference",
-                                createdBy: currentUserEmailAddress,
-                                referenceClass: thisDataClass)
-                            thisDataClass.addToReferenceTypes(sourceReferenceType)
-                            classesDataModel.addToDataTypes(sourceReferenceType)
+                                referenceClass: thisDataClass,
+                                dataTypeKind: DataType.DataTypeKind.REFERENCE_TYPE)
+                            //thisDataClass.addToReferenceTypes(sourceReferenceType)
+                            classesDataModel.dataTypes.add(sourceReferenceType)
                             classReferenceTypesByName[thisDataClass.label] = sourceReferenceType
                         }
 
@@ -206,14 +208,13 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
                         if (count > 0) {
                             sourceLabel += " (${count})"
                         }
-                        DataElement sourceDataElement = new DataElement(label: sourceLabel, dataType: targetReferenceType,
-                                                                        createdBy: currentUserEmailAddress)
+                        DataElement sourceDataElement = new DataElement(label: sourceLabel, dataType: targetReferenceType)
                         NhsDDClassLink.setMultiplicityToDataElement(sourceDataElement, classLink.supplierCardinality)
-                        addMetadataForLink(classLink, sourceDataElement, currentUserEmailAddress)
-                        addToMetadata(sourceDataElement, NhsDDClassLink.IS_KEY_METADATA_KEY, classLink.isPartOfSupplierKey().toString(), currentUserEmailAddress)
-                        addToMetadata(sourceDataElement, NhsDDClassLink.IS_CHOICE_METADATA_KEY, classLink.hasRelationClientExclusivity().toString(), currentUserEmailAddress)
-                        addToMetadata(sourceDataElement, NhsDDClassLink.DIRECTION_METADATA_KEY, NhsDDClassLink.CLIENT_DIRECTION, currentUserEmailAddress)
-                        thisDataClass.addToDataElements(sourceDataElement)
+                        addMetadataForLink(classLink, sourceDataElement)
+                        addToMetadata(sourceDataElement, NhsDDClassLink.IS_KEY_METADATA_KEY, classLink.isPartOfSupplierKey().toString())
+                        addToMetadata(sourceDataElement, NhsDDClassLink.IS_CHOICE_METADATA_KEY, classLink.hasRelationClientExclusivity().toString())
+                        addToMetadata(sourceDataElement, NhsDDClassLink.DIRECTION_METADATA_KEY, NhsDDClassLink.CLIENT_DIRECTION)
+                        thisDataClass.dataElements.add(sourceDataElement)
 
                         String targetLabel = classLink.supplierRole
                         count = 0
@@ -223,26 +224,25 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
                         if (count > 0) {
                             targetLabel += " (${count})"
                         }
-                        DataElement targetDataElement = new DataElement(label: targetLabel, dataType: sourceReferenceType,
-                                                                        createdBy: currentUserEmailAddress)
+                        DataElement targetDataElement = new DataElement(label: targetLabel, dataType: sourceReferenceType)
                         NhsDDClassLink.setMultiplicityToDataElement(targetDataElement, classLink.clientCardinality)
-                        addMetadataForLink(classLink, targetDataElement, currentUserEmailAddress)
-                        addToMetadata(targetDataElement, NhsDDClassLink.IS_KEY_METADATA_KEY, classLink.isPartOfClientKey().toString(), currentUserEmailAddress)
-                        addToMetadata(targetDataElement, NhsDDClassLink.IS_CHOICE_METADATA_KEY, classLink.hasRelationSupplierExclusivity().toString(), currentUserEmailAddress)
-                        addToMetadata(targetDataElement, NhsDDClassLink.DIRECTION_METADATA_KEY, NhsDDClassLink.SUPPLIER_DIRECTION, currentUserEmailAddress)
-                        targetDataClass.addToDataElements(targetDataElement)
+                        addMetadataForLink(classLink, targetDataElement)
+                        addToMetadata(targetDataElement, NhsDDClassLink.IS_KEY_METADATA_KEY, classLink.isPartOfClientKey().toString())
+                        addToMetadata(targetDataElement, NhsDDClassLink.IS_CHOICE_METADATA_KEY, classLink.hasRelationSupplierExclusivity().toString())
+                        addToMetadata(targetDataElement, NhsDDClassLink.DIRECTION_METADATA_KEY, NhsDDClassLink.SUPPLIER_DIRECTION)
+                        targetDataClass.dataElements.add(targetDataElement)
                     }
                 } else if (classLink.metaclass == "Generalization20") {
                     DataClass thisDataClass = classesByUin[classLink.clientClass.getUin()]
                     // Get the target class
                     DataClass targetDataClass = classesByUin[classLink.supplierClass.getUin()]
-                    thisDataClass.addToExtendedDataClasses(targetDataClass)
+                    thisDataClass.extendsDataClasses.add(targetDataClass)
                 }
             }
         }
     }
 
-    void addMetadataForLink(NhsDDClassLink classLink, DataElement dataElement, String currentUserEmailAddress) {
+    void addMetadataForLink(NhsDDClassLink classLink, DataElement dataElement) {
         Map<String, String> metadata = [
             "uin": classLink.uin,
             "metaclass": classLink.metaclass,
@@ -260,7 +260,7 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
             "direction": classLink.direction
         ]
         metadata.each {key, value ->
-            addToMetadata(dataElement, key, value, currentUserEmailAddress)
+            addToMetadata(dataElement, key, value.toString())
         }
     }
 

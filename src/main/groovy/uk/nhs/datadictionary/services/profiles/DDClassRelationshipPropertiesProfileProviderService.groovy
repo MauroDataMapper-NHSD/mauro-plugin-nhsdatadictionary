@@ -28,7 +28,7 @@ class DDClassRelationshipPropertiesProfileProviderService extends JsonBasedProfi
 
     @Override
     String getJsonFileName() {
-        return 'classRelationshipProfile.json'
+        return 'profiles/classRelationshipProfile.json'
     }
 
     String getMetadataNamespace() {

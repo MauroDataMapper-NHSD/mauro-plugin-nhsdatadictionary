@@ -73,7 +73,9 @@ class TestingService {
         log.info('---------- Ingesting {} ----------', name)
         def xml = loadXml(name)
         assert xml
-        Folder dd = nhsDataDictionaryService.ingest(user, xml, releaseDate, finalised, null, null, branchName, new DataDictionaryImportParameters(), deletePrevious)
+
+
+        Folder dd = nhsDataDictionaryImporter.importDomain(dataDictionaryImportParameters)
         sessionFactory.currentSession.flush()
         sessionFactory.currentSession.clear()
         log.info('---------- Finished Ingesting {} ----------', name)

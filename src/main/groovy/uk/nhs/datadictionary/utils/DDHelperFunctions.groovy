@@ -113,12 +113,12 @@ class DDHelperFunctions {
 
     static void addDataElementAtPath(DataClass topLevelClass, List<String> path, DataElement dataElement) {
         DataClass parentClass = getClassByPath(topLevelClass, path)
-        parentClass.addToDataElements(dataElement)
+        parentClass.dataElements.add(dataElement)
     }
 
     static void addDataClassAtPath(DataClass topLevelClass, List<String> path, DataClass dataClass) {
         DataClass parentClass = getClassByPath(topLevelClass, path)
-        parentClass.addToDataClasses(dataClass)
+        parentClass.dataClasses.add(dataClass)
     }
 
     /*
@@ -146,7 +146,7 @@ class DDHelperFunctions {
             DataClass newParentClass = parentClass.getDataClasses().find {it.label == componentName}
             if (!newParentClass) {
                 newParentClass = new DataClass(label: componentName)
-                parentClass.addToDataClasses(newParentClass)
+                parentClass.dataClasses.add(newParentClass)
             }
             parentClass = newParentClass
         }
@@ -280,7 +280,7 @@ class DDHelperFunctions {
 
     static DataClass dataClassFromTable(GPathResult table, DataModel dataSetDataModel) {
         DataClass currentClass = new DataClass(label: table.tbody.tr.th.text())
-        dataSetDataModel.addToDataClasses(currentClass)
+        dataSetDataModel.childDataClasses.add(currentClass)
         return currentClass
     }
 /*
@@ -407,27 +407,22 @@ class DDHelperFunctions {
                 replaceAll("&apos;", "'")
     }
 
-    static Folder getSubfolderFromName(FolderService folderService, Folder parent, String name, String currentUserEmailAddress) {
+    static Folder getSubfolderFromName(Folder parent, String name) {
         String folderName = name.substring(0, 1).toUpperCase()
         Folder subFolder = parent.childFolders.find {it.label == folderName}
         if (!subFolder) {
-            subFolder = new Folder(label: folderName, createdBy: currentUserEmailAddress)
-            parent.addToChildFolders(subFolder)
-            if (!folderService.validate(subFolder)) {
-                throw new MauroApplicationException('NHSDD', 'Invalid model', subFolder.errors)
-            }
-            folderService.save(subFolder)
-            //existingFolders[folderName] = subFolder
+            subFolder = new Folder(label: folderName)
+            parent.childFolders.add(subFolder)
         }
         subFolder
     }
 
-    static DataClass getChildClassFromName(DataModel parent, String name, String currentUserEmailAddress) {
+    static DataClass getChildClassFromName(DataModel parent, String name) {
         String className = name.substring(0, 1).toUpperCase()
         DataClass childClass = parent.childDataClasses.find {it.label == className}
         if (!childClass) {
-            childClass = new DataClass(label: className, createdBy: currentUserEmailAddress)
-            parent.addToDataClasses(childClass)
+            childClass = new DataClass(label: className)
+            parent.childDataClasses.add(childClass)
         }
         childClass
     }

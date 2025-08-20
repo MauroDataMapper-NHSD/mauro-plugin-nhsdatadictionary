@@ -51,11 +51,12 @@ class DataSetParserSpec {
             label: filename,
             description: testFileContents,
             //createdBy: currentUser.emailAddress,
-            type: DataModelType.DATA_STANDARD,
+            dataModelType: DataModelType.DATA_STANDARD,
             //authority: authorityService.defaultAuthority,
-            //folder: folder,
+            folder: folder,
             //branchName: newDataDictionary.branchName
         )
+        folder.dataModels.add(dataSetDataModel)
 
         if (filename.startsWith("CDS")) {
             CDSDataSetParser.parseCDSDataSet(xmlParser.parseText(testFileContents), dataSetDataModel, newDataDictionary)

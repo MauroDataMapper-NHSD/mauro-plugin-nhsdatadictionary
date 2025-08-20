@@ -20,6 +20,7 @@ package uk.nhs.datadictionary.services
 import groovy.util.logging.Slf4j
 import io.micronaut.transaction.annotation.Transactional
 import jakarta.inject.Inject
+import jakarta.inject.Singleton
 import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.folder.Folder
@@ -29,7 +30,7 @@ import uk.nhs.datadictionary.NhsDDDataSetFolder
 import uk.nhs.datadictionary.NhsDataDictionary
 
 @Slf4j
-@Transactional
+@Singleton
 class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDDataSetFolder> {
 
     @Inject
@@ -130,31 +131,21 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
     }
 
 
-    void persistDataSetFolders(NhsDataDictionary dataDictionary,
-                               Folder dictionaryFolder, DataModel coreDataModel, String currentUserEmailAddress) {
+    void persistDataSetFolders(NhsDataDictionary dataDictionary, Folder dictionaryFolder) {
 
-        Folder dataSetsFolder = new Folder(label: NhsDataDictionary.DATA_SETS_FOLDER_NAME, createdBy: currentUserEmailAddress)
-        dictionaryFolder.addToChildFolders(dataSetsFolder)
-        if (!folderService.validate(dataSetsFolder)) {
-            throw new MauroApplicationException('NHSDD', 'Invalid model', dataSetsFolder.errors)
-        }
-        folderService.save(dataSetsFolder)
+        Folder dataSetsFolder = new Folder(label: NhsDataDictionary.DATA_SETS_FOLDER_NAME)
+        dictionaryFolder.childFolders.add(dataSetsFolder)
 
 
         dataDictionary.dataSetFolders.each {path, folders ->
             //System.err.println("Persisting: ${dataSetFolder.name}")
 
-            Folder newFolder = getFolderAtPath(dataSetsFolder, path, currentUserEmailAddress)
+            Folder newFolder = getFolderAtPath(dataSetsFolder, path)
             folders.each {dataSetFolder ->
                 if(dataSetFolder.definition) {
                     newFolder.description = dataSetFolder.definition
                 }
-                addMetadataFromComponent(newFolder, dataSetFolder, currentUserEmailAddress)
-
-                if (!folderService.validate(newFolder)) {
-                    throw new MauroApplicationException('NHSDD', 'Invalid model', newFolder.errors)
-                }
-                folderService.save(newFolder)
+                addMetadataFromComponent(newFolder, dataSetFolder)
             }
         }
     }

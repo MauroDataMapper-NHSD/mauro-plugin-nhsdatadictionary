@@ -30,7 +30,7 @@ class DDElementProfileProviderService extends JsonBasedProfile {
 
     @Override
     String getJsonFileName() {
-        return 'elementProfile.json'
+        return 'profiles/elementProfile.json'
     }
 
     @Override

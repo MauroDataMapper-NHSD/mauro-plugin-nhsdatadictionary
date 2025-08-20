@@ -30,7 +30,7 @@ class DDAttributeProfileProviderService extends JsonBasedProfile {
 
     @Override
     String getJsonFileName() {
-        return 'attributeProfile.json'
+        return 'profiles/attributeProfile.json'
     }
 
     @Override

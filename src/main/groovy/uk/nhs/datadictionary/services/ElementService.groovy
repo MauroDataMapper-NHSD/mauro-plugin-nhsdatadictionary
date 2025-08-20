@@ -21,12 +21,14 @@ package uk.nhs.datadictionary.services
 import groovy.util.logging.Slf4j
 import io.micronaut.transaction.annotation.Transactional
 import jakarta.inject.Inject
+import jakarta.inject.Singleton
 import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.datamodel.DataType
 import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.facet.SemanticLink
+import org.maurodata.domain.facet.SemanticLinkType
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.model.AdministeredItem
 import org.maurodata.domain.terminology.CodeSet
@@ -38,14 +40,16 @@ import uk.nhs.datadictionary.NhsDDCode
 import uk.nhs.datadictionary.NhsDDElement
 import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.services.profiles.DDCodeSetProfileProviderService
+import uk.nhs.datadictionary.utils.DDHelperFunctions
 
 @Slf4j
-@Transactional
+@Singleton
 class ElementService extends DataDictionaryComponentService<DataElement, NhsDDElement> {
 
-    AttributeService attributeService
     @Inject
+    AttributeService attributeService
 
+    @Inject
     DDCodeSetProfileProviderService ddCodeSetProfileProviderService
 
     @Override
@@ -226,24 +230,19 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
     }
 
     void persistElements(NhsDataDictionary dataDictionary,
-                         Folder dictionaryFolder, DataModel elementsDataModel, String currentUserEmailAddress,
+                         Folder dictionaryFolder, DataModel elementsDataModel,
                          Map<String, Terminology> attributeTerminologiesByName) {
 
         DataType stringDataType = new DataType(label: "String", dataTypeKind: DataType.DataTypeKind.PRIMITIVE_TYPE)
-        elementsDataModel.addToDataTypes(stringDataType)
+        elementsDataModel.dataTypes.add(stringDataType)
 
 
         Folder dataElementCodeSetsFolder =
-            new Folder(label: "Data Element CodeSets", createdBy: currentUserEmailAddress)
-        dictionaryFolder.addToChildFolders(dataElementCodeSetsFolder)
-        if (!folderService.validate(dataElementCodeSetsFolder)) {
-            throw new MauroApplicationException('NHSDD', 'Invalid model', dataElementCodeSetsFolder.errors)
-        }
-        folderService.save(dataElementCodeSetsFolder)
+            new Folder(label: "Data Element CodeSets")
+        dictionaryFolder.childFolders.add(dataElementCodeSetsFolder)
 
-
-        DataClass retiredElementsClass = new DataClass(label: "Retired", createdBy: currentUserEmailAddress)
-        elementsDataModel.addToDataClasses(retiredElementsClass)
+        DataClass retiredElementsClass = new DataClass(label: "Retired")
+        elementsDataModel.childDataClasses.add(retiredElementsClass)
 
 
         Map<String, Folder> folders = [:]
@@ -252,15 +251,14 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
         dataDictionary.elements.each {name, element ->
             DataType dataType
             if (element.codes.size() > 0 && !element.isRetired()) {
-                Folder subFolder = DDHelperFunctions.getSubfolderFromName(folderService, dataElementCodeSetsFolder, name, currentUserEmailAddress)
+                Folder subFolder = DDHelperFunctions.getSubfolderFromName(dataElementCodeSetsFolder, name)
 
                 CodeSet codeSet = new CodeSet(
                     label: name,
                     folder: subFolder,
-                    createdBy: currentUserEmailAddress,
-                    authority: authorityService.defaultAuthority,
                     branchName: dataDictionary.branchName)
-                codeSet.addToMetadata(new Metadata(namespace: ddCodeSetProfileProviderService.metadataNamespace, key: "version", value: element.codeSetVersion))
+                subFolder.codeSets.add(codeSet)
+                codeSet.metadata.add(new Metadata(namespace: ddCodeSetProfileProviderService.metadataNamespace, key: "version", value: element.codeSetVersion))
 
 
                 // String terminologyUin = ddDataElement.link.participant.find {it -> it.@role == 'Supplier'}.@referencedUin
@@ -270,25 +268,20 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
                     if (!attributeTerminology) {
                         log.error("No terminology with name ${code.owningAttribute.name} found for element ${name}")
                     } else {
-                        Term t = attributeTerminology.findTermByCode(code.code)
+                        Term t = attributeTerminology.terms.find{term -> term.code == code.code}
                         if (!t) {
                             log.error("Cannot find term: ${code.code}")
                         } else {
-                            codeSet.addToTerms(t)
+                            codeSet.terms.add(t)
                         }
                     }
 
-                }
-                if (codeSetService.validate(codeSet)) {
-                    codeSet = codeSetService.saveModelWithContent(codeSet)
-                } else {
-                    GormUtils.outputDomainErrors(messageSource, codeSet) // TODO throw exception???
                 }
                 dataType = new DataType(label: "${name} Element Type",
                                              modelResourceDomainType: codeSet.getDomainType(),
                                              modelResourceId: codeSet.id,
                                              dataTypeKind: DataType.DataTypeKind.MODEL_TYPE)
-                elementsDataModel.addToDataTypes(dataType)
+                elementsDataModel.dataTypes.add(dataType)
             } else {
                 // no "value-set" nodes
                 dataType = stringDataType
@@ -296,21 +289,20 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
             DataElement elementDataElement = new DataElement(
                 label: name,
                 description: element.definition,
-                createdBy: currentUserEmailAddress,
                 dataType: dataType,
-                index: idx++)
+                order: idx++)
 
-            addMetadataFromComponent(elementDataElement, element, currentUserEmailAddress)
+            addMetadataFromComponent(elementDataElement, element)
 
 
             element.instantiatesAttributes.each {attribute ->
                 if(attribute.catalogueItem) {
                     SemanticLink semanticLink = new SemanticLink(
-                            targetMultiFacetAwareItem: attribute.catalogueItem,
-                            linkType: SemanticLinkType.REFINES,
-                            createdBy: currentUserEmailAddress
+                            targetMultiFacetAwareItemId: attribute.catalogueItem.id,
+                            targetMultiFacetAwareItemDomainType: DataElement,
+                            linkType: SemanticLinkType.REFINES
                     )
-                    elementDataElement.addToSemanticLinks(semanticLink)
+                    elementDataElement.semanticLinks.add(semanticLink)
                 }
             }
 
@@ -319,10 +311,10 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
 
             DataClass parentClass
             if (element.isRetired()) {
-                retiredElementsClass.addToDataElements(elementDataElement)
+                retiredElementsClass.dataElements.add(elementDataElement)
             } else {
-                parentClass = DDHelperFunctions.getChildClassFromName(elementsDataModel, name, currentUserEmailAddress)
-                parentClass.addToDataElements(elementDataElement)
+                parentClass = DDHelperFunctions.getChildClassFromName(elementsDataModel, name)
+                parentClass.dataElements.add(elementDataElement)
             }
             dataDictionary.elementsByUrl[element.otherProperties["ddUrl"]] = elementDataElement
         }

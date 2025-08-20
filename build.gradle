@@ -48,6 +48,9 @@ dependencies {
 
     implementation('org.maurodata:mauro-domain:0.0.1-SNAPSHOT')
     implementation('org.maurodata:mauro-persistence:0.0.1-SNAPSHOT')
+    implementation('org.maurodata:mauro-api:0.0.1-SNAPSHOT')
+    implementation('org.maurodata:mauro-client:0.0.1-SNAPSHOT')
+
     implementation("org.maurodata:dita-dsl:2.0.0-SNAPSHOT")
 
     implementation("org.maurodata:iso11179-domain:2.0.0-SNAPSHOT") {
@@ -112,4 +115,10 @@ publishing {
             }
         }
     }
+}
+
+test {
+    minHeapSize = "1g" // initial heap size
+    maxHeapSize = "20g" // maximum heap size
+    //jvmArgs '-XX:MaxPermSize=256m' // mem argument for the test JVM
 }

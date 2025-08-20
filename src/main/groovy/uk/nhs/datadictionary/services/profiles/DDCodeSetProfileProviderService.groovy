@@ -18,10 +18,14 @@
 package uk.nhs.datadictionary.services.profiles
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import jakarta.inject.Singleton
 import org.maurodata.profile.JsonBasedProfile
 
 @Slf4j
+@Singleton
+@CompileStatic
 class DDCodeSetProfileProviderService extends JsonBasedProfile {
 
     DDCodeSetProfileProviderService(ObjectMapper objectMapper) {
@@ -30,12 +34,12 @@ class DDCodeSetProfileProviderService extends JsonBasedProfile {
 
     @Override
     String getJsonFileName() {
-        return 'codeSetProfile.json'
+        return 'profiles/codeSetProfile.json'
     }
 
     @Override
     String getMetadataNamespace() {
-        'uk.nhs.datadictionary.codeset'
+        namespace
     }
 
     @Override
@@ -43,16 +47,11 @@ class DDCodeSetProfileProviderService extends JsonBasedProfile {
         'NHS Data Dictionary - CodeSet'
     }
 
-    @Override
-    String getVersion() {
-        '1.0.0'
-    }
+    String version = '1.0.0'
 
     @Override
     List<String> getProfileApplicableForDomains() {
         return ['CodeSet']
     }
-
-
 
 }

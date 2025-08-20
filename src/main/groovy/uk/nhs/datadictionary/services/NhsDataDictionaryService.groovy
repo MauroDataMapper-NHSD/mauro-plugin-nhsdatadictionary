@@ -17,6 +17,8 @@
  */
 package uk.nhs.datadictionary.services
 
+import org.maurodata.controller.folder.FolderController
+import org.maurodata.controller.folder.VersionedFolderController
 import org.maurodata.iso11179.domain.MetadataBundle
 
 import groovy.util.logging.Slf4j
@@ -89,16 +91,32 @@ class NhsDataDictionaryService {
     @Inject
     FolderCacheableRepository folderCacheableRepository
 
+
+    @Inject
     DataSetService dataSetService
+
+    @Inject
     ClassService classService
+
+    @Inject
     ElementService elementService
+
+    @Inject
     AttributeService attributeService
 
+    @Inject
     BusinessDefinitionService businessDefinitionService
+
+    @Inject
     SupportingInformationService supportingInformationService
+
+    @Inject
     DataSetConstraintService dataSetConstraintService
+
+    @Inject
     DataSetFolderService dataSetFolderService
 
+    @Inject
     DDWorkItemProfileProviderService ddWorkItemProfileProviderService
 
     UUID newVersion(CatalogueUser currentUser, UUID versionedFolderId) {
@@ -148,7 +166,7 @@ class NhsDataDictionaryService {
         originalChildFolders.addAll(original.childFolders)
 
         original.childFolders = []
-        original.addToChildFolders(originalChildFolders.collect { cf ->
+        original.childFolders.add(originalChildFolders.collect { cf ->
             cf.id = null
             cf.discard()
             cf.annotations = []
@@ -626,163 +644,12 @@ class NhsDataDictionaryService {
     }
 
 
-    Folder ingest(def xml, DataDictionaryImportParameters parameters) {
-
-        NhsDataDictionary nhsDataDictionary = NhsDataDictionary.buildFromXml(xml, parameters)
-
-        nhsDataDictionary.branchName = parameters.newBranchName ?: "main"
-        log.info('Ingesting new NHSDD with release date {}, finalise {}, folderVersionNo {}, prevVersion {}', parameters.releaseDate, parameters.finalised, parameters.folderVersionNo, parameters.prevVersion)
-        Instant startTime = Instant.now()
-        Instant originalStartTime = Instant.now()
-        String dictionaryFolderName = "NHS Data Dictionary"
-        if (parameters.deletePrevious || (!parameters.finalised && !parameters.folderVersionNo && !parameters.prevVersion)) {
-            deleteOriginalFolder(dictionaryFolderName)
-            log.info("Delete old folder complete in ${Duration.between(startTime, Instant.now()).toString()}")
-            startTime = Instant.now()
-        }
-
-        Folder dictionaryFolder = new Folder(label: dictionaryFolderName, branchName: nhsDataDictionary.branchName)
-
-        defaultProfileMetadata().each { metadata ->
-            dictionaryFolder.metadata.add(metadata)
-        }
-
-        /*
-        if (!folderService.validate(dictionaryFolder)) {
-            throw new ApiInvalidModelException('NHSDD', 'Invalid model', dictionaryFolder.errors)
-        }
-        versionedFolderService.save(dictionaryFolder)
-        */
-
-        if (parameters.prevVersion) {
-            Folder prevDictionaryVersion = folderCacheableRepository.readById(parameters.prevVersion)
-            dictionaryFolder.versionLinks.add(new VersionLink(
-                versionLinkType: 'NEW_FORK_OF',
-                targetModel: prevDictionaryVersion
-            ))
-            //versionedFolderService.setFolderIsNewBranchModelVersionOfFolder(dictionaryFolder, prevDictionaryVersion)
-
-        }
-
-        Map<String, Terminology> attributeTerminologiesByName = [:]
-        Map<String, DataClass> attributeClassesByUin = [:]
-        Set<String> attributeUinIsKey = []
-
-        if(parameters.publishAttributes || parameters.publishClasses) {
-
-            DataModel classesDataModel =
-                    new DataModel(label: NhsDataDictionary.CLASSES_MODEL_NAME,
-                            description: "NHS Data Dictionary Data Model (Classes and Attributes)",
-                            dataModelType: DataModelType.DATA_STANDARD,
-                            folder: dictionaryFolder,
-                            branchName: nhsDataDictionary.branchName)
-
-            startTime = Instant.now()
-            classService.persistClasses(nhsDataDictionary, classesDataModel, currentUser.emailAddress, attributeClassesByUin, attributeUinIsKey)
-            log.info('ClassService persisted in {}', Utils.timeTaken(startTime))
-
-            if(publishOptions.publishAttributes) {
-                startTime = System.currentTimeMillis()
-                attributeService.persistAttributes(nhsDataDictionary, dictionaryFolder, classesDataModel, currentUser.emailAddress, attributeTerminologiesByName, attributeClassesByUin, attributeUinIsKey)
-                log.info('AttributeService persisted in {}', Utils.timeTaken(startTime))
-            }
-            validateAndSaveModel(classesDataModel)
-        }
-
-        DataModel elementDataModel = null
-        if (publishOptions.publishElements) {
-            elementDataModel =
-                    new DataModel(label: NhsDataDictionary.ELEMENTS_MODEL_NAME,
-                            description: "NHS Data Dictionary Data Elements",
-                            folder: dictionaryFolder,
-                            createdBy: currentUser.emailAddress,
-                            authority: authorityService.defaultAuthority,
-                            type: DataModelType.DATA_STANDARD,
-                            branchName: nhsDataDictionary.branchName)
-
-            startTime = System.currentTimeMillis()
-            elementService.persistElements(nhsDataDictionary, dictionaryFolder, elementDataModel, currentUser.emailAddress, attributeTerminologiesByName)
-            log.info('ElementService persisted in {}', Utils.timeTaken(startTime))
-
-
-            validateAndSaveModel(elementDataModel)
-            endTime = System.currentTimeMillis()
-            log.info('{} model built in {}', NhsDataDictionary.ELEMENTS_MODEL_NAME, Utils.getTimeString(endTime - startTime))
-        }
-
-
-
-        if(publishOptions.publishBusinessDefinitions) {
-            startTime = System.currentTimeMillis()
-            businessDefinitionService.persistBusinessDefinitions(nhsDataDictionary, dictionaryFolder, currentUser.emailAddress)
-            log.info('BusinessDefinitionService persisted in {}', Utils.timeTaken(startTime))
-        }
-
-        if(publishOptions.publishSupportingInformation) {
-            startTime = System.currentTimeMillis()
-            supportingInformationService.persistSupportingInformation(nhsDataDictionary, dictionaryFolder, currentUser.emailAddress)
-            log.info('SupportingInformationService persisted in {}', Utils.timeTaken(startTime))
-        }
-
-        if(publishOptions.publishDataSetConstraints) {
-            startTime = System.currentTimeMillis()
-            dataSetConstraintService.persistDataSetConstraints(nhsDataDictionary, dictionaryFolder, currentUser.emailAddress)
-            log.info('DataSetConstraintService persisted in {}', Utils.timeTaken(startTime))
-        }
-
-        if(publishOptions.publishDataSetFolders) {
-            startTime = System.currentTimeMillis()
-            dataSetFolderService.persistDataSetFolders(nhsDataDictionary, dictionaryFolder, elementDataModel, currentUser.emailAddress)
-            log.info('DataSetFolderService persist complete in {}', Utils.timeTaken(startTime))
-        }
-
-
-        if(publishOptions.publishDataSets) {
-            startTime = System.currentTimeMillis()
-            dataSetService.persistDataSets(nhsDataDictionary, dictionaryFolder, elementDataModel, currentUser)
-            log.info('DataSetService persist complete in {}', Utils.timeTaken(startTime))
-        }
-
-        // If any changes remain on the dictionary folder then save them
-        if (dictionaryFolder.isDirty()) {
-            log.debug('Validate and save {}', dictionaryFolderName)
-            startTime = System.currentTimeMillis()
-            if (!folderService.validate(dictionaryFolder)) {
-                throw new MauroApplicationException('NHSDD', 'Invalid model', dictionaryFolder.errors)
-            }
-            versionedFolderService.save(dictionaryFolder, validate: false, flush: true)
-            log.info('Validate and save {} complete in {}', dictionaryFolderName, Utils.timeTaken(startTime))
-        } else {
-            // Otherwise flush and clear the session before we do anything else
-            log.debug('Flush the session')
-            sessionFactory.currentSession.flush()
-        }
-
-        dictionaryFolder = versionedFolderService.get(dictionaryFolder.id)
-
-        if (finalise) {
-            log.info('Finalising {}', dictionaryFolderName)
-            startTime = System.currentTimeMillis()
-            ModelVersion requestedFolderVersion = folderVersionNo ? ModelVersion.from(folderVersionNo) : null
-            versionedFolderService.finaliseFolder(dictionaryFolder, currentUser, requestedFolderVersion, VersionChangeType.MAJOR, releaseDate)
-            log.info('Finalise {} complete in {}', dictionaryFolderName, Utils.timeTaken(startTime))
-        }
-
-        log.info('Final save and flush of the ingested {}', dictionaryFolderName)
-        if (!folderService.validate(dictionaryFolder)) {
-            throw new MauroApplicationException('NHSDD', 'Invalid model', dictionaryFolder.errors)
-        }
-        versionedFolderService.saveFolderHierarchy(dictionaryFolder)
-        log.info('Ingest {} complete in {}', dictionaryFolderName, Utils.timeTaken(originalStartTime))
-        dictionaryFolder
-
-    }
-
-
     void deleteOriginalFolder(String coreFolderName) {
-        Folder folder = folderService.findByPath(coreFolderName)
-        if (folder) {
-            folderService.delete(flolder, true, true)
+        Folder originalFolder = folderCacheableRepository.readAll().find {
+            it.label == coreFolderName
+        }
+        if(originalFolder) {
+            folderCacheableRepository.delete(originalFolder)
         }
     }
 
@@ -905,7 +772,9 @@ class NhsDataDictionaryService {
 
     void setApiProperties(NhsDataDictionary dataDictionary) {
 
-        apiPropertyCacheableRepository.findByCategory(NHSDD_PROPERTY_CATEGORY).each {apiProperty ->
+        apiPropertyCacheableRepository.findAll().find {
+            it.category == NHSDD_PROPERTY_CATEGORY
+        }.each {apiProperty ->
             if(apiProperty.key == API_PROPERTY_RETIRED_TEMPLATE) {
                 dataDictionary.retiredItemText = apiProperty.value
             }

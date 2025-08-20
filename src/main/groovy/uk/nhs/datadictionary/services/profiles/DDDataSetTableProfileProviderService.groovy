@@ -31,7 +31,7 @@ class DDDataSetTableProfileProviderService extends JsonBasedProfile {
 
     @Override
     String getJsonFileName() {
-        return 'dataSetTableProfile.json'
+        return 'profiles/dataSetTableProfile.json'
     }
 
     @Override

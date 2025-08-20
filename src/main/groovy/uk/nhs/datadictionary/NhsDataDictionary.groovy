@@ -18,10 +18,31 @@
 package uk.nhs.datadictionary
 
 import groovy.util.logging.Slf4j
+import groovy.xml.XmlParser
+import io.micronaut.context.ApplicationContext
+import io.micronaut.context.annotation.Bean
+import io.micronaut.context.annotation.Prototype
+import jakarta.inject.Inject
+import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.datamodel.DataElement
+import org.maurodata.domain.datamodel.DataModel
+import org.maurodata.domain.datamodel.DataModelType
 import org.maurodata.domain.facet.Metadata
+import org.maurodata.domain.facet.VersionLink
 import org.maurodata.domain.folder.Folder
+import org.maurodata.domain.model.version.ModelVersion
+import org.maurodata.domain.terminology.Terminology
+import org.maurodata.exception.MauroApplicationException
+import uk.nhs.datadictionary.services.AttributeService
+import uk.nhs.datadictionary.services.BusinessDefinitionService
+import uk.nhs.datadictionary.services.ClassService
 import uk.nhs.datadictionary.services.DataDictionaryComponentService
+import uk.nhs.datadictionary.services.DataSetConstraintService
+import uk.nhs.datadictionary.services.DataSetFolderService
+import uk.nhs.datadictionary.services.DataSetService
+import uk.nhs.datadictionary.services.ElementService
+import uk.nhs.datadictionary.services.NhsDataDictionaryService
+import uk.nhs.datadictionary.services.SupportingInformationService
 
 import java.time.Duration
 import java.time.Instant
@@ -29,7 +50,35 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 @Slf4j
+@Prototype
 class NhsDataDictionary {
+
+    @Inject
+    NhsDataDictionaryService nhsDataDictionaryService
+
+    @Inject
+    ClassService classService
+
+    @Inject
+    ElementService elementService
+
+    @Inject
+    AttributeService attributeService
+
+    @Inject
+    BusinessDefinitionService businessDefinitionService
+
+    @Inject
+    DataSetService dataSetService
+
+    @Inject
+    DataSetConstraintService dataSetConstraintService
+
+    @Inject
+    SupportingInformationService supportingInformationService
+
+    @Inject
+    DataSetFolderService dataSetFolderService
 
 
     static final String WEBSITE_URL = "https://www.datadictionary.nhs.uk"
@@ -175,57 +224,126 @@ class NhsDataDictionary {
     }
 
 
-    static NhsDataDictionary buildFromXml(def xml, DataDictionaryImportParameters parameters) {
-        return new NhsDataDictionary().tap {
-            log.info('Building new NHS Data Dictionary from XML')
-            Instant startTime = Instant.now()
+    void buildFromXml(DataDictionaryImportParameters parameters) {
+        def xml = new XmlParser().parse(parameters.importFile.inputStream)
 
-            // I'm not sure we do this any more?
-            /* if (parameters.releaseDate) {
-                folderName = "${FOLDER_NAME} (${releaseDate})"
-            }
-            */
-            folderName = FOLDER_NAME
+        System.err.println(nhsDataDictionaryService)
+        System.err.println(classService)
+        log.info('Building new NHS Data Dictionary from XML')
+        Instant startTime = Instant.now()
 
-            buildDataSetUrlMap(xml)
-            componentClasses.each {componentClassName, map ->
-                String componentNameWithPackage = "${NhsDataDictionary.packageName}.${componentClassName}"
-                NhsDataDictionaryComponent dummyComponent = (NhsDataDictionaryComponent) Class.forName(componentNameWithPackage).getConstructor()
-                    .newInstance()
-                log.info("Building ${componentClassName}...")
-                Instant componentStartTime = Instant.now()
-                if(parameters.isPublishableComponent(dummyComponent)) {
-                    xml[dummyComponent.getXmlNodeName()] /*.sort {it.name.text()} */.each {node ->
-                        NhsDataDictionaryComponent component = (NhsDataDictionaryComponent) Class.forName(componentNameWithPackage).getConstructor()
-                            .newInstance()
-                        if (component.isValidXmlNode(node)) {
-                            component.fromXml(node, it)
-                            NhsDataDictionaryComponent existingItem = map[component.name]
-                            if (!existingItem || existingItem.isRetired()) {
-                                map[component.name] = component
-                            }
+        // I'm not sure we do this any more?
+        /* if (parameters.releaseDate) {
+            folderName = "${FOLDER_NAME} (${releaseDate})"
+        }
+        */
+        folderName = FOLDER_NAME
+
+        branchName = parameters.newBranchName ?: "main"
+        buildDataSetUrlMap(xml)
+
+        componentClasses.each {componentClassName, map ->
+            String componentNameWithPackage = "${NhsDataDictionary.packageName}.${componentClassName}"
+            NhsDataDictionaryComponent dummyComponent = (NhsDataDictionaryComponent) Class.forName(componentNameWithPackage).getConstructor()
+                .newInstance()
+            log.info("Building ${componentClassName}...")
+            Instant componentStartTime = Instant.now()
+            if(parameters.isPublishableComponent(dummyComponent)) {
+                xml[dummyComponent.getXmlNodeName()] /*.sort {it.name.text()} */.each {node ->
+                    NhsDataDictionaryComponent component = (NhsDataDictionaryComponent) Class.forName(componentNameWithPackage).getConstructor()
+                        .newInstance()
+                    if (component.isValidXmlNode(node)) {
+                        component.fromXml(node, this)
+                        NhsDataDictionaryComponent existingItem = map[component.name]
+                        if (!existingItem || existingItem.isRetired()) {
+                            map[component.name] = component
                         }
                     }
                 }
-                log.info("${componentClassName} built in ${Duration.between(componentStartTime, Instant.now()).toString()}")
             }
-            Instant componentStartTime = Instant.now()
-            if(parameters.publishDataSetFolders) {
-                processDataSetFolders()
-            }
-            log.info("Data Set Folders built in ${Duration.between(componentStartTime, Instant.now()).toString()}")
-            componentStartTime = Instant.now()
-            if(parameters.publishClasses) {
-                processClassLinks()
-            }
-            log.info("Class Links built in ${Duration.between(componentStartTime, Instant.now()).toString()}")
-            componentStartTime = Instant.now()
-            processLinksFromXml()
-            log.info("Links processed in ${Duration.between(componentStartTime, Instant.now()).toString()}")
-
-            log.info("Data Dictionary build from XML complete in ${Duration.between(startTime, Instant.now()).toString()}")
+            log.info("${componentClassName} built in ${Duration.between(componentStartTime, Instant.now()).toString()}")
         }
+        Instant componentStartTime = Instant.now()
+        if(parameters.publishDataSetFolders) {
+            processDataSetFolders()
+        }
+        log.info("Data Set Folders built in ${Duration.between(componentStartTime, Instant.now()).toString()}")
+        componentStartTime = Instant.now()
+        if(parameters.publishClasses) {
+            processClassLinks()
+        }
+        log.info("Class Links built in ${Duration.between(componentStartTime, Instant.now()).toString()}")
+        componentStartTime = Instant.now()
+        processLinksFromXml()
+        log.info("Links processed in ${Duration.between(componentStartTime, Instant.now()).toString()}")
+
+        log.info("Data Dictionary build from XML complete in ${Duration.between(startTime, Instant.now()).toString()}")
+
     }
+
+    Folder generateFolder(DataDictionaryImportParameters parameters) {
+
+        Folder dictionaryFolder = new Folder(label: folderName)
+
+        nhsDataDictionaryService.defaultProfileMetadata().each { metadata ->
+            dictionaryFolder.metadata.add(metadata)
+        }
+
+
+        Map<String, Terminology> attributeTerminologiesByName = [:]
+        Map<String, DataClass> attributeClassesByUin = [:]
+        Set<String> attributeUinIsKey = []
+
+        if(parameters.publishAttributes || parameters.publishClasses) {
+
+            DataModel classesDataModel =
+                new DataModel(label: CLASSES_MODEL_NAME,
+                              description: "NHS Data Dictionary Data Model (Classes and Attributes)",
+                              dataModelType: DataModelType.DATA_STANDARD,
+                              folder: dictionaryFolder,
+                              branchName: branchName)
+            dictionaryFolder.dataModels.add(classesDataModel)
+            classService.createClassesModel(this, classesDataModel, attributeClassesByUin, attributeUinIsKey)
+
+            if(parameters.publishAttributes) {
+                attributeService.createAttributes(this, dictionaryFolder, classesDataModel, attributeTerminologiesByName, attributeClassesByUin, attributeUinIsKey)
+            }
+        }
+
+        DataModel elementDataModel = null
+        if (parameters.publishElements) {
+            elementDataModel =
+                new DataModel(label: ELEMENTS_MODEL_NAME,
+                              description: "NHS Data Dictionary Data Elements",
+                              folder: dictionaryFolder,
+                              dataModelType: DataModelType.DATA_STANDARD,
+                              branchName: branchName)
+            dictionaryFolder.dataModels.add(elementDataModel)
+            elementService.persistElements(this, dictionaryFolder, elementDataModel, attributeTerminologiesByName)
+        }
+
+        if(parameters.publishBusinessDefinitions) {
+            businessDefinitionService.persistBusinessDefinitions(this, dictionaryFolder)
+        }
+
+        if(parameters.publishSupportingInformation) {
+            supportingInformationService.persistSupportingInformation(this, dictionaryFolder)
+        }
+
+        if(parameters.publishDataSetConstraints) {
+            dataSetConstraintService.persistDataSetConstraints(this, dictionaryFolder)
+        }
+
+        if(parameters.publishDataSetFolders) {
+            dataSetFolderService.persistDataSetFolders(this, dictionaryFolder)
+        }
+
+        if(parameters.publishDataSets) {
+            dataSetService.persistDataSets(this, dictionaryFolder, elementDataModel)
+        }
+
+        dictionaryFolder
+   }
 
     Map<String, String> introductionPageMap = [
             //"PLICS": "PLICS Data Set Overview",

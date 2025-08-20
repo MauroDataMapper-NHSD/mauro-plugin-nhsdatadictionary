@@ -160,7 +160,7 @@ class DataSetParser {
             dataClasses[0].label = "Data Set Data Elements"
         }
         dataClasses.eachWithIndex {dataClass, index ->
-            dataModel.addToDataClasses(dataClass)
+            dataModel.childDataClasses.add(dataClass)
             setOrder(dataClass, index + 1)
         }
         fixPotentialDuplicates(dataModel)
@@ -256,11 +256,8 @@ class DataSetParser {
     static void setOrder(AdministeredItem item, Integer order) {
         if(!item) {
             log.error("Setting order on null element!")
-        }
-        if(item instanceof DataElement && ((DataElement)item).importingDataClasses != null) {
-            // Do nothing yet
         } else {
-            item.addToMetadata(new Metadata(namespace: getDataSetNamespace(item),
+            item.metadata.add(new Metadata(namespace: getDataSetNamespace(item),
                         key: NhsDataDictionary.DATASET_TABLE_KEY_WEB_ORDER, value: order.toString()))
         }
     }
@@ -268,11 +265,8 @@ class DataSetParser {
     static void setChoice(AdministeredItem item) {
         if(!item) {
             log.error("Setting choice on null element!")
-        }
-        if(item instanceof DataElement && ((DataElement)item).importingDataClasses != null) {
-            // Do nothing yet
         } else {
-            item.addToMetadata(
+            item.metadata.add(
                 new Metadata(namespace: getDataSetNamespace(item),
                              key: NhsDataDictionary.DATASET_TABLE_KEY_CHOICE, value: "true"))
         }
@@ -281,12 +275,8 @@ class DataSetParser {
     static void setAnd(AdministeredItem item) {
         if(!item) {
             log.error("Setting choice on null element!")
-        }
-
-        if(item instanceof DataElement && ((DataElement)item).importingDataClasses != null) {
-            // Do nothing yet
         } else {
-            item.addToMetadata(
+            item.metadata.add(
                 new Metadata(namespace: getDataSetNamespace(item),
                              key: NhsDataDictionary.DATASET_TABLE_KEY_AND, value: "true"))
         }
@@ -295,12 +285,8 @@ class DataSetParser {
     static void setAddress(AdministeredItem item) {
         if(!item) {
             log.error("Setting address on null element!")
-        }
-
-        if(item instanceof DataElement && ((DataElement)item).importingDataClasses != null) {
-            // Do nothing yet
         } else {
-            item.addToMetadata(
+            item.metadata.add(
                 new Metadata(namespace: getDataSetNamespace(item),
                      key: NhsDataDictionary.DATASET_TABLE_KEY_ADDRESS_CHOICE, value: "true"))
         }
@@ -309,11 +295,8 @@ class DataSetParser {
     static void setNameChoice(AdministeredItem item) {
         if(!item) {
             log.error("Setting name choice on null element!")
-        }
-        if(item instanceof DataElement && ((DataElement)item).importingDataClasses != null) {
-            // Do nothing yet
         } else {
-            item.addToMetadata(
+            item.metadata.add(
                 new Metadata(namespace: getDataSetNamespace(item),
                              key: NhsDataDictionary.DATASET_TABLE_KEY_NAME_CHOICE, value: "true"))
         }
@@ -322,12 +305,8 @@ class DataSetParser {
     static void setInclusiveOr(AdministeredItem item) {
         if(!item) {
             log.error("Setting inclusive or on null element!")
-        }
-
-        if(item instanceof DataElement && ((DataElement)item).importingDataClasses != null) {
-            // Do nothing yet
         } else {
-            item.addToMetadata(
+            item.metadata.add(
                 new Metadata(namespace: getDataSetNamespace(item),
                              key: NhsDataDictionary.DATASET_TABLE_KEY_INCLUSIVE_OR, value: "true"))
         }
@@ -336,11 +315,8 @@ class DataSetParser {
     static void setDataSetReference(AdministeredItem item) {
         if(!item) {
             log.error("Setting data set reference on null element!")
-        }
-        if(item instanceof DataElement && ((DataElement)item).importingDataClasses != null) {
-            // Do nothing yet
         } else {
-            item.addToMetadata(
+            item.metadata.add(
                 new Metadata(namespace: getDataSetNamespace(item),
                      key: NhsDataDictionary.DATASET_TABLE_KEY_DATA_SET_REFERENCE, value: "true"))
         }
@@ -357,12 +333,8 @@ class DataSetParser {
     static void setDataSetReferenceTo(AdministeredItem item, String dataSetName) {
         if(!item) {
             log.error("Setting data set reference to on null element!")
-        }
-
-        if(item instanceof DataElement && ((DataElement)item).importingDataClasses != null) {
-            // Do nothing yet
         } else {
-            item.addToMetadata(
+            item.metadata.add(
                 new Metadata(namespace: getDataSetNamespace(item),
                      key: NhsDataDictionary.DATASET_TABLE_KEY_DATA_SET_REFERENCE_TO, value: dataSetName))
         }
@@ -376,12 +348,8 @@ class DataSetParser {
     static void setMultiplicityText(AdministeredItem item, def multiplicity) {
         if(!item) {
             log.error("Setting multiplicity text on null element!")
-        }
-
-        if(item instanceof DataElement && ((DataElement)item).importingDataClasses != null) {
-            // Do nothing yet
         } else {
-            item.addToMetadata(
+            item.metadata.add(
                 new Metadata(namespace: getDataSetNamespace(item),
                     key: NhsDataDictionary.DATASET_TABLE_KEY_MULTIPLICITY_TEXT,
                      value: parsePossibleParagraphs(multiplicity)))
@@ -395,11 +363,8 @@ class DataSetParser {
     static void setMRO(AdministeredItem item, def mro) {
         if(!item) {
             log.error("Setting MRO on null element!")
-        }
-        if(item instanceof DataElement && ((DataElement)item).importingDataClasses != null) {
-            // Do nothing yet
         } else {
-            item.addToMetadata(
+            item.metadata.add(
                 new Metadata(namespace: getDataSetNamespace(item),
                      key: NhsDataDictionary.DATASET_TABLE_KEY_MRO, value: mandationFromMRO(parsePossibleParagraphs(mro))))
         }
@@ -432,11 +397,8 @@ class DataSetParser {
     static void setRules(AdministeredItem item, def rules) {
         if(!item) {
             log.error("Setting rules on null element!")
-        }
-        if(item instanceof DataElement && ((DataElement)item).importingDataClasses != null) {
-            // Do nothing yet
         } else {
-            item.addToMetadata(new Metadata(namespace: getDataSetNamespace(item),
+            item.metadata.add(new Metadata(namespace: getDataSetNamespace(item),
                     key: NhsDataDictionary.DATASET_TABLE_KEY_RULES, value: parsePossibleParagraphs(rules)))
         }
     }
@@ -448,11 +410,8 @@ class DataSetParser {
     static void setGroupRepeats(AdministeredItem item, def groupRepeats) {
         if(!item) {
             log.error("Setting group repeats on null element!")
-        }
-        if(item instanceof DataElement && ((DataElement)item).importingDataClasses != null) {
-            // Do nothing yet
         } else {
-            item.addToMetadata(new Metadata(namespace: getDataSetNamespace(item),
+            item.metadata.add(new Metadata(namespace: getDataSetNamespace(item),
                     key: NhsDataDictionary.DATASET_TABLE_KEY_GROUP_REPEATS,
                     value: parsePossibleParagraphs(groupRepeats)))
         }
@@ -466,11 +425,8 @@ class DataSetParser {
     static void setNotOption(AdministeredItem item) {
         if(!item) {
             log.error("Setting not option on null element!")
-        }
-        if(item instanceof DataElement && ((DataElement)item).importingDataClasses != null) {
-            // Do nothing yet
         } else {
-            item.addToMetadata(
+            item.metadata.add(
                 new Metadata(namespace: getDataSetNamespace(item),
                      key: NhsDataDictionary.DATASET_TABLE_KEY_NOT_OPTION, value: "true"))
         }
@@ -599,24 +555,25 @@ class DataSetParser {
             DataType defaultDataType = dataModel.dataTypes.find {it.label == "DataType: Any"}
             if (!defaultDataType) {
                 defaultDataType = new DataType(label: "DataType: Any", dataTypeKind: DataType.DataTypeKind.PRIMITIVE_TYPE)
-                dataModel.addToDataTypes(defaultDataType)
+                dataModel.dataTypes.add(defaultDataType)
             }
             dataElement = new DataElement(label: DDHelperFunctions.tidyLabel(anchor.text()), dataType: defaultDataType)
-            currentClass.addToDataElements(dataElement)
+            currentClass.dataElements.add(dataElement)
         } else {
             DataType dataType = dataModel.dataTypes.find {it.label == originalDataElement.dataType.label }
             if(!dataType) {
                 dataType = copyDataType(originalDataElement.dataType)
-                dataModel.addToDataTypes(dataType)
+                dataModel.dataTypes.add(dataType)
             }
 
             dataElement = new DataElement(label: DDHelperFunctions.tidyLabel(anchor.text()), dataType: dataType)
-            currentClass.addToDataElements(dataElement)
+            currentClass.dataElements.add(dataElement)
             SemanticLink semanticLink = new SemanticLink(
-                targetMultiFacetAwareItem: originalDataElement,
+                targetMultiFacetAwareItemId: originalDataElement.id,
+                targetMultiFacetAwareItemDomainType: DataElement,
                 linkType: SemanticLinkType.REFINES,
                 )
-            dataElement.addToSemanticLinks(semanticLink)
+            dataElement.semanticLinks.add(semanticLink)
         }
         return dataElement
     }
@@ -633,7 +590,6 @@ class DataSetParser {
             return new DataType(
                     modelResourceDomainType: original.modelResourceDomainType,
                     modelResourceId: original.modelResourceId,
-                    model: original.model,
                     label: original.label,
                     description: original.description,
                     dataTypeKind: DataType.DataTypeKind.MODEL_TYPE

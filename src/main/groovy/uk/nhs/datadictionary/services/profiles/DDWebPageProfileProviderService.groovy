@@ -30,7 +30,7 @@ class DDWebPageProfileProviderService extends JsonBasedProfile {
 
     @Override
     String getJsonFileName() {
-        return 'webPageProfile.json'
+        return 'profiles/webPageProfile.json'
     }
 
     @Override

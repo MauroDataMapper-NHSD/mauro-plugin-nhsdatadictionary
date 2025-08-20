@@ -58,7 +58,7 @@ class OtherDataSetParser {
                 && tables[0].text() != "IMAGING: CANCER SITE LOCATION CHOICE - CORE") {
                 // header and choice between n
                 DataClass choiceDataClass = new DataClass(label: tables[0].tbody.tr.th.text())
-                dataModel.addToDataClasses(choiceDataClass)
+                dataModel.childDataClasses.add(choiceDataClass)
                 DataSetParser.setChoice(choiceDataClass)
                 DataSetParser.setOrder(choiceDataClass, elementWebOrder)
                 elementWebOrder++
@@ -73,12 +73,12 @@ class OtherDataSetParser {
                             }
                         } else {
                             DataSetParser.setOrder(dataClasses.get(0), index)
-                            choiceDataClass.addToDataClasses(dataClasses.get(0))
+                            choiceDataClass.dataClasses.add(dataClasses.get(0))
                         }
                     } else if (index != 0) {
                         List<DataClass> childClasses = parseDataClassTable(table, dataModel, dataDictionary, choiceNo)
                         childClasses.eachWithIndex { childDataClass, idx ->
-                            choiceDataClass.addToDataClasses(childDataClass)
+                            choiceDataClass.dataClasses.add(childDataClass)
                             DataSetParser.setNotOption(childDataClass)
                             DataSetParser.setOrder(childDataClass, elementWebOrder)
                             elementWebOrder++
@@ -90,15 +90,15 @@ class OtherDataSetParser {
                 && tables[0].text() == "IMAGING: CANCER SITE LOCATION CHOICE - CORE") {
                 // header and choice between n
                 DataClass topDataClass = new DataClass(label: tables[0].tbody.tr.th.text())
-                dataModel.addToDataClasses(topDataClass)
+                dataModel.childDataClasses.add(topDataClass)
                 DataSetParser.setOrder(topDataClass, elementWebOrder)
                 elementWebOrder++
                 returnDataClasses.add(topDataClass)
                 DataClass choiceDataClass = new DataClass(label: "Choice")
-                dataModel.addToDataClasses(choiceDataClass)
+                dataModel.childDataClasses.add(choiceDataClass)
                 DataSetParser.setChoice(choiceDataClass)
                 DataSetParser.setOrder(choiceDataClass, 1)
-                topDataClass.addToDataClasses(choiceDataClass)
+                topDataClass.dataClasses.add(choiceDataClass)
                 tables.eachWithIndex { table, index ->
                     if(table != tables.last()) {
                         if (index > 0 && index < ors.size() + 2) { // ignore the first, header table
@@ -110,12 +110,12 @@ class OtherDataSetParser {
                                 }
                             } else {
                                 DataSetParser.setOrder(dataClasses.get(0), index)
-                                choiceDataClass.addToDataClasses(dataClasses.get(0))
+                                choiceDataClass.dataClasses.add(dataClasses.get(0))
                             }
                         } else if (index != 0) {
                             List<DataClass> childClasses = parseDataClassTable(table, dataModel, dataDictionary, choiceNo)
                             childClasses.eachWithIndex { childDataClass, idx ->
-                                choiceDataClass.addToDataClasses(childDataClass)
+                                choiceDataClass.dataClasses.add(childDataClass)
                                 DataSetParser.setNotOption(childDataClass)
                                 DataSetParser.setOrder(childDataClass, elementWebOrder)
                                 elementWebOrder++
@@ -124,7 +124,7 @@ class OtherDataSetParser {
                     } else {
                         List<DataClass> dataClasses = parseDataClassTable(tables.last(), dataModel, dataDictionary, 1)
                         DataSetParser.setOrder(dataClasses.get(0), 2)
-                        topDataClass.addToDataClasses(dataClasses.get(0))
+                        topDataClass.dataClasses.add(dataClasses.get(0))
                     }
 
                 }
@@ -132,7 +132,7 @@ class OtherDataSetParser {
                 DataClass dataClass = new DataClass()
                 dataClass.label = tables.get(0).tbody.tr.th.text()
                 dataClass.description = ""
-                dataModel.addToDataClasses(dataClass)
+                dataModel.childDataClasses.add(dataClass)
                 elementWebOrder = 0
 
                 section.findAll {it instanceof Node && it.name() == "strong" && it.text() != "OR" }.each { par ->
@@ -151,16 +151,16 @@ class OtherDataSetParser {
                             List<DataClass> childClasses2 = parseDataClassTable(section[idx + 2], dataModel, dataDictionary, choiceNo)
                             if (childClasses1.size() == 1 && childClasses2.size() == 1) {
                                 DataClass choiceDataClass = new DataClass(label: "Choice " + choiceNo)
-                                dataModel.addToDataClasses(choiceDataClass)
+                                dataModel.dataClasses.add(choiceDataClass)
                                 DataSetParser.setChoice(choiceDataClass)
                                 choiceNo++
                                 DataSetParser.setOrder(choiceDataClass, elementWebOrder)
                                 elementWebOrder++
-                                dataClass.addToDataClasses(choiceDataClass)
+                                dataClass.dataClasses.add(choiceDataClass)
                                 DataSetParser.setOrder(childClasses1.get(0), 0)
                                 DataSetParser.setOrder(childClasses2.get(0), 1)
-                                choiceDataClass.addToDataClasses(childClasses1.get(0))
-                                choiceDataClass.addToDataClasses(childClasses2.get(0))
+                                choiceDataClass.dataClasses.add(childClasses1.get(0))
+                                choiceDataClass.dataClasses.add(childClasses2.get(0))
                             } else {
                                 log.error("Oh no!  More than 1 data class returned!")
                             }
@@ -168,7 +168,7 @@ class OtherDataSetParser {
                         } else {
                             List<DataClass> childClasses = parseDataClassTable(section[idx], dataModel, dataDictionary, choiceNo)
                             childClasses.eachWithIndex { childDataClass, index ->
-                                dataClass.addToDataClasses(childDataClass)
+                                dataClass.dataClasses.add(childDataClass)
                                 DataSetParser.setOrder(childDataClass, elementWebOrder)
                                 elementWebOrder++
                             }
@@ -187,7 +187,7 @@ class OtherDataSetParser {
                                                Integer choiceNo = 1) {
         Integer elementWebOrder = 0
         DataClass currentClass = new DataClass()
-        dataModel.addToDataClasses(currentClass)
+        dataModel.childDataClasses.add(currentClass)
         List<DataClass> dataClasses = [currentClass]
 
         table.tbody.tr.eachWithIndex { Node tr, idx ->
@@ -199,7 +199,7 @@ class OtherDataSetParser {
                     dataModel.label.startsWith("National_Joint_Registry_Data_Set")) {
                     if (alreadyHasContent(currentClass)) {
                         currentClass = new DataClass()
-                        dataModel.addToDataClasses(currentClass)
+                        dataModel.childDataClasses.add(currentClass)
                         dataClasses.add(currentClass)
                         elementWebOrder = 0
                     }
@@ -217,7 +217,7 @@ class OtherDataSetParser {
                     // We're starting a new class.  Let's finish with the old one...
                     if (alreadyHasContent(currentClass)) {
                         currentClass = new DataClass()
-                        dataModel.addToDataClasses(currentClass)
+                        dataModel.childDataClasses.add(currentClass)
                         dataClasses.add(currentClass)
                         elementWebOrder = 0
                     }
@@ -227,7 +227,7 @@ class OtherDataSetParser {
                 if (!currentClass) { // We're probably in a duckblue section, and there's one table, and it
                     // doesn't have any further header information.
                     currentClass = new DataClass()
-                    dataModel.addToDataClasses(currentClass)
+                    dataModel.childDataClasses.add(currentClass)
                     dataClasses.add(currentClass)
                 } else {
                     AdministeredItem catalogueItem = parseDataElementRow(tr, dataModel, dataDictionary, currentClass)
@@ -238,7 +238,7 @@ class OtherDataSetParser {
                     DataSetParser.setOrder(catalogueItem, elementWebOrder)
                     elementWebOrder++
                     if(catalogueItem instanceof DataClass) {
-                        currentClass.addToDataClasses(catalogueItem)
+                        currentClass.dataClasses.add(catalogueItem)
                     } else if(catalogueItem instanceof DataElement) {
                         // Ignore
                     }
@@ -280,7 +280,7 @@ class OtherDataSetParser {
                 }
             } else if(tds[1].a.size() == 2) {
                 returnElement = new DataClass(label: "Choice")
-                dataModel.addToDataClasses(returnElement)
+                dataModel.childDataClasses.add(returnElement)
                 Integer choiceElementWebOrder = 0
                 tds[1].children().each { child ->
                     if (child instanceof Node && child.name() == "a") {
@@ -314,14 +314,14 @@ class OtherDataSetParser {
             } else if(tds[1].a.size() == 3) {
                 if(tds[1].em.size() >= 2 && tds[1].em[0].text().trim() == "or" && tds[1].em[1].text().trim() == "and") {
                     returnElement = new DataClass(label: "Choice")
-                    dataModel.addToDataClasses(returnElement)
+                    dataModel.childDataClasses.add(returnElement)
                     DataElement dataElement = DataSetParser.getElementFromText(tds[1].a[0], dataModel, dataDictionary, returnElement)
                     //log.debug("Added ${dataElement.label} to ${returnElement.label}")
                     DataSetParser.setOrder(dataElement, 0)
                     DataSetParser.setChoice(returnElement)
 
                     DataClass andClass = new DataClass(label: "And")
-                    dataModel.addToDataClasses(andClass)
+                    dataModel.childDataClasses.add(andClass)
                     DataSetParser.setAnd(andClass)
                     dataElement = DataSetParser.getElementFromText(tds[1].a[1], dataModel, dataDictionary, andClass)
                     DataSetParser.setOrder(dataElement, 0)
@@ -329,15 +329,15 @@ class OtherDataSetParser {
                     dataElement = DataSetParser.getElementFromText(tds[1].a[2], dataModel, dataDictionary, andClass)
                     DataSetParser.setOrder(dataElement, 1)
                     //log.debug("Added ${dataElement.label} to ${andClass.label}")
-                    returnElement.addToDataClasses(andClass)
+                    returnElement.dataClasses.add(andClass)
                     DataSetParser.setOrder(andClass, 1)
 
                 } else if (tds[1].em.size() >= 2 && tds[1].em[0].text().trim() == "and" && tds[1].em[1].text().trim() == "or") {
                     returnElement = new DataClass(label: "Choice")
-                    dataModel.addToDataClasses(returnElement)
+                    dataModel.childDataClasses.add(returnElement)
                     DataSetParser.setChoice(returnElement)
                     DataClass andClass = new DataClass(label: "And")
-                    dataModel.addToDataClasses(returnElement)
+                    dataModel.childDataClasses.add(returnElement)
                     DataSetParser.setAnd(andClass)
                     DataElement dataElement = DataSetParser.getElementFromText(tds[1].a[0], dataModel, dataDictionary, andClass)
                     DataSetParser.setOrder(dataElement, 0)
@@ -345,7 +345,7 @@ class OtherDataSetParser {
                     dataElement = DataSetParser.getElementFromText(tds[1].a[1], dataModel, dataDictionary, andClass)
                     DataSetParser.setOrder(dataElement, 1)
                     //log.debug("Added ${dataElement.label} to ${andClass.label}")
-                    returnElement.addToDataClasses(andClass)
+                    returnElement.dataClasses.add(andClass)
                     DataSetParser.setOrder(andClass, 0)
 
                     dataElement = DataSetParser.getElementFromText(tds[1].a[2], dataModel, dataDictionary, returnElement)
@@ -353,7 +353,7 @@ class OtherDataSetParser {
                     DataSetParser.setOrder(dataElement, 1)
                 } else if (tds[1].em.size() >= 2 && tds[1].em[0].text().trim() == "or" && tds[1].em[1].text().trim() == "or") {
                     returnElement = new DataClass(label: "Choice")
-                    dataModel.addToDataClasses(returnElement)
+                    dataModel.childDataClasses.add(returnElement)
                     DataSetParser.setChoice(returnElement)
                     DataElement dataElement = DataSetParser.getElementFromText(tds[1].a[0], dataModel, dataDictionary, returnElement)
                     DataSetParser.setOrder(dataElement, 0)
@@ -397,7 +397,7 @@ class OtherDataSetParser {
                     && tds[1].em[2].text() == "or") {
                     // a1 - a2 or b1 or b2
                     returnElement = new DataClass(label: "Choice")
-                    dataModel.addToDataClasses(returnElement)
+                    dataModel.childDataClasses.add(returnElement)
                     Integer choiceElementWebOrder = 0
 
                     tds[1].a.each { anchor ->
@@ -411,7 +411,7 @@ class OtherDataSetParser {
                 } else if(tds[1].em.size() == 1 && tds[1].em[0].text() == "or") {
                     // a1 - a2 or b1 - b2
                     returnElement = new DataClass(label: "Address Choice")
-                    dataModel.addToDataClasses(returnElement)
+                    dataModel.childDataClasses.add(returnElement)
 
                     DataElement dataElement = DataSetParser.getElementFromText(tds[1].a[0], dataModel, dataDictionary, returnElement)
                     //log.debug("Added ${dataElement.label} to ${returnElement.label}")
@@ -419,10 +419,10 @@ class OtherDataSetParser {
 
                     DataSetParser.setChoice(returnElement)
                     DataSetParser.setAddress(returnElement)
-                    if(dataElement.importingDataClasses == null) {
-                        returnElement.addToMetadata(new Metadata(namespace: NhsDataDictionary.METADATA_NAMESPACE, key: "Address 1", value: tds[1].a[1].@href))
-                        returnElement.addToMetadata(new Metadata(namespace: NhsDataDictionary.METADATA_NAMESPACE, key: "Address 2", value: tds[1].a[3].@href))
-                    }
+                    //if(dataElement.importingDataClasses == null) {
+                    returnElement.metadata.add(new Metadata(namespace: NhsDataDictionary.METADATA_NAMESPACE, key: "Address 1", value: tds[1].a[1].@href))
+                    returnElement.metadata.add(new Metadata(namespace: NhsDataDictionary.METADATA_NAMESPACE, key: "Address 2", value: tds[1].a[3].@href))
+                    //}
                 }  else {
                     unmatchedPattern("Unmatched 4 link pattern", tr, dataModel.label, currentClassName)
                 }
@@ -481,8 +481,9 @@ class OtherDataSetParser {
 
     static boolean alreadyHasContent(DataClass currentClass) {
         return ((currentClass.dataElements && currentClass.dataElements.size() > 0) ||
-                (currentClass.dataClasses && currentClass.dataClasses.size() > 0) ||
-                (currentClass.importedDataElements && currentClass.importedDataElements.size() > 0))
+                (currentClass.dataClasses && currentClass.dataClasses.size() > 0) /* ||
+                (currentClass.importedDataElements && currentClass.importedDataElements.size() > 0) */
+        )
     }
 
 

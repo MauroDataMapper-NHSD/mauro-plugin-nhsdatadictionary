@@ -19,6 +19,7 @@ package uk.nhs.datadictionary.services
 
 import groovy.util.logging.Slf4j
 import io.micronaut.transaction.annotation.Transactional
+import jakarta.inject.Singleton
 import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataModel
@@ -32,9 +33,11 @@ import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.NhsDDCode
 import uk.nhs.datadictionary.NhsDDElement
 import uk.nhs.datadictionary.NhsDataDictionary
+import uk.nhs.datadictionary.utils.DDHelperFunctions
 
 @Slf4j
 @Transactional
+@Singleton
 class AttributeService extends DataDictionaryComponentService<DataElement, NhsDDAttribute> {
 
     ElementService elementService
@@ -107,40 +110,35 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
 
     }
 
-    void persistAttributes(NhsDataDictionary dataDictionary,
-                           Folder dictionaryFolder, DataModel classesDataModel, String currentUserEmailAddress,
+    void createAttributes(NhsDataDictionary dataDictionary,
+                           Folder dictionaryFolder, DataModel classesDataModel,
                            Map<String, Terminology> attributeTerminologiesByName, Map<String, DataClass> attributeClassesByUin, Set<String> attributeUinIsKey) {
 
-        Folder attributeTerminologiesFolder =
-            new Folder(label: "Attribute Terminologies", createdBy: currentUserEmailAddress)
-        dictionaryFolder.addToChildFolders(attributeTerminologiesFolder)
+        Folder attributeTerminologiesFolder = new Folder(label: "Attribute Terminologies")
+        dictionaryFolder.childFolders.add(attributeTerminologiesFolder)
 
-        if (!folderService.validate(attributeTerminologiesFolder)) {
-            throw new MauroApplicationException('NHSDD', 'Invalid model', attributeTerminologiesFolder.errors)
-        }
-        folderService.save(attributeTerminologiesFolder)
-
-        DataType stringDataType = classesDataModel.getPrimitiveTypes().find {it.label == "String"}
+        DataType stringDataType = classesDataModel.dataTypes.find {it.label == "String"}
         if (!stringDataType) {
-            stringDataType = new DataType(label: "String", createdBy: currentUserEmailAddress)
-            classesDataModel.addToDataTypes(stringDataType)
+            stringDataType = new DataType(label: "String", dataTypeKind: DataType.DataTypeKind.PRIMITIVE_TYPE)
+            classesDataModel.dataTypes.add(stringDataType)
         }
         DataClass retiredDataClass = classesDataModel.childDataClasses.find { it.label == "Retired"}
 
         List<Terminology> terminologies = []
         dataDictionary.attributes.each { name, attribute ->
+            System.err.println("${attribute.name} : ${attribute.codes.size()}")
+            attribute.codes.each {
 
+            }
             if (attribute.codes.size() > 0) {
                 Terminology terminology = createAttributeTerminology(
                         name, attribute,
                         attributeTerminologiesFolder,
-                        currentUserEmailAddress,
                         dataDictionary
                 )
                 terminologies.add(terminology)
             }
         }
-        terminologies = terminologyService.saveModelsWithContent(terminologies, 1000)
         attributeTerminologiesByName.putAll(terminologies.collectEntries{ [it.label, it]})
 
         //int idx = 0
@@ -151,17 +149,15 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
                 dataType = createAttributeTerminologyType(
                         name,
                         attributeTerminologiesByName[name],
-                        currentUserEmailAddress,
                         classesDataModel)
             }
 
             DataElement attributeDataElement = new DataElement(
                 label: name,
                 description: attribute.definition,
-                createdBy: currentUserEmailAddress,
                 dataType: dataType)
 
-            addMetadataFromComponent(attributeDataElement, attribute, currentUserEmailAddress)
+            addMetadataFromComponent(attributeDataElement, attribute)
             DataClass parentClass = attributeClassesByUin[attribute.uin]
             if(!parentClass) {
                 if(!attribute.isRetired()) {
@@ -169,16 +165,13 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
                 }
                 parentClass = retiredDataClass
             }
-            parentClass.addToDataElements(attributeDataElement)
+            parentClass.dataElements.add(attributeDataElement)
 
             if(attributeUinIsKey.contains(attribute.uin)) {
-                addToMetadata(attributeDataElement, "isKey", attributeUinIsKey.contains(attribute.uin).toString(), currentUserEmailAddress)
+                addToMetadata(attributeDataElement, "isKey", attributeUinIsKey.contains(attribute.uin).toString())
             }
 
             // Reload all terms into the session
-            attributeTerminologiesByName.each {k, v ->
-                v.terms.size()
-            }
             attribute.catalogueItem = attributeDataElement
         }
 
@@ -190,30 +183,27 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
         }
     }
 
-    Terminology createAttributeTerminology(
+    static Terminology createAttributeTerminology(
             String attributeName,
             NhsDDAttribute attribute,
             Folder attributeTerminologiesFolder,
-            String currentUserEmailAddress,
             NhsDataDictionary dataDictionary
         ) {
 
-        Folder subFolder = DDHelperFunctions.getSubfolderFromName(folderService, attributeTerminologiesFolder, attributeName, currentUserEmailAddress)
+        Folder subFolder = DDHelperFunctions.getSubfolderFromName(attributeTerminologiesFolder, attributeName)
         // attributeTerminologiesFolder.save()
 
         Terminology terminology = new Terminology(
                 label: attributeName,
                 folder: subFolder,
-                createdBy: currentUserEmailAddress,
-                authority: authorityService.defaultAuthority,
                 branchName: dataDictionary.branchName)
-        terminology.addToMetadata(new Metadata(namespace: "uk.nhs.datadictionary.terminology", key: "version", value: attribute.codesVersion))
+        subFolder.terminologies.add(terminology)
+        terminology.metadata.add(new Metadata(namespace: "uk.nhs.datadictionary.terminology", key: "version", value: attribute.codesVersion))
 
         attribute.codes.each { code ->
             Term term = new Term(
                     code: code.code,
                     definition: code.definition,
-                    createdBy: currentUserEmailAddress,
                     label: "${code.code} : ${code.definition}",
                     depth: 1,
                     terminology: terminology
@@ -221,31 +211,24 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
 
             code.propertiesAsMap().each { key, value ->
                 if (value) {
-                    term.addToMetadata(new Metadata(namespace: "uk.nhs.datadictionary.term",
+                    term.metadata.add(new Metadata(namespace: "uk.nhs.datadictionary.term",
                             key: key,
-                            value: value,
-                            createdBy: currentUserEmailAddress))
+                            value: value))
                 }
             }
-            terminology.addToTerms(term)
-
-        }
-        if (!terminologyService.validate(terminology)) {
-            GormUtils.outputDomainErrors(messageSource, terminology) // TODO throw exception???
-            log.error("Cannot save terminology: ${attributeName}")
+            terminology.terms.add(term)
         }
 
         //nhsDataDictionary.attributeTerminologiesByName[name] = terminology
         return terminology
     }
 
-    DataType createAttributeTerminologyType(String name, Terminology terminology, String currentUserEmailAddress, DataModel classesDataModel) {
+    static DataType createAttributeTerminologyType(String name, Terminology terminology, DataModel classesDataModel) {
         DataType dataType = new DataType(label: "${name} Attribute Type",
                 modelResourceDomainType: terminology.getDomainType(),
                 modelResourceId: terminology.id,
-                dataTypeKind: DataType.DataTypeKind.MODEL_TYPE,
-                createdBy: currentUserEmailAddress)
-        classesDataModel.addToDataTypes(dataType)
+                dataTypeKind: DataType.DataTypeKind.MODEL_TYPE)
+        classesDataModel.dataTypes.add(dataType)
         return dataType
     }
 

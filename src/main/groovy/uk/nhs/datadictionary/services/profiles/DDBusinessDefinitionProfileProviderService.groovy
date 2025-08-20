@@ -30,7 +30,7 @@ class DDBusinessDefinitionProfileProviderService extends JsonBasedProfile {
 
     @Override
     String getJsonFileName() {
-        return 'businessDefinitionProfile.json'
+        return 'profiles/businessDefinitionProfile.json'
     }
 
     @Override

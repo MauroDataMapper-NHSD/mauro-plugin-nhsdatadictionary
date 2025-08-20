@@ -19,6 +19,7 @@ package uk.nhs.datadictionary.services
 
 import groovy.util.logging.Slf4j
 import io.micronaut.transaction.annotation.Transactional
+import jakarta.inject.Singleton
 import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.terminology.Term
@@ -27,7 +28,7 @@ import uk.nhs.datadictionary.NhsDDBusinessDefinition
 import uk.nhs.datadictionary.NhsDataDictionary
 
 @Slf4j
-@Transactional
+@Singleton
 class BusinessDefinitionService extends DataDictionaryComponentService<Term, NhsDDBusinessDefinition> {
 
     NhsDataDictionaryService nhsDataDictionaryService
@@ -68,16 +69,13 @@ class BusinessDefinitionService extends DataDictionaryComponentService<Term, Nhs
         return businessDefinition
     }
 
-    void persistBusinessDefinitions(NhsDataDictionary dataDictionary,
-                                    Folder dictionaryFolder, String currentUserEmailAddress) {
+    void persistBusinessDefinitions(NhsDataDictionary dataDictionary, Folder dictionaryFolder) {
 
         Terminology terminology = new Terminology(
             label: NhsDataDictionary.BUSINESS_DEFINITIONS_TERMINOLOGY_NAME,
             folder: dictionaryFolder,
-            createdBy: currentUserEmailAddress,
-            authority: authorityService.defaultAuthority,
             branchName: dataDictionary.branchName)
-
+        dictionaryFolder.terminologies.add(terminology)
         TreeMap<String, Term> allTerms = new TreeMap<>()
         dataDictionary.businessDefinitions.each {name, businessDefinition ->
 
@@ -93,25 +91,17 @@ class BusinessDefinitionService extends DataDictionaryComponentService<Term, Nhs
                     // Leave Url blank for now
                     // url: businessDefinition.otherProperties["ddUrl"].replaceAll(" ", "%20"),
                     description: businessDefinition.definition,
-                    createdBy: currentUserEmailAddress,
                     depth: 1,
                     terminology: terminology)
 
-                addMetadataFromComponent(term, businessDefinition, currentUserEmailAddress)
+                addMetadataFromComponent(term, businessDefinition)
 
                 allTerms[name] = term
             }
         }
         allTerms.values().each { term ->
-            terminology.addToTerms(term)
+            terminology.terms.add(term)
         }
-
-        if (terminologyService.validate(terminology)) {
-            terminology = terminologyService.saveModelWithContent(terminology)
-        } else {
-            GormUtils.outputDomainErrors(messageSource, terminology) // TODO throw exception???
-        }
-
 
     }
 

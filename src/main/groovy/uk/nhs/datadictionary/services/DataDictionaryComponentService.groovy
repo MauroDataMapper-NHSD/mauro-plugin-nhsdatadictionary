@@ -20,6 +20,7 @@ package uk.nhs.datadictionary.services
 import groovy.util.logging.Slf4j
 import io.micronaut.transaction.annotation.Transactional
 import jakarta.inject.Inject
+import jakarta.inject.Singleton
 import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataModel
@@ -28,6 +29,7 @@ import org.maurodata.domain.facet.Edit
 import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.model.AdministeredItem
+import org.maurodata.domain.model.Item
 import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
 import org.maurodata.domain.terminology.TerminologyService
@@ -44,12 +46,8 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 @Slf4j
-@Transactional
+@Singleton
 abstract class DataDictionaryComponentService<T extends AdministeredItem, D extends NhsDataDictionaryComponent> {
-
-    @Inject
-    NhsDataDictionaryService nhsDataDictionaryService
-
 
     List<T> index(UUID versionedFolderId, boolean includeRetired = false) {
         (getAll(versionedFolderId, includeRetired) as List).sort {it.label}
@@ -313,21 +311,19 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
         //"valueSet": "value-set",
     ]
 
-    void addMetadataFromComponent(T domainObject, NhsDataDictionaryComponent component, String currentUserEmailAddress) {
+    void addMetadataFromComponent(Item domainObject, NhsDataDictionaryComponent component) {
         component.otherProperties.each {key, value ->
             if(!NhsDataDictionary.KEYS_FOR_INGEST_ONLY.contains(key))
-            addToMetadata(domainObject, key, value, currentUserEmailAddress)
+            addToMetadata(domainObject, key, value)
         }
     }
 
 
-    void addToMetadata(AdministeredItem domainObject, String key, String value, String currentUserEmailAddress) {
-
+    void addToMetadata(Item domainObject, String key, String value) {
         if (value) {
-            domainObject.addToMetadata(new Metadata(namespace: getMetadataNamespace(),
+            domainObject.metadata.add(new Metadata(namespace: getMetadataNamespace(),
                                                     key: key,
-                                                    value: value,
-                                                    createdBy: currentUserEmailAddress))
+                                                    value: value))
         }
     }
 
@@ -460,21 +456,17 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
         return codes
     }
 
-    Folder getFolderAtPath(Folder sourceFolder, List<String> path, String createdByEmail) {
+    Folder getFolderAtPath(Folder sourceFolder, List<String> path) {
         if (path.size() == 0) {
             return sourceFolder
         } else {
             String nextFolderName = path.remove(0)
             Folder nextFolder = sourceFolder.childFolders.find {it.label == nextFolderName}
             if (!nextFolder) {
-                nextFolder = new Folder(label: nextFolderName, createdBy: createdByEmail)
-                sourceFolder.addToChildFolders(nextFolder)
-                if (!folderService.validate(nextFolder)) {
-                    throw new MauroApplicationException('NHSDD', 'Invalid model', nextFolder.errors)
-                }
-                folderService.save(nextFolder)
+                nextFolder = new Folder(label: nextFolderName)
+                sourceFolder.childFolders.add(nextFolder)
             }
-            return getFolderAtPath(nextFolder, path, createdByEmail)
+            return getFolderAtPath(nextFolder, path)
 
         }
 

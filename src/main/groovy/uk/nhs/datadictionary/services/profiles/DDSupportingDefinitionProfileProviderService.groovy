@@ -30,7 +30,7 @@ class DDSupportingDefinitionProfileProviderService extends JsonBasedProfile {
 
     @Override
     String getJsonFileName() {
-        return 'supportingDefinitionProfile.json'
+        return 'profiles/supportingDefinitionProfile.json'
     }
 
     @Override
