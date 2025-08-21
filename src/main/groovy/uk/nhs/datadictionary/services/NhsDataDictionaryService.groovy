@@ -233,14 +233,12 @@ class NhsDataDictionaryService {
         return original.id
     }
 
-    def branches(/*UserSecurityPolicyManager userSecurityPolicyManager */) {
-        List<Folder> versionedFolders = VersionedFolder.findAll().findAll {
+    List<Folder> branches(/*UserSecurityPolicyManager userSecurityPolicyManager */) {
+        folderCacheableRepository.readAll().findAll {
             it.label.startsWith("NHS Data Dictionary")
         }
-        if(versionedFolders.size() == 0) {
-            return []
-        }
 
+/*
         Folder oldestAncestor = versionedFolderService.findOldestAncestor(versionedFolders[0])
 
         // List<VersionTreeModel>
@@ -252,6 +250,7 @@ class NhsDataDictionaryService {
             false,
             userSecurityPolicyManager)
         return versionTreeModelList
+*/
     }
 
     List<IntegrityCheck> integrityChecks(UUID versionedFolderId) {

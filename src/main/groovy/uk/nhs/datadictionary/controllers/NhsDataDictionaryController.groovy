@@ -17,19 +17,27 @@
  */
 package uk.nhs.datadictionary.controllers
 
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import groovy.xml.XmlParser
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+import io.micronaut.security.annotation.Secured
+import io.micronaut.security.rules.SecurityRule
 import io.micronaut.transaction.annotation.Transactional
+import jakarta.inject.Inject
+import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.security.CatalogueUser
 import uk.nhs.datadictionary.DataDictionaryImportParameters
 import uk.nhs.datadictionary.services.NhsDataDictionaryService
 
+//@CompileStatic
+@Controller()
+@Secured(SecurityRule.IS_AUTHENTICATED)
 @Slf4j
 class NhsDataDictionaryController {
 
-    // For ingest
-    static XmlParser xmlParser = new XmlParser(false, false)
-
+    @Inject
     NhsDataDictionaryService nhsDataDictionaryService
 
     @Transactional
@@ -49,8 +57,9 @@ class NhsDataDictionaryController {
         respond nhsDataDictionaryService.previewChangePaper(versionedFolderId, includeDataSets)
     }
 
-    def branches() {
-        respond nhsDataDictionaryService.branches(currentUserSecurityPolicyManager)
+    @Get('/nhsdd/branches')
+    List<Folder> branches() {
+        nhsDataDictionaryService.branches()
     }
 
     def statistics() {
