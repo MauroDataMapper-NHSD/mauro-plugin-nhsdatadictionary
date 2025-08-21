@@ -213,7 +213,7 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
                         addMetadataForLink(classLink, sourceDataElement)
                         addToMetadata(sourceDataElement, NhsDDClassLink.IS_KEY_METADATA_KEY, classLink.isPartOfSupplierKey().toString())
                         addToMetadata(sourceDataElement, NhsDDClassLink.IS_CHOICE_METADATA_KEY, classLink.hasRelationClientExclusivity().toString())
-                        addToMetadata(sourceDataElement, NhsDDClassLink.DIRECTION_METADATA_KEY, NhsDDClassLink.CLIENT_DIRECTION)
+                        //addToMetadata(sourceDataElement, NhsDDClassLink.DIRECTION_METADATA_KEY, NhsDDClassLink.CLIENT_DIRECTION)
                         thisDataClass.dataElements.add(sourceDataElement)
 
                         String targetLabel = classLink.supplierRole
@@ -229,7 +229,7 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
                         addMetadataForLink(classLink, targetDataElement)
                         addToMetadata(targetDataElement, NhsDDClassLink.IS_KEY_METADATA_KEY, classLink.isPartOfClientKey().toString())
                         addToMetadata(targetDataElement, NhsDDClassLink.IS_CHOICE_METADATA_KEY, classLink.hasRelationSupplierExclusivity().toString())
-                        addToMetadata(targetDataElement, NhsDDClassLink.DIRECTION_METADATA_KEY, NhsDDClassLink.SUPPLIER_DIRECTION)
+                        //addToMetadata(targetDataElement, NhsDDClassLink.DIRECTION_METADATA_KEY, NhsDDClassLink.SUPPLIER_DIRECTION)
                         targetDataClass.dataElements.add(targetDataElement)
                     }
                 } else if (classLink.metaclass == "Generalization20") {

@@ -1,186 +1,188 @@
-[
-  {
-    "sectionName": "Publication Status",
-    "sectionDescription": "These fields control the publication status of the item",
-    "fields": [
-      {
-        "fieldName": "Valid From",
-        "metadataPropertyName": "validFrom",
-        "description": "The start date from which this item is valid",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "date"
-      },
-      {
-        "fieldName": "Valid To",
-        "metadataPropertyName": "validTo",
-        "description": "The end date until this item is invalid",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "date"
-      },
-      {
-        "fieldName": "Is preparatory",
-        "metadataPropertyName": "isPreparatory",
-        "description": "Whether this item is preparatory or not",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "boolean"
-      },
-      {
-        "fieldName": "Is retired",
-        "metadataPropertyName": "isRetired",
-        "description": "Whether this item is retired or not",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "boolean"
-      },
-      {
-        "fieldName": "Retired date",
-        "metadataPropertyName": "retiredDate",
-        "description": "The date on which this item was retired.  ",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      }
-    ]
-  },
-  {
-    "sectionName": "Headings and descriptions",
-    "sectionDescription": "These fields allow additional headings and descriptions for publication",
-    "fields": [
-      {
-        "fieldName": "Title Case Name",
-        "metadataPropertyName": "titleCaseName",
-        "description": "The name of this item with correct character casing",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      },
-      {
-        "fieldName": "Short Description",
-        "metadataPropertyName": "shortDescription",
-        "description": "The short summary description for this item",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "text"
-      },
-      {
-        "fieldName": "Website Page Heading",
-        "metadataPropertyName": "websitePageHeading",
-        "description": "The heading of the website page for this item",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      }
-    ]
-  },
-  {
-    "sectionName": "Aliases",
-    "sectionDescription": "Other names that this item may be known by",
-    "fields": [
-      {
-        "fieldName": "ShortName",
-        "metadataPropertyName": "aliasShortName",
-        "description": "The short name of this item",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      },
-      {
-        "fieldName": "Also known as",
-        "metadataPropertyName": "aliasAlsoKnownAs",
-        "description": "Any other name this item may also be known as",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      },
-      {
-        "fieldName": "Plural",
-        "metadataPropertyName": "aliasPlural",
-        "description": "The plural name of this item",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      },
-      {
-        "fieldName": "Formerly",
-        "metadataPropertyName": "aliasFormerly",
-        "description": "Any name this item has been formerly known as",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      },
-      {
-        "fieldName": "Full name",
-        "metadataPropertyName": "aliasFullName",
-        "description": "The full name of this item",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      },
-      {
-        "fieldName": "Index name",
-        "metadataPropertyName": "aliasIndexName",
-        "description": "The name of this item as it appears in the index",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      },
-      {
-        "fieldName": "No aliases required",
-        "metadataPropertyName": "noAliasesRequired",
-        "description": "No other names are applicable or appropriate for this item",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "boolean"
-      }
-    ]
-  },
-  {
-    "sectionName": "Legacy fields",
-    "sectionDescription": "Properties relating to the definitions in previous tooling, or used as part of the original ingest process",
-    "fields": [
-      {
-        "fieldName": "UIN",
-        "metadataPropertyName": "uin",
-        "description": "The unique identifier of this modeled content in Borland Together",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      },
-      {
-        "fieldName": "Base Version",
-        "metadataPropertyName": "baseVersion",
-        "description": "The version as described in Together",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      },
-      {
-        "fieldName": "Base URI",
-        "metadataPropertyName": "baseUri",
-        "description": "The path where this item was stored on disk during the ingest process",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      },
-      {
-        "fieldName": "Ultimate Path",
-        "metadataPropertyName": "ultimatePath",
-        "description": "The URL of this item in the V3 data dictionary",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      },
-      {
-        "fieldName": "DD URL",
-        "metadataPropertyName": "ddUrl",
-        "description": "The 'intended' URL of this item in the V3+ Data Dictionary",
-        "maxMultiplicity": 1,
-        "minMultiplicity": 0,
-        "dataType": "string"
-      }
-    ]
-  }
-]
+{
+  "sections": [
+    {
+      "sectionName": "Publication Status",
+      "sectionDescription": "These fields control the publication status of the item",
+      "fields": [
+        {
+          "fieldName": "Valid From",
+          "metadataPropertyName": "validFrom",
+          "description": "The start date from which this item is valid",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "date"
+        },
+        {
+          "fieldName": "Valid To",
+          "metadataPropertyName": "validTo",
+          "description": "The end date until this item is invalid",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "date"
+        },
+        {
+          "fieldName": "Is preparatory",
+          "metadataPropertyName": "isPreparatory",
+          "description": "Whether this item is preparatory or not",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "boolean"
+        },
+        {
+          "fieldName": "Is retired",
+          "metadataPropertyName": "isRetired",
+          "description": "Whether this item is retired or not",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "boolean"
+        },
+        {
+          "fieldName": "Retired date",
+          "metadataPropertyName": "retiredDate",
+          "description": "The date on which this item was retired.  ",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        }
+      ]
+    },
+    {
+      "sectionName": "Headings and descriptions",
+      "sectionDescription": "These fields allow additional headings and descriptions for publication",
+      "fields": [
+        {
+          "fieldName": "Title Case Name",
+          "metadataPropertyName": "titleCaseName",
+          "description": "The name of this item with correct character casing",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        },
+        {
+          "fieldName": "Short Description",
+          "metadataPropertyName": "shortDescription",
+          "description": "The short summary description for this item",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "text"
+        },
+        {
+          "fieldName": "Website Page Heading",
+          "metadataPropertyName": "websitePageHeading",
+          "description": "The heading of the website page for this item",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        }
+      ]
+    },
+    {
+      "sectionName": "Aliases",
+      "sectionDescription": "Other names that this item may be known by",
+      "fields": [
+        {
+          "fieldName": "ShortName",
+          "metadataPropertyName": "aliasShortName",
+          "description": "The short name of this item",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        },
+        {
+          "fieldName": "Also known as",
+          "metadataPropertyName": "aliasAlsoKnownAs",
+          "description": "Any other name this item may also be known as",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        },
+        {
+          "fieldName": "Plural",
+          "metadataPropertyName": "aliasPlural",
+          "description": "The plural name of this item",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        },
+        {
+          "fieldName": "Formerly",
+          "metadataPropertyName": "aliasFormerly",
+          "description": "Any name this item has been formerly known as",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        },
+        {
+          "fieldName": "Full name",
+          "metadataPropertyName": "aliasFullName",
+          "description": "The full name of this item",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        },
+        {
+          "fieldName": "Index name",
+          "metadataPropertyName": "aliasIndexName",
+          "description": "The name of this item as it appears in the index",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        },
+        {
+          "fieldName": "No aliases required",
+          "metadataPropertyName": "noAliasesRequired",
+          "description": "No other names are applicable or appropriate for this item",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "boolean"
+        }
+      ]
+    },
+    {
+      "sectionName": "Legacy fields",
+      "sectionDescription": "Properties relating to the definitions in previous tooling, or used as part of the original ingest process",
+      "fields": [
+        {
+          "fieldName": "UIN",
+          "metadataPropertyName": "uin",
+          "description": "The unique identifier of this modeled content in Borland Together",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        },
+        {
+          "fieldName": "Base Version",
+          "metadataPropertyName": "baseVersion",
+          "description": "The version as described in Together",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        },
+        {
+          "fieldName": "Base URI",
+          "metadataPropertyName": "baseUri",
+          "description": "The path where this item was stored on disk during the ingest process",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        },
+        {
+          "fieldName": "Ultimate Path",
+          "metadataPropertyName": "ultimatePath",
+          "description": "The URL of this item in the V3 data dictionary",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        },
+        {
+          "fieldName": "DD URL",
+          "metadataPropertyName": "ddUrl",
+          "description": "The 'intended' URL of this item in the V3+ Data Dictionary",
+          "maxMultiplicity": 1,
+          "minMultiplicity": 0,
+          "dataType": "string"
+        }
+      ]
+    }
+  ]
+}

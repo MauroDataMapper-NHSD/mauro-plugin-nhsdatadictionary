@@ -18,11 +18,15 @@
 package uk.nhs.datadictionary.services.profiles
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import jakarta.inject.Singleton
 import org.maurodata.profile.JsonBasedProfile
 import uk.nhs.datadictionary.NhsDataDictionary
 
 @Slf4j
+@Singleton
+@CompileStatic
 class DDDataSetTableProfileProviderService extends JsonBasedProfile {
 
     DDDataSetTableProfileProviderService(ObjectMapper objectMapper) {

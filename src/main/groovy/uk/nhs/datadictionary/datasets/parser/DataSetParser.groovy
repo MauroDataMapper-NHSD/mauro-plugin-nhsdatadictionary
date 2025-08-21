@@ -161,7 +161,7 @@ class DataSetParser {
         }
         dataClasses.eachWithIndex {dataClass, index ->
             dataModel.childDataClasses.add(dataClass)
-            setOrder(dataClass, index + 1)
+            //setOrder(dataClass, index + 1)
         }
         fixPotentialDuplicates(dataModel)
     }
@@ -257,8 +257,14 @@ class DataSetParser {
         if(!item) {
             log.error("Setting order on null element!")
         } else {
-            item.metadata.add(new Metadata(namespace: getDataSetNamespace(item),
-                        key: NhsDataDictionary.DATASET_TABLE_KEY_WEB_ORDER, value: order.toString()))
+            if(item.metadata.find {
+                it.key == NhsDataDictionary.DATASET_TABLE_KEY_WEB_ORDER
+            }) {
+                throw new Exception("Duplicate web order set!")
+            } else {
+                item.metadata.add(new Metadata(namespace: getDataSetNamespace(item),
+                            key: NhsDataDictionary.DATASET_TABLE_KEY_WEB_ORDER, value: order.toString()))
+            }
         }
     }
 
@@ -316,9 +322,15 @@ class DataSetParser {
         if(!item) {
             log.error("Setting data set reference on null element!")
         } else {
-            item.metadata.add(
-                new Metadata(namespace: getDataSetNamespace(item),
-                     key: NhsDataDictionary.DATASET_TABLE_KEY_DATA_SET_REFERENCE, value: "true"))
+            if(item.metadata.find {
+                it.key == NhsDataDictionary.DATASET_TABLE_KEY_DATA_SET_REFERENCE
+            }) {
+                throw new Exception("Duplicate data set reference set!")
+            } else {
+                item.metadata.add(
+                    new Metadata(namespace: getDataSetNamespace(item),
+                                 key: NhsDataDictionary.DATASET_TABLE_KEY_DATA_SET_REFERENCE, value: "true"))
+            }
         }
     }
 
@@ -364,9 +376,15 @@ class DataSetParser {
         if(!item) {
             log.error("Setting MRO on null element!")
         } else {
-            item.metadata.add(
-                new Metadata(namespace: getDataSetNamespace(item),
-                     key: NhsDataDictionary.DATASET_TABLE_KEY_MRO, value: mandationFromMRO(parsePossibleParagraphs(mro))))
+            if(item.metadata.find {
+                it.key == NhsDataDictionary.DATASET_TABLE_KEY_MRO
+            }) {
+                throw new Exception("Duplicate mandation set!")
+            } else {
+                item.metadata.add(
+                    new Metadata(namespace: getDataSetNamespace(item),
+                                 key: NhsDataDictionary.DATASET_TABLE_KEY_MRO, value: mandationFromMRO(parsePossibleParagraphs(mro))))
+            }
         }
     }
 
@@ -411,9 +429,15 @@ class DataSetParser {
         if(!item) {
             log.error("Setting group repeats on null element!")
         } else {
-            item.metadata.add(new Metadata(namespace: getDataSetNamespace(item),
-                    key: NhsDataDictionary.DATASET_TABLE_KEY_GROUP_REPEATS,
-                    value: parsePossibleParagraphs(groupRepeats)))
+            if(item.metadata.find {
+                it.key == NhsDataDictionary.DATASET_TABLE_KEY_GROUP_REPEATS
+            }) {
+                throw new Exception("Duplicate group repeats set!")
+            } else {
+                item.metadata.add(new Metadata(namespace: getDataSetNamespace(item),
+                                               key: NhsDataDictionary.DATASET_TABLE_KEY_GROUP_REPEATS,
+                                               value: parsePossibleParagraphs(groupRepeats)))
+            }
         }
     }
 
@@ -568,12 +592,14 @@ class DataSetParser {
 
             dataElement = new DataElement(label: DDHelperFunctions.tidyLabel(anchor.text()), dataType: dataType)
             currentClass.dataElements.add(dataElement)
+/*
             SemanticLink semanticLink = new SemanticLink(
                 targetMultiFacetAwareItemId: originalDataElement.id,
                 targetMultiFacetAwareItemDomainType: DataElement,
                 linkType: SemanticLinkType.REFINES,
                 )
             dataElement.semanticLinks.add(semanticLink)
+ */
         }
         return dataElement
     }

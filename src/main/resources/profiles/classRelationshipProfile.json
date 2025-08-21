@@ -1,143 +1,148 @@
-[
-  {
-    "sectionName": "Relationship Properties",
-    "sectionDescription": "These fields control the properties for the class relationship",
-    "fields": [
-      {
-        "fieldName": "Is key",
-        "metadataPropertyName": "isKey",
-        "description": "States whether this is a key relationship.",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "boolean"
-      },
-      {
-        "fieldName": "Is choice",
-        "metadataPropertyName": "isChoice",
-        "description": "States whether this relationship is a choice between another relationship. If checked, this results in an 'or' wording of the relationship description.",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "boolean"
-      }
-    ]
-  },
-  {
-    "sectionName": "Legacy fields",
-    "sectionDescription": "Properties relating to the definitions in previous tooling, or used as part of the original ingest process",
-    "fields": [
-      {
-        "fieldName": "Direction",
-        "metadataPropertyName": "direction",
-        "description": "The direction of this relationship",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "enumeration",
-        "allowedValues": ["client", "supplier"]
-      },
-      {
-        "fieldName": "Supplier Role",
-        "metadataPropertyName": "supplierRole",
-        "description": "The role of the supplier in this relationship. e.g. If the supplier is ACTIVITY which relates to ADDRESS and a direction of 'supplier', the supplier role may be 'located at'.",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      },
-      {
-        "fieldName": "Supplier UIN",
-        "metadataPropertyName": "supplierUin",
-        "description": "The unique identifier of the supplier in this relationship",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      },
-      {
-        "fieldName": "Supplier Cardinality",
-        "metadataPropertyName": "supplierCardinality",
-        "description": "The cardinality of the supplier in this relationship. e.g. a single value like '1', or a cardinality like '0..*'",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      },
-      {
-        "fieldName": "Part of Supplier Key",
-        "metadataPropertyName": "partOfSupplierKey",
-        "description": "States whether this is a key from the supplier.",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "boolean"
-      },
-      {
-        "fieldName": "Relation Supplier Exclusivity",
-        "metadataPropertyName": "relationSupplierExclusivity",
-        "description": "The exclusivity of the supplier in this relationship",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      },
-      {
-        "fieldName": "Client Role",
-        "metadataPropertyName": "clientRole",
-        "description": "The role of the client in this relationship. e.g. If the client is ADDRESS which is used in ACTIVITY and a direction of 'supplier', the client role may be 'the location for'.'",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      },
-      {
-        "fieldName": "Client UIN",
-        "metadataPropertyName": "clientUin",
-        "description": "The unique identifier of the client in this relationship",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      },
-      {
-        "fieldName": "Client Cardinality",
-        "metadataPropertyName": "clientCardinality",
-        "description": "The cardinality of the client in this relationship. e.g. a single value like '1', or a cardinality like '0..*'",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      },
-      {
-        "fieldName": "Part of Client Key",
-        "metadataPropertyName": "partOfClientKey",
-        "description": "States whether this is a key from the client.",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "boolean"
-      },
-      {
-        "fieldName": "Relation Client Exclusivity",
-        "metadataPropertyName": "relationClientExclusivity",
-        "description": "The exclusivity of the client in this relationship",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      },
-      {
-        "fieldName": "UIN",
-        "metadataPropertyName": "uin",
-        "description": "The unique identifier of this modeled content in Borland Together",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      },
-      {
-        "fieldName": "Name from Borland Together",
-        "metadataPropertyName": "name",
-        "description": "The name of this modeled content in Borland Together",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      },
-      {
-        "fieldName": "Metaclass",
-        "metadataPropertyName": "metaclass",
-        "description": "The metaclass of this modeled content",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      }
-    ]
-  }
-]
+{
+  "sections": [
+    {
+      "sectionName": "Relationship Properties",
+      "sectionDescription": "These fields control the properties for the class relationship",
+      "fields": [
+        {
+          "fieldName": "Is key",
+          "metadataPropertyName": "isKey",
+          "description": "States whether this is a key relationship.",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "boolean"
+        },
+        {
+          "fieldName": "Is choice",
+          "metadataPropertyName": "isChoice",
+          "description": "States whether this relationship is a choice between another relationship. If checked, this results in an 'or' wording of the relationship description.",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "boolean"
+        }
+      ]
+    },
+    {
+      "sectionName": "Legacy fields",
+      "sectionDescription": "Properties relating to the definitions in previous tooling, or used as part of the original ingest process",
+      "fields": [
+        {
+          "fieldName": "Direction",
+          "metadataPropertyName": "direction",
+          "description": "The direction of this relationship",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "enumeration",
+          "allowedValues": [
+            "client",
+            "supplier"
+          ]
+        },
+        {
+          "fieldName": "Supplier Role",
+          "metadataPropertyName": "supplierRole",
+          "description": "The role of the supplier in this relationship. e.g. If the supplier is ACTIVITY which relates to ADDRESS and a direction of 'supplier', the supplier role may be 'located at'.",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        },
+        {
+          "fieldName": "Supplier UIN",
+          "metadataPropertyName": "supplierUin",
+          "description": "The unique identifier of the supplier in this relationship",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        },
+        {
+          "fieldName": "Supplier Cardinality",
+          "metadataPropertyName": "supplierCardinality",
+          "description": "The cardinality of the supplier in this relationship. e.g. a single value like '1', or a cardinality like '0..*'",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        },
+        {
+          "fieldName": "Part of Supplier Key",
+          "metadataPropertyName": "partOfSupplierKey",
+          "description": "States whether this is a key from the supplier.",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "boolean"
+        },
+        {
+          "fieldName": "Relation Supplier Exclusivity",
+          "metadataPropertyName": "relationSupplierExclusivity",
+          "description": "The exclusivity of the supplier in this relationship",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        },
+        {
+          "fieldName": "Client Role",
+          "metadataPropertyName": "clientRole",
+          "description": "The role of the client in this relationship. e.g. If the client is ADDRESS which is used in ACTIVITY and a direction of 'supplier', the client role may be 'the location for'.'",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        },
+        {
+          "fieldName": "Client UIN",
+          "metadataPropertyName": "clientUin",
+          "description": "The unique identifier of the client in this relationship",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        },
+        {
+          "fieldName": "Client Cardinality",
+          "metadataPropertyName": "clientCardinality",
+          "description": "The cardinality of the client in this relationship. e.g. a single value like '1', or a cardinality like '0..*'",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        },
+        {
+          "fieldName": "Part of Client Key",
+          "metadataPropertyName": "partOfClientKey",
+          "description": "States whether this is a key from the client.",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "boolean"
+        },
+        {
+          "fieldName": "Relation Client Exclusivity",
+          "metadataPropertyName": "relationClientExclusivity",
+          "description": "The exclusivity of the client in this relationship",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        },
+        {
+          "fieldName": "UIN",
+          "metadataPropertyName": "uin",
+          "description": "The unique identifier of this modeled content in Borland Together",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        },
+        {
+          "fieldName": "Name from Borland Together",
+          "metadataPropertyName": "name",
+          "description": "The name of this modeled content in Borland Together",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        },
+        {
+          "fieldName": "Metaclass",
+          "metadataPropertyName": "metaclass",
+          "description": "The metaclass of this modeled content",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        }
+      ]
+    }
+  ]
+}

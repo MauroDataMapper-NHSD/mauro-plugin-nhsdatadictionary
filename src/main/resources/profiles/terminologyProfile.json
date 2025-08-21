@@ -1,61 +1,64 @@
-[
-  {
-    "sectionName": "Publication Status",
-    "sectionDescription": "These fields control the publication status of the item",
-    "fields": [
-      {
-        "fieldName": "Valid From",
-        "metadataPropertyName": "validFrom",
-        "description": "The start date from which this item is valid",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "date"
-      },
-      {
-        "fieldName": "Valid To",
-        "metadataPropertyName": "validTo",
-        "description": "The end date until this item is invalid",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "date"
-      },
-      {
-        "fieldName": "Is preparatory",
-        "metadataPropertyName": "isPreparatory",
-        "description": "Whether this item is preparatory or not",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "boolean"
-      },
-      {
-        "fieldName": "Is retired",
-        "metadataPropertyName": "isRetired",
-        "description": "Whether this item is retired or not",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "boolean"
-      },
-      {
-        "fieldName": "Retired date",
-        "metadataPropertyName": "retiredDate",
-        "description": "The date on which this item was retired.  ",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      }
-    ]},
-  {
-    "sectionName": "Basic Properties",
-    "sectionDescription": "Basic Properties",
-    "fields": [
-      {
-        "fieldName": "Version",
-        "metadataPropertyName": "version",
-        "description": "",
-        "minMultiplicity": 0,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      }
-    ]
-  }
-]
+{
+  "sections": [
+    {
+      "sectionName": "Publication Status",
+      "sectionDescription": "These fields control the publication status of the item",
+      "fields": [
+        {
+          "fieldName": "Valid From",
+          "metadataPropertyName": "validFrom",
+          "description": "The start date from which this item is valid",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "date"
+        },
+        {
+          "fieldName": "Valid To",
+          "metadataPropertyName": "validTo",
+          "description": "The end date until this item is invalid",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "date"
+        },
+        {
+          "fieldName": "Is preparatory",
+          "metadataPropertyName": "isPreparatory",
+          "description": "Whether this item is preparatory or not",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "boolean"
+        },
+        {
+          "fieldName": "Is retired",
+          "metadataPropertyName": "isRetired",
+          "description": "Whether this item is retired or not",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "boolean"
+        },
+        {
+          "fieldName": "Retired date",
+          "metadataPropertyName": "retiredDate",
+          "description": "The date on which this item was retired.  ",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        }
+      ]
+    },
+    {
+      "sectionName": "Basic Properties",
+      "sectionDescription": "Basic Properties",
+      "fields": [
+        {
+          "fieldName": "Version",
+          "metadataPropertyName": "version",
+          "description": "",
+          "minMultiplicity": 0,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        }
+      ]
+    }
+  ]
+}

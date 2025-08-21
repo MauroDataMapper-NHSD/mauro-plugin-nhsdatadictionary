@@ -1,106 +1,108 @@
-[
-  {
-    "sectionName": "Details",
-    "sectionDescription": "Details about the Change Request, Patch, or DDCN",
-    "fields": [
-      {
-        "fieldName": "Type",
-        "metadataPropertyName": "type",
-        "description": "The type of the change: change request; patch or data dictionary change notice",
-        "minMultiplicity": 1,
-        "maxMultiplicity": 1,
-        "dataType": "enumeration",
-        "allowedValues": [
-          "Change Request",
-          "Patch",
-          "Data Dictionary Change Notice"
-        ]
-      },
-      {
-        "fieldName": "Reference",
-        "metadataPropertyName": "reference",
-        "description": "The reference for the change",
-        "minMultiplicity": 1,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      },
-      {
-        "fieldName": "Version No.",
-        "metadataPropertyName": "versionNo",
-        "description": "The version number of the change",
-        "minMultiplicity": 1,
-        "maxMultiplicity": 1,
-        "dataType": "string",
-        "defaultValue": "1.0"
-      },
-      {
-        "fieldName": "Subject",
-        "metadataPropertyName": "subject",
-        "description": "The subject of the change",
-        "minMultiplicity": 1,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      },
-      {
-        "fieldName": "Effective Date",
-        "metadataPropertyName": "effectiveDate",
-        "description": "The date from which these changes are effective",
-        "minMultiplicity": 1,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      },
-      {
-        "fieldName": "Reason for Change",
-        "metadataPropertyName": "reasonForChange",
-        "description": "The reason for the change",
-        "minMultiplicity": 1,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      }
-    ]
-  },
-  {
-    "sectionName": "Background",
-    "sectionDescription": "Background text",
-    "fields": [
-      {
-        "fieldName": "Background text",
-        "metadataPropertyName": "backgroundText",
-        "description": "The background to the change",
-        "minMultiplicity": 1,
-        "maxMultiplicity": 1,
-        "dataType": "text",
-        "defaultValue": "<p>This Change Request adds the ???? Data Set and supporting definitions to the NHS Data Model and Dictionary to support the Information Standard.</p><p>A short demonstration is available which describes \"How to Read an NHS Data Model and Dictionary Change Request\", in an easy to understand screen capture including a voice over and readable captions. This demonstration can be viewed at: <a href=\"https://datadictionary.nhs.uk/elearning/change_request/index.html\">https://datadictionary.nhs.uk/elearning/change_request/index.html</a>.</p><p>Note: if the web page does not open, please copy the link and paste into the web browser. A guide to how to use the demonstration can be found at: <a href=\"https://datadictionary.nhs.uk/help/demonstrations.html\">Demonstrations</a>.</p>"
-      }
-    ]
-  },
-  {
-    "sectionName": "Notes",
-    "sectionDescription": "Notes",
-    "fields": [
-      {
-        "fieldName": "Sponsor",
-        "metadataPropertyName": "sponsor",
-        "description": "The sponsor of the change",
-        "minMultiplicity": 1,
-        "maxMultiplicity": 1,
-        "dataType": "string"
-      }
-    ]
-  },
-  {
-    "sectionName": "Contact Details",
-    "sectionDescription": "Contact Details",
-    "fields": [
-      {
-        "fieldName": "Contact Details",
-        "metadataPropertyName": "contactDetails",
-        "description": "The contact details for this change",
-        "minMultiplicity": 1,
-        "maxMultiplicity": 1,
-        "dataType": "text",
-        "defaultValue": "<p>For enquiries about this Change Request, please email <a href=\"mailto:information.standards@nhs.net\">information.standards@nhs.net</a>.</p>"
-      }
-    ]
-  }
-]
+{
+  "sections": [
+    {
+      "sectionName": "Details",
+      "sectionDescription": "Details about the Change Request, Patch, or DDCN",
+      "fields": [
+        {
+          "fieldName": "Type",
+          "metadataPropertyName": "type",
+          "description": "The type of the change: change request; patch or data dictionary change notice",
+          "minMultiplicity": 1,
+          "maxMultiplicity": 1,
+          "dataType": "enumeration",
+          "allowedValues": [
+            "Change Request",
+            "Patch",
+            "Data Dictionary Change Notice"
+          ]
+        },
+        {
+          "fieldName": "Reference",
+          "metadataPropertyName": "reference",
+          "description": "The reference for the change",
+          "minMultiplicity": 1,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        },
+        {
+          "fieldName": "Version No.",
+          "metadataPropertyName": "versionNo",
+          "description": "The version number of the change",
+          "minMultiplicity": 1,
+          "maxMultiplicity": 1,
+          "dataType": "string",
+          "defaultValue": "1.0"
+        },
+        {
+          "fieldName": "Subject",
+          "metadataPropertyName": "subject",
+          "description": "The subject of the change",
+          "minMultiplicity": 1,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        },
+        {
+          "fieldName": "Effective Date",
+          "metadataPropertyName": "effectiveDate",
+          "description": "The date from which these changes are effective",
+          "minMultiplicity": 1,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        },
+        {
+          "fieldName": "Reason for Change",
+          "metadataPropertyName": "reasonForChange",
+          "description": "The reason for the change",
+          "minMultiplicity": 1,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        }
+      ]
+    },
+    {
+      "sectionName": "Background",
+      "sectionDescription": "Background text",
+      "fields": [
+        {
+          "fieldName": "Background text",
+          "metadataPropertyName": "backgroundText",
+          "description": "The background to the change",
+          "minMultiplicity": 1,
+          "maxMultiplicity": 1,
+          "dataType": "text",
+          "defaultValue": "<p>This Change Request adds the ???? Data Set and supporting definitions to the NHS Data Model and Dictionary to support the Information Standard.</p><p>A short demonstration is available which describes \"How to Read an NHS Data Model and Dictionary Change Request\", in an easy to understand screen capture including a voice over and readable captions. This demonstration can be viewed at: <a href=\"https://datadictionary.nhs.uk/elearning/change_request/index.html\">https://datadictionary.nhs.uk/elearning/change_request/index.html</a>.</p><p>Note: if the web page does not open, please copy the link and paste into the web browser. A guide to how to use the demonstration can be found at: <a href=\"https://datadictionary.nhs.uk/help/demonstrations.html\">Demonstrations</a>.</p>"
+        }
+      ]
+    },
+    {
+      "sectionName": "Notes",
+      "sectionDescription": "Notes",
+      "fields": [
+        {
+          "fieldName": "Sponsor",
+          "metadataPropertyName": "sponsor",
+          "description": "The sponsor of the change",
+          "minMultiplicity": 1,
+          "maxMultiplicity": 1,
+          "dataType": "string"
+        }
+      ]
+    },
+    {
+      "sectionName": "Contact Details",
+      "sectionDescription": "Contact Details",
+      "fields": [
+        {
+          "fieldName": "Contact Details",
+          "metadataPropertyName": "contactDetails",
+          "description": "The contact details for this change",
+          "minMultiplicity": 1,
+          "maxMultiplicity": 1,
+          "dataType": "text",
+          "defaultValue": "<p>For enquiries about this Change Request, please email <a href=\"mailto:information.standards@nhs.net\">information.standards@nhs.net</a>.</p>"
+        }
+      ]
+    }
+  ]
+}

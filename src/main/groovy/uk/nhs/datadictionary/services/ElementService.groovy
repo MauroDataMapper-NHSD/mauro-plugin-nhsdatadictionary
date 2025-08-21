@@ -258,7 +258,9 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
                     folder: subFolder,
                     branchName: dataDictionary.branchName)
                 subFolder.codeSets.add(codeSet)
-                codeSet.metadata.add(new Metadata(namespace: ddCodeSetProfileProviderService.metadataNamespace, key: "version", value: element.codeSetVersion))
+                if(element.codeSetVersion) {
+                    codeSet.metadata.add(new Metadata(namespace: ddCodeSetProfileProviderService.metadataNamespace, key: "version", value: element.codeSetVersion))
+                }
 
 
                 // String terminologyUin = ddDataElement.link.participant.find {it -> it.@role == 'Supplier'}.@referencedUin
@@ -294,7 +296,7 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
 
             addMetadataFromComponent(elementDataElement, element)
 
-
+/*
             element.instantiatesAttributes.each {attribute ->
                 if(attribute.catalogueItem) {
                     SemanticLink semanticLink = new SemanticLink(
@@ -305,7 +307,7 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
                     elementDataElement.semanticLinks.add(semanticLink)
                 }
             }
-
+*/
             //String elementAttributes = StringUtils.join(element.instantiatesAttributes.collect {it.name}, ";")
             //addToMetadata(elementDataElement, "linkedAttributes", elementAttributes, currentUserEmailAddress)
 

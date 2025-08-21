@@ -320,10 +320,16 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
 
 
     void addToMetadata(Item domainObject, String key, String value) {
-        if (value) {
-            domainObject.metadata.add(new Metadata(namespace: getMetadataNamespace(),
-                                                    key: key,
-                                                    value: value))
+        if (domainObject && value) {
+            if(domainObject.metadata.find {
+                it.key == key
+            }) {
+                throw new Exception("Duplicate metadata for $key on object of type ${domainObject.domainType}")
+            } else {
+                domainObject.metadata.add(new Metadata(namespace: getMetadataNamespace(),
+                                                        key: key,
+                                                        value: value))
+            }
         }
     }
 

@@ -198,7 +198,9 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
                 folder: subFolder,
                 branchName: dataDictionary.branchName)
         subFolder.terminologies.add(terminology)
-        terminology.metadata.add(new Metadata(namespace: "uk.nhs.datadictionary.terminology", key: "version", value: attribute.codesVersion))
+        if(attribute.codesVersion) {
+            terminology.metadata.add(new Metadata(namespace: "uk.nhs.datadictionary.terminology", key: "version", value: attribute.codesVersion))
+        }
 
         attribute.codes.each { code ->
             Term term = new Term(

@@ -25,6 +25,15 @@ repositories {
     // maven {url "https://mauro-repository.com/libs-snapshot-local"}
 }
 
+configurations {
+    // Define a custom configuration for your platform API
+    platformapi
+
+    // Make compileOnly and testImplementation extend from it
+    compileOnly.extendsFrom(platformapi)
+    testImplementation.extendsFrom(platformapi)
+}
+
 dependencies {
     implementation("io.micronaut.groovy:micronaut-runtime-groovy")
     implementation("io.micronaut:micronaut-jackson-databind")
@@ -46,10 +55,10 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.2.0")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.2.0")
 
-    implementation('org.maurodata:mauro-domain:0.0.1-SNAPSHOT')
-    implementation('org.maurodata:mauro-persistence:0.0.1-SNAPSHOT')
-    implementation('org.maurodata:mauro-api:0.0.1-SNAPSHOT')
-    implementation('org.maurodata:mauro-client:0.0.1-SNAPSHOT')
+    platformapi('org.maurodata:mauro-domain:0.0.1-SNAPSHOT')
+    platformapi('org.maurodata:mauro-persistence:0.0.1-SNAPSHOT')
+    platformapi('org.maurodata:mauro-api:0.0.1-SNAPSHOT')
+    platformapi('org.maurodata:mauro-client:0.0.1-SNAPSHOT')
 
     implementation("org.maurodata:dita-dsl:2.0.0-SNAPSHOT")
 

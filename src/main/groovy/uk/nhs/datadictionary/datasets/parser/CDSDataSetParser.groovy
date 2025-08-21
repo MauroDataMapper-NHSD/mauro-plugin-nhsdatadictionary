@@ -45,7 +45,7 @@ class CDSDataSetParser {
                 log.error(dataClass.toString())
                 dataClass.label = "Test Class Label"
             }
-            DataSetParser.setOrder(dataClass, index + 1)
+            //DataSetParser.setOrder(dataClass, index + 1)
         }
         log.debug('Add to DCs data set complete in {}', Duration.between(startTime, Instant.now()).toString())
         startTime = Instant.now()
@@ -96,8 +96,8 @@ class CDSDataSetParser {
         if (tableRows.size() == 1 && firstRow.td[0].@bgcolor == "#DCDCDC" && firstRow.td.size() == 3) {
 
             // Single row, pointer to data class
-            DataSetParser.setMRO(currentClass, firstRow.td[0].text())
-            DataSetParser.setGroupRepeats(currentClass, firstRow.td[1].text())
+            //DataSetParser.setMRO(currentClass, firstRow.td[0].text())
+            //DataSetParser.setGroupRepeats(currentClass, firstRow.td[1].text())
             DataSetParser.setDataSetReference(currentClass)
             if (firstRow.td[2].strong.a.size() > 0) {
                 String dataSetName = dataDictionary.dataSetNamesByDDUrl[firstRow.td[2].strong.a[0].@href]
@@ -329,7 +329,7 @@ class CDSDataSetParser {
                     List<Node> tableRows = []
                     component.tbody.tr.each {tr -> tableRows.add(tr)}
                     parseCDSElementTable(tableRows, currentClass, dataModel, dataDictionary, classWebOrder)
-                    DataSetParser.setOrder(currentClass, classWebOrder)
+                    //DataSetParser.setOrder(currentClass, classWebOrder)
                     classWebOrder++
                 }
             }
