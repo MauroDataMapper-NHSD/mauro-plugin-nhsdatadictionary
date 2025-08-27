@@ -17,11 +17,11 @@
  */
 package uk.nhs.datadictionary
 
-import com.ibm.icu.impl.Row
 import groovy.util.logging.Slf4j
 import org.maurodata.dita.elements.langref.base.Div
 import org.maurodata.dita.elements.langref.base.Entry
 import org.maurodata.dita.elements.langref.base.P
+import org.maurodata.dita.elements.langref.base.Row
 import org.maurodata.dita.elements.langref.base.Table
 import org.maurodata.dita.elements.langref.base.XRef
 import org.maurodata.domain.datamodel.DataClass

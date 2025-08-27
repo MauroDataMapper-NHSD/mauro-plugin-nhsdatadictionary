@@ -1,9 +1,10 @@
 plugins {
     id("groovy")
-    //    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.micronaut.library") version "4.4.5"
     id("io.micronaut.aot") version "4.4.5"
     id("maven-publish")
+    //id('com.gradleup.shadow') version '9.0.2'
 }
 
 group = 'org.maurodata.plugins'
@@ -25,6 +26,10 @@ repositories {
     // maven {url "https://mauro-repository.com/libs-snapshot-local"}
 }
 
+shadowJar {
+    zip64 true
+}
+
 configurations {
     // Define a custom configuration for your platform API
     platformapi
@@ -35,17 +40,18 @@ configurations {
 }
 
 dependencies {
-    implementation("io.micronaut.groovy:micronaut-runtime-groovy")
-    implementation("io.micronaut:micronaut-jackson-databind")
+    platformapi("io.micronaut.groovy:micronaut-runtime-groovy")
+    platformapi("io.micronaut:micronaut-jackson-databind")
     compileOnly("io.micronaut.security:micronaut-security-annotations")
-    implementation("io.micronaut.security:micronaut-security-session")
+    platformapi("io.micronaut.security:micronaut-security-session")
     compileOnly("io.micronaut:micronaut-inject-groovy")
     compileOnly("io.micronaut.data:micronaut-data-processor")
-    implementation("io.micronaut.data:micronaut-data-jdbc")
+    platformapi("io.micronaut.data:micronaut-data-jdbc")
     runtimeOnly("org.yaml:snakeyaml")
-    implementation("org.apache.groovy:groovy-xml")
-    implementation("org.apache.groovy:groovy-json")
+    platformapi("org.apache.groovy:groovy-xml")
+    platformapi("org.apache.groovy:groovy-json")
     implementation('commons-io:commons-io:2.20.0')
+    implementation('org.apache.commons:commons-lang3:3.18.0')
 
     //testImplementation("io.micronaut:micronaut-jdbc-hikari")
     testRuntimeOnly("org.postgresql:postgresql")
@@ -60,7 +66,7 @@ dependencies {
     platformapi('org.maurodata:mauro-api:0.0.1-SNAPSHOT')
     platformapi('org.maurodata:mauro-client:0.0.1-SNAPSHOT')
 
-    implementation("org.maurodata:dita-dsl:2.0.0-SNAPSHOT")
+    implementation("org.maurodata:dita-dsl-base:2.0.0-SNAPSHOT")
 
     implementation("org.maurodata:iso11179-domain:2.0.0-SNAPSHOT") {
         exclude group: "com.sun.xml.bind", module: "jaxb-impl"
@@ -70,11 +76,13 @@ dependencies {
     implementation group: 'org.outerj.daisy', name: 'daisydiff', version: '1.2.3-atlassian-hosted'
 
     implementation 'org.cyberneko:html:1.9.8'
-    implementation 'xerces:xercesImpl:2.12.0'
+    implementation 'xerces:xercesImpl:2.12.2'
     implementation "xml-apis:xml-apis:1.4.01"
+    implementation "net.sf.jtidy:jtidy:r938"
 
     // Required for Daisy Diff (NPE when using Saxon)
-    implementation group: 'xalan', name: 'xalan', version: '2.7.1'
+    implementation group: 'xalan', name: 'xalan', version: '2.7.3'
+    implementation group: 'xalan', name: 'serializer', version: '2.7.3'
 
     testImplementation("junit:junit:4.13.2")
 

@@ -508,6 +508,47 @@ class NhsDataDictionary {
         return source
     }
 
+    Map<String, Map<String, Number>> statistics() {
+        ['Attributes': [
+            'Total':  attributes.size(),
+            'Preparatory': attributes.values().count {it.isPreparatory()},
+            'Retired': attributes.values().count {it.isRetired()},
+            ],
+        'Data Elements': [
+            'Total': elements.size(),
+            'Preparatory': elements.values().count {it.isPreparatory()},
+            'Retired': elements.values().count {it.isRetired()},
+            ],
+        'Classes': [
+            'Total': classes.size(),
+            'Preparatory': classes.values().count {it.isPreparatory()},
+            'Retired': classes.values().count {it.isRetired()}
+            ],
+        'Data Sets': [
+            'Total': dataSets.size(),
+            'Preparatory': dataSets.values().count {it.isPreparatory()},
+            'Retired': dataSets.values().count {it.isRetired()},
+            ],
+        'NHS Business Definitions': [
+            'Total': businessDefinitions.size(),
+            'Preparatory': businessDefinitions.values().count {it.isPreparatory()},
+            'Retired': businessDefinitions.values().count {it.isRetired()},
+            ],
+        'Supporting Information': [
+            'Total': supportingInformation.size(),
+            'Preparatory': supportingInformation.values().count {it.isPreparatory()},
+            'Retired': supportingInformation.values().count {it.isRetired()},
+            ],
+        'Data Set Constraints': [
+            'Total': dataSetConstraints.size(),
+            'Preparatory': dataSetConstraints.values().count {it.isPreparatory()},
+            'Retired': dataSetConstraints.values().count {it.isRetired()},
+            ]
+        ]
+
+    }
+
+
 
     static Set<String> getAllMetadataKeys() {
         Set<String> allKeys = []

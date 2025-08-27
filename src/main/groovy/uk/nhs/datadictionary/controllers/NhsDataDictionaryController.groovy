@@ -62,9 +62,9 @@ class NhsDataDictionaryController {
         nhsDataDictionaryService.branches()
     }
 
-    def statistics() {
-        UUID versionedFolderId = UUID.fromString(params.versionedFolderId)
-        respond nhsDataDictionaryService.buildDataDictionary(versionedFolderId)
+    @Get('/nhsdd/{dictionaryId}/statistics')
+    Map statistics(UUID dictionaryId) {
+        nhsDataDictionaryService.buildDataDictionary(dictionaryId).statistics()
     }
 
 

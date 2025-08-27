@@ -17,8 +17,6 @@
  */
 package uk.nhs.datadictionary.services
 
-import org.maurodata.controller.folder.FolderController
-import org.maurodata.controller.folder.VersionedFolderController
 import org.maurodata.iso11179.domain.MetadataBundle
 
 import groovy.util.logging.Slf4j
@@ -28,17 +26,18 @@ import org.apache.commons.io.FileUtils
 import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataModel
-import org.maurodata.domain.datamodel.DataModelType
 import org.maurodata.domain.datamodel.DataType
 import org.maurodata.domain.facet.Metadata
-import org.maurodata.domain.facet.VersionLink
 import org.maurodata.domain.folder.Folder
-import org.maurodata.domain.model.version.ModelVersion
 import org.maurodata.domain.security.CatalogueUser
 import org.maurodata.domain.terminology.Terminology
-import org.maurodata.exception.MauroApplicationException
+import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.DataElementCacheableRepository
 import org.maurodata.persistence.cache.ItemCacheableRepository
+import org.maurodata.persistence.cache.ModelCacheableRepository
 import org.maurodata.persistence.cache.ModelCacheableRepository.FolderCacheableRepository
+import org.maurodata.persistence.cache.ModelCacheableRepository.TerminologyCacheableRepository
+import org.maurodata.persistence.cache.ModelCacheableRepository.DataModelCacheableRepository
+import org.maurodata.persistence.datamodel.DataModelContentRepository
 import uk.nhs.datadictionary.DataDictionaryImportParameters
 import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.NhsDDBranch
@@ -91,6 +90,17 @@ class NhsDataDictionaryService {
     @Inject
     FolderCacheableRepository folderCacheableRepository
 
+    @Inject
+    TerminologyCacheableRepository terminologyCacheableRepository
+
+    @Inject
+    DataElementCacheableRepository dataElementCacheableRepository
+
+    @Inject
+    DataModelCacheableRepository dataModelCacheableRepository
+
+    @Inject
+    DataModelContentRepository dataModelContentRepository
 
     @Inject
     DataSetService dataSetService
@@ -118,6 +128,9 @@ class NhsDataDictionaryService {
 
     @Inject
     DDWorkItemProfileProviderService ddWorkItemProfileProviderService
+
+    NhsDataDictionaryService() {
+    }
 
     UUID newVersion(CatalogueUser currentUser, UUID versionedFolderId) {
         Folder original = versionedFolderService.get(versionedFolderId)
@@ -287,115 +300,94 @@ class NhsDataDictionaryService {
 
 
     NhsDataDictionary buildDataDictionary(UUID versionedFolderId) {
-        log.debug("Building Data Dictionary...")
-        long totalStart = System.currentTimeMillis()
         NhsDataDictionary dataDictionary = newDataDictionary()
-        dataDictionary.containingVersionedFolder = versionedFolderService.get(versionedFolderId)
+        dataDictionary.containingVersionedFolder = folderCacheableRepository.readById(versionedFolderId)
 
         buildWorkItemDetails(dataDictionary.containingVersionedFolder, dataDictionary)
 
-        log.debug('Starting {}', Utils.timeTaken(totalStart))
 
-
-        List<Terminology> terminologies = terminologyService.findAllByFolderId(versionedFolderId)
-
-        Terminology busDefTerminology = terminologies.find {it.label == NhsDataDictionary.BUSINESS_DEFINITIONS_TERMINOLOGY_NAME}
-        Terminology supDefTerminology = terminologies.find {it.label == NhsDataDictionary.SUPPORTING_DEFINITIONS_TERMINOLOGY_NAME}
-        Terminology dataSetConstraintsTerminology = terminologies.find {it.label == NhsDataDictionary.DATA_SET_CONSTRAINTS_TERMINOLOGY_NAME}
-
-        log.debug('Got terminologies {}', Utils.timeTaken(totalStart))
-
+        Terminology busDefTerminology = getBusinessDefinitionTerminology(versionedFolderId)
+        Terminology supDefTerminology = getSupportingDefinitionTerminology(versionedFolderId)
+        Terminology dataSetConstraintsTerminology = getDataSetConstraintTerminology(versionedFolderId)
 
         Folder dataSetsFolder = dataDictionary.containingVersionedFolder.childFolders.find {it.label == NhsDataDictionary.DATA_SETS_FOLDER_NAME}
 
         DataModel classesModel = getClassesModel(versionedFolderId)
+
+        dataModelContentRepository.readWithContentById(classesModel.id)
+
         DataModel elementsModel = getElementsModel(versionedFolderId)
-
-        log.debug('Got models {}', Utils.timeTaken(totalStart))
-
 
         if(classesModel) {
             addAttributesToDictionary(classesModel, dataDictionary)
-            log.info('Added to dictionary - attributes... {}', Utils.timeTaken(totalStart))
             addClassesToDictionary(classesModel, dataDictionary)
-            log.info('Added to dictionary - classes... {}', Utils.timeTaken(totalStart))
         } else {
             log.error("No classes model found")
         }
         if(elementsModel) {
             addElementsToDictionary(elementsModel, dataDictionary)
-            log.info('Added to dictionary - elements... {}', Utils.timeTaken(totalStart))
         } else {
             log.error("No elements model found")
         }
         if(dataSetsFolder) {
             addDataSetFoldersToDictionary(dataSetsFolder, dataDictionary)
-            log.info('Added to dictionary - folders... {}', Utils.timeTaken(totalStart))
             addDataSetsToDictionary(dataSetsFolder, dataDictionary)
-            log.info('Added to dictionary - data sets... {}', Utils.timeTaken(totalStart))
         } else {
             log.error("No datasets folder found")
         }
         if(busDefTerminology) {
             addBusDefsToDictionary(busDefTerminology, dataDictionary)
-            log.info('Added to dictionary - bus defs... {}', Utils.timeTaken(totalStart))
         } else {
             log.error("No business definitions terminology found")
         }
         if(supDefTerminology) {
             addSupDefsToDictionary(supDefTerminology, dataDictionary)
-            log.debug('Added to dictionary - sup defs... {}', Utils.timeTaken(totalStart))
         } else {
             log.info("No supporting definitions terminology found")
         }
         if(dataSetConstraintsTerminology) {
             addDataSetConstraintsToDictionary(dataSetConstraintsTerminology, dataDictionary)
-            log.info('Added to dictionary - data set constraints... {}', Utils.timeTaken(totalStart))
         } else {
             log.error("No dataset constraints terminology found")
         }
 
-        log.debug('Added to dictionary... {}', Utils.timeTaken(totalStart))
-
         dataDictionary.buildInternalLinks()
-
-        log.debug('Data Dictionary built in {}', Utils.timeTaken(totalStart))
 
         return dataDictionary
     }
 
     Terminology getBusinessDefinitionTerminology(UUID versionedFolderId) {
-        List<Terminology> terminologies = terminologyService.findAllByFolderId(versionedFolderId)
+        List<Terminology> terminologies = terminologyCacheableRepository.findAllByFolderId(versionedFolderId)
         terminologies.find {it.label == NhsDataDictionary.BUSINESS_DEFINITIONS_TERMINOLOGY_NAME}
     }
 
     Terminology getSupportingDefinitionTerminology(UUID versionedFolderId) {
-        List<Terminology> terminologies = terminologyService.findAllByFolderId(versionedFolderId)
+        List<Terminology> terminologies = terminologyCacheableRepository.findAllByFolderId(versionedFolderId)
         terminologies.find {it.label == NhsDataDictionary.SUPPORTING_DEFINITIONS_TERMINOLOGY_NAME}
     }
 
     Terminology getDataSetConstraintTerminology(UUID versionedFolderId) {
-        List<Terminology> terminologies = terminologyService.findAllByFolderId(versionedFolderId)
+        List<Terminology> terminologies = terminologyCacheableRepository.findAllByFolderId(versionedFolderId)
         terminologies.find {it.label == NhsDataDictionary.DATA_SET_CONSTRAINTS_TERMINOLOGY_NAME}
     }
 
     DataModel getElementsModel(UUID versionedFolderId) {
-        List<DataModel> dataModels = dataModelService.findAllByFolderId(versionedFolderId)
+        List<DataModel> dataModels = dataModelCacheableRepository.findAllByFolderId(versionedFolderId)
         dataModels.find {it.label == NhsDataDictionary.ELEMENTS_MODEL_NAME}
     }
 
     DataModel getClassesModel(UUID versionedFolderId) {
-        List<DataModel> dataModels = dataModelService.findAllByFolderId(versionedFolderId)
+        List<DataModel> dataModels = dataModelCacheableRepository.findAllByFolderId(versionedFolderId)
         dataModels.find {it.label == NhsDataDictionary.CLASSES_MODEL_NAME}
     }
 
     Folder getDataSetsFolder(UUID versionedFolderId) {
-        List<Folder> childFolders = folderService.findAllByParentId(versionedFolderId)
+        List<Folder> childFolders = folderCacheableRepository.findAllByFolderId(versionedFolderId)
         childFolders.find {it.label == NhsDataDictionary.DATA_SETS_FOLDER_NAME}
     }
 
     void addAttributesToDictionary(DataModel classesModel, NhsDataDictionary dataDictionary) {
-        Set<DataElement> attributeElements = classesModel.getAllDataElements().findAll {
+        Set<DataElement> attributeElements = dataElementCacheableRepository.findAllByParent(classesModel).findAll {
             !(it.dataType.dataTypeKind == DataType.DataTypeKind.REFERENCE_TYPE)
         }
         dataDictionary.attributes = attributeService.collectNhsDataDictionaryComponents(attributeElements, dataDictionary)
@@ -405,7 +397,7 @@ class NhsDataDictionaryService {
     }
 
     void addElementsToDictionary(DataModel elementsModel, NhsDataDictionary dataDictionary) {
-        Set<DataElement> elementElements = elementsModel.getAllDataElements()
+        Set<DataElement> elementElements = dataElementCacheableRepository.findAllByParent(elementsModel)
         List<Metadata> elementMetadata = Metadata.byMultiFacetAwareItemIdInList(elementElements.collect {it.id} as List).list()
         elementMetadata.each { metadata ->
             if(dataDictionary.elementsMetadata[metadata.multiFacetAwareItemId]) {

@@ -19,11 +19,13 @@ package uk.nhs.datadictionary.services
 
 import groovy.util.logging.Slf4j
 import io.micronaut.transaction.annotation.Transactional
+import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
+import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.TermCacheableRepository
 import uk.nhs.datadictionary.NhsDDBusinessDefinition
 import uk.nhs.datadictionary.NhsDataDictionary
 
@@ -31,7 +33,13 @@ import uk.nhs.datadictionary.NhsDataDictionary
 @Singleton
 class BusinessDefinitionService extends DataDictionaryComponentService<Term, NhsDDBusinessDefinition> {
 
+    @Inject
+    TermCacheableRepository termCacheableRepository
+
     NhsDataDictionaryService nhsDataDictionaryService
+
+    BusinessDefinitionService() {
+    }
 
     @Override
     NhsDDBusinessDefinition show(UUID versionedFolderId, String id) {
@@ -49,7 +57,7 @@ class BusinessDefinitionService extends DataDictionaryComponentService<Term, Nhs
 
         Terminology busDefTerminology = nhsDataDictionaryService.getBusinessDefinitionTerminology(versionedFolderId)
 
-        List<Term> terms = termService.findAllByTerminologyId(busDefTerminology.id)
+        List<Term> terms = termCacheableRepository.readAllByParent(busDefTerminology)
 
         terms.findAll {term ->
             includeRetired || !catalogueItemIsRetired(term)
