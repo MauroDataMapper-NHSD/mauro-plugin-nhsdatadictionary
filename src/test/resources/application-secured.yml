@@ -1,0 +1,28 @@
+mauro:
+    audit:
+        scope: ALL
+
+micronaut:
+    server:
+        port: -1
+        max-request-size: 100mb
+        multipart:
+            max-file-size: 100mb
+        netty:
+            idle-timeout: 30m
+    http:
+        client:
+            read-timeout: 30m
+            request-timeout: 30m
+            connect-timeout: 30m
+            read-idle-timeout: 30m
+        services:
+            mauro:
+                url: http://localhost:2345
+                read-timeout: 30m
+                request-timeout: 30m
+                connect-timeout: 30m
+                read-idle-timeout: 30m
+        #       apikey: 1234
+    security:
+        enabled: false

@@ -31,13 +31,12 @@ import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.security.CatalogueUser
 import org.maurodata.domain.terminology.Terminology
-import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.DataElementCacheableRepository
 import org.maurodata.persistence.cache.ItemCacheableRepository
-import org.maurodata.persistence.cache.ModelCacheableRepository
-import org.maurodata.persistence.cache.ModelCacheableRepository.FolderCacheableRepository
-import org.maurodata.persistence.cache.ModelCacheableRepository.TerminologyCacheableRepository
-import org.maurodata.persistence.cache.ModelCacheableRepository.DataModelCacheableRepository
+import org.maurodata.persistence.datamodel.DataElementRepository
 import org.maurodata.persistence.datamodel.DataModelContentRepository
+import org.maurodata.persistence.datamodel.DataModelRepository
+import org.maurodata.persistence.folder.FolderRepository
+import org.maurodata.persistence.terminology.TerminologyRepository
 import uk.nhs.datadictionary.DataDictionaryImportParameters
 import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.NhsDDBranch
@@ -88,18 +87,18 @@ class NhsDataDictionaryService {
     ItemCacheableRepository.ApiPropertyCacheableRepository apiPropertyCacheableRepository
 
     @Inject
-    FolderCacheableRepository folderCacheableRepository
+    FolderRepository folderRepository
 
     @Inject
-    TerminologyCacheableRepository terminologyCacheableRepository
+    TerminologyRepository terminologyRepository
 
     @Inject
-    DataElementCacheableRepository dataElementCacheableRepository
+    DataElementRepository dataElementRepository
 
     @Inject
-    DataModelCacheableRepository dataModelCacheableRepository
+    DataModelRepository dataModelRepository
 
-    @Inject
+
     DataModelContentRepository dataModelContentRepository
 
     @Inject
@@ -129,7 +128,9 @@ class NhsDataDictionaryService {
     @Inject
     DDWorkItemProfileProviderService ddWorkItemProfileProviderService
 
-    NhsDataDictionaryService() {
+    NhsDataDictionaryService(DataModelRepository dataModelRepository, DataModelContentRepository dataModelContentRepository) {
+        this.dataModelContentRepository = dataModelContentRepository
+        this.dataModelContentRepository.administeredItemRepository = dataModelRepository
     }
 
     UUID newVersion(CatalogueUser currentUser, UUID versionedFolderId) {
@@ -247,7 +248,7 @@ class NhsDataDictionaryService {
     }
 
     List<Folder> branches(/*UserSecurityPolicyManager userSecurityPolicyManager */) {
-        folderCacheableRepository.readAll().findAll {
+        folderRepository.readAll().findAll {
             it.label.startsWith("NHS Data Dictionary")
         }
 
@@ -301,7 +302,7 @@ class NhsDataDictionaryService {
 
     NhsDataDictionary buildDataDictionary(UUID versionedFolderId) {
         NhsDataDictionary dataDictionary = newDataDictionary()
-        dataDictionary.containingVersionedFolder = folderCacheableRepository.readById(versionedFolderId)
+        dataDictionary.containingVersionedFolder = folderRepository.readById(versionedFolderId)
 
         buildWorkItemDetails(dataDictionary.containingVersionedFolder, dataDictionary)
 
@@ -357,37 +358,37 @@ class NhsDataDictionaryService {
     }
 
     Terminology getBusinessDefinitionTerminology(UUID versionedFolderId) {
-        List<Terminology> terminologies = terminologyCacheableRepository.findAllByFolderId(versionedFolderId)
+        List<Terminology> terminologies = terminologyRepository.findAllByFolderId(versionedFolderId)
         terminologies.find {it.label == NhsDataDictionary.BUSINESS_DEFINITIONS_TERMINOLOGY_NAME}
     }
 
     Terminology getSupportingDefinitionTerminology(UUID versionedFolderId) {
-        List<Terminology> terminologies = terminologyCacheableRepository.findAllByFolderId(versionedFolderId)
+        List<Terminology> terminologies = terminologyRepository.findAllByFolderId(versionedFolderId)
         terminologies.find {it.label == NhsDataDictionary.SUPPORTING_DEFINITIONS_TERMINOLOGY_NAME}
     }
 
     Terminology getDataSetConstraintTerminology(UUID versionedFolderId) {
-        List<Terminology> terminologies = terminologyCacheableRepository.findAllByFolderId(versionedFolderId)
+        List<Terminology> terminologies = terminologyRepository.findAllByFolderId(versionedFolderId)
         terminologies.find {it.label == NhsDataDictionary.DATA_SET_CONSTRAINTS_TERMINOLOGY_NAME}
     }
 
     DataModel getElementsModel(UUID versionedFolderId) {
-        List<DataModel> dataModels = dataModelCacheableRepository.findAllByFolderId(versionedFolderId)
+        List<DataModel> dataModels = dataModelRepository.findAllByFolderId(versionedFolderId)
         dataModels.find {it.label == NhsDataDictionary.ELEMENTS_MODEL_NAME}
     }
 
     DataModel getClassesModel(UUID versionedFolderId) {
-        List<DataModel> dataModels = dataModelCacheableRepository.findAllByFolderId(versionedFolderId)
+        List<DataModel> dataModels = dataModelRepository.findAllByFolderId(versionedFolderId)
         dataModels.find {it.label == NhsDataDictionary.CLASSES_MODEL_NAME}
     }
 
     Folder getDataSetsFolder(UUID versionedFolderId) {
-        List<Folder> childFolders = folderCacheableRepository.findAllByFolderId(versionedFolderId)
+        List<Folder> childFolders = folderRepository.findAllByFolderId(versionedFolderId)
         childFolders.find {it.label == NhsDataDictionary.DATA_SETS_FOLDER_NAME}
     }
 
     void addAttributesToDictionary(DataModel classesModel, NhsDataDictionary dataDictionary) {
-        Set<DataElement> attributeElements = dataElementCacheableRepository.findAllByParent(classesModel).findAll {
+        Set<DataElement> attributeElements = dataElementRepository.findAllByParent(classesModel).findAll {
             !(it.dataType.dataTypeKind == DataType.DataTypeKind.REFERENCE_TYPE)
         }
         dataDictionary.attributes = attributeService.collectNhsDataDictionaryComponents(attributeElements, dataDictionary)
@@ -397,7 +398,7 @@ class NhsDataDictionaryService {
     }
 
     void addElementsToDictionary(DataModel elementsModel, NhsDataDictionary dataDictionary) {
-        Set<DataElement> elementElements = dataElementCacheableRepository.findAllByParent(elementsModel)
+        Set<DataElement> elementElements = dataElementRepository.findAllByParent(elementsModel)
         List<Metadata> elementMetadata = Metadata.byMultiFacetAwareItemIdInList(elementElements.collect {it.id} as List).list()
         elementMetadata.each { metadata ->
             if(dataDictionary.elementsMetadata[metadata.multiFacetAwareItemId]) {
@@ -636,11 +637,11 @@ class NhsDataDictionaryService {
 
 
     void deleteOriginalFolder(String coreFolderName) {
-        Folder originalFolder = folderCacheableRepository.readAll().find {
+        Folder originalFolder = folderRepository.readAll().find {
             it.label == coreFolderName
         }
         if(originalFolder) {
-            folderCacheableRepository.delete(originalFolder)
+            folderRepository.delete(originalFolder)
         }
     }
 
@@ -801,7 +802,7 @@ class NhsDataDictionaryService {
 
     void loadBranchInformation(NhsDataDictionary dataDictionary) {
 
-        List<Folder> dictionaryFolders = folderCacheableRepository.readAll().findAll {it.label.startsWith("NHS Data Dictionary") }
+        List<Folder> dictionaryFolders = folderRepository.readAll().findAll {it.label.startsWith("NHS Data Dictionary") }
 
         if (dictionaryFolders.empty) {
             return

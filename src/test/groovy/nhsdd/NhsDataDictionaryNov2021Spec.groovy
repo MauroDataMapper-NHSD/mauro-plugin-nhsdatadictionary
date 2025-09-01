@@ -21,8 +21,15 @@ import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 import io.micronaut.context.ApplicationContext
+import io.micronaut.context.BeanContext
+import io.micronaut.context.annotation.Property
+import io.micronaut.http.MediaType
+import io.micronaut.http.client.ServiceHttpClientConfiguration
+import io.micronaut.http.client.multipart.MultipartBody
+import io.micronaut.inject.qualifiers.Qualifiers
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
+import org.maurodata.api.folder.FolderApi
 import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.datamodel.DataModelService
@@ -40,10 +47,14 @@ import spock.lang.Specification
 import uk.nhs.datadictionary.DataDictionaryImportParameters
 import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.NhsDataDictionaryImporter
+import uk.nhs.datadictionary.controllers.NhsDataDictionaryController
 import uk.nhs.datadictionary.integritychecks.IntegrityCheck
 import uk.nhs.datadictionary.services.NhsDataDictionaryService
 import uk.nhs.datadictionary.services.TestingService
 
+import java.lang.annotation.ElementType
+import java.lang.annotation.Inherited
+import java.lang.annotation.Target
 import java.nio.file.Files
 import java.nio.file.Path
 
@@ -52,7 +63,7 @@ import static org.junit.Assert.assertNotNull
 import static org.junit.Assert.assertTrue
 
 /**
- * To run this against a PG db you need to alter the application.yml file.
+ * To run this against a PG db you need to alter the application-secured.yml file.
  * The block at the end inside environments needs to be altered to
  * <pre>
  *     test:
@@ -78,9 +89,16 @@ import static org.junit.Assert.assertTrue
  * @since 14/12/2021
  */
 @Slf4j
-@MicronautTest
+@MicronautTest(startApplication = true, environments = ['secured'])
+@Property(name = "datasources.default.driver-class-name",
+    value = "org.testcontainers.jdbc.ContainerDatabaseDriver")
+@Property(name = "datasources.default.url",
+    value = "jdbc:tc:postgresql:16-alpine:///db")
 //@Ignore("Ingest of older version of Data Dictionary takes too long to test. Keep just in case but skip running these tests.")
 class NhsDataDictionaryNov2021Spec extends Specification {
+
+    @Inject
+    BeanContext beanContext;
 
     @Inject
     ApplicationContext applicationContext
@@ -91,7 +109,13 @@ class NhsDataDictionaryNov2021Spec extends Specification {
     @Inject
     NhsDataDictionaryImporter nhsDataDictionaryImporter
 
-//    @Shared
+    @Inject
+    FolderApi folderApi
+
+    @Inject
+    NhsDataDictionaryController nhsDataDictionaryController
+
+    //    @Shared
 //    DataDictionaryImportParameters dataDictionaryImportParameters
 
     TerminologyService terminologyService
@@ -140,6 +164,30 @@ class NhsDataDictionaryNov2021Spec extends Specification {
         then:
         dds
         checkNovember2021(dds.first(), false, 75, 955, 1271, 263)
+    }
+
+    void 'I02 : test ingest and statistics'() {
+
+        when:
+        System.out.println(folderApi.getClass());
+        ServiceHttpClientConfiguration cfg =
+            beanContext.getBean(ServiceHttpClientConfiguration.class, Qualifiers.byName("mauro"));
+        System.out.println("Mauro read-timeout = " + cfg.getReadTimeout());
+
+        MultipartBody importRequest = MultipartBody.builder()
+        //  .addPart('folderId', folderId.toString()) // Should now be optional
+            .addPart('importFile', 'file.json', MediaType.APPLICATION_XML_TYPE, xmlBytes)
+            .build()
+
+        folderApi.importModel(
+            importRequest,
+            nhsDataDictionaryImporter.namespace,
+            nhsDataDictionaryImporter.name,
+            nhsDataDictionaryImporter.version)
+
+        then:
+        List<Folder> branches = nhsDataDictionaryController.branches()
+        nhsDataDictionaryController.statistics(branches.first().id)
     }
 
 

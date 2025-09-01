@@ -17,6 +17,8 @@
  */
 package datadictionary
 
+import io.micronaut.context.annotation.Property
+import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import spock.lang.Specification
 import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.NhsDDBusinessDefinition
@@ -28,6 +30,8 @@ import uk.nhs.datadictionary.NhsDDElement
 import uk.nhs.datadictionary.NhsDDSupportingInformation
 import uk.nhs.datadictionary.NhsDataDictionary
 
+@MicronautTest(startApplication = false, environments = ['secured'])
+@Property(name = "flyway.enabled", value = "false")
 class NhsDataDictionarySpec extends Specification {
     void "should process links from xml for classes and attributes"() {
         given: "the dictionary contains components with definitions containing links"

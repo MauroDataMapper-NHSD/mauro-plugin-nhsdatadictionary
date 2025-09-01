@@ -17,12 +17,16 @@
  */
 package uk.nhs.digital.maurodatamapper.datadictionary.integritychecks
 
+import io.micronaut.context.annotation.Property
+import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import spock.lang.Specification
 import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.integritychecks.AllItemsAreWithinValidDateRange
 
 import java.time.LocalDate
 
+@MicronautTest(startApplication = false, environments = ['secured'])
+@Property(name = "flyway.enabled", value = "false")
 class AllItemsAreWithinValidDateRangeSpec extends Specification {
 
     LocalDate testDateNow = LocalDate.of(2024, 12, 31)

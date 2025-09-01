@@ -17,13 +17,15 @@
  */
 package uk.nhs.digital.maurodatamapper.datadictionary.publish
 
+import io.micronaut.context.annotation.Property
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import org.eclipse.compare.rangedifferencer.RangeDifference
 import spock.lang.Specification
 import uk.nhs.datadictionary.publish.DaisyDiffHelper
 
 
-@MicronautTest
+@MicronautTest(startApplication = false, environments = ['secured'])
+@Property(name = "flyway.enabled", value = "false")
 class DaisyDiffHelperSpec extends Specification {
 
 

@@ -52,6 +52,8 @@ dependencies {
     platformapi("org.apache.groovy:groovy-json")
     implementation('commons-io:commons-io:2.20.0')
     implementation('org.apache.commons:commons-lang3:3.18.0')
+    platformapi("io.micronaut:micronaut-http-client")
+    platformapi("io.micronaut:micronaut-http-server")
 
     //testImplementation("io.micronaut:micronaut-jdbc-hikari")
     testRuntimeOnly("org.postgresql:postgresql")
@@ -63,14 +65,21 @@ dependencies {
 
     platformapi('org.maurodata:mauro-domain:0.0.1-SNAPSHOT')
     platformapi('org.maurodata:mauro-persistence:0.0.1-SNAPSHOT')
-    platformapi('org.maurodata:mauro-api:0.0.1-SNAPSHOT')
     platformapi('org.maurodata:mauro-client:0.0.1-SNAPSHOT')
+
+    platformapi('org.maurodata:mauro-api:0.0.1-SNAPSHOT')
 
     implementation("org.maurodata:dita-dsl-base:2.0.0-SNAPSHOT")
 
     implementation("org.maurodata:iso11179-domain:2.0.0-SNAPSHOT") {
         exclude group: "com.sun.xml.bind", module: "jaxb-impl"
     }
+    implementation("io.micronaut.sql:micronaut-jdbc-hikari")
+    testRuntimeOnly("org.testcontainers:testcontainers")
+    testRuntimeOnly("org.testcontainers:postgresql")
+    testImplementation("io.micronaut:micronaut-http-server-netty")
+    testRuntimeOnly("org.postgresql:postgresql")
+
 
     // Daisy Diff and transitive dependencies.  Used in the generation of change requests
     implementation group: 'org.outerj.daisy', name: 'daisydiff', version: '1.2.3-atlassian-hosted'
@@ -85,6 +94,10 @@ dependencies {
     implementation group: 'xalan', name: 'serializer', version: '2.7.3'
 
     testImplementation("junit:junit:4.13.2")
+    testImplementation("io.micronaut.test:micronaut-test-junit5")
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+
+
 
 }
 
@@ -135,6 +148,7 @@ publishing {
 }
 
 test {
+    useJUnitPlatform()
     minHeapSize = "1g" // initial heap size
     maxHeapSize = "20g" // maximum heap size
     //jvmArgs '-XX:MaxPermSize=256m' // mem argument for the test JVM

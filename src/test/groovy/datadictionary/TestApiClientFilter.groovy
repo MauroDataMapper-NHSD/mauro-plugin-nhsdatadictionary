@@ -1,0 +1,34 @@
+package datadictionary
+
+import groovy.util.logging.Slf4j
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.MutableHttpRequest
+import io.micronaut.http.MutableHttpResponse
+import io.micronaut.http.annotation.ClientFilter
+import io.micronaut.http.annotation.RequestFilter
+import io.micronaut.http.annotation.ResponseFilter
+import io.micronaut.http.uri.UriBuilder
+import io.micronaut.runtime.server.EmbeddedServer
+import jakarta.inject.Inject
+import jakarta.inject.Singleton
+
+@ClientFilter
+@Singleton
+@Slf4j
+class TestApiClientFilter {
+
+    @Inject
+    EmbeddedServer embeddedServer
+
+    @RequestFilter
+    void doFilter(MutableHttpRequest<?> request) {
+        System.err.println("Applying request filter: ${this.class}")
+        log.trace("Applying request filter: ${this.class}")
+        UriBuilder builder = UriBuilder.of(request.getUri())
+        builder.host(embeddedServer.host)
+        builder.port(embeddedServer.port)
+        System.err.println(builder.build())
+        request.uri (builder.build())
+    }
+
+}

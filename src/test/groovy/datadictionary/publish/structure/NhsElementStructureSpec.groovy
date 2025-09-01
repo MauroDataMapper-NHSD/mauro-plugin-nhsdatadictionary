@@ -17,6 +17,7 @@
  */
 package datadictionary.publish.structure
 
+import io.micronaut.context.annotation.Property
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
 import org.maurodata.dita.elements.langref.base.Topic
@@ -38,7 +39,8 @@ import uk.nhs.datadictionary.publish.structure.ItemLinkListSection
 import uk.nhs.datadictionary.publish.structure.WhereUsedSection
 import uk.nhs.datadictionary.services.NhsDataDictionaryService
 
-@MicronautTest
+@MicronautTest(startApplication = false, environments = ['secured'])
+@Property(name = "flyway.enabled", value = "false")
 class NhsElementStructureSpec extends DataDictionaryComponentStructureSpec<NhsDDElement> {
     @Inject
     NhsDataDictionaryService dataDictionaryService
