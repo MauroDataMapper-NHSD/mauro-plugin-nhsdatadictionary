@@ -26,6 +26,7 @@ import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.datamodel.DataModelService
 import org.maurodata.domain.facet.Edit
+import org.maurodata.domain.facet.EditType
 import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.model.AdministeredItem
@@ -34,6 +35,7 @@ import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
 import org.maurodata.domain.terminology.TerminologyService
 import org.maurodata.exception.MauroApplicationException
+import org.maurodata.persistence.cache.FacetCacheableRepository.MetadataCacheableRepository
 import uk.nhs.datadictionary.NhsDDBranch
 import uk.nhs.datadictionary.NhsDDChangeLog
 import uk.nhs.datadictionary.NhsDDCode
@@ -49,6 +51,9 @@ import java.util.regex.Pattern
 @Singleton
 abstract class DataDictionaryComponentService<T extends AdministeredItem, D extends NhsDataDictionaryComponent> {
 
+    @Inject
+    MetadataCacheableRepository metadataCacheableRepository
+
     List<T> index(UUID versionedFolderId, boolean includeRetired = false) {
         (getAll(versionedFolderId, includeRetired) as List).sort {it.label}
     }
@@ -57,7 +62,7 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
 
     abstract Set<T> getAll(UUID versionedFolderId, boolean includeRetired = false)
 
-    Map<String, String> getAliases(T catalogueItem) {
+/*    Map<String, String> getAliases(T catalogueItem) {
         Map<String, String> aliases = [:]
         catalogueItem.aliases
         NhsDataDictionary.aliasFields.each {aliasField ->
@@ -68,11 +73,7 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
         }
         return aliases
     }
-
-    abstract String getMetadataNamespace()
-
-    abstract D getNhsDataDictionaryComponentFromCatalogueItem(T catalogueItem, NhsDataDictionary dataDictionary, List<Metadata> metadata = null)
-
+*/
     abstract D getByCatalogueItemId(UUID catalogueItemId, NhsDataDictionary nhsDataDictionary)
 
     List<StereotypedCatalogueItem> getWhereUsed(UUID versionedFolderId, String id) {
@@ -314,124 +315,31 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
     void addMetadataFromComponent(Item domainObject, NhsDataDictionaryComponent component) {
         component.otherProperties.each {key, value ->
             if(!NhsDataDictionary.KEYS_FOR_INGEST_ONLY.contains(key))
-            addToMetadata(domainObject, key, value)
+            addToMetadata(domainObject, component.getMetadataNamespace(), key, value)
         }
     }
 
 
-    void addToMetadata(Item domainObject, String key, String value) {
+    void addToMetadata(Item domainObject, String namespace, String key, String value) {
         if (domainObject && value) {
             if(domainObject.metadata.find {
                 it.key == key
             }) {
                 throw new Exception("Duplicate metadata for $key on object of type ${domainObject.domainType}")
             } else {
-                domainObject.metadata.add(new Metadata(namespace: getMetadataNamespace(),
+                domainObject.metadata.add(new Metadata(namespace: namespace,
                                                         key: key,
                                                         value: value))
             }
         }
     }
 
-    void nhsDataDictionaryComponentFromItem(NhsDataDictionary dataDictionary, T catalogueItem, NhsDataDictionaryComponent component, List<Metadata> metadata = null) {
-        component.name = catalogueItem.label
-        component.definition = catalogueItem.description?:""
-        component.catalogueItem = catalogueItem
-
-        component.catalogueItemId = catalogueItem.id
-        component.branchId = dataDictionary.containingVersionedFolder.id
-
-        // This is not obvious, but these parent/model IDs are required in the GSON views for the integrity checks - they are used for the direct
-        // URLs to items in the Mauro UI
-        if(catalogueItem instanceof DataClass) {
-            component.catalogueItemParentId = ((DataClass)catalogueItem).parentDataClass?.id?.toString()
-            component.catalogueItemModelId = ((DataClass)catalogueItem).dataModel.id.toString()
-        }
-        if(catalogueItem instanceof DataElement) {
-            component.catalogueItemParentId = ((DataElement)catalogueItem).dataClass?.id?.toString()
-            component.catalogueItemModelId = ((DataElement)catalogueItem).dataClass?.dataModel?.id.toString()
-        }
-        if(catalogueItem instanceof DataModel) {
-            component.catalogueItemModelId = catalogueItem.id.toString()
-        }
-        if(catalogueItem instanceof Term) {
-            component.catalogueItemModelId = ((Term)catalogueItem).terminology.id.toString()
-        }
-
-        if(!metadata) {
-            if(component instanceof NhsDDElement) {
-                log.debug("Building metadata for element!")
-            }
-            metadata = Metadata
-                    .byMultiFacetAwareItemIdAndNamespace(catalogueItem.id, getMetadataNamespace())
-                    .inList('key', NhsDataDictionary.getAllMetadataKeys())
-                    .list()
-        }
-
-        NhsDataDictionary.getAllMetadataKeys().each {key ->
-            component.otherProperties[key] = metadata.find {it.key == key}?.value
-        }
-
-        setNhsDataDictionaryComponentChangeLog(dataDictionary, component)
-    }
-
-    static Pattern CHANGE_LOG_BRANCH_NAME_PATTERN = Pattern.compile(/(?<=\$)(.*?(?='))/)
-
-    void setNhsDataDictionaryComponentChangeLog(NhsDataDictionary dataDictionary, NhsDataDictionaryComponent component) {
-        component.changeLogHeaderText = dataDictionary.changeLogHeaderText
-        component.changeLogFooterText = dataDictionary.changeLogFooterText
-
-        List<Edit> mergeEdits = getMergeEditsForChangeLog(component)
-        if (mergeEdits.empty) {
-            return
-        }
-
-        Set<String> branchNames = mergeEdits
-            .collect {edit -> edit.description.find(CHANGE_LOG_BRANCH_NAME_PATTERN) }
-            .findAll { branchName -> branchName != null }
-            .toSet()
-
-        if (branchNames.empty) {
-            return
-        }
-
-        component.changeLog = branchNames
-            .findAll { branchName -> dataDictionary.workItemBranches.containsKey(branchName) }
-            .collect { branchName ->
-                NhsDDBranch branch = dataDictionary.workItemBranches.get(branchName)
-                new NhsDDChangeLog(branch, dataDictionary.changeRequestUrl)
-            }
-    }
-
-    List<Edit> getMergeEditsForChangeLog(NhsDataDictionaryComponent component) {
-        editService.findAllByResourceAndTitle(component.catalogueItem.domainType, component.catalogueItem.id, EditTitle.MERGE)
-    }
-
-    Map<String, D> collectNhsDataDictionaryComponents(Collection<T> catalogueItems, NhsDataDictionary dataDictionary, Map<UUID, Metadata> metadataMap = null) {
-        catalogueItems.collectEntries {ci ->
-            List<Metadata> metadata = null
-            if(metadataMap) {
-                metadata = metadataMap[ci.id]
-            }
-            [ci.label, getNhsDataDictionaryComponentFromCatalogueItem(ci, dataDictionary, metadata)]
-        }
-    }
 
     boolean catalogueItemIsRetired(AdministeredItem catalogueItem) {
-        List<Metadata> allRelevantMetadata = Metadata
-            .byMultiFacetAwareItemIdAndNamespace(catalogueItem.id, getMetadataNamespace())
-            .eq('key', 'isRetired')
-            .list()
-        return allRelevantMetadata.any{md -> md.value == "true"}
-    }
-
-    boolean containerIsRetired(Folder container) {
-        List<Metadata> allRelevantMetadata = Metadata
-                .byMultiFacetAwareItemIdAndNamespace(container.id, getMetadataNamespace())
-                .eq('key', "isRetired")
-                .list()
-
-        return allRelevantMetadata.any{md -> md.value == "true"}
+        // Maybe should check for namespace here as well?
+        catalogueItem.metadata.find {
+            it.name == 'isRetired' && it.value == 'true'
+        }
     }
 
 

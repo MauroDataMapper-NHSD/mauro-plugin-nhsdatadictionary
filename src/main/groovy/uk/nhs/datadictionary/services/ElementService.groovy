@@ -19,7 +19,6 @@ package uk.nhs.datadictionary.services
 
 
 import groovy.util.logging.Slf4j
-import io.micronaut.transaction.annotation.Transactional
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import org.maurodata.domain.datamodel.DataClass
@@ -27,16 +26,14 @@ import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.datamodel.DataType
 import org.maurodata.domain.facet.Metadata
-import org.maurodata.domain.facet.SemanticLink
 import org.maurodata.domain.facet.SemanticLinkType
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.model.AdministeredItem
 import org.maurodata.domain.terminology.CodeSet
 import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
-import org.maurodata.exception.MauroApplicationException
+import org.maurodata.persistence.datamodel.DataElementRepository
 import uk.nhs.datadictionary.NhsDDAttribute
-import uk.nhs.datadictionary.NhsDDCode
 import uk.nhs.datadictionary.NhsDDElement
 import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.services.profiles.DDCodeSetProfileProviderService
@@ -46,8 +43,7 @@ import uk.nhs.datadictionary.utils.DDHelperFunctions
 @Singleton
 class ElementService extends DataDictionaryComponentService<DataElement, NhsDDElement> {
 
-    @Inject
-    AttributeService attributeService
+    @Inject DataElementRepository dataElementRepository
 
     @Inject
     DDCodeSetProfileProviderService ddCodeSetProfileProviderService
@@ -58,8 +54,8 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
         dataDictionary.containingVersionedFolder = versionedFolderService.get(versionedFolderId)
 
         DataElement elementElement = dataElementService.get(id)
-        NhsDDElement element = getNhsDataDictionaryComponentFromCatalogueItem(elementElement, dataDictionary)
-        element.instantiatesAttributes.addAll(attributeService.getAllForElement(dataDictionary, element))
+        NhsDDElement element = new NhsDDElement().fromMauroItem(dataDictionary, elementElement)
+        element.instantiatesAttributes.addAll(getAllAttributesForElement(dataDictionary, element))
         element.definition = convertLinksInDescription(versionedFolderId, element.getDescription())
         String attributeText = element.getAttributeTextAsHtml()
         if (attributeText) {
@@ -171,17 +167,18 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
         }
     }
 
-    Set<NhsDDElement> getAllForAttribute(NhsDataDictionary dataDictionary, NhsDDAttribute nhsDDAttribute) {
-        SemanticLink.byTargetMultiFacetAwareItemId(nhsDDAttribute.catalogueItem.id)
-            .list()
-            .collect { link -> DataElement.get(link.multiFacetAwareItemId) }
-            .collect { dataElement ->
-                dataElement.metadata.size() // For later conversion to stereotyped item and to find out if retired
-                getNhsDataDictionaryComponentFromCatalogueItem(dataElement, dataDictionary)
-            }
-            .findAll { element -> !element.isRetired() }
-            .sort { element -> element.name }
+    Set<NhsDDAttribute> getAllAttributesForElement(NhsDataDictionary dataDictionary, NhsDDElement nhsDDElement) {
+        nhsDDAttribute.catalogueItem.semanticLinks.findAll {semanticLink ->
+            semanticLink.linkType == SemanticLinkType.REFINES
+        }.collect {semanticLink ->
+            DataElement dataElement = dataElementRepository.readById(semanticLink.targetMultiFacetAwareItemId)
+            new NhsDDAttribute().fromMauroItem(dataDictionary, dataElement)
+        }.findAll{
+            !it.isRetired()
+        }.sort {it.name}
+
     }
+
 
     @Deprecated
     boolean attributeListIncludesName(AdministeredItem catalogueItem, String name) {
@@ -196,37 +193,6 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
         catalogueItem.semanticLinks.collect {link ->
             DataElement.get(link.targetMultiFacetAwareItemId).label
         }
-    }
-
-
-    @Override
-    String getMetadataNamespace() {
-        NhsDataDictionary.METADATA_NAMESPACE + ".element"
-    }
-
-    @Override
-    NhsDDElement getNhsDataDictionaryComponentFromCatalogueItem(DataElement catalogueItem, NhsDataDictionary dataDictionary, List<Metadata> metadata = null) {
-        NhsDDElement element = new NhsDDElement()
-        nhsDataDictionaryComponentFromItem(dataDictionary, catalogueItem, element, metadata)
-        catalogueItem.semanticLinks.each {
-            if(it.linkType == SemanticLinkType.REFINES) {
-                NhsDDAttribute linkedAttribute = dataDictionary.attributesByCatalogueId[it.targetMultiFacetAwareItemId]
-                if(linkedAttribute) {
-                    element.instantiatesAttributes.add(linkedAttribute)
-                    linkedAttribute.instantiatedByElements.add(element)
-                }
-            }
-        }
-        if (catalogueItem.dataType.dataTypeKind == DataType.DataTypeKind.MODEL_TYPE) {
-            List<Term> terms = termService.findAllByCodeSetId(((DataType) catalogueItem.dataType).modelResourceId)
-            List<NhsDDCode> codes = getCodesForTerms(terms, dataDictionary)
-            codes.each {code ->
-                code.usedByElements.add(element)
-                element.codes.add(code)
-            }
-        }
-        element.dataDictionary = dataDictionary
-        return element
     }
 
     void persistElements(NhsDataDictionary dataDictionary,

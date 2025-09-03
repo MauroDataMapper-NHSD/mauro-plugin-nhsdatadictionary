@@ -21,7 +21,11 @@ package uk.nhs.datadictionary
 import groovy.util.logging.Slf4j
 import groovy.xml.XmlUtil
 import org.maurodata.dita.elements.langref.base.Topic
+import org.maurodata.domain.datamodel.DataClass
+import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataModel
+import org.maurodata.domain.facet.Edit
+import org.maurodata.domain.facet.Metadata
 import uk.nhs.datadictionary.publish.structure.DictionaryItem
 import uk.nhs.datadictionary.publish.structure.datasets.DataSetSection
 import uk.nhs.datadictionary.publish.structure.datasets.cds.LegacyCdsDataSetSection
@@ -48,6 +52,10 @@ class NhsDDDataSet implements NhsDataDictionaryComponent <DataModel> {
         "data_sets"
     }
 
+    @Override
+    String getMetadataNamespace() {
+        NhsDataDictionary.METADATA_NAMESPACE + ".data set"
+    }
 
     List<String> path = []
     String definitionAsXml
@@ -212,4 +220,72 @@ class NhsDDDataSet implements NhsDataDictionaryComponent <DataModel> {
     boolean useCdsClassRender() {
         name.startsWith('CDS') || name.startsWith('ECDS') || name.startsWith('Emergency Care Data Set')
     }
+
+    @Override
+    NhsDDDataSet fromMauroItem(NhsDataDictionary dataDictionary, DataModel catalogueItem, List<Metadata> metadata = null) {
+        NhsDataDictionaryComponent.super.fromMauroItem(dataDictionary, catalogueItem, metadata)
+        this.catalogueItem.childDataClasses.each {dataClass ->
+            dataSetClasses.add(new NhsDDDataSetClass(dataClass, dataDictionary))
+        }
+        dataSetClasses = dataSetClasses.sort { it.webOrder }
+        return this
+    }
+
+    @Override
+    List<Edit> getMergeEditsForChangeLog() {
+        // Special code for loading the change log for a Data Set, since all the edit history entries are stored
+        // not just in the Data Set (Data Model), but child components too
+        DataModel dataModel = catalogueItem as DataModel
+        if (!dataModel) {
+            return []
+        }
+
+        List<Edit> allMergeEdits = []
+        loadDataModelMergeEdits(allMergeEdits, dataModel)
+        dataModel.childDataClasses.each { dataClass ->
+            loadDataClassMergeEdits(allMergeEdits, dataClass)
+        }
+
+        allMergeEdits.sort { it.dateCreated }
+    }
+
+    void loadDataModelMergeEdits(List<Edit> allMergeEdits, DataModel item) {
+        log.info("Getting merge edits for data model '$item.label'")
+        List<Edit> mergeEdits = editService.findAllByResourceAndTitle(item.domainType, item.id, EditTitle.MERGE)
+        if (mergeEdits.empty) {
+            return
+        }
+
+        allMergeEdits.addAll(mergeEdits)
+    }
+
+    void loadDataClassMergeEdits(List<Edit> allMergeEdits, DataClass item) {
+        log.info("Getting merge edits for data class '$item.label'")
+        List<Edit> mergeEdits = editService.findAllByResourceAndTitle(item.domainType, item.id, EditTitle.MERGE)
+        if (mergeEdits.empty) {
+            return
+        }
+
+        allMergeEdits.addAll(mergeEdits)
+
+        item.dataClasses.each { dataClass ->
+            loadDataClassMergeEdits(allMergeEdits, dataClass)
+        }
+
+        item.getDataElements().each { dataElement ->
+            loadDataElementMergeEdits(allMergeEdits, dataElement)
+        }
+    }
+
+    void loadDataElementMergeEdits(List<Edit> allMergeEdits, DataElement item) {
+        log.info("Getting merge edits for data element '$item.label'")
+        List<Edit> mergeEdits = editService.findAllByResourceAndTitle(item.domainType, item.id, EditTitle.MERGE)
+        if (mergeEdits.empty) {
+            return
+        }
+
+        allMergeEdits.addAll(mergeEdits)
+    }
+
+
 }

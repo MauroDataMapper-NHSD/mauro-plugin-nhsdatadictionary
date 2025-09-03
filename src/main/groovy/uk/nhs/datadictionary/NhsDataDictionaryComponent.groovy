@@ -23,7 +23,14 @@ import org.maurodata.dita.elements.langref.base.Topic
 import org.maurodata.dita.elements.langref.base.XRef
 import org.maurodata.dita.helpers.HtmlHelper
 import org.maurodata.dita.meta.SpaceSeparatedStringList
+import org.maurodata.domain.datamodel.DataClass
+import org.maurodata.domain.datamodel.DataElement
+import org.maurodata.domain.datamodel.DataModel
+import org.maurodata.domain.facet.Edit
+import org.maurodata.domain.facet.EditType
+import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.model.AdministeredItem
+import org.maurodata.domain.terminology.Term
 import uk.nhs.datadictionary.publish.structure.AliasesRow
 import uk.nhs.datadictionary.publish.structure.AliasesSection
 import uk.nhs.datadictionary.publish.structure.ChangeLogRow
@@ -37,6 +44,7 @@ import uk.nhs.datadictionary.utils.DDHelperFunctions
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.regex.Pattern
 
 @Slf4j
 trait NhsDataDictionaryComponent <T extends AdministeredItem > {
@@ -44,6 +52,8 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
     abstract String getStereotype()
     abstract String getStereotypeForPreview()
     abstract String getPluralStereotypeForWebsite()
+
+    abstract String getMetadataNamespace()
 
     NhsDataDictionary dataDictionary
 
@@ -583,6 +593,88 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
     void updateWhereUsed() {
 
     }
+
+
+    NhsDataDictionaryComponent<T> fromMauroItem(NhsDataDictionary dataDictionary, T catalogueItem, List<Metadata> metadata) {
+        this.catalogueItem = catalogueItem
+        this.dataDictionary = dataDictionary
+
+        name = catalogueItem.label
+        definition = catalogueItem.description?:""
+        catalogueItemId = catalogueItem.id
+        branchId = dataDictionary.containingVersionedFolder.id
+
+        // This is not obvious, but these parent/model IDs are required in the GSON views for the integrity checks - they are used for the direct
+        // URLs to items in the Mauro UI
+        if(catalogueItem instanceof DataClass) {
+            catalogueItemParentId = ((DataClass)catalogueItem).parentDataClass?.id?.toString()
+            catalogueItemModelId = ((DataClass)catalogueItem).dataModel.id.toString()
+        }
+        if(catalogueItem instanceof DataElement) {
+            catalogueItemParentId = ((DataElement)catalogueItem).dataClass?.id?.toString()
+            catalogueItemModelId = ((DataElement)catalogueItem).dataClass?.dataModel?.id.toString()
+        }
+        if(catalogueItem instanceof DataModel) {
+            catalogueItemModelId = catalogueItem.id.toString()
+        }
+        if(catalogueItem instanceof Term) {
+            catalogueItemModelId = ((Term)catalogueItem).terminology.id.toString()
+        }
+
+        if(!metadata) {
+            // Assume already loaded in the Catalogue Item
+            metadata = catalogueItem.metadata.findAll {
+                it.namespace == getMetadataNamespace() &&
+                NhsDataDictionary.getAllMetadataKeys().contains(it.key)
+            }
+        }
+
+        NhsDataDictionary.getAllMetadataKeys().each {key ->
+            otherProperties[key] = metadata.find {it.key == key}?.value
+        }
+
+        setNhsDataDictionaryComponentChangeLog(dataDictionary)
+        return this
+    }
+
+    static Pattern CHANGE_LOG_BRANCH_NAME_PATTERN = Pattern.compile(/(?<=\$)(.*?(?='))/)
+
+    void setNhsDataDictionaryComponentChangeLog(NhsDataDictionary dataDictionary) {
+        changeLogHeaderText = dataDictionary.changeLogHeaderText
+        changeLogFooterText = dataDictionary.changeLogFooterText
+
+        List<Edit> mergeEdits = getMergeEditsForChangeLog()
+        if (mergeEdits.empty) {
+            return
+        }
+
+        Set<String> branchNames = mergeEdits
+            .collect {edit -> edit.description.find(CHANGE_LOG_BRANCH_NAME_PATTERN) }
+            .findAll { branchName -> branchName != null }
+            .toSet()
+
+        if (branchNames.empty) {
+            return
+        }
+
+        changeLog = branchNames
+            .findAll { branchName -> dataDictionary.workItemBranches.containsKey(branchName) }
+            .collect { branchName ->
+                NhsDDBranch branch = dataDictionary.workItemBranches.get(branchName)
+                new NhsDDChangeLog(branch, dataDictionary.changeRequestUrl)
+            }
+    }
+
+    List<Edit> getMergeEditsForChangeLog() {
+        catalogueItem.edits.findAll {
+            it.title = EditType.MERGE
+        }
+        // Assume already loaded in from the database
+        //editService.findAllByResourceAndTitle(component.catalogueItem.domainType, component.catalogueItem.id, EditTitle.MERGE)
+    }
+
+
+
 
 
 }

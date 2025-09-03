@@ -40,9 +40,14 @@ import org.maurodata.persistence.terminology.TerminologyRepository
 import uk.nhs.datadictionary.DataDictionaryImportParameters
 import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.NhsDDBranch
+import uk.nhs.datadictionary.NhsDDBusinessDefinition
+import uk.nhs.datadictionary.NhsDDClass
 import uk.nhs.datadictionary.NhsDDClassRelationship
 import uk.nhs.datadictionary.NhsDDDataSet
+import uk.nhs.datadictionary.NhsDDDataSetConstraint
 import uk.nhs.datadictionary.NhsDDDataSetFolder
+import uk.nhs.datadictionary.NhsDDElement
+import uk.nhs.datadictionary.NhsDDSupportingInformation
 import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.fhir.FhirBundle
 import uk.nhs.datadictionary.fhir.FhirEntry
@@ -55,7 +60,6 @@ import uk.nhs.datadictionary.utils.StereotypedCatalogueItem
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.time.Duration
 import java.time.Instant
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
@@ -315,8 +319,6 @@ class NhsDataDictionaryService {
 
         DataModel classesModel = getClassesModel(versionedFolderId)
 
-        dataModelContentRepository.readWithContentById(classesModel.id)
-
         DataModel elementsModel = getElementsModel(versionedFolderId)
 
         if(classesModel) {
@@ -374,12 +376,14 @@ class NhsDataDictionaryService {
 
     DataModel getElementsModel(UUID versionedFolderId) {
         List<DataModel> dataModels = dataModelRepository.findAllByFolderId(versionedFolderId)
-        dataModels.find {it.label == NhsDataDictionary.ELEMENTS_MODEL_NAME}
+        DataModel elementsModel = dataModels.find {it.label == NhsDataDictionary.ELEMENTS_MODEL_NAME}
+        dataModelContentRepository.findWithContentById(elementsModel.id)
     }
 
     DataModel getClassesModel(UUID versionedFolderId) {
         List<DataModel> dataModels = dataModelRepository.findAllByFolderId(versionedFolderId)
-        dataModels.find {it.label == NhsDataDictionary.CLASSES_MODEL_NAME}
+        DataModel classesDataModel = dataModels.find {it.label == NhsDataDictionary.CLASSES_MODEL_NAME}
+        dataModelContentRepository.findWithContentById(classesDataModel.id)
     }
 
     Folder getDataSetsFolder(UUID versionedFolderId) {
@@ -388,17 +392,23 @@ class NhsDataDictionaryService {
     }
 
     void addAttributesToDictionary(DataModel classesModel, NhsDataDictionary dataDictionary) {
-        Set<DataElement> attributeElements = dataElementRepository.findAllByParent(classesModel).findAll {
+        Set<DataElement> attributeElements = classesModel.dataElements.findAll {
             !(it.dataType.dataTypeKind == DataType.DataTypeKind.REFERENCE_TYPE)
         }
-        dataDictionary.attributes = attributeService.collectNhsDataDictionaryComponents(attributeElements, dataDictionary)
+        dataDictionary.attributes =
+            attributeElements.collectEntries {ci ->
+                 [ci.label, new NhsDDAttribute().fromMauroItem(dataDictionary, ci)]
+            }
         dataDictionary.attributes.values().each { ddAttribute ->
             dataDictionary.attributesByCatalogueId[ddAttribute.getCatalogueItem().id] = ddAttribute
         }
     }
 
     void addElementsToDictionary(DataModel elementsModel, NhsDataDictionary dataDictionary) {
-        Set<DataElement> elementElements = dataElementRepository.findAllByParent(elementsModel)
+        Set<DataElement> elementElements = elementsModel.dataElements
+
+        // Assume metadata already read in
+        /*
         List<Metadata> elementMetadata = Metadata.byMultiFacetAwareItemIdInList(elementElements.collect {it.id} as List).list()
         elementMetadata.each { metadata ->
             if(dataDictionary.elementsMetadata[metadata.multiFacetAwareItemId]) {
@@ -407,7 +417,11 @@ class NhsDataDictionaryService {
                 dataDictionary.elementsMetadata[metadata.multiFacetAwareItemId] = [metadata]
             }
         }
-        dataDictionary.elements = elementService.collectNhsDataDictionaryComponents(elementElements, dataDictionary, dataDictionary.elementsMetadata)
+         */
+
+        dataDictionary.elements = elementElements.collectEntries {ci ->
+                [ci.label, new NhsDDElement().fromMauroItem(dataDictionary, ci)]
+            }
         dataDictionary.elements.values().each { ddElement ->
             dataDictionary.elementsByCatalogueId[ddElement.getCatalogueItem().id] = ddElement
         }
@@ -419,7 +433,9 @@ class NhsDataDictionaryService {
         Set<DataClass> classClasses = classesModel.dataClasses.collect() as Set
         classClasses.addAll(classClasses.find {it.label == "Retired"}.dataClasses)
         classClasses.removeAll {it.label == "Retired"}
-        dataDictionary.classes = classService.collectNhsDataDictionaryComponents(classClasses, dataDictionary)
+        dataDictionary.classes = classClasses.collectEntries {ci ->
+            [ci.label, new NhsDDClass().fromMauroItem(dataDictionary, ci)]
+        }
         dataDictionary.classes.values().each { ddClass ->
             dataDictionary.classesByCatalogueId[ddClass.getCatalogueItem().id] = ddClass
         }
@@ -473,7 +489,7 @@ class NhsDataDictionaryService {
                     }
                 }
 
-                NhsDDDataSet dataSet = dataSetService.getNhsDataDictionaryComponentFromCatalogueItem(dataModel, dataDictionary, null)
+                NhsDDDataSet dataSet = new NhsDDDataSet().fromMauroItem(dataDictionary, dataModel)
                 dataSet.path.addAll(path)
                 dataDictionary.dataSets[dataModel.label] = dataSet
                 List<String> folderPath = []
@@ -490,7 +506,8 @@ class NhsDataDictionaryService {
 
         dataSetFolders.each { path, folders ->
             folders.each {folder ->
-                NhsDDDataSetFolder dataSetFolder = dataSetFolderService.getNhsDataDictionaryComponentFromCatalogueItem(path, folder, dataDictionary)
+                NhsDDDataSetFolder dataSetFolder = new NhsDDDataSetFolder().fromMauroItem(dataDictionary, folder)
+                dataSetFolder.setPath(path)
                 if(dataDictionary.dataSetFolders[path]) {
                     dataDictionary.dataSetFolders[path].add(dataSetFolder)
                 } else {
@@ -515,17 +532,24 @@ class NhsDataDictionaryService {
 
 
     void addBusDefsToDictionary(Terminology busDefsTerminology, NhsDataDictionary dataDictionary) {
-        dataDictionary.businessDefinitions = businessDefinitionService.collectNhsDataDictionaryComponents(termService.findAllByTerminologyId(busDefsTerminology.id), dataDictionary)
+        dataDictionary.businessDefinitions =
+            termService.findAllByTerminologyId(busDefsTerminology.id).collectEntries {ci ->
+                [ci.label, new NhsDDBusinessDefinition().fromMauroItem(dataDictionary, ci)]
+            }
     }
 
     void addSupDefsToDictionary(Terminology supDefsTerminology, NhsDataDictionary dataDictionary) {
-        dataDictionary.supportingInformation = supportingInformationService.collectNhsDataDictionaryComponents(termService.findAllByTerminologyId(supDefsTerminology.id), dataDictionary)
-    }
+        dataDictionary.supportingInformation =
+            termService.findAllByTerminologyId(supDefsTerminology.id).collectEntries {ci ->
+                [ci.label, new NhsDDSupportingInformation().fromMauroItem(dataDictionary, ci)]
+            }
+        }
 
     void addDataSetConstraintsToDictionary(Terminology dataSetConstraintsTerminology, NhsDataDictionary dataDictionary) {
         dataDictionary.dataSetConstraints =
-            dataSetConstraintService.collectNhsDataDictionaryComponents(termService.findAllByTerminologyId(dataSetConstraintsTerminology.id),
-                                                                  dataDictionary)
+            termService.findAllByTerminologyId(dataSetConstraintsTerminology.id).collectEntries {ci ->
+                [ci.label, new NhsDDDataSetConstraint().fromMauroItem(dataDictionary, ci)]
+            }
     }
 
 /*

@@ -63,7 +63,7 @@ class DataSetService extends DataDictionaryComponentService<DataModel, NhsDDData
 
         DataModel dataModel = dataModelService.get(id)
 
-        NhsDDDataSet dataSet = getNhsDataDictionaryComponentFromCatalogueItem(dataModel, dataDictionary)
+        NhsDDDataSet dataSet = new NhsDDDataSet().nhsDataDictionaryComponentFromCatalogueItem(dataDictionary, dataModel)
         dataSet.definition = convertLinksInDescription(versionedFolderId, dataSet.getDescription())
 
         DictionaryItem structure = dataSet.getPublishStructure()
@@ -116,79 +116,6 @@ class DataSetService extends DataDictionaryComponentService<DataModel, NhsDDData
             returnModels.putAll(getAllDataSets(newPath, childFolder, includeRetired))
         }
         return returnModels
-    }
-
-    @Override
-    String getMetadataNamespace() {
-        NhsDataDictionary.METADATA_NAMESPACE + ".data set"
-    }
-
-    @Override
-    NhsDDDataSet getNhsDataDictionaryComponentFromCatalogueItem(DataModel catalogueItem, NhsDataDictionary dataDictionary, List<Metadata> metadata = null) {
-        NhsDDDataSet dataSet = new NhsDDDataSet()
-        nhsDataDictionaryComponentFromItem(dataDictionary, catalogueItem, dataSet, metadata)
-        catalogueItem.childDataClasses.each {dataClass ->
-            dataSet.dataSetClasses.add(new NhsDDDataSetClass(dataClass, dataDictionary))
-        }
-        dataSet.dataSetClasses = dataSet.dataSetClasses.sort { it.webOrder }
-        dataSet.dataDictionary = dataDictionary
-        return dataSet
-    }
-
-    @Override
-    List<Edit> getMergeEditsForChangeLog(NhsDataDictionaryComponent component) {
-        // Special code for loading the change log for a Data Set, since all the edit history entries are stored
-        // not just in the Data Set (Data Model), but child components too
-        DataModel dataModel = component.catalogueItem as DataModel
-        if (!dataModel) {
-            return []
-        }
-
-        List<Edit> allMergeEdits = []
-        loadDataModelMergeEdits(allMergeEdits, dataModel)
-        dataModel.childDataClasses.each { dataClass ->
-            loadDataClassMergeEdits(allMergeEdits, dataClass)
-        }
-
-        allMergeEdits.sort { it.dateCreated }
-    }
-
-    void loadDataModelMergeEdits(List<Edit> allMergeEdits, DataModel item) {
-        log.info("Getting merge edits for data model '$item.label'")
-        List<Edit> mergeEdits = editService.findAllByResourceAndTitle(item.domainType, item.id, EditTitle.MERGE)
-        if (mergeEdits.empty) {
-            return
-        }
-
-        allMergeEdits.addAll(mergeEdits)
-    }
-
-    void loadDataClassMergeEdits(List<Edit> allMergeEdits, DataClass item) {
-        log.info("Getting merge edits for data class '$item.label'")
-        List<Edit> mergeEdits = editService.findAllByResourceAndTitle(item.domainType, item.id, EditTitle.MERGE)
-        if (mergeEdits.empty) {
-            return
-        }
-
-        allMergeEdits.addAll(mergeEdits)
-
-        item.dataClasses.each { dataClass ->
-            loadDataClassMergeEdits(allMergeEdits, dataClass)
-        }
-
-        item.getDataElements().each { dataElement ->
-            loadDataElementMergeEdits(allMergeEdits, dataElement)
-        }
-    }
-
-    void loadDataElementMergeEdits(List<Edit> allMergeEdits, DataElement item) {
-        log.info("Getting merge edits for data element '$item.label'")
-        List<Edit> mergeEdits = editService.findAllByResourceAndTitle(item.domainType, item.id, EditTitle.MERGE)
-        if (mergeEdits.empty) {
-            return
-        }
-
-        allMergeEdits.addAll(mergeEdits)
     }
 
     /*

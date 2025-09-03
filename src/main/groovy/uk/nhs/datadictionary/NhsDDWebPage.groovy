@@ -39,6 +39,11 @@ class NhsDDWebPage implements NhsDataDictionaryComponent <Term> {
     }
 
     @Override
+    String getMetadataNamespace() {
+        return NhsDataDictionary.METADATA_NAMESPACE + '.webpage'
+    }
+
+    @Override
     boolean isValidXmlNode(def xmlNode) {
         return !xmlNode."base-uri".text().contains("Supporting_Definitions") &&
                !xmlNode."base-uri".text().contains("Supporting_Information") /* &&

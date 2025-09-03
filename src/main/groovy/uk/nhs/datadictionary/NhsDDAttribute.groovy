@@ -19,8 +19,13 @@ package uk.nhs.datadictionary
 
 
 import groovy.util.logging.Slf4j
+import jakarta.inject.Inject
 import org.maurodata.dita.elements.langref.base.Topic
 import org.maurodata.domain.datamodel.DataElement
+import org.maurodata.domain.datamodel.DataType
+import org.maurodata.domain.facet.Metadata
+import org.maurodata.domain.terminology.Term
+import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.TermCacheableRepository
 import uk.nhs.datadictionary.publish.changePaper.ChangeAware
 import uk.nhs.datadictionary.publish.structure.CodesRow
 import uk.nhs.datadictionary.publish.structure.CodesSection
@@ -44,6 +49,11 @@ class NhsDDAttribute implements NhsDataDictionaryComponent <DataElement>, Change
     @Override
     String getPluralStereotypeForWebsite() {
         "attributes"
+    }
+
+    @Override
+    String getMetadataNamespace() {
+        NhsDataDictionary.METADATA_NAMESPACE + ".attribute"
     }
 
     /**
@@ -285,4 +295,21 @@ class NhsDDAttribute implements NhsDataDictionaryComponent <DataElement>, Change
     String getDiscriminator() {
         return name
     }
+
+    @Override
+    NhsDDAttribute fromMauroItem(NhsDataDictionary dataDictionary, DataElement catalogueItem, List<Metadata> metadata = null) {
+        NhsDataDictionaryComponent.super.fromMauroItem(dataDictionary, catalogueItem, metadata)
+        if (catalogueItem.dataType.dataTypeKind == DataType.DataTypeKind.MODEL_TYPE) {
+            List<Term> terms = termService.findAllByTerminologyId(((DataType) catalogueItem.dataType).modelResourceId)
+            List<NhsDDCode> codes = getCodesForTerms(terms, dataDictionary)
+            codes.each {code ->
+                code.owningAttribute = attribute
+                codes.add(code)
+            }
+        }
+        parentClass = new NhsDDClass()
+        parentClass.fromMauroItem(dataDictionary, catalogueItem.dataClass, metadata)
+        return this
+    }
+
 }

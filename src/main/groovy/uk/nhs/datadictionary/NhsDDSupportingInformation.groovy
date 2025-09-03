@@ -39,6 +39,10 @@ class NhsDDSupportingInformation implements NhsDataDictionaryComponent <Term> {
         "supporting_information"
     }
 
+    @Override
+    String getMetadataNamespace() {
+        NhsDataDictionary.METADATA_NAMESPACE + ".supporting information"
+    }
 
     @Override
     String calculateShortDescription() {

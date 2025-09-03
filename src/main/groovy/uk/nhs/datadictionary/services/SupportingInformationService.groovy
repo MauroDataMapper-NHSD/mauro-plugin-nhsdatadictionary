@@ -18,9 +18,7 @@
 package uk.nhs.datadictionary.services
 
 import groovy.util.logging.Slf4j
-import io.micronaut.transaction.annotation.Transactional
 import jakarta.inject.Singleton
-import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
@@ -37,7 +35,7 @@ class SupportingInformationService extends DataDictionaryComponentService<Term, 
         dataDictionary.containingVersionedFolder = versionedFolderService.get(versionedFolderId)
 
         Term supportingInformationTerm = termService.get(id)
-        NhsDDSupportingInformation supportingInformation = getNhsDataDictionaryComponentFromCatalogueItem(supportingInformationTerm, dataDictionary)
+        NhsDDSupportingInformation supportingInformation = new NhsDDSupportingInformation().fromMauroItem(dataDictionary, supportingInformationTerm)
         supportingInformation.definition = convertLinksInDescription(versionedFolderId, supportingInformation.getDescription())
         return supportingInformation
     }
@@ -51,18 +49,6 @@ class SupportingInformationService extends DataDictionaryComponentService<Term, 
         }
     }
 
-    @Override
-    String getMetadataNamespace() {
-        NhsDataDictionary.METADATA_NAMESPACE + ".supporting information"
-    }
-
-    @Override
-    NhsDDSupportingInformation getNhsDataDictionaryComponentFromCatalogueItem(Term catalogueItem, NhsDataDictionary dataDictionary, List<Metadata> metadata = null) {
-        NhsDDSupportingInformation supportingInformation = new NhsDDSupportingInformation()
-        nhsDataDictionaryComponentFromItem(dataDictionary, catalogueItem, supportingInformation, metadata)
-        supportingInformation.dataDictionary = dataDictionary
-        return supportingInformation
-    }
 
     void persistSupportingInformation(NhsDataDictionary dataDictionary, Folder dictionaryFolder) {
 

@@ -47,7 +47,10 @@ class NhsDDClass implements NhsDataDictionaryComponent <DataClass> {
         "classes"
     }
 
-    List<NhsDDCode> codes = []
+    @Override
+    String getMetadataNamespace() {
+        NhsDataDictionary.METADATA_NAMESPACE + ".class"
+    }
 
     List<NhsDDClass> extendsClasses = []
 

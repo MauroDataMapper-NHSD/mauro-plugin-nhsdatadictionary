@@ -18,13 +18,9 @@
 package uk.nhs.datadictionary.services
 
 import groovy.util.logging.Slf4j
-import io.micronaut.transaction.annotation.Transactional
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
-import org.maurodata.domain.datamodel.DataModel
-import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.folder.Folder
-import org.maurodata.exception.MauroApplicationException
 import uk.nhs.datadictionary.NhsDDDataSet
 import uk.nhs.datadictionary.NhsDDDataSetFolder
 import uk.nhs.datadictionary.NhsDataDictionary
@@ -48,7 +44,7 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
             Folder vf = versionedFolderService.get(versionedFolderId)
             folderFolder = vf.childFolders.find {it.label == NhsDataDictionary.DATA_SETS_FOLDER_NAME}
         }
-        NhsDDDataSetFolder dataSetFolder = getNhsDataDictionaryComponentFromCatalogueItem(folderFolder, dataDictionary, [])
+        NhsDDDataSetFolder dataSetFolder = new NhsDDDataSetFolder().fromMauroItem(dataDictionary, folderFolder, [])
         dataSetFolder.definition = convertLinksInDescription(versionedFolderId, dataSetFolder.getDescription())
         if(id && id != 'root') {
             List<String> folderPath = [folderFolder.label]
@@ -60,11 +56,11 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
             dataSetFolder.folderPath = folderPath
         }
         folderFolder.childFolders.each { it ->
-            NhsDDDataSetFolder childFolder = getNhsDataDictionaryComponentFromCatalogueItem(it, dataDictionary, [])
+            NhsDDDataSetFolder childFolder = new NhsDDDataSetFolder().fromMauroItem(dataDictionary, it, [])
             dataSetFolder.childFolders[it.label] = childFolder
         }
         dataModelService.findAllByFolderId(folderFolder.id).each {
-            NhsDDDataSet childDataSet = dataSetService.getNhsDataDictionaryComponentFromCatalogueItem(it, dataDictionary)
+            NhsDDDataSet childDataSet = new NhsDDDataSet().fromMauroItem(dataDictionary, it)
             if (!childDataSet.isRetired()) {
                 dataSetFolder.dataSets[it.label] = childDataSet
             }
@@ -80,10 +76,12 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
         Map<List<String>, Set<Folder>> allFolders = getAllFolders([], dataSetsFolder, includeRetired)
 
         Set<Folder> returnFolders = [] as Set
+
+
         allFolders.values().each {folders ->
             folders.each {folder ->
                 if(folder.label != "Retired" && (
-                    includeRetired || !containerIsRetired(folder))) {
+                    includeRetired || !catalogueItemIsRetired(folder))) {
                     returnFolders.add(folder)
                 }
             }
@@ -111,24 +109,6 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
     }
 
 
-    @Override
-    String getMetadataNamespace() {
-        NhsDataDictionary.METADATA_NAMESPACE + ".data set folder"
-    }
-
-    @Override
-    NhsDDDataSetFolder getNhsDataDictionaryComponentFromCatalogueItem(Folder catalogueItem, NhsDataDictionary dataDictionary, List<Metadata> metadata = null) {
-        return getNhsDataDictionaryComponentFromCatalogueItem([], catalogueItem, dataDictionary, metadata)
-    }
-
-    NhsDDDataSetFolder getNhsDataDictionaryComponentFromCatalogueItem(List<String> path, Folder catalogueItem, NhsDataDictionary dataDictionary, List<Metadata> metadata = null) {
-        NhsDDDataSetFolder folder = new NhsDDDataSetFolder()
-        nhsDataDictionaryComponentFromItem(dataDictionary, catalogueItem, folder, metadata)
-        folder.folderPath.addAll(path)
-        folder.folderPath.add(catalogueItem.label)
-        folder.dataDictionary = dataDictionary
-        return folder
-    }
 
 
     void persistDataSetFolders(NhsDataDictionary dataDictionary, Folder dictionaryFolder) {

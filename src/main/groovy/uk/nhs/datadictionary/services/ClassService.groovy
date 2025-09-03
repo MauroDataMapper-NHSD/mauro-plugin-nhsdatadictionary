@@ -18,13 +18,11 @@
 package uk.nhs.datadictionary.services
 
 import groovy.util.logging.Slf4j
-import io.micronaut.transaction.annotation.Transactional
 import jakarta.inject.Singleton
 import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.datamodel.DataType
-import org.maurodata.domain.facet.Metadata
 import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.NhsDDClass
 import uk.nhs.datadictionary.NhsDDClassLink
@@ -45,7 +43,7 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
         dataDictionary.containingVersionedFolder = versionedFolderService.get(versionedFolderId)
 
         DataClass dataClass = dataClassService.get(id)
-        NhsDDClass nhsClass = getNhsDataDictionaryComponentFromCatalogueItem(dataClass, dataDictionary)
+        NhsDDClass nhsClass = new NhsDDClass().fromMauroItem(dataDictionary, dataClass)
         nhsClass.definition = convertLinksInDescription(versionedFolderId, nhsClass.getDescription())
 
         List<NhsDDAttribute> attributes = getAttributesForShow(nhsClass, dataDictionary)
@@ -73,9 +71,7 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
         // Get a cut-down version of the NhsDDAttribute list, we don't need national codes for previewing an NhsDDClass
         attributeDataElements
             .collect {dataElement ->
-                NhsDDAttribute nhsAttribute = new NhsDDAttribute()
-                attributeService.nhsDataDictionaryComponentFromItem(dataDictionary, dataElement, nhsAttribute, dataElement.metadata.toList())
-                nhsAttribute
+                NhsDDAttribute().fromMauroItem(dataDictionary, dataElement, dataElement.metadata.toList())
             }
         .findAll { nhsAttribute ->
             // Do not include retired attributes in the list
@@ -90,8 +86,7 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
 
         relationshipDataElements.collect { dataElement ->
             DataClass referencedClass = ((DataType)dataElement.dataType).referenceClass
-            NhsDDClass referencedNhsClass = getNhsDataDictionaryComponentFromCatalogueItem(referencedClass, dataDictionary)
-
+            NhsDDClass referencedNhsClass = new NhsDDClass().fromMauroItem(dataDictionary, referencedClass)
             NhsDDClassRelationship relationship = new NhsDDClassRelationship(dataElement, referencedNhsClass)
             relationship
         }
@@ -108,18 +103,7 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
         }
     }
 
-    @Override
-    String getMetadataNamespace() {
-        NhsDataDictionary.METADATA_NAMESPACE + ".class"
-    }
 
-    @Override
-    NhsDDClass getNhsDataDictionaryComponentFromCatalogueItem(DataClass catalogueItem, NhsDataDictionary dataDictionary, List<Metadata> metadata = null) {
-        NhsDDClass clazz = new NhsDDClass()
-        nhsDataDictionaryComponentFromItem(dataDictionary, catalogueItem, clazz, metadata)
-        clazz.dataDictionary = dataDictionary
-        return clazz
-    }
 
     void createClassesModel(NhsDataDictionary dataDictionary, DataModel classesDataModel,
                         Map<String, DataClass> attributeClassesByUin, Set<String> attributeUinIsKey) {
@@ -210,9 +194,9 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
                         }
                         DataElement sourceDataElement = new DataElement(label: sourceLabel, dataType: targetReferenceType)
                         NhsDDClassLink.setMultiplicityToDataElement(sourceDataElement, classLink.supplierCardinality)
-                        addMetadataForLink(classLink, sourceDataElement)
-                        addToMetadata(sourceDataElement, NhsDDClassLink.IS_KEY_METADATA_KEY, classLink.isPartOfSupplierKey().toString())
-                        addToMetadata(sourceDataElement, NhsDDClassLink.IS_CHOICE_METADATA_KEY, classLink.hasRelationClientExclusivity().toString())
+                        addMetadataForLink(clazz.getMetadataNamespace(), classLink, sourceDataElement)
+                        addToMetadata(sourceDataElement, clazz.getMetadataNamespace(), NhsDDClassLink.IS_KEY_METADATA_KEY, classLink.isPartOfSupplierKey().toString())
+                        addToMetadata(sourceDataElement, clazz.getMetadataNamespace(), NhsDDClassLink.IS_CHOICE_METADATA_KEY, classLink.hasRelationClientExclusivity().toString())
                         //addToMetadata(sourceDataElement, NhsDDClassLink.DIRECTION_METADATA_KEY, NhsDDClassLink.CLIENT_DIRECTION)
                         thisDataClass.dataElements.add(sourceDataElement)
 
@@ -226,9 +210,9 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
                         }
                         DataElement targetDataElement = new DataElement(label: targetLabel, dataType: sourceReferenceType)
                         NhsDDClassLink.setMultiplicityToDataElement(targetDataElement, classLink.clientCardinality)
-                        addMetadataForLink(classLink, targetDataElement)
-                        addToMetadata(targetDataElement, NhsDDClassLink.IS_KEY_METADATA_KEY, classLink.isPartOfClientKey().toString())
-                        addToMetadata(targetDataElement, NhsDDClassLink.IS_CHOICE_METADATA_KEY, classLink.hasRelationSupplierExclusivity().toString())
+                        addMetadataForLink(clazz.getMetadataNamespace(), classLink, targetDataElement)
+                        addToMetadata(targetDataElement, clazz.getMetadataNamespace(), NhsDDClassLink.IS_KEY_METADATA_KEY, classLink.isPartOfClientKey().toString())
+                        addToMetadata(targetDataElement, clazz.getMetadataNamespace(), NhsDDClassLink.IS_CHOICE_METADATA_KEY, classLink.hasRelationSupplierExclusivity().toString())
                         //addToMetadata(targetDataElement, NhsDDClassLink.DIRECTION_METADATA_KEY, NhsDDClassLink.SUPPLIER_DIRECTION)
                         targetDataClass.dataElements.add(targetDataElement)
                     }
@@ -242,7 +226,7 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
         }
     }
 
-    void addMetadataForLink(NhsDDClassLink classLink, DataElement dataElement) {
+    void addMetadataForLink(String namespace, NhsDDClassLink classLink, DataElement dataElement) {
         Map<String, String> metadata = [
             "uin": classLink.uin,
             "metaclass": classLink.metaclass,
@@ -260,12 +244,12 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
             "direction": classLink.direction
         ]
         metadata.each {key, value ->
-            addToMetadata(dataElement, key, value.toString())
+            addToMetadata(dataElement, namespace, key, value.toString())
         }
     }
 
     NhsDDClass classFromDataClass(DataClass dc, NhsDataDictionary dataDictionary) {
-        NhsDDClass clazz = getNhsDataDictionaryComponentFromCatalogueItem(dc, dataDictionary)
+        NhsDDClass clazz = new NhsDDClass().fromMauroItem(dataDictionary, dc)
         dc.dataElements.each {dataElement ->
             if(dataElement.dataType instanceof PrimitiveType) {
                 NhsDDAttribute foundAttribute = dataDictionary.attributes[dataElement.label]

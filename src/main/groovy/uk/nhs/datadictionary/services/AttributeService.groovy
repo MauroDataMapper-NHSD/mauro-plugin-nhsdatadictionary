@@ -19,18 +19,19 @@ package uk.nhs.datadictionary.services
 
 import groovy.util.logging.Slf4j
 import io.micronaut.transaction.annotation.Transactional
+import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.datamodel.DataType
 import org.maurodata.domain.facet.Metadata
+import org.maurodata.domain.facet.SemanticLinkType
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
-import org.maurodata.exception.MauroApplicationException
+import org.maurodata.persistence.datamodel.DataElementRepository
 import uk.nhs.datadictionary.NhsDDAttribute
-import uk.nhs.datadictionary.NhsDDCode
 import uk.nhs.datadictionary.NhsDDElement
 import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.utils.DDHelperFunctions
@@ -40,8 +41,9 @@ import uk.nhs.datadictionary.utils.DDHelperFunctions
 @Singleton
 class AttributeService extends DataDictionaryComponentService<DataElement, NhsDDAttribute> {
 
-    ElementService elementService
-    ClassService classService
+    @Inject ClassService classService
+
+    @Inject DataElementRepository dataElementRepository
 
     @Override
     NhsDDAttribute show(UUID versionedFolderId, String id) {
@@ -49,8 +51,8 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
         dataDictionary.containingVersionedFolder = versionedFolderService.get(versionedFolderId)
 
         DataElement attributeElement = dataElementService.get(id)
-        NhsDDAttribute attribute = getNhsDataDictionaryComponentFromCatalogueItem(attributeElement, dataDictionary)
-        attribute.instantiatedByElements.addAll (elementService.getAllForAttribute(dataDictionary, attribute))
+        NhsDDAttribute attribute = new NhsDDAttribute().fromMauroItem(dataDictionary, attributeElement)
+        attribute.instantiatedByElements.addAll (getAllElementsForAttribute(dataDictionary, attribute))
         attribute.definition = convertLinksInDescription(versionedFolderId, attribute.getDescription())
         attribute.codes.each {code ->
             if(code.webPresentation) {
@@ -60,17 +62,15 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
         return attribute
     }
 
-    Set<NhsDDAttribute> getAllForElement(NhsDataDictionary dataDictionary, NhsDDElement nhsDDElement) {
-        List<String> linkedAttributeList = elementService.getLinkedAttributes(nhsDDElement.catalogueItem)
-
-        nhsDDElement.catalogueItem.semanticLinks
-            .collect {link -> DataElement.get(link.targetMultiFacetAwareItemId) }
-            .collect {dataElement ->
-                dataElement.getMetadata().size() // For later getting retired property
-                getNhsDataDictionaryComponentFromCatalogueItem(dataElement, dataDictionary)
-            }
-            .findAll { attribute -> !attribute.isRetired() }
-            .sort { attribute -> attribute.name }
+    Set<NhsDDElement> getAllElementsForAttribute(NhsDataDictionary dataDictionary, NhsDDAttribute nhsDDAttribute) {
+        nhsDDAttribute.catalogueItem.semanticLinks.findAll {semanticLink ->
+            semanticLink.linkType == SemanticLinkType.REFINES
+        }.collect {semanticLink ->
+            DataElement dataElement = dataElementRepository.readById(semanticLink.targetMultiFacetAwareItemId)
+            new NhsDDElement().fromMauroItem(dataDictionary, dataElement)
+        }.findAll{
+            !it.isRetired()
+        }.sort {it.name}
     }
 
 
@@ -87,28 +87,6 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
 
     }
 
-    @Override
-    String getMetadataNamespace() {
-        NhsDataDictionary.METADATA_NAMESPACE + ".attribute"
-    }
-
-    @Override
-    NhsDDAttribute getNhsDataDictionaryComponentFromCatalogueItem(DataElement catalogueItem, NhsDataDictionary dataDictionary, List<Metadata> metadata = null) {
-        NhsDDAttribute attribute = new NhsDDAttribute()
-        nhsDataDictionaryComponentFromItem(dataDictionary, catalogueItem, attribute, metadata)
-        if (catalogueItem.dataType.dataTypeKind == DataType.DataTypeKind.MODEL_TYPE) {
-            List<Term> terms = termService.findAllByTerminologyId(((DataType) catalogueItem.dataType).modelResourceId)
-            List<NhsDDCode> codes = getCodesForTerms(terms, dataDictionary)
-            codes.each {code ->
-                code.owningAttribute = attribute
-                attribute.codes.add(code)
-            }
-        }
-        attribute.parentClass = classService.getNhsDataDictionaryComponentFromCatalogueItem(catalogueItem.dataClass, dataDictionary, metadata)
-        attribute.dataDictionary = dataDictionary
-        return attribute
-
-    }
 
     void createAttributes(NhsDataDictionary dataDictionary,
                            Folder dictionaryFolder, DataModel classesDataModel,
@@ -168,7 +146,7 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
             parentClass.dataElements.add(attributeDataElement)
 
             if(attributeUinIsKey.contains(attribute.uin)) {
-                addToMetadata(attributeDataElement, "isKey", attributeUinIsKey.contains(attribute.uin).toString())
+                addToMetadata(attributeDataElement, attribute.getMetadataNamespace(), "isKey", attributeUinIsKey.contains(attribute.uin).toString())
             }
 
             // Reload all terms into the session

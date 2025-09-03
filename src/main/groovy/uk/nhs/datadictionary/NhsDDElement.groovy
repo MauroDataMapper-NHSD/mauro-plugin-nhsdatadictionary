@@ -22,6 +22,10 @@ import groovy.util.logging.Slf4j
 import org.maurodata.dita.elements.langref.base.Topic
 import org.maurodata.dita.elements.langref.base.XRef
 import org.maurodata.domain.datamodel.DataElement
+import org.maurodata.domain.datamodel.DataType
+import org.maurodata.domain.facet.Metadata
+import org.maurodata.domain.facet.SemanticLinkType
+import org.maurodata.domain.terminology.Term
 import uk.nhs.datadictionary.publish.changePaper.ChangeAware
 import uk.nhs.datadictionary.publish.structure.CodesRow
 import uk.nhs.datadictionary.publish.structure.CodesSection
@@ -49,7 +53,10 @@ class NhsDDElement implements NhsDataDictionaryComponent <DataElement>, ChangeAw
         "data_elements"
     }
 
-
+    @Override
+    String getMetadataNamespace() {
+        NhsDataDictionary.METADATA_NAMESPACE + ".element"
+    }
 
     List<NhsDDCode> codes = []
 
@@ -472,4 +479,28 @@ class NhsDDElement implements NhsDataDictionaryComponent <DataElement>, ChangeAw
     String getDiscriminator() {
         name
     }
+
+    @Override
+    NhsDDElement fromMauroItem(NhsDataDictionary dataDictionary, DataElement catalogueItem, List<Metadata> metadata = null) {
+        NhsDataDictionaryComponent.super.fromMauroItem(dataDictionary, catalogueItem, metadata)
+        catalogueItem.semanticLinks.each {
+            if(it.linkType == SemanticLinkType.REFINES) {
+                NhsDDAttribute linkedAttribute = dataDictionary.attributesByCatalogueId[it.targetMultiFacetAwareItemId]
+                if(linkedAttribute) {
+                    instantiatesAttributes.add(linkedAttribute)
+                    linkedAttribute.instantiatedByElements.add(this)
+                }
+            }
+        }
+        if (catalogueItem.dataType.dataTypeKind == DataType.DataTypeKind.MODEL_TYPE) {
+            List<Term> terms = termService.findAllByCodeSetId(((DataType) catalogueItem.dataType).modelResourceId)
+            List<NhsDDCode> codes = getCodesForTerms(terms, dataDictionary)
+            codes.each {code ->
+                code.usedByElements.add(this)
+                codes.add(code)
+            }
+        }
+        return this
+    }
+
 }

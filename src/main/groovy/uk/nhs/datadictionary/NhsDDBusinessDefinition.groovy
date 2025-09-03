@@ -19,6 +19,7 @@ package uk.nhs.datadictionary
 
 
 import groovy.util.logging.Slf4j
+import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.terminology.Term
 
 @Slf4j
@@ -39,6 +40,12 @@ class NhsDDBusinessDefinition implements NhsDataDictionaryComponent <Term> {
     String getPluralStereotypeForWebsite() {
         "nhs_business_definitions"
     }
+
+    @Override
+    String getMetadataNamespace() {
+        NhsDataDictionary.METADATA_NAMESPACE + ".NHS business definition"
+    }
+
 
     @Override
     String calculateShortDescription() {

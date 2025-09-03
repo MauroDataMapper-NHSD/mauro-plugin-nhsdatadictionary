@@ -40,6 +40,12 @@ class NhsDDDataSetConstraint implements NhsDataDictionaryComponent <Term> {
     }
 
     @Override
+    String getMetadataNamespace() {
+        NhsDataDictionary.METADATA_NAMESPACE + ".Data set constraint"
+    }
+
+
+    @Override
     String calculateShortDescription() {
         if (isPreparatory()) {
             return "This item is being used for development purposes and has not yet been approved."

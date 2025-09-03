@@ -18,6 +18,7 @@
 package uk.nhs.datadictionary
 
 import groovy.util.logging.Slf4j
+import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.folder.Folder
 
 @Slf4j
@@ -43,6 +44,12 @@ class NhsDDDataSetFolder implements NhsDataDictionaryComponent <Folder> {
     String getPluralStereotypeForWebsite() {
         "data_sets"
     }
+
+    @Override
+    String getMetadataNamespace() {
+        NhsDataDictionary.METADATA_NAMESPACE + ".data set folder"
+    }
+
 
     @Override
     boolean isValidXmlNode(def xmlNode) {
@@ -129,6 +136,13 @@ class NhsDDDataSetFolder implements NhsDataDictionaryComponent <Folder> {
             it.replaceAll("[^A-Za-z0-9- ]", "").replace(" ", "_")
         }
     }
+
+
+    void setPath(List<String> path) {
+        folderPath.addAll(path)
+        folderPath.add(catalogueItem.label)
+    }
+
 
 
 }

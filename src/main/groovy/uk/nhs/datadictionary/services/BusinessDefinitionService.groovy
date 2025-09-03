@@ -18,10 +18,8 @@
 package uk.nhs.datadictionary.services
 
 import groovy.util.logging.Slf4j
-import io.micronaut.transaction.annotation.Transactional
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
-import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
@@ -47,7 +45,7 @@ class BusinessDefinitionService extends DataDictionaryComponentService<Term, Nhs
         dataDictionary.containingVersionedFolder = versionedFolderService.get(versionedFolderId)
 
         Term businessDefinitionTerm = termService.get(id)
-        NhsDDBusinessDefinition businessDefinition = getNhsDataDictionaryComponentFromCatalogueItem(businessDefinitionTerm, dataDictionary)
+        NhsDDBusinessDefinition businessDefinition = new NhsDDBusinessDefinition().fromMauroItem(dataDictionary, businessDefinitionTerm)
         businessDefinition.definition = convertLinksInDescription(versionedFolderId, businessDefinition.getDescription())
         return businessDefinition
     }
@@ -62,19 +60,6 @@ class BusinessDefinitionService extends DataDictionaryComponentService<Term, Nhs
         terms.findAll {term ->
             includeRetired || !catalogueItemIsRetired(term)
         }
-    }
-
-    @Override
-    String getMetadataNamespace() {
-        NhsDataDictionary.METADATA_NAMESPACE + ".NHS business definition"
-    }
-
-    @Override
-    NhsDDBusinessDefinition getNhsDataDictionaryComponentFromCatalogueItem(Term catalogueItem, NhsDataDictionary dataDictionary, List<Metadata> metadata = null) {
-        NhsDDBusinessDefinition businessDefinition = new NhsDDBusinessDefinition()
-        nhsDataDictionaryComponentFromItem(dataDictionary, catalogueItem, businessDefinition, metadata)
-        businessDefinition.dataDictionary = dataDictionary
-        return businessDefinition
     }
 
     void persistBusinessDefinitions(NhsDataDictionary dataDictionary, Folder dictionaryFolder) {

@@ -19,9 +19,7 @@ package uk.nhs.datadictionary.services
 
 
 import groovy.util.logging.Slf4j
-import io.micronaut.transaction.annotation.Transactional
 import jakarta.inject.Singleton
-import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
@@ -38,7 +36,7 @@ class DataSetConstraintService extends DataDictionaryComponentService<Term, NhsD
         dataDictionary.containingVersionedFolder = versionedFolderService.get(versionedFolderId)
 
         Term dataSetConstraintTerm = termService.get(id)
-        NhsDDDataSetConstraint dataSetConstraint = getNhsDataDictionaryComponentFromCatalogueItem(dataSetConstraintTerm, dataDictionary)
+        NhsDDDataSetConstraint dataSetConstraint = new NhsDDDataSetConstraint().fromMauroItem(dataDictionary, dataSetConstraintTerm)
         dataSetConstraint.definition = convertLinksInDescription(versionedFolderId, dataSetConstraint.getDescription())
         return dataSetConstraint
     }
@@ -56,18 +54,6 @@ class DataSetConstraintService extends DataDictionaryComponentService<Term, NhsD
 
     }
 
-    @Override
-    String getMetadataNamespace() {
-        NhsDataDictionary.METADATA_NAMESPACE + ".Data set constraint"
-    }
-
-    @Override
-    NhsDDDataSetConstraint getNhsDataDictionaryComponentFromCatalogueItem(Term catalogueItem, NhsDataDictionary dataDictionary, List<Metadata> metadata = null) {
-        NhsDDDataSetConstraint dataSetConstraint = new NhsDDDataSetConstraint()
-        nhsDataDictionaryComponentFromItem(dataDictionary, catalogueItem, dataSetConstraint, metadata)
-        dataSetConstraint.dataDictionary = dataDictionary
-        return dataSetConstraint
-    }
 
     void persistDataSetConstraints(NhsDataDictionary dataDictionary, Folder dictionaryFolder) {
 

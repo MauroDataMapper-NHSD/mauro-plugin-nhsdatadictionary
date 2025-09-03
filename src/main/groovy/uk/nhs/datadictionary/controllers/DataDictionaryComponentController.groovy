@@ -17,6 +17,7 @@
  */
 package uk.nhs.datadictionary.controllers
 
+import jakarta.inject.Inject
 import org.maurodata.domain.model.AdministeredItem
 import uk.nhs.datadictionary.services.AttributeService
 import uk.nhs.datadictionary.services.BusinessDefinitionService
@@ -33,16 +34,16 @@ import uk.nhs.datadictionary.utils.StereotypedCatalogueItem
 abstract class DataDictionaryComponentController<T extends AdministeredItem> {
 	static responseFormats = ['json', 'xml']
 
-    DataSetService dataSetService
-    ElementService elementService
-    ClassService classService
-    AttributeService attributeService
-    BusinessDefinitionService businessDefinitionService
-    SupportingInformationService supportingInformationService
-    DataSetConstraintService dataSetConstraintService
-    DataSetFolderService dataSetFolderService
+    @Inject DataSetService dataSetService
+    @Inject ElementService elementService
+    @Inject ClassService classService
+    @Inject AttributeService attributeService
+    @Inject BusinessDefinitionService businessDefinitionService
+    @Inject SupportingInformationService supportingInformationService
+    @Inject DataSetConstraintService dataSetConstraintService
+    @Inject DataSetFolderService dataSetFolderService
 
-    NhsDataDictionaryService nhsDataDictionaryService
+    @Inject NhsDataDictionaryService nhsDataDictionaryService
 
     abstract DataDictionaryComponentService getService()
 
