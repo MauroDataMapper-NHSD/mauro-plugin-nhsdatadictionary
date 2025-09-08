@@ -100,7 +100,7 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
             stringDataType = new DataType(label: "String", dataTypeKind: DataType.DataTypeKind.PRIMITIVE_TYPE)
             classesDataModel.dataTypes.add(stringDataType)
         }
-        DataClass retiredDataClass = classesDataModel.childDataClasses.find { it.label == "Retired"}
+        DataClass retiredDataClass = classesDataModel.dataClasses.find { it.label == "Retired"}
 
         List<Terminology> terminologies = []
         dataDictionary.attributes.each { name, attribute ->
@@ -177,7 +177,7 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
                 branchName: dataDictionary.branchName)
         subFolder.terminologies.add(terminology)
         if(attribute.codesVersion) {
-            terminology.metadata.add(new Metadata(namespace: "uk.nhs.datadictionary.terminology", key: "version", value: attribute.codesVersion))
+            terminology.metadata("uk.nhs.datadictionary.terminology", "version", attribute.codesVersion)
         }
 
         attribute.codes.each { code ->
@@ -191,9 +191,7 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
 
             code.propertiesAsMap().each { key, value ->
                 if (value) {
-                    term.metadata.add(new Metadata(namespace: "uk.nhs.datadictionary.term",
-                            key: key,
-                            value: value))
+                    term.metadata("uk.nhs.datadictionary.term", key, value)
                 }
             }
             terminology.terms.add(term)

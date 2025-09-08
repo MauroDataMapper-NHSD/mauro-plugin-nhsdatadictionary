@@ -285,8 +285,8 @@ class NhsDataDictionary {
 
         Folder dictionaryFolder = new Folder(label: folderName)
 
-        nhsDataDictionaryService.defaultProfileMetadata().each { metadata ->
-            dictionaryFolder.metadata.add(metadata)
+        nhsDataDictionaryService.defaultProfileMetadata().each { defaultMetadata ->
+            dictionaryFolder.metadata(defaultMetadata)
         }
 
 

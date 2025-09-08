@@ -242,7 +242,7 @@ class NhsDDDataSet implements NhsDataDictionaryComponent <DataModel> {
 
         List<Edit> allMergeEdits = []
         loadDataModelMergeEdits(allMergeEdits, dataModel)
-        dataModel.childDataClasses.each { dataClass ->
+        dataModel.dataClasses.each { dataClass ->
             loadDataClassMergeEdits(allMergeEdits, dataClass)
         }
 

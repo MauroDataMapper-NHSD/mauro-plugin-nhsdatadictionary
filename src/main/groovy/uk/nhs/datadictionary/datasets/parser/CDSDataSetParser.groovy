@@ -39,7 +39,7 @@ class CDSDataSetParser {
         log.debug('Initial parse data set complete in {}', Duration.between(startTime, Instant.now()).toString())
         startTime = Instant.now()
         dataClasses.eachWithIndex {dataClass, index ->
-            dataModel.childDataClasses.add(dataClass)
+            //dataModel.childDataClasses.add(dataClass)
             if(!dataClass.label || dataClass.label == "") {
                 log.error("Class with unset label: ${dataModel.label}")
                 log.error(dataClass.toString())
@@ -65,7 +65,7 @@ class CDSDataSetParser {
             }
             if (ors.size() == 1 && sect.size() == 3) {
                 DataClass choiceClass = new DataClass(label: "Choice")
-                dataModel.childDataClasses.add(choiceClass)
+                dataModel.allDataClasses.add(choiceClass)
                 DataSetParser.setChoice(choiceClass)
                 List<DataClass> classes1 = parseCDSSection(sect, dataModel, dataDictionary)
                 sectIdx++
@@ -201,7 +201,7 @@ class CDSDataSetParser {
 
     static DataClass getClassFromTD(Node td, NhsDataDictionary dataDictionary, DataModel dataModel) {
         DataClass dataClass = new DataClass(label: "")
-        dataModel.childDataClasses.add(dataClass)
+        dataModel.allDataClasses.add(dataClass)
 
         // Issue where the trimmed content == NBSP so we need to trim it then check that for NBSP
         def firstStringNode = td.depthFirst().find {
@@ -260,7 +260,7 @@ class CDSDataSetParser {
         components.each {component ->
             if (component instanceof Node && component.name() == "table" && DDHelperFunctions.tableIsClassHeader(component)) {
                 currentClass = new DataClass(label: component.tbody.tr[0].td[1].text())
-                dataModel.childDataClasses.add(currentClass)
+                dataModel.allDataClasses.add(currentClass)
                 currentClass.label = currentClass.label.replaceFirst("DATA GROUP:", "").trim()
 
                 Node tdNode = null
@@ -316,7 +316,7 @@ class CDSDataSetParser {
                         log.error("" + tr.td[1] + " " + tr.td[2])
                     }
                     DataClass andClass = new DataClass(label: "And")
-                    dataModel.dataClasses.add(andClass)
+                    dataModel.allDataClasses.add(andClass)
                     DataSetParser.setAnd(andClass)
                     currentClass.dataClasses.add(andClass)
                     List<Node> tableRows = []
@@ -350,7 +350,7 @@ class CDSDataSetParser {
 
 
             DataClass andClass = new DataClass(label: "And")
-            dataModel.childDataClasses.add(andClass)
+            dataModel.allDataClasses.add(andClass)
             DataSetParser.setOrder(andClass, 2)
             DataSetParser.setAnd(andClass)
             List<DataElement> deList = [dataElement1]
@@ -366,7 +366,7 @@ class CDSDataSetParser {
         } else if (tr.td[2].a.size() == 4) {
             // Address
             DataClass choiceClass = new DataClass(label: "Choice")
-            dataModel.childDataClasses.add(choiceClass)
+            dataModel.allDataClasses.add(choiceClass)
             DataSetParser.setOrder(choiceClass, position)
             DataSetParser.setChoice(choiceClass)
             if (tr.td[2].a[0].text().contains("NAME")) {
@@ -389,7 +389,7 @@ class CDSDataSetParser {
         } else if ((tr.td[2].em && tr.td[2].em.text().equalsIgnoreCase("Or")) ||
                    (tr.td[2].strong && tr.td[2].strong.text().equalsIgnoreCase("OR"))) {
             DataClass choiceClass = new DataClass(label: "Choice")
-            dataModel.childDataClasses.add(choiceClass)
+            dataModel.allDataClasses.add(choiceClass)
             DataSetParser.setOrder(choiceClass, position)
             DataSetParser.setChoice(choiceClass)
             DataElement dataElement1 = DataSetParser.getElementFromText(tr.td[2].a[0], dataModel, dataDictionary, choiceClass)

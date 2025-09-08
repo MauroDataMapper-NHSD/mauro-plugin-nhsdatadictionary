@@ -208,7 +208,7 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
         dictionaryFolder.childFolders.add(dataElementCodeSetsFolder)
 
         DataClass retiredElementsClass = new DataClass(label: "Retired")
-        elementsDataModel.childDataClasses.add(retiredElementsClass)
+        elementsDataModel.dataClasses.add(retiredElementsClass)
 
 
         Map<String, Folder> folders = [:]
@@ -225,7 +225,7 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
                     branchName: dataDictionary.branchName)
                 subFolder.codeSets.add(codeSet)
                 if(element.codeSetVersion) {
-                    codeSet.metadata.add(new Metadata(namespace: ddCodeSetProfileProviderService.metadataNamespace, key: "version", value: element.codeSetVersion))
+                    codeSet.metadata(ddCodeSetProfileProviderService.metadataNamespace, "version", element.codeSetVersion)
                 }
 
 

@@ -159,10 +159,10 @@ class DataSetParser {
         if (dataClasses.size() == 1 && !dataClasses[0].label) {
             dataClasses[0].label = "Data Set Data Elements"
         }
-        dataClasses.eachWithIndex {dataClass, index ->
+        /*dataClasses.eachWithIndex {dataClass, index ->
             dataModel.childDataClasses.add(dataClass)
             //setOrder(dataClass, index + 1)
-        }
+        } */
         fixPotentialDuplicates(dataModel)
     }
 
@@ -262,8 +262,7 @@ class DataSetParser {
             }) {
                 throw new Exception("Duplicate web order set!")
             } else {
-                item.metadata.add(new Metadata(namespace: getDataSetNamespace(item),
-                            key: NhsDataDictionary.DATASET_TABLE_KEY_WEB_ORDER, value: order.toString()))
+                item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_WEB_ORDER, order.toString())
             }
         }
     }
@@ -272,9 +271,7 @@ class DataSetParser {
         if(!item) {
             log.error("Setting choice on null element!")
         } else {
-            item.metadata.add(
-                new Metadata(namespace: getDataSetNamespace(item),
-                             key: NhsDataDictionary.DATASET_TABLE_KEY_CHOICE, value: "true"))
+            item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_CHOICE,  "true")
         }
     }
 
@@ -282,9 +279,7 @@ class DataSetParser {
         if(!item) {
             log.error("Setting choice on null element!")
         } else {
-            item.metadata.add(
-                new Metadata(namespace: getDataSetNamespace(item),
-                             key: NhsDataDictionary.DATASET_TABLE_KEY_AND, value: "true"))
+            item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_AND, "true")
         }
     }
 
@@ -292,9 +287,7 @@ class DataSetParser {
         if(!item) {
             log.error("Setting address on null element!")
         } else {
-            item.metadata.add(
-                new Metadata(namespace: getDataSetNamespace(item),
-                     key: NhsDataDictionary.DATASET_TABLE_KEY_ADDRESS_CHOICE, value: "true"))
+            item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_ADDRESS_CHOICE, "true")
         }
     }
 
@@ -302,9 +295,7 @@ class DataSetParser {
         if(!item) {
             log.error("Setting name choice on null element!")
         } else {
-            item.metadata.add(
-                new Metadata(namespace: getDataSetNamespace(item),
-                             key: NhsDataDictionary.DATASET_TABLE_KEY_NAME_CHOICE, value: "true"))
+            item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_NAME_CHOICE, "true")
         }
     }
 
@@ -312,9 +303,7 @@ class DataSetParser {
         if(!item) {
             log.error("Setting inclusive or on null element!")
         } else {
-            item.metadata.add(
-                new Metadata(namespace: getDataSetNamespace(item),
-                             key: NhsDataDictionary.DATASET_TABLE_KEY_INCLUSIVE_OR, value: "true"))
+            item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_INCLUSIVE_OR, "true")
         }
     }
 
@@ -327,9 +316,7 @@ class DataSetParser {
             }) {
                 throw new Exception("Duplicate data set reference set!")
             } else {
-                item.metadata.add(
-                    new Metadata(namespace: getDataSetNamespace(item),
-                                 key: NhsDataDictionary.DATASET_TABLE_KEY_DATA_SET_REFERENCE, value: "true"))
+                item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_DATA_SET_REFERENCE, "true")
             }
         }
     }
@@ -346,9 +333,7 @@ class DataSetParser {
         if(!item) {
             log.error("Setting data set reference to on null element!")
         } else {
-            item.metadata.add(
-                new Metadata(namespace: getDataSetNamespace(item),
-                     key: NhsDataDictionary.DATASET_TABLE_KEY_DATA_SET_REFERENCE_TO, value: dataSetName))
+            item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_DATA_SET_REFERENCE_TO, dataSetName)
         }
     }
 
@@ -361,10 +346,7 @@ class DataSetParser {
         if(!item) {
             log.error("Setting multiplicity text on null element!")
         } else {
-            item.metadata.add(
-                new Metadata(namespace: getDataSetNamespace(item),
-                    key: NhsDataDictionary.DATASET_TABLE_KEY_MULTIPLICITY_TEXT,
-                     value: parsePossibleParagraphs(multiplicity)))
+            item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_MULTIPLICITY_TEXT, parsePossibleParagraphs(multiplicity))
         }
     }
 
@@ -379,11 +361,10 @@ class DataSetParser {
             if(item.metadata.find {
                 it.key == NhsDataDictionary.DATASET_TABLE_KEY_MRO
             }) {
+                System.err.println("Duplicate mandation")
                 throw new Exception("Duplicate mandation set!")
             } else {
-                item.metadata.add(
-                    new Metadata(namespace: getDataSetNamespace(item),
-                                 key: NhsDataDictionary.DATASET_TABLE_KEY_MRO, value: mandationFromMRO(parsePossibleParagraphs(mro))))
+                item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_MRO, mandationFromMRO(parsePossibleParagraphs(mro)))
             }
         }
     }
@@ -416,8 +397,7 @@ class DataSetParser {
         if(!item) {
             log.error("Setting rules on null element!")
         } else {
-            item.metadata.add(new Metadata(namespace: getDataSetNamespace(item),
-                    key: NhsDataDictionary.DATASET_TABLE_KEY_RULES, value: parsePossibleParagraphs(rules)))
+            item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_RULES, parsePossibleParagraphs(rules))
         }
     }
 
@@ -434,9 +414,7 @@ class DataSetParser {
             }) {
                 throw new Exception("Duplicate group repeats set!")
             } else {
-                item.metadata.add(new Metadata(namespace: getDataSetNamespace(item),
-                                               key: NhsDataDictionary.DATASET_TABLE_KEY_GROUP_REPEATS,
-                                               value: parsePossibleParagraphs(groupRepeats)))
+                item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_GROUP_REPEATS, parsePossibleParagraphs(groupRepeats))
             }
         }
     }
@@ -450,9 +428,7 @@ class DataSetParser {
         if(!item) {
             log.error("Setting not option on null element!")
         } else {
-            item.metadata.add(
-                new Metadata(namespace: getDataSetNamespace(item),
-                     key: NhsDataDictionary.DATASET_TABLE_KEY_NOT_OPTION, value: "true"))
+            item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_NOT_OPTION, "true")
         }
     }
 
