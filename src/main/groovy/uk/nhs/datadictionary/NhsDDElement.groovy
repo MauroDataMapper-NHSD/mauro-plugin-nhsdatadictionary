@@ -26,6 +26,7 @@ import org.maurodata.domain.datamodel.DataType
 import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.facet.SemanticLinkType
 import org.maurodata.domain.terminology.Term
+import org.maurodata.domain.terminology.Terminology
 import uk.nhs.datadictionary.publish.changePaper.ChangeAware
 import uk.nhs.datadictionary.publish.structure.CodesRow
 import uk.nhs.datadictionary.publish.structure.CodesSection
@@ -33,6 +34,7 @@ import uk.nhs.datadictionary.publish.structure.DictionaryItem
 import uk.nhs.datadictionary.publish.structure.FormatLengthSection
 import uk.nhs.datadictionary.publish.structure.ItemLink
 import uk.nhs.datadictionary.publish.structure.ItemLinkListSection
+import uk.nhs.datadictionary.services.profiles.MauroPersistenceService
 
 @Slf4j
 class NhsDDElement implements NhsDataDictionaryComponent <DataElement>, ChangeAware {
@@ -481,8 +483,8 @@ class NhsDDElement implements NhsDataDictionaryComponent <DataElement>, ChangeAw
     }
 
     @Override
-    NhsDDElement fromMauroItem(NhsDataDictionary dataDictionary, DataElement catalogueItem, List<Metadata> metadata = null) {
-        NhsDataDictionaryComponent.super.fromMauroItem(dataDictionary, catalogueItem, metadata)
+    NhsDataDictionaryComponent<DataElement> fromMauroItem(NhsDataDictionary dataDictionary, MauroPersistenceService mauroPersistenceService, DataElement catalogueItem) {
+        NhsDataDictionaryComponent.super.fromMauroItem(dataDictionary, mauroPersistenceService, catalogueItem)
         catalogueItem.semanticLinks.each {
             if(it.linkType == SemanticLinkType.REFINES) {
                 NhsDDAttribute linkedAttribute = dataDictionary.attributesByCatalogueId[it.targetMultiFacetAwareItemId]
@@ -493,9 +495,9 @@ class NhsDDElement implements NhsDataDictionaryComponent <DataElement>, ChangeAw
             }
         }
         if (catalogueItem.dataType.dataTypeKind == DataType.DataTypeKind.MODEL_TYPE) {
-            List<Term> terms = termService.findAllByCodeSetId(((DataType) catalogueItem.dataType).modelResourceId)
-            List<NhsDDCode> codes = getCodesForTerms(terms, dataDictionary)
-            codes.each {code ->
+            Set<Term> terms = mauroPersistenceService.codeSetCacheableRepository.getTerms(catalogueItem.dataType.modelResourceId)
+            List<NhsDDCode> codesForTerms = getCodesForTerms(terms as List, dataDictionary)
+            codesForTerms.each {code ->
                 code.usedByElements.add(this)
                 codes.add(code)
             }

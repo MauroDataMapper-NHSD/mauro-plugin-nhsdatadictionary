@@ -25,6 +25,7 @@ import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataType
 import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.terminology.Term
+import org.maurodata.domain.terminology.Terminology
 import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.TermCacheableRepository
 import uk.nhs.datadictionary.publish.changePaper.ChangeAware
 import uk.nhs.datadictionary.publish.structure.CodesRow
@@ -32,6 +33,7 @@ import uk.nhs.datadictionary.publish.structure.CodesSection
 import uk.nhs.datadictionary.publish.structure.DictionaryItem
 import uk.nhs.datadictionary.publish.structure.ItemLink
 import uk.nhs.datadictionary.publish.structure.ItemLinkListSection
+import uk.nhs.datadictionary.services.profiles.MauroPersistenceService
 
 @Slf4j
 class NhsDDAttribute implements NhsDataDictionaryComponent <DataElement>, ChangeAware {
@@ -297,18 +299,18 @@ class NhsDDAttribute implements NhsDataDictionaryComponent <DataElement>, Change
     }
 
     @Override
-    NhsDDAttribute fromMauroItem(NhsDataDictionary dataDictionary, DataElement catalogueItem, List<Metadata> metadata = null) {
-        NhsDataDictionaryComponent.super.fromMauroItem(dataDictionary, catalogueItem, metadata)
+    NhsDataDictionaryComponent<DataElement> fromMauroItem(NhsDataDictionary dataDictionary, MauroPersistenceService mauroPersistenceService, DataElement catalogueItem) {
+        NhsDataDictionaryComponent.super.fromMauroItem(dataDictionary, mauroPersistenceService, catalogueItem)
         if (catalogueItem.dataType.dataTypeKind == DataType.DataTypeKind.MODEL_TYPE) {
-            List<Term> terms = termService.findAllByTerminologyId(((DataType) catalogueItem.dataType).modelResourceId)
-            List<NhsDDCode> codes = getCodesForTerms(terms, dataDictionary)
-            codes.each {code ->
-                code.owningAttribute = attribute
+            List<Term> terms = mauroPersistenceService.termCacheableRepository.findAllByTerminology(new Terminology(id: catalogueItem.dataType.modelResourceId))
+            List<NhsDDCode> codesForTerms = getCodesForTerms(terms, dataDictionary)
+            codesForTerms.each {code ->
+                code.owningAttribute = this
                 codes.add(code)
             }
         }
         parentClass = new NhsDDClass()
-        parentClass.fromMauroItem(dataDictionary, catalogueItem.dataClass, metadata)
+        parentClass.fromMauroItem(dataDictionary, mauroPersistenceService, catalogueItem.dataClass)
         return this
     }
 

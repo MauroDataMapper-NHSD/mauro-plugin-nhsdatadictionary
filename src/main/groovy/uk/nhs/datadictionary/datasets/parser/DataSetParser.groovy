@@ -591,7 +591,7 @@ class DataSetParser {
         } else if(original.dataTypeKind == DataType.DataTypeKind.MODEL_TYPE) {
             return new DataType(
                     modelResourceDomainType: original.modelResourceDomainType,
-                    modelResourceId: original.modelResourceId,
+                    modelResource: original.modelResource,
                     label: original.label,
                     description: original.description,
                     dataTypeKind: DataType.DataTypeKind.MODEL_TYPE

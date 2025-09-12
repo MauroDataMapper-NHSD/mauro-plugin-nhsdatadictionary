@@ -187,7 +187,8 @@ class NhsDataDictionaryNov2021Spec extends Specification {
 
         then:
         List<Folder> branches = nhsDataDictionaryController.branches()
-        nhsDataDictionaryController.statistics(branches.first().id)
+        System.err.println(nhsDataDictionaryController.statistics(branches.first().id))
+        System.err.println(nhsDataDictionaryController.statistics(branches.first().id))
     }
 
 

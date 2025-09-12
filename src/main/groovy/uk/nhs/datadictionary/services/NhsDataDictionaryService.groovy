@@ -31,6 +31,7 @@ import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.security.CatalogueUser
 import org.maurodata.domain.terminology.Terminology
+import org.maurodata.persistence.cache.AdministeredItemCacheableRepository
 import org.maurodata.persistence.cache.ItemCacheableRepository
 import org.maurodata.persistence.datamodel.DataElementRepository
 import org.maurodata.persistence.datamodel.DataModelContentRepository
@@ -55,6 +56,7 @@ import uk.nhs.datadictionary.integritychecks.IntegrityCheck
 import uk.nhs.datadictionary.publish.MauroCatalogueItemPathResolver
 import uk.nhs.datadictionary.publish.changePaper.ChangePaperPreview
 import uk.nhs.datadictionary.services.profiles.DDWorkItemProfileProviderService
+import uk.nhs.datadictionary.services.profiles.MauroPersistenceService
 import uk.nhs.datadictionary.utils.StereotypedCatalogueItem
 
 import java.nio.file.Files
@@ -88,6 +90,9 @@ class NhsDataDictionaryService {
     static final String API_PROPERTY_CHANGE_LOG_FOOTER_TEXT = 'changelog.footertext'
 
     @Inject
+    MauroPersistenceService mauroPersistenceService
+
+    @Inject
     ItemCacheableRepository.ApiPropertyCacheableRepository apiPropertyCacheableRepository
 
     @Inject
@@ -95,6 +100,9 @@ class NhsDataDictionaryService {
 
     @Inject
     TerminologyRepository terminologyRepository
+
+    @Inject
+    AdministeredItemCacheableRepository.TermCacheableRepository termCacheableRepository
 
     @Inject
     DataElementRepository dataElementRepository
@@ -397,7 +405,7 @@ class NhsDataDictionaryService {
         }
         dataDictionary.attributes =
             attributeElements.collectEntries {ci ->
-                 [ci.label, new NhsDDAttribute().fromMauroItem(dataDictionary, ci)]
+                 [ci.label, new NhsDDAttribute().fromMauroItem(dataDictionary, mauroPersistenceService, ci)]
             }
         dataDictionary.attributes.values().each { ddAttribute ->
             dataDictionary.attributesByCatalogueId[ddAttribute.getCatalogueItem().id] = ddAttribute
@@ -420,7 +428,7 @@ class NhsDataDictionaryService {
          */
 
         dataDictionary.elements = elementElements.collectEntries {ci ->
-                [ci.label, new NhsDDElement().fromMauroItem(dataDictionary, ci)]
+                [ci.label, new NhsDDElement().fromMauroItem(dataDictionary, mauroPersistenceService, ci)]
             }
         dataDictionary.elements.values().each { ddElement ->
             dataDictionary.elementsByCatalogueId[ddElement.getCatalogueItem().id] = ddElement
@@ -434,7 +442,7 @@ class NhsDataDictionaryService {
         classClasses.addAll(classClasses.find {it.label == "Retired"}.dataClasses)
         classClasses.removeAll {it.label == "Retired"}
         dataDictionary.classes = classClasses.collectEntries {ci ->
-            [ci.label, new NhsDDClass().fromMauroItem(dataDictionary, ci)]
+            [ci.label, new NhsDDClass().fromMauroItem(dataDictionary, mauroPersistenceService, ci)]
         }
         dataDictionary.classes.values().each { ddClass ->
             dataDictionary.classesByCatalogueId[ddClass.getCatalogueItem().id] = ddClass
@@ -461,7 +469,7 @@ class NhsDataDictionaryService {
                     }
                 }
             }
-            ((DataClass)dataClass.catalogueItem).getExtendedDataClasses().each { extendedDataClass ->
+            ((DataClass)dataClass.catalogueItem).extendsDataClasses.each { extendedDataClass ->
                 dataClass.extendsClasses.add(dataDictionary.classesByCatalogueId[extendedDataClass.id])
             }
 
@@ -489,7 +497,7 @@ class NhsDataDictionaryService {
                     }
                 }
 
-                NhsDDDataSet dataSet = new NhsDDDataSet().fromMauroItem(dataDictionary, dataModel)
+                NhsDDDataSet dataSet = new NhsDDDataSet().fromMauroItem(dataDictionary, mauroPersistenceService, dataModel)
                 dataSet.path.addAll(path)
                 dataDictionary.dataSets[dataModel.label] = dataSet
                 List<String> folderPath = []
@@ -506,7 +514,7 @@ class NhsDataDictionaryService {
 
         dataSetFolders.each { path, folders ->
             folders.each {folder ->
-                NhsDDDataSetFolder dataSetFolder = new NhsDDDataSetFolder().fromMauroItem(dataDictionary, folder)
+                NhsDDDataSetFolder dataSetFolder = new NhsDDDataSetFolder().fromMauroItem(dataDictionary, mauroPersistenceService, folder)
                 dataSetFolder.setPath(path)
                 if(dataDictionary.dataSetFolders[path]) {
                     dataDictionary.dataSetFolders[path].add(dataSetFolder)
@@ -533,22 +541,22 @@ class NhsDataDictionaryService {
 
     void addBusDefsToDictionary(Terminology busDefsTerminology, NhsDataDictionary dataDictionary) {
         dataDictionary.businessDefinitions =
-            termService.findAllByTerminologyId(busDefsTerminology.id).collectEntries {ci ->
-                [ci.label, new NhsDDBusinessDefinition().fromMauroItem(dataDictionary, ci)]
+            termCacheableRepository.findAllByTerminology(busDefsTerminology).collectEntries {ci ->
+                [ci.label, new NhsDDBusinessDefinition().fromMauroItem(dataDictionary, mauroPersistenceService, ci)]
             }
     }
 
     void addSupDefsToDictionary(Terminology supDefsTerminology, NhsDataDictionary dataDictionary) {
         dataDictionary.supportingInformation =
-            termService.findAllByTerminologyId(supDefsTerminology.id).collectEntries {ci ->
-                [ci.label, new NhsDDSupportingInformation().fromMauroItem(dataDictionary, ci)]
+            termCacheableRepository.findAllByTerminology(supDefsTerminology).collectEntries {ci ->
+                [ci.label, new NhsDDSupportingInformation().fromMauroItem(dataDictionary, mauroPersistenceService, ci)]
             }
         }
 
     void addDataSetConstraintsToDictionary(Terminology dataSetConstraintsTerminology, NhsDataDictionary dataDictionary) {
         dataDictionary.dataSetConstraints =
-            termService.findAllByTerminologyId(dataSetConstraintsTerminology.id).collectEntries {ci ->
-                [ci.label, new NhsDDDataSetConstraint().fromMauroItem(dataDictionary, ci)]
+            termCacheableRepository.findAllByTerminology(dataSetConstraintsTerminology).collectEntries {ci ->
+                [ci.label, new NhsDDDataSetConstraint().fromMauroItem(dataDictionary, mauroPersistenceService, ci)]
             }
     }
 

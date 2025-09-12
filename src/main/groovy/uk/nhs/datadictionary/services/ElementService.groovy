@@ -54,7 +54,7 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
         dataDictionary.containingVersionedFolder = versionedFolderService.get(versionedFolderId)
 
         DataElement elementElement = dataElementService.get(id)
-        NhsDDElement element = new NhsDDElement().fromMauroItem(dataDictionary, elementElement)
+        NhsDDElement element = new NhsDDElement().fromMauroItem(dataDictionary, mauroPersistenceService, elementElement)
         element.instantiatesAttributes.addAll(getAllAttributesForElement(dataDictionary, element))
         element.definition = convertLinksInDescription(versionedFolderId, element.getDescription())
         String attributeText = element.getAttributeTextAsHtml()
@@ -172,7 +172,7 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
             semanticLink.linkType == SemanticLinkType.REFINES
         }.collect {semanticLink ->
             DataElement dataElement = dataElementRepository.readById(semanticLink.targetMultiFacetAwareItemId)
-            new NhsDDAttribute().fromMauroItem(dataDictionary, dataElement)
+            new NhsDDAttribute().fromMauroItem(dataDictionary, mauroPersistenceService, dataElement)
         }.findAll{
             !it.isRetired()
         }.sort {it.name}
@@ -216,6 +216,9 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
         // Would sort, but assume already sorted
         dataDictionary.elements.each {name, element ->
             DataType dataType
+            if(name.contains("OXFORD")) {
+                System.err.println(name)
+            }
             if (element.codes.size() > 0 && !element.isRetired()) {
                 Folder subFolder = DDHelperFunctions.getSubfolderFromName(dataElementCodeSetsFolder, name)
 
@@ -247,7 +250,7 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
                 }
                 dataType = new DataType(label: "${name} Element Type",
                                              modelResourceDomainType: codeSet.getDomainType(),
-                                             modelResourceId: codeSet.id,
+                                             modelResource: codeSet,
                                              dataTypeKind: DataType.DataTypeKind.MODEL_TYPE)
                 elementsDataModel.dataTypes.add(dataType)
             } else {

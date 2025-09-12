@@ -40,6 +40,7 @@ import uk.nhs.datadictionary.publish.structure.DictionaryItem
 import uk.nhs.datadictionary.publish.structure.ItemLink
 import uk.nhs.datadictionary.publish.structure.WhereUsedRow
 import uk.nhs.datadictionary.publish.structure.WhereUsedSection
+import uk.nhs.datadictionary.services.profiles.MauroPersistenceService
 import uk.nhs.datadictionary.utils.DDHelperFunctions
 
 import java.time.LocalDate
@@ -595,7 +596,7 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
     }
 
 
-    NhsDataDictionaryComponent<T> fromMauroItem(NhsDataDictionary dataDictionary, T catalogueItem, List<Metadata> metadata) {
+    NhsDataDictionaryComponent<T> fromMauroItem(NhsDataDictionary dataDictionary, MauroPersistenceService mauroPersistenceService, T catalogueItem) {
         this.catalogueItem = catalogueItem
         this.dataDictionary = dataDictionary
 
@@ -621,13 +622,11 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
             catalogueItemModelId = ((Term)catalogueItem).terminology.id.toString()
         }
 
-        if(!metadata) {
-            // Assume already loaded in the Catalogue Item
-            metadata = catalogueItem.metadata.findAll {
-                it.namespace == getMetadataNamespace() &&
-                NhsDataDictionary.getAllMetadataKeys().contains(it.key)
-            }
+        List<Metadata> metadata = catalogueItem.metadata.findAll {
+            it.namespace == getMetadataNamespace() &&
+            NhsDataDictionary.getAllMetadataKeys().contains(it.key)
         }
+
 
         NhsDataDictionary.getAllMetadataKeys().each {key ->
             otherProperties[key] = metadata.find {it.key == key}?.value
@@ -671,6 +670,34 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
         }
         // Assume already loaded in from the database
         //editService.findAllByResourceAndTitle(component.catalogueItem.domainType, component.catalogueItem.id, EditTitle.MERGE)
+    }
+
+    List<NhsDDCode> getCodesForTerms(List<Term> terms, NhsDataDictionary nhsDataDictionary) {
+        List<NhsDDCode> codes = []
+        // Assume facets already loaded from teh db
+        //List<Metadata> allRelevantMetadata = Metadata
+        //    .byMultiFacetAwareItemIdInList(terms.collect {it.id})
+        //    .inList('key', ['publishDate', 'webOrder', 'webPresentation', 'isDefault', 'isRetired', 'retiredDate'])
+        //    .list()
+        codes.addAll(terms.collect {term ->
+            NhsDDCode nhsDDCode = nhsDataDictionary.codesByCatalogueId[term.id]
+            if(!nhsDDCode) {
+                nhsDDCode = new NhsDDCode().tap {
+                    code = term.code
+                    definition = term.definition
+                    publishDate = term.metadata.find {it.multiFacetAwareItemId == term.id && it.key == 'publishDate'}?.value
+                    webOrder = Integer.parseInt(term.metadata.find {it.multiFacetAwareItemId == term.id && it.key == 'webOrder'}?.value ?: "0")
+                    webPresentation = term.metadata.find {it.multiFacetAwareItemId == term.id && it.key == 'webPresentation'}?.value
+                    isDefault = Boolean.valueOf(term.metadata.find {it.multiFacetAwareItemId == term.id && it.key == 'isDefault'}?.value ?: "false")
+                    isRetired = Boolean.valueOf(term.metadata.find {it.multiFacetAwareItemId == term.id && it.key == 'isRetired'}?.value ?: "false")
+                    retiredDate = term.metadata.find {it.multiFacetAwareItemId == term.id && it.key == 'retiredDate'}?.value
+                    it.catalogueItem = term
+                }
+                nhsDataDictionary.codesByCatalogueId[term.id] = nhsDDCode
+            }
+            return nhsDDCode
+        })
+        return codes
     }
 
 

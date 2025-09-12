@@ -35,7 +35,7 @@ class SupportingInformationService extends DataDictionaryComponentService<Term, 
         dataDictionary.containingVersionedFolder = versionedFolderService.get(versionedFolderId)
 
         Term supportingInformationTerm = termService.get(id)
-        NhsDDSupportingInformation supportingInformation = new NhsDDSupportingInformation().fromMauroItem(dataDictionary, supportingInformationTerm)
+        NhsDDSupportingInformation supportingInformation = new NhsDDSupportingInformation().fromMauroItem(dataDictionary, mauroPersistenceService, supportingInformationTerm)
         supportingInformation.definition = convertLinksInDescription(versionedFolderId, supportingInformation.getDescription())
         return supportingInformation
     }

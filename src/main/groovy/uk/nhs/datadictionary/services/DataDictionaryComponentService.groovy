@@ -42,6 +42,7 @@ import uk.nhs.datadictionary.NhsDDCode
 import uk.nhs.datadictionary.NhsDDElement
 import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.NhsDataDictionaryComponent
+import uk.nhs.datadictionary.services.profiles.MauroPersistenceService
 import uk.nhs.datadictionary.utils.StereotypedCatalogueItem
 
 import java.util.regex.Matcher
@@ -53,6 +54,9 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
 
     @Inject
     MetadataCacheableRepository metadataCacheableRepository
+
+    @Inject MauroPersistenceService mauroPersistenceService
+
 
     List<T> index(UUID versionedFolderId, boolean includeRetired = false) {
         (getAll(versionedFolderId, includeRetired) as List).sort {it.label}
@@ -341,32 +345,6 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
     }
 
 
-    List<NhsDDCode> getCodesForTerms(List<Term> terms, NhsDataDictionary nhsDataDictionary) {
-        List<NhsDDCode> codes = []
-        List<Metadata> allRelevantMetadata = Metadata
-            .byMultiFacetAwareItemIdInList(terms.collect {it.id})
-            .inList('key', ['publishDate', 'webOrder', 'webPresentation', 'isDefault', 'isRetired', 'retiredDate'])
-            .list()
-        codes.addAll(terms.collect {term ->
-            NhsDDCode nhsDDCode = nhsDataDictionary.codesByCatalogueId[term.id]
-            if(!nhsDDCode) {
-                nhsDDCode = new NhsDDCode().tap {
-                    code = term.code
-                    definition = term.definition
-                    publishDate = allRelevantMetadata.find {it.multiFacetAwareItemId == term.id && it.key == 'publishDate'}?.value
-                    webOrder = Integer.parseInt(allRelevantMetadata.find {it.multiFacetAwareItemId == term.id && it.key == 'webOrder'}?.value ?: "0")
-                    webPresentation = allRelevantMetadata.find {it.multiFacetAwareItemId == term.id && it.key == 'webPresentation'}?.value
-                    isDefault = Boolean.valueOf(allRelevantMetadata.find {it.multiFacetAwareItemId == term.id && it.key == 'isDefault'}?.value ?: "false")
-                    isRetired = Boolean.valueOf(allRelevantMetadata.find {it.multiFacetAwareItemId == term.id && it.key == 'isRetired'}?.value ?: "false")
-                    retiredDate = allRelevantMetadata.find {it.multiFacetAwareItemId == term.id && it.key == 'retiredDate'}?.value
-                    catalogueItem = term
-                }
-                nhsDataDictionary.codesByCatalogueId[term.id] = nhsDDCode
-            }
-            return nhsDDCode
-        })
-        return codes
-    }
 
     Folder getFolderAtPath(Folder sourceFolder, List<String> path) {
         if (path.size() == 0) {

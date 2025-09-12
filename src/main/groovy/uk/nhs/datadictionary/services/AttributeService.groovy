@@ -45,13 +45,16 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
 
     @Inject DataElementRepository dataElementRepository
 
+    AttributeService() {
+    }
+
     @Override
     NhsDDAttribute show(UUID versionedFolderId, String id) {
         NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary()
         dataDictionary.containingVersionedFolder = versionedFolderService.get(versionedFolderId)
 
         DataElement attributeElement = dataElementService.get(id)
-        NhsDDAttribute attribute = new NhsDDAttribute().fromMauroItem(dataDictionary, attributeElement)
+        NhsDDAttribute attribute = new NhsDDAttribute().fromMauroItem(dataDictionary, mauroPersistenceService, attributeElement)
         attribute.instantiatedByElements.addAll (getAllElementsForAttribute(dataDictionary, attribute))
         attribute.definition = convertLinksInDescription(versionedFolderId, attribute.getDescription())
         attribute.codes.each {code ->
@@ -67,7 +70,7 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
             semanticLink.linkType == SemanticLinkType.REFINES
         }.collect {semanticLink ->
             DataElement dataElement = dataElementRepository.readById(semanticLink.targetMultiFacetAwareItemId)
-            new NhsDDElement().fromMauroItem(dataDictionary, dataElement)
+            new NhsDDElement().fromMauroItem(dataDictionary, mauroPersistenceService, dataElement)
         }.findAll{
             !it.isRetired()
         }.sort {it.name}
@@ -204,7 +207,7 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
     static DataType createAttributeTerminologyType(String name, Terminology terminology, DataModel classesDataModel) {
         DataType dataType = new DataType(label: "${name} Attribute Type",
                 modelResourceDomainType: terminology.getDomainType(),
-                modelResourceId: terminology.id,
+                modelResource: terminology,
                 dataTypeKind: DataType.DataTypeKind.MODEL_TYPE)
         classesDataModel.dataTypes.add(dataType)
         return dataType

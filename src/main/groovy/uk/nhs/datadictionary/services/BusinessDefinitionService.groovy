@@ -45,7 +45,7 @@ class BusinessDefinitionService extends DataDictionaryComponentService<Term, Nhs
         dataDictionary.containingVersionedFolder = versionedFolderService.get(versionedFolderId)
 
         Term businessDefinitionTerm = termService.get(id)
-        NhsDDBusinessDefinition businessDefinition = new NhsDDBusinessDefinition().fromMauroItem(dataDictionary, businessDefinitionTerm)
+        NhsDDBusinessDefinition businessDefinition = new NhsDDBusinessDefinition().fromMauroItem(dataDictionary, mauroPersistenceService, businessDefinitionTerm)
         businessDefinition.definition = convertLinksInDescription(versionedFolderId, businessDefinition.getDescription())
         return businessDefinition
     }

@@ -43,7 +43,7 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
         dataDictionary.containingVersionedFolder = versionedFolderService.get(versionedFolderId)
 
         DataClass dataClass = dataClassService.get(id)
-        NhsDDClass nhsClass = new NhsDDClass().fromMauroItem(dataDictionary, dataClass)
+        NhsDDClass nhsClass = new NhsDDClass().fromMauroItem(dataDictionary, mauroPersistenceService, dataClass)
         nhsClass.definition = convertLinksInDescription(versionedFolderId, nhsClass.getDescription())
 
         List<NhsDDAttribute> attributes = getAttributesForShow(nhsClass, dataDictionary)
@@ -71,7 +71,7 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
         // Get a cut-down version of the NhsDDAttribute list, we don't need national codes for previewing an NhsDDClass
         attributeDataElements
             .collect {dataElement ->
-                NhsDDAttribute().fromMauroItem(dataDictionary, dataElement, dataElement.metadata.toList())
+                new NhsDDAttribute().fromMauroItem(dataDictionary, mauroPersistenceService, dataElement)
             }
         .findAll { nhsAttribute ->
             // Do not include retired attributes in the list
@@ -86,7 +86,7 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
 
         relationshipDataElements.collect { dataElement ->
             DataClass referencedClass = ((DataType)dataElement.dataType).referenceClass
-            NhsDDClass referencedNhsClass = new NhsDDClass().fromMauroItem(dataDictionary, referencedClass)
+            NhsDDClass referencedNhsClass = new NhsDDClass().fromMauroItem(dataDictionary, mauroPersistenceService, referencedClass)
             NhsDDClassRelationship relationship = new NhsDDClassRelationship(dataElement, referencedNhsClass)
             relationship
         }
@@ -249,7 +249,7 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
     }
 
     NhsDDClass classFromDataClass(DataClass dc, NhsDataDictionary dataDictionary) {
-        NhsDDClass clazz = new NhsDDClass().fromMauroItem(dataDictionary, dc)
+        NhsDDClass clazz = new NhsDDClass().fromMauroItem(dataDictionary, mauroPersistenceService, dc)
         dc.dataElements.each {dataElement ->
             if(dataElement.dataType instanceof PrimitiveType) {
                 NhsDDAttribute foundAttribute = dataDictionary.attributes[dataElement.label]

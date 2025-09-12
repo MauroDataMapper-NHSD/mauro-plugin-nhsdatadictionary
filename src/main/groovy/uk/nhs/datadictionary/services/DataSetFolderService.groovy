@@ -44,7 +44,7 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
             Folder vf = versionedFolderService.get(versionedFolderId)
             folderFolder = vf.childFolders.find {it.label == NhsDataDictionary.DATA_SETS_FOLDER_NAME}
         }
-        NhsDDDataSetFolder dataSetFolder = new NhsDDDataSetFolder().fromMauroItem(dataDictionary, folderFolder, [])
+        NhsDDDataSetFolder dataSetFolder = new NhsDDDataSetFolder().fromMauroItem(dataDictionary, mauroPersistenceService, folderFolder)
         dataSetFolder.definition = convertLinksInDescription(versionedFolderId, dataSetFolder.getDescription())
         if(id && id != 'root') {
             List<String> folderPath = [folderFolder.label]
@@ -56,11 +56,11 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
             dataSetFolder.folderPath = folderPath
         }
         folderFolder.childFolders.each { it ->
-            NhsDDDataSetFolder childFolder = new NhsDDDataSetFolder().fromMauroItem(dataDictionary, it, [])
+            NhsDDDataSetFolder childFolder = new NhsDDDataSetFolder().fromMauroItem(dataDictionary, mauroPersistenceService, it)
             dataSetFolder.childFolders[it.label] = childFolder
         }
         dataModelService.findAllByFolderId(folderFolder.id).each {
-            NhsDDDataSet childDataSet = new NhsDDDataSet().fromMauroItem(dataDictionary, it)
+            NhsDDDataSet childDataSet = new NhsDDDataSet().fromMauroItem(dataDictionary, mauroPersistenceService, it)
             if (!childDataSet.isRetired()) {
                 dataSetFolder.dataSets[it.label] = childDataSet
             }

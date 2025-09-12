@@ -30,6 +30,7 @@ import uk.nhs.datadictionary.publish.structure.DictionaryItem
 import uk.nhs.datadictionary.publish.structure.datasets.DataSetSection
 import uk.nhs.datadictionary.publish.structure.datasets.cds.LegacyCdsDataSetSection
 import uk.nhs.datadictionary.publish.structure.datasets.other.OtherDataSetTable
+import uk.nhs.datadictionary.services.profiles.MauroPersistenceService
 
 @Slf4j
 class NhsDDDataSet implements NhsDataDictionaryComponent <DataModel> {
@@ -222,8 +223,8 @@ class NhsDDDataSet implements NhsDataDictionaryComponent <DataModel> {
     }
 
     @Override
-    NhsDDDataSet fromMauroItem(NhsDataDictionary dataDictionary, DataModel catalogueItem, List<Metadata> metadata = null) {
-        NhsDataDictionaryComponent.super.fromMauroItem(dataDictionary, catalogueItem, metadata)
+    NhsDataDictionaryComponent<DataModel> fromMauroItem(NhsDataDictionary dataDictionary, MauroPersistenceService mauroPersistenceService, DataModel catalogueItem) {
+        NhsDataDictionaryComponent.super.fromMauroItem(dataDictionary, mauroPersistenceService, catalogueItem)
         this.catalogueItem.childDataClasses.each {dataClass ->
             dataSetClasses.add(new NhsDDDataSetClass(dataClass, dataDictionary))
         }
