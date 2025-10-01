@@ -24,6 +24,7 @@ import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
 import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.TermCacheableRepository
+import org.maurodata.persistence.terminology.dto.TermDTORepository
 import uk.nhs.datadictionary.NhsDDBusinessDefinition
 import uk.nhs.datadictionary.NhsDataDictionary
 
@@ -34,30 +35,30 @@ class BusinessDefinitionService extends DataDictionaryComponentService<Term, Nhs
     @Inject
     TermCacheableRepository termCacheableRepository
 
-    NhsDataDictionaryService nhsDataDictionaryService
+    @Inject
+    TermDTORepository termDTORepository
 
     BusinessDefinitionService() {
     }
 
-    @Override
-    NhsDDBusinessDefinition show(UUID versionedFolderId, String id) {
-        NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary()
-        dataDictionary.containingVersionedFolder = versionedFolderService.get(versionedFolderId)
+    String getStereotype() {
+        "businessDefinition"
+    }
 
-        Term businessDefinitionTerm = termService.get(id)
+    @Override
+    NhsDDBusinessDefinition show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
+        NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary(versionedFolderId)
+        Term businessDefinitionTerm = termDTORepository.findById(id)
         NhsDDBusinessDefinition businessDefinition = new NhsDDBusinessDefinition().fromMauroItem(dataDictionary, mauroPersistenceService, businessDefinitionTerm)
-        businessDefinition.definition = convertLinksInDescription(versionedFolderId, businessDefinition.getDescription())
+        businessDefinition.definition =
+            convertLinksInDescription(versionedFolderId, businessDefinition.getDescription())
         return businessDefinition
     }
 
     @Override
-    Set<Term> getAll(UUID versionedFolderId, boolean includeRetired = false) {
-
+    Set<Term> getAll(UUID versionedFolderId, NhsDataDictionaryService nhsDataDictionaryService, Boolean includeRetired = false) {
         Terminology busDefTerminology = nhsDataDictionaryService.getBusinessDefinitionTerminology(versionedFolderId)
-
-        List<Term> terms = termCacheableRepository.readAllByParent(busDefTerminology)
-
-        terms.findAll {term ->
+        busDefTerminology.terms.findAll {term ->
             includeRetired || !catalogueItemIsRetired(term)
         }
     }

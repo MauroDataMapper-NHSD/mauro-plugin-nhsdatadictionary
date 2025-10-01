@@ -30,10 +30,14 @@ import uk.nhs.datadictionary.NhsDataDictionary
 @Singleton
 class DataSetConstraintService extends DataDictionaryComponentService<Term, NhsDDDataSetConstraint> {
 
+    String getStereotype() {
+        "dataSetConstraint"
+    }
+
+
     @Override
-    NhsDDDataSetConstraint show(UUID versionedFolderId, String id) {
-        NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary()
-        dataDictionary.containingVersionedFolder = versionedFolderService.get(versionedFolderId)
+    NhsDDDataSetConstraint show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
+        NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary(versionedFolderId)
 
         Term dataSetConstraintTerm = termService.get(id)
         NhsDDDataSetConstraint dataSetConstraint = new NhsDDDataSetConstraint().fromMauroItem(dataDictionary, dataSetConstraintTerm)
@@ -42,7 +46,7 @@ class DataSetConstraintService extends DataDictionaryComponentService<Term, NhsD
     }
 
     @Override
-    Set<Term> getAll(UUID versionedFolderId, boolean includeRetired = false) {
+    Set<Term> getAll(UUID versionedFolderId, NhsDataDictionaryService nhsDataDictionaryService, Boolean includeRetired = false) {
 
         Terminology dataSetConstraintTerminology = nhsDataDictionaryService.getDataSetConstraintTerminology(versionedFolderId)
 

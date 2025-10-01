@@ -49,11 +49,6 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
     NhsDDAttribute previousItemLinkedElementsChange
 
     @Override
-    protected NhsDataDictionary createDataDictionary() {
-        dataDictionaryService.newDataDictionary()
-    }
-
-    @Override
     String getDefinition() {
         """<p>The date, month, year and century, or any combination of these elements, that is of relevance to an 
 <a href="dm:Classes and Attributes|dc:ACTIVITY">ACTIVITY</a>.</p>"""

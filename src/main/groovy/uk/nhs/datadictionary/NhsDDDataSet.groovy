@@ -25,6 +25,7 @@ import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.facet.Edit
+import org.maurodata.domain.facet.EditType
 import org.maurodata.domain.facet.Metadata
 import uk.nhs.datadictionary.publish.structure.DictionaryItem
 import uk.nhs.datadictionary.publish.structure.datasets.DataSetSection
@@ -252,7 +253,9 @@ class NhsDDDataSet implements NhsDataDictionaryComponent <DataModel> {
 
     void loadDataModelMergeEdits(List<Edit> allMergeEdits, DataModel item) {
         log.info("Getting merge edits for data model '$item.label'")
-        List<Edit> mergeEdits = editService.findAllByResourceAndTitle(item.domainType, item.id, EditTitle.MERGE)
+        List<Edit> mergeEdits = item.edits.findAll {
+            it.title = EditType.MERGE
+        }
         if (mergeEdits.empty) {
             return
         }
@@ -262,7 +265,9 @@ class NhsDDDataSet implements NhsDataDictionaryComponent <DataModel> {
 
     void loadDataClassMergeEdits(List<Edit> allMergeEdits, DataClass item) {
         log.info("Getting merge edits for data class '$item.label'")
-        List<Edit> mergeEdits = editService.findAllByResourceAndTitle(item.domainType, item.id, EditTitle.MERGE)
+        List<Edit> mergeEdits = item.edits.findAll {
+            it.title = EditType.MERGE
+        }
         if (mergeEdits.empty) {
             return
         }
@@ -280,7 +285,9 @@ class NhsDDDataSet implements NhsDataDictionaryComponent <DataModel> {
 
     void loadDataElementMergeEdits(List<Edit> allMergeEdits, DataElement item) {
         log.info("Getting merge edits for data element '$item.label'")
-        List<Edit> mergeEdits = editService.findAllByResourceAndTitle(item.domainType, item.id, EditTitle.MERGE)
+        List<Edit> mergeEdits = item.edits.findAll {
+            it.title = EditType.MERGE
+        }
         if (mergeEdits.empty) {
             return
         }

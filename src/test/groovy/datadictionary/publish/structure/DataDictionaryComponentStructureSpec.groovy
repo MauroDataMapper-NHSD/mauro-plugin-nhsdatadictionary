@@ -17,7 +17,7 @@
  */
 package datadictionary.publish.structure
 
-
+import jakarta.inject.Inject
 import spock.lang.Specification
 import uk.nhs.datadictionary.NhsDDChangeLog
 import uk.nhs.datadictionary.NhsDataDictionary
@@ -26,8 +26,12 @@ import uk.nhs.datadictionary.publish.ItemLinkScanner
 import uk.nhs.datadictionary.publish.NhsDataDictionaryComponentPathResolver
 import uk.nhs.datadictionary.publish.PublishContext
 import uk.nhs.datadictionary.publish.PublishTarget
+import uk.nhs.datadictionary.services.NhsDataDictionaryService
 
 abstract class DataDictionaryComponentStructureSpec<T extends NhsDataDictionaryComponent> extends Specification {
+
+    @Inject NhsDataDictionaryService nhsDataDictionaryService
+
     NhsDataDictionary dataDictionary
 
     UUID branchId
@@ -49,9 +53,10 @@ abstract class DataDictionaryComponentStructureSpec<T extends NhsDataDictionaryC
     PublishContext changePaperHtmlPublishContext
 
     def setup() {
-        dataDictionary = createDataDictionary()
-
         branchId = UUID.fromString("782602d4-e153-45d8-a271-eb42396804da")
+
+        dataDictionary = createDataDictionary(branchId)
+
 
         definition = getDefinition()
         setupRelatedItems()
@@ -74,7 +79,9 @@ abstract class DataDictionaryComponentStructureSpec<T extends NhsDataDictionaryC
         setupPublishContexts()
     }
 
-    protected abstract NhsDataDictionary createDataDictionary()
+    protected NhsDataDictionary createDataDictionary(UUID branchId) {
+        nhsDataDictionaryService.newDataDictionary(branchId)
+    }
 
     protected static <K, V> Map<K, V> copyMap(Map<K, V> properties) {
         Map<K, V> copy = [:]

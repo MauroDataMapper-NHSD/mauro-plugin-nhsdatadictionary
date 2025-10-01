@@ -65,11 +65,6 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
     NhsDDDataSet currentTablesChange
 
     @Override
-    protected NhsDataDictionary createDataDictionary() {
-        dataDictionaryService.newDataDictionary()
-    }
-
-    @Override
     String getDefinition() {
         """<p>The Diagnostic Data Set contains <a href="dm:Classes and Attributes|dc:PATIENT">PATIENTS</a> holding data.</p>"""
     }

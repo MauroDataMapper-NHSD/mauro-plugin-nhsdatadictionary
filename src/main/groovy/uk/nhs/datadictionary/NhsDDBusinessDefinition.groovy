@@ -17,7 +17,7 @@
  */
 package uk.nhs.datadictionary
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore
 import groovy.util.logging.Slf4j
 import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.terminology.Term
@@ -36,11 +36,13 @@ class NhsDDBusinessDefinition implements NhsDataDictionaryComponent <Term> {
     }
 
 
+    @JsonIgnore
     @Override
     String getPluralStereotypeForWebsite() {
         "nhs_business_definitions"
     }
 
+    @JsonIgnore
     @Override
     String getMetadataNamespace() {
         NhsDataDictionary.METADATA_NAMESPACE + ".NHS business definition"
@@ -67,16 +69,19 @@ class NhsDDBusinessDefinition implements NhsDataDictionaryComponent <Term> {
         }
     }
 
+    @JsonIgnore
     @Override
     String getXmlNodeName() {
         "DDBusinessDefinition"
     }
 
+    @JsonIgnore
     @Override
     void fromXml(def xml, NhsDataDictionary dataDictionary) {
         NhsDataDictionaryComponent.super.fromXml(xml, dataDictionary)
     }
 
+    @JsonIgnore
     String getMauroPath() {
         return "te:${NhsDataDictionary.BUSINESS_DEFINITIONS_TERMINOLOGY_NAME}|tm:${name}"
     }

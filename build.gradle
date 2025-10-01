@@ -1,10 +1,8 @@
 plugins {
     id("groovy")
-    id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("io.micronaut.library") version "4.4.5"
-    id("io.micronaut.aot") version "4.4.5"
+    id("io.micronaut.library") version "4.5.4"
     id("maven-publish")
-    //id('com.gradleup.shadow') version '9.0.2'
+    id("com.gradleup.shadow") version "8.3.6"
 }
 
 group = 'org.maurodata.plugins'
@@ -26,9 +24,6 @@ repositories {
     // maven {url "https://mauro-repository.com/libs-snapshot-local"}
 }
 
-shadowJar {
-    zip64 true
-}
 
 configurations {
     // Define a custom configuration for your platform API
@@ -63,11 +58,11 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.2.0")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.2.0")
 
-    platformapi('org.maurodata:mauro-domain:0.0.1-SNAPSHOT')
-    platformapi('org.maurodata:mauro-persistence:0.0.1-SNAPSHOT')
-    platformapi('org.maurodata:mauro-client:0.0.1-SNAPSHOT')
+    platformapi('org.maurodata:mauro-domain:0.0.2-SNAPSHOT')
+    platformapi('org.maurodata:mauro-persistence:0.0.2-SNAPSHOT')
+    platformapi('org.maurodata:mauro-client:0.0.2-SNAPSHOT')
 
-    platformapi('org.maurodata:mauro-api:0.0.1-SNAPSHOT')
+    platformapi('org.maurodata:mauro-api:0.0.2-SNAPSHOT')
 
     implementation("org.maurodata:dita-dsl-base:2.0.0-SNAPSHOT")
 
@@ -97,9 +92,8 @@ dependencies {
     testImplementation("io.micronaut.test:micronaut-test-junit5")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
 
-
-
 }
+
 
 micronaut {
     runtime("netty")
@@ -108,17 +102,12 @@ micronaut {
         incremental(true)
         annotations("org.maurodata.*")
     }
-    aot {
-        // Please review carefully the optimizations enabled below
-        // Check https://micronaut-projects.github.io/micronaut-aot/latest/guide/ for more details
-        optimizeServiceLoading = false
-        convertYamlToJava = false
-        precomputeOperations = true
-        cacheEnvironment = true
-        optimizeClassLoading = true
-        deduceEnvironment = true
-        optimizeNetty = true
-    }
+}
+
+
+java {
+    sourceCompatibility = JavaVersion.toVersion("17")
+    targetCompatibility = JavaVersion.toVersion("17")
 }
 
 publishing {
@@ -127,14 +116,6 @@ publishing {
             from components.java
         }
     }
-}
-
-java {
-    sourceCompatibility = JavaVersion.toVersion("17")
-    targetCompatibility = JavaVersion.toVersion("17")
-}
-
-publishing {
     repositories {
         maven {
             name = "MauroSnapshotRepository"

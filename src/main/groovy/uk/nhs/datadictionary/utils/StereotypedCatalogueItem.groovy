@@ -32,6 +32,8 @@ class StereotypedCatalogueItem {
     Boolean isRetired
     String key
     String description
+    UUID catalogueId
+    String name
 
     StereotypedCatalogueItem(AdministeredItem catalogueItem, String stereotype) {
         this.catalogueItem = catalogueItem
@@ -42,7 +44,9 @@ class StereotypedCatalogueItem {
         }
         this.key = catalogueItem.metadata.any { it.key == "isKey" && it.value == "true" } ? "Key" : ""
         this.label = catalogueItem.label
-        this.description = ""
+        this.description = catalogueItem.description
+        this.name = this.label
+        this.catalogueId = this.catalogueItem.id
     }
 
     StereotypedCatalogueItem(NhsDataDictionaryComponent component, String description = null) {
@@ -52,6 +56,8 @@ class StereotypedCatalogueItem {
         this.key = component.otherProperties.any { it.key == "isKey" && it.value == "true" } ? "Key" : ""
         this.label = component.getNameWithRetired()
         this.description = description
+        this.name = this.label
+        this.catalogueId = this.catalogueItem.id
     }
 
     String getId() {

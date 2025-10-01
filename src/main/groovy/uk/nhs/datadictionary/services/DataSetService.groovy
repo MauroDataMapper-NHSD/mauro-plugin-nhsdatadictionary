@@ -20,6 +20,7 @@ package uk.nhs.datadictionary.services
 import groovy.util.logging.Slf4j
 import groovy.xml.XmlParser
 import io.micronaut.transaction.annotation.Transactional
+import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.datamodel.DataElement
@@ -29,14 +30,19 @@ import org.maurodata.domain.facet.Edit
 import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.security.CatalogueUser
+import org.maurodata.persistence.datamodel.DataModelContentRepository
+import org.maurodata.persistence.datamodel.DataModelRepository
+import org.maurodata.persistence.folder.FolderRepository
 import uk.nhs.datadictionary.NhsDDDataSet
 import uk.nhs.datadictionary.NhsDDDataSetClass
 import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.NhsDataDictionaryComponent
 import uk.nhs.datadictionary.datasets.parser.CDSDataSetParser
 import uk.nhs.datadictionary.datasets.parser.DataSetParser
+import uk.nhs.datadictionary.publish.ItemLinkScanner
 import uk.nhs.datadictionary.publish.MauroCatalogueItemPathResolver
 import uk.nhs.datadictionary.publish.PublishContext
+import uk.nhs.datadictionary.publish.PublishTarget
 import uk.nhs.datadictionary.publish.structure.DictionaryItem
 import uk.nhs.datadictionary.publish.structure.Section
 import uk.nhs.datadictionary.publish.structure.datasets.DataSetSection
@@ -45,16 +51,29 @@ import uk.nhs.datadictionary.publish.structure.datasets.DataSetSection
 @Singleton
 class DataSetService extends DataDictionaryComponentService<DataModel, NhsDDDataSet> {
 
+    @Inject
+    DataModelRepository dataModelRepository
+
+    @Inject
+    DataModelContentRepository dataModelContentRepository
+
+    @Inject
+    FolderRepository folderRepository
+
     static XmlParser xmlParser = new XmlParser(false, false)
     static {
         xmlParser.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
     }
 
+    String getStereotype() {
+        "dataSet"
+    }
+
+
 
     @Override
-    NhsDDDataSet show(UUID versionedFolderId, String id) {
-        NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary()
-        dataDictionary.containingVersionedFolder = versionedFolderService.get(versionedFolderId)
+    NhsDDDataSet show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
+        NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary(versionedFolderId)
 
         // Load all available Data Elements into the dictionary so that the Data Set preview, when loading classes/element rows, can
         // match up elements in the specification tables
@@ -71,11 +90,7 @@ class DataSetService extends DataDictionaryComponentService<DataModel, NhsDDData
         if (specificationSection) {
             // TODO: Improve this preview, all HTML preview items should use publish model, this just gets a quick result for a data set specification fix
             MauroCatalogueItemPathResolver pathResolver = new MauroCatalogueItemPathResolver(
-                dataDictionary.containingVersionedFolder,
-                dataModelService,
-                dataClassService,
-                dataElementService,
-                terminologyService)
+                dataDictionary.containingVersionedFolder)
 
             PublishContext publishContext = new PublishContext(PublishTarget.WEBSITE)
             publishContext.setItemLinkScanner(
@@ -94,7 +109,7 @@ class DataSetService extends DataDictionaryComponentService<DataModel, NhsDDData
     }
 
     @Override
-    Set<DataModel> getAll(UUID versionedFolderId, boolean includeRetired = false) {
+    Set<DataModel> getAll(UUID versionedFolderId, NhsDataDictionaryService nhsDataDictionaryService, Boolean includeRetired = false) {
         Set<DataModel> returnModels = [] as Set
         Folder dataSetsFolder = nhsDataDictionaryService.getDataSetsFolder(versionedFolderId)
 
@@ -106,14 +121,16 @@ class DataSetService extends DataDictionaryComponentService<DataModel, NhsDDData
         return returnModels
     }
 
-    Map<List<String>, Set<DataModel>> getAllDataSets(List<String> currentPath, Folder dataSetsFolder, boolean includeRetired = false) {
+    Map<List<String>, Set<DataModel>> getAllDataSets(List<String> currentPath, Folder dataSetsFolder, Boolean includeRetired = false) {
         Map<List<String>, Set<DataModel>> returnModels = [:]
-        returnModels[currentPath] = dataModelService.findAllByFolderId(dataSetsFolder.id) as Set
-        dataSetsFolder.childFolders.each {childFolder ->
+        returnModels[currentPath] = dataModelRepository.findAllByFolderId(dataSetsFolder.id).collect {
+            dataModelContentRepository.readWithContentById(it.id) as DataModel
+        } as Set
+        folderRepository.readAllByParentFolder(dataSetsFolder).each {subFolder ->
             List<String> newPath = []
             newPath.addAll(currentPath)
-            newPath.add(childFolder.label)
-            returnModels.putAll(getAllDataSets(newPath, childFolder, includeRetired))
+            newPath.add(subFolder.label)
+            returnModels.putAll(getAllDataSets(newPath, subFolder, includeRetired))
         }
         return returnModels
     }

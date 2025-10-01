@@ -18,6 +18,7 @@
 package uk.nhs.datadictionary.services
 
 import groovy.util.logging.Slf4j
+import io.micronaut.context.ApplicationContext
 import io.micronaut.transaction.annotation.Transactional
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
@@ -36,12 +37,17 @@ import org.maurodata.domain.terminology.Terminology
 import org.maurodata.domain.terminology.TerminologyService
 import org.maurodata.exception.MauroApplicationException
 import org.maurodata.persistence.cache.FacetCacheableRepository.MetadataCacheableRepository
+import org.maurodata.persistence.cache.ModelCacheableRepository.FolderCacheableRepository
 import uk.nhs.datadictionary.NhsDDBranch
 import uk.nhs.datadictionary.NhsDDChangeLog
 import uk.nhs.datadictionary.NhsDDCode
 import uk.nhs.datadictionary.NhsDDElement
 import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.NhsDataDictionaryComponent
+import uk.nhs.datadictionary.publish.ItemLinkScanner
+import uk.nhs.datadictionary.publish.MauroCatalogueItemPathResolver
+import uk.nhs.datadictionary.publish.PublishContext
+import uk.nhs.datadictionary.publish.PublishTarget
 import uk.nhs.datadictionary.services.profiles.MauroPersistenceService
 import uk.nhs.datadictionary.utils.StereotypedCatalogueItem
 
@@ -57,14 +63,22 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
 
     @Inject MauroPersistenceService mauroPersistenceService
 
+    @Inject FolderCacheableRepository folderCacheableRepository
 
-    List<T> index(UUID versionedFolderId, boolean includeRetired = false) {
-        (getAll(versionedFolderId, includeRetired) as List).sort {it.label}
+    @Inject ApplicationContext applicationContext
+
+    DataDictionaryComponentService() {
     }
 
-    abstract def show(UUID versionedFolderId, String id)
+    abstract String getStereotype()
 
-    abstract Set<T> getAll(UUID versionedFolderId, boolean includeRetired = false)
+    List<StereotypedCatalogueItem> index(UUID dictionaryFolderId, NhsDataDictionaryService nhsDataDictionaryService, Boolean includeRetired = false) {
+        (getAll(dictionaryFolderId, nhsDataDictionaryService, includeRetired)).sort {it.label}.collect {new StereotypedCatalogueItem(it, getStereotype())}
+    }
+
+    abstract def show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService)
+
+    abstract Set<T> getAll(UUID dictionaryFolderId, NhsDataDictionaryService nhsDataDictionaryService, Boolean includeRetired = false)
 
 /*    Map<String, String> getAliases(T catalogueItem) {
         Map<String, String> aliases = [:]
@@ -110,41 +124,18 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
 
 
     String convertLinksInDescription(UUID branchId, String description) {
-        Folder versionedFolder = VersionedFolder.get(branchId)
 
-        String newDescription = description
-        log.debug(newDescription)
-        Matcher matcher = pattern.matcher(description)
-        while (matcher.find()) {
-            if(matcher.group(1).startsWith('http') ||
-               matcher.group(1).startsWith('mailto')
-            ) {
-                // ignore
-            } else {
-                //System.err.println(matcher.group(1))
-                try {
-                    String[] path = matcher.group(1).split("\\|")
-                    AdministeredItem foundCatalogueItem = getByPath(versionedFolder, path)
-                    if (foundCatalogueItem) {
-                        String stereotype = getStereotypeByPath(path)
-                        String catalogueId = foundCatalogueItem.id.toString()
-                        String cssClass = stereotype
-                        String replacementLink = """<a class="${cssClass}" href="#/preview/${branchId.toString()}/${stereotype}/${catalogueId}">${
-                            matcher
-                                .group(2)}</a>"""
-                        newDescription = newDescription.replace(matcher.group(0), replacementLink)
-                    } else {
-                        System.err.println("Cannot find domain item: ${matcher.group(1)}")
-                    }
-                } catch(Exception e) {
-                    System.err.println(e.message)
-                    e.printStackTrace()
-                    System.err.println(description)
-                }
 
-            }
-        }
-        return newDescription?.trim() ?: null
+        MauroCatalogueItemPathResolver pathResolver = applicationContext.createBean(MauroCatalogueItemPathResolver)
+        pathResolver.setVersionedFolderId(branchId)
+
+        PublishContext publishContext = new PublishContext(PublishTarget.WEBSITE)
+        publishContext.setItemLinkScanner(
+            ItemLinkScanner.createForHtmlPreview(branchId, pathResolver))
+
+        // Don't pretty print the output, try to reduce the response size
+        publishContext.prettyPrintHtml = false
+        return publishContext.replaceLinksInString(description).trim() ?: null
     }
 
     String replaceLinksInShortDescription(String input) {
@@ -154,68 +145,6 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
             output = output.replace(matcher.group(0), matcher.group(1))
         }
         return output
-    }
-
-    @Deprecated
-    AdministeredItem getByPath(Folder versionedFolder, String[] path) {
-        if (path[0] == "te:${NhsDataDictionary.BUSINESS_DEFINITIONS_TERMINOLOGY_NAME}") {
-            Terminology terminology = terminologyService.findByFolderIdAndLabel(versionedFolder.id, NhsDataDictionary.BUSINESS_DEFINITIONS_TERMINOLOGY_NAME)
-            String termLabel = path[1].replace("tm:", "")
-            Term t = terminology.findTermByCode(termLabel)
-            if (t) {
-                return t
-            }
-        }
-        if (path[0] == "te:${NhsDataDictionary.SUPPORTING_DEFINITIONS_TERMINOLOGY_NAME}") {
-            Terminology terminology = terminologyService.findByFolderIdAndLabel(versionedFolder.id, NhsDataDictionary.SUPPORTING_DEFINITIONS_TERMINOLOGY_NAME)
-            String termLabel = path[1].replace("tm:", "")
-            Term t = terminology.findTermByCode(termLabel)
-            if (t) {
-                return t
-            }
-        }
-        if (path[0] == "te:${NhsDataDictionary.DATA_SET_CONSTRAINTS_TERMINOLOGY_NAME}") {
-            Terminology terminology = terminologyService.findByFolderIdAndLabel(versionedFolder.id, NhsDataDictionary.DATA_SET_CONSTRAINTS_TERMINOLOGY_NAME)
-            String termLabel = path[1].replace("tm:", "")
-            Term t = terminology.findTermByCode(termLabel)
-            if (t) {
-                return t
-            }
-        }
-        if (path[0] == "dm:${NhsDataDictionary.CLASSES_MODEL_NAME}".toString()) {
-            DataModel dm = dataModelService.findByFolderIdAndLabel(versionedFolder.id, NhsDataDictionary.CLASSES_MODEL_NAME)
-            if (path[1] == "dc:Retired") {
-                DataClass dc1 = dataClassService.findByDataModelIdAndLabel(dm.id, "Retired")
-                DataClass dc2 = dataClassService.findByParentAndLabel(dc2, path[2].replace("dc:", ""))
-                return dc2
-            } else {
-                DataClass dc1 = dataClassService.findByDataModelIdAndLabel(dm.id, path[1].replace("dc:", ""))
-                if(path.length > 2 && path[2].startsWith("de")) {
-                    DataElement de = dataElementService.findByParentAndLabel(dc1, path[2].replace("de:", ""))
-                    return de
-                } else {
-                    return dc1
-                }
-            }
-        } else if (path[0] == "dm:${NhsDataDictionary.ELEMENTS_MODEL_NAME}") {
-            DataModel dm = dataModelService.findByFolderIdAndLabel(versionedFolder.id, NhsDataDictionary.ELEMENTS_MODEL_NAME)
-            if (path[1] == "dc:Retired") {
-                DataClass dc1 = dataClassService.findByDataModelIdAndLabel(dm.id, "Retired")
-                DataElement de = dataElementService.findByParentAndLabel(dc1, path[2].replace("de:", ""))
-                return de
-            } else {
-                DataClass dc = dataClassService.findByDataModelIdAndLabel(dm.id, path[1].replace("dc:", ""))
-                DataElement de = dataElementService.findByParentAndLabel(dc, path[2].replace("de:", ""))
-                return de
-            }
-        }
-
-        if (path.length == 1 && path[0].startsWith("dm:")) {
-            DataModel dm = dataModelService.findByLabel(path[0].replace("dm:", ""))
-            return dm
-        }
-
-        return null
     }
 
     static String getStereotypeByPath(String[] path) {
@@ -340,7 +269,7 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
     boolean catalogueItemIsRetired(AdministeredItem catalogueItem) {
         // Maybe should check for namespace here as well?
         catalogueItem.metadata.find {
-            it.name == 'isRetired' && it.value == 'true'
+            it.key == 'isRetired' && it.value == 'true'
         }
     }
 

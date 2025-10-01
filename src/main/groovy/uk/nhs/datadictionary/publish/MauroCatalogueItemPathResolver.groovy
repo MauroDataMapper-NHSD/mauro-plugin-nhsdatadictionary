@@ -17,42 +17,51 @@
  */
 package uk.nhs.datadictionary.publish
 
+import io.micronaut.context.annotation.Bean
+import io.micronaut.context.annotation.Prototype
+import jakarta.inject.Inject
 import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataModel
-import org.maurodata.domain.datamodel.DataModelService
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.model.AdministeredItem
 import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
-import org.maurodata.domain.terminology.TerminologyService
+import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.DataElementCacheableRepository
+import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.DataClassCacheableRepository
+import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.TermCacheableRepository
+import org.maurodata.persistence.cache.ModelCacheableRepository.TerminologyCacheableRepository
+import org.maurodata.persistence.cache.ModelCacheableRepository.DataModelCacheableRepository
+import org.maurodata.persistence.terminology.TerminologyRepository
 import uk.nhs.datadictionary.NhsDataDictionary
 
-
+@Bean
 class MauroCatalogueItemPathResolver implements PathResolver<UUID> {
-    final Folder versionedFolder
+    UUID versionedFolderId
 
-    final DataModelService dataModelService
-    //final DataElementService dataElementService
-    final TerminologyService terminologyService
+    @Inject TerminologyCacheableRepository terminologyCacheableRepository
+    @Inject TerminologyRepository terminologyRepository
+    @Inject TermCacheableRepository termCacheableRepository
+    @Inject DataModelCacheableRepository dataModelCacheableRepository
+    @Inject DataClassCacheableRepository dataClassCacheableRepository
+    @Inject DataElementCacheableRepository dataElementCacheableRepository
 
-    MauroCatalogueItemPathResolver(
-        Folder versionedFolder,
-        DataModelService dataModelService,
-        //DataClassService dataClassService,
-        //DataElementService dataElementService,
-        TerminologyService terminologyService) {
-        this.versionedFolder = versionedFolder
-        this.dataModelService = dataModelService
-        this.dataClassService = dataClassService
-        this.dataElementService = dataElementService
-        this.terminologyService = terminologyService
+    MauroCatalogueItemPathResolver () {
+
+    }
+    /*
+    MauroCatalogueItemPathResolver (Folder versionedFolder) {
+        this.versionedFolderId = versionedFolder.id
     }
 
+    MauroCatalogueItemPathResolver (UUID versionedFolderId) {
+        this.versionedFolderId = versionedFolderId
+    }
+*/
     @Override
     UUID get(String path) {
         String[] pathParts = path.split("\\|")
-        AdministeredItem catalogueItem = getByPath(versionedFolder, pathParts)
+        AdministeredItem catalogueItem = getByPath(pathParts)
         if (!catalogueItem) {
             return null
         }
@@ -60,56 +69,62 @@ class MauroCatalogueItemPathResolver implements PathResolver<UUID> {
         catalogueItem.id
     }
 
-    private AdministeredItem getByPath(Folder versionedFolder, String[] path) {
+    private AdministeredItem getByPath(String[] path) {
         if (path[0] == "te:${NhsDataDictionary.BUSINESS_DEFINITIONS_TERMINOLOGY_NAME}") {
-            Terminology terminology = terminologyService.findByFolderIdAndLabel(versionedFolder.id, NhsDataDictionary.BUSINESS_DEFINITIONS_TERMINOLOGY_NAME)
-            String termLabel = path[1].replace("tm:", "")
-            Term t = terminology.findTermByCode(termLabel)
-            if (t) {
-                return t
+            Terminology terminology = terminologyRepository.findAllByFolderId(versionedFolderId).find {
+                (NhsDataDictionary.BUSINESS_DEFINITIONS_TERMINOLOGY_NAME == it.label)
             }
+            String termLabel = path[1].replace("tm:", "")
+            Term t = termCacheableRepository.findAllByTerminologyAndCode(terminology, termLabel)
+            return t
         }
         if (path[0] == "te:${NhsDataDictionary.SUPPORTING_DEFINITIONS_TERMINOLOGY_NAME}") {
-            Terminology terminology = terminologyService.findByFolderIdAndLabel(versionedFolder.id, NhsDataDictionary.SUPPORTING_DEFINITIONS_TERMINOLOGY_NAME)
-            String termLabel = path[1].replace("tm:", "")
-            Term t = terminology.findTermByCode(termLabel)
-            if (t) {
-                return t
+            Terminology terminology = terminologyCacheableRepository.findAllByFolderId(versionedFolderId).find {
+               it.label == NhsDataDictionary.SUPPORTING_DEFINITIONS_TERMINOLOGY_NAME
             }
+            String termLabel = path[1].replace("tm:", "")
+            Term t = termCacheableRepository.findAllByTerminologyAndCode(terminology, termLabel)
+            return t
         }
         if (path[0] == "te:${NhsDataDictionary.DATA_SET_CONSTRAINTS_TERMINOLOGY_NAME}") {
-            Terminology terminology = terminologyService.findByFolderIdAndLabel(versionedFolder.id, NhsDataDictionary.DATA_SET_CONSTRAINTS_TERMINOLOGY_NAME)
-            String termLabel = path[1].replace("tm:", "")
-            Term t = terminology.findTermByCode(termLabel)
-            if (t) {
-                return t
+            Terminology terminology = terminologyCacheableRepository.findAllByFolderId(versionedFolderId).find {
+                it.label == NhsDataDictionary.DATA_SET_CONSTRAINTS_TERMINOLOGY_NAME
             }
+            String termLabel = path[1].replace("tm:", "")
+            Term t = termCacheableRepository.findAllByTerminologyAndCode(terminology, termLabel)
+            return t
         }
         if (path[0] == "dm:${NhsDataDictionary.CLASSES_MODEL_NAME}".toString()) {
-            DataModel dm = dataModelService.findByFolderIdAndLabel(versionedFolder.id, NhsDataDictionary.CLASSES_MODEL_NAME)
+            DataModel dm = dataModelCacheableRepository.findAllByFolderId(versionedFolderId).find {
+                it.label == NhsDataDictionary.CLASSES_MODEL_NAME
+            }
             if (path[1] == "dc:Retired") {
-                DataClass dc1 = dataClassService.findByDataModelIdAndLabel(dm.id, "Retired")
-                DataClass dc2 = dataClassService.findByParentAndLabel(dc1, path[2].replace("dc:", ""))
+                DataClass dc1 = dataClassCacheableRepository.readByDataModelAndLabelAndParentDataClassIsNull(dm, "Retired")
+                DataClass dc2 = dataClassCacheableRepository.readByParentDataClassAndLabel(dc1, path[2].replace("dc:", ""))
                 return dc2
             } else {
-                DataClass dc1 = dataClassService.findByDataModelIdAndLabel(dm.id, path[1].replace("dc:", ""))
+                DataClass dc1 = dataClassCacheableRepository.readByDataModelAndLabelAndParentDataClassIsNull(dm, path[1].replace("dc:", ""))
                 return dc1
             }
         } else if (path[0] == "dm:${NhsDataDictionary.ELEMENTS_MODEL_NAME}") {
-            DataModel dm = dataModelService.findByFolderIdAndLabel(versionedFolder.id, NhsDataDictionary.ELEMENTS_MODEL_NAME)
+            DataModel dm = dataModelCacheableRepository.findAllByFolderId(versionedFolderId).find {
+                it.label == NhsDataDictionary.ELEMENTS_MODEL_NAME
+            }
             if (path[1] == "dc:Retired") {
-                DataClass dc1 = dataClassService.findByDataModelIdAndLabel(dm.id, "Retired")
-                DataElement de = dataElementService.findByParentAndLabel(dc1, path[2].replace("de:", ""))
+                DataClass dc1 = dataClassCacheableRepository.readByDataModelAndLabelAndParentDataClassIsNull(dm, "Retired")
+                DataElement de = dataElementCacheableRepository.readByDataClassAndLabel(dc1, path[2].replace("de:", ""))
                 return de
             } else {
-                DataClass dc = dataClassService.findByDataModelIdAndLabel(dm.id, path[1].replace("dc:", ""))
-                DataElement de = dataElementService.findByParentAndLabel(dc, path[2].replace("de:", ""))
+                DataClass dc = dataClassCacheableRepository.readByDataModelAndLabelAndParentDataClassIsNull(dm, path[1].replace("dc:", ""))
+                DataElement de = dataElementCacheableRepository.readByDataClassAndLabel(dc, path[2].replace("de:", ""))
                 return de
             }
         }
 
         if (path.length == 1 && path[0].startsWith("dm:")) {
-            DataModel dm = dataModelService.findByLabel(path[0].replace("dm:", ""))
+            DataModel dm = dataModelCacheableRepository.findAllByFolderId(versionedFolderId).find {
+                it.label == path[0].replace("dm:", "")
+            }
             return dm
         }
 

@@ -44,11 +44,6 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
     NhsDDClass relatedItem
 
     @Override
-    protected NhsDataDictionary createDataDictionary() {
-        dataDictionaryService.newDataDictionary()
-    }
-
-    @Override
     String getDefinition() {
         """<p>
     A <a href="te:NHS Business Definitions|tm:Baby First Feed">Baby First Feed</a>

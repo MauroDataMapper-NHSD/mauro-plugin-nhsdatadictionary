@@ -20,8 +20,10 @@ package uk.nhs.datadictionary.controllers
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import groovy.xml.XmlParser
+import io.micronaut.core.annotation.Nullable
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.QueryValue
 import io.micronaut.security.annotation.Secured
 import io.micronaut.security.rules.SecurityRule
 import io.micronaut.transaction.annotation.Transactional
@@ -29,7 +31,16 @@ import jakarta.inject.Inject
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.security.CatalogueUser
 import uk.nhs.datadictionary.DataDictionaryImportParameters
+import uk.nhs.datadictionary.NhsDDBusinessDefinition
+import uk.nhs.datadictionary.NhsDDElement
+import uk.nhs.datadictionary.services.AttributeService
+import uk.nhs.datadictionary.services.BusinessDefinitionService
+import uk.nhs.datadictionary.services.ClassService
+import uk.nhs.datadictionary.services.DataSetService
+import uk.nhs.datadictionary.services.ElementService
 import uk.nhs.datadictionary.services.NhsDataDictionaryService
+import uk.nhs.datadictionary.services.SupportingInformationService
+import uk.nhs.datadictionary.utils.StereotypedCatalogueItem
 
 //@CompileStatic
 @Controller()
@@ -37,19 +48,82 @@ import uk.nhs.datadictionary.services.NhsDataDictionaryService
 @Slf4j
 class NhsDataDictionaryController {
 
-    @Inject
-    NhsDataDictionaryService nhsDataDictionaryService
+    @Inject NhsDataDictionaryService nhsDataDictionaryService
 
-    @Transactional
-    def newVersion() {
-        log.debug("Creating a new version...")
-        CatalogueUser currentUser = getCurrentUser()
-        long startTime = System.currentTimeMillis()
-        UUID versionedFolderId = UUID.fromString(params.versionedFolderId)
-        UUID newVersionedFolderId = nhsDataDictionaryService.newVersion(currentUser, versionedFolderId)
-        log.debug(Utils.timeTaken(startTime))
-        respond([newVersionedFolderId.toString()])
+    @Inject ElementService elementService
+    @Inject AttributeService attributeService
+    @Inject ClassService classService
+    @Inject BusinessDefinitionService businessDefinitionService
+    @Inject SupportingInformationService supportingInformationService
+    @Inject DataSetService dataSetService
+
+    NhsDataDictionaryController() {
     }
+
+    @Get('/api/nhsdd/branches')
+    List<Folder> branches() {
+        nhsDataDictionaryService.branches()
+    }
+
+    @Get('/api/nhsdd/{dictionaryId}/statistics')
+    Map statistics(UUID dictionaryId) {
+        nhsDataDictionaryService.buildDataDictionary(dictionaryId).statistics()
+    }
+
+    @Get('api/nhsdd/{dictionaryId}/preview/elements')
+    List<StereotypedCatalogueItem> indexElements(UUID dictionaryId, @Nullable @QueryValue Boolean includeDeleted) {
+        elementService.index(dictionaryId, nhsDataDictionaryService, includeDeleted)
+    }
+
+    @Get('api/nhsdd/{dictionaryId}/preview/elements/{elementId}')
+    NhsDDElement showElement(UUID dictionaryId, UUID elementId) {
+        elementService.show(dictionaryId, elementId, nhsDataDictionaryService)
+    }
+
+    @Get('api/nhsdd/{dictionaryId}/preview/attributes')
+    List<StereotypedCatalogueItem> indexAttributes(UUID dictionaryId, @Nullable @QueryValue Boolean includeDeleted) {
+        attributeService.index(dictionaryId, nhsDataDictionaryService, includeDeleted)
+    }
+
+    @Get('api/nhsdd/{dictionaryId}/preview/classes')
+    List<StereotypedCatalogueItem> indexClasses(UUID dictionaryId, @Nullable @QueryValue Boolean includeDeleted) {
+        classService.index(dictionaryId, nhsDataDictionaryService, includeDeleted)
+    }
+
+    @Get('api/nhsdd/{dictionaryId}/preview/businessDefinitions')
+    List<StereotypedCatalogueItem> indexBusinessDefinitions(UUID dictionaryId, @Nullable @QueryValue Boolean includeDeleted) {
+        businessDefinitionService.index(dictionaryId, nhsDataDictionaryService, includeDeleted)
+    }
+
+    @Get('api/nhsdd/{dictionaryId}/preview/businessDefinitions/{businessDefinitionId}')
+    NhsDDBusinessDefinition showBusinessDefinition(UUID dictionaryId, UUID businessDefinitionId) {
+        businessDefinitionService.show(dictionaryId, businessDefinitionId, nhsDataDictionaryService)
+    }
+
+    @Get('api/nhsdd/{dictionaryId}/preview/supportingInformation')
+    List<StereotypedCatalogueItem> indexSupportingInformation(UUID dictionaryId, @Nullable @QueryValue Boolean includeDeleted) {
+        supportingInformationService.index(dictionaryId, nhsDataDictionaryService, includeDeleted)
+    }
+
+    @Get('api/nhsdd/{dictionaryId}/preview/dataSets')
+    List<StereotypedCatalogueItem> indexDataSets(UUID dictionaryId, @Nullable @QueryValue Boolean includeDeleted) {
+        dataSetService.index(dictionaryId, nhsDataDictionaryService, includeDeleted)
+    }
+
+
+
+    /*
+        @Transactional
+        def newVersion() {
+            log.debug("Creating a new version...")
+            CatalogueUser currentUser = getCurrentUser()
+            long startTime = System.currentTimeMillis()
+            UUID versionedFolderId = UUID.fromString(params.versionedFolderId)
+            UUID newVersionedFolderId = nhsDataDictionaryService.newVersion(currentUser, versionedFolderId)
+            log.debug(Utils.timeTaken(startTime))
+            respond([newVersionedFolderId.toString()])
+        }
+    */
 
     def previewChangePaper() {
         UUID versionedFolderId = UUID.fromString(params.versionedFolderId)
@@ -57,15 +131,6 @@ class NhsDataDictionaryController {
         respond nhsDataDictionaryService.previewChangePaper(versionedFolderId, includeDataSets)
     }
 
-    @Get('/nhsdd/branches')
-    List<Folder> branches() {
-        nhsDataDictionaryService.branches()
-    }
-
-    @Get('/nhsdd/{dictionaryId}/statistics')
-    Map statistics(UUID dictionaryId) {
-        nhsDataDictionaryService.buildDataDictionary(dictionaryId).statistics()
-    }
 
 
     def integrityChecks() {

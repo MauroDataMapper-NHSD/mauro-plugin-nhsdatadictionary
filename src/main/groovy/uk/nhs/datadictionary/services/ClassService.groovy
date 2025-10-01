@@ -37,10 +37,14 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
 
     AttributeService attributeService
 
+    String getStereotype() {
+        "class"
+    }
+
+
     @Override
-    NhsDDClass show(UUID versionedFolderId, String id) {
-        NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary()
-        dataDictionary.containingVersionedFolder = versionedFolderService.get(versionedFolderId)
+    NhsDDClass show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
+        NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary(versionedFolderId)
 
         DataClass dataClass = dataClassService.get(id)
         NhsDDClass nhsClass = new NhsDDClass().fromMauroItem(dataDictionary, mauroPersistenceService, dataClass)
@@ -93,11 +97,9 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
     }
 
     @Override
-    Set<DataClass> getAll(UUID versionedFolderId, boolean includeRetired = false) {
-        DataModel coreModel = nhsDataDictionaryService.getClassesModel(versionedFolderId)
-        List<DataClass> classesClass = DataClass.byDataModelId(coreModel.id).toList()
-
-        classesClass.findAll {dataClass ->
+    Set<DataClass> getAll(UUID versionedFolderId, NhsDataDictionaryService nhsDataDictionaryService, Boolean includeRetired = false) {
+        DataModel classesModel = nhsDataDictionaryService.getClassesModel(versionedFolderId)
+        classesModel.allDataClasses.findAll {dataClass ->
             dataClass.label != "Retired" && (
                 includeRetired || !catalogueItemIsRetired(dataClass))
         }

@@ -36,7 +36,9 @@ import org.maurodata.persistence.cache.ItemCacheableRepository
 import org.maurodata.persistence.datamodel.DataElementRepository
 import org.maurodata.persistence.datamodel.DataModelContentRepository
 import org.maurodata.persistence.datamodel.DataModelRepository
+import org.maurodata.persistence.folder.FolderContentRepository
 import org.maurodata.persistence.folder.FolderRepository
+import org.maurodata.persistence.terminology.TerminologyContentRepository
 import org.maurodata.persistence.terminology.TerminologyRepository
 import uk.nhs.datadictionary.DataDictionaryImportParameters
 import uk.nhs.datadictionary.NhsDDAttribute
@@ -110,8 +112,11 @@ class NhsDataDictionaryService {
     @Inject
     DataModelRepository dataModelRepository
 
-
+    @Inject
     DataModelContentRepository dataModelContentRepository
+
+    @Inject
+    TerminologyContentRepository terminologyContentRepository
 
     @Inject
     DataSetService dataSetService
@@ -143,120 +148,6 @@ class NhsDataDictionaryService {
     NhsDataDictionaryService(DataModelRepository dataModelRepository, DataModelContentRepository dataModelContentRepository) {
         this.dataModelContentRepository = dataModelContentRepository
         this.dataModelContentRepository.administeredItemRepository = dataModelRepository
-    }
-
-    UUID newVersion(CatalogueUser currentUser, UUID versionedFolderId) {
-        Folder original = versionedFolderService.get(versionedFolderId)
-        // load the VersionedFolder into memory...
-
-        original.metadata.size()
-        original.annotations.each {an ->
-            an.childAnnotations.size()
-        }
-        original.childFolders.each { cf ->
-            cf.childFolders.each { cf2 ->
-                cf2.childFolders.size()
-                cf2.metadata.size()
-                cf2.rules.size()
-                cf2.semanticLinks.size()
-                cf2.annotations.size()
-                cf2.referenceFiles.size()
-            }
-            cf.annotations.size()
-            cf.metadata.size()
-            cf.rules.size()
-            cf.semanticLinks.size()
-            cf.referenceFiles.size()
-
-
-        }
-        original.rules.size()
-        original.referenceFiles.size()
-        original.semanticLinks.size()
-        original.versionLinks.size()
-        // discard the whole structure
-
-        original.id = null
-        original.discard()
-
-
-        original.metadata = []
-        original.annotations = []
-        original.rules = []
-        original.metadata = []
-        original.semanticLinks = []
-        original.referenceFiles = []
-        original.versionLinks = []
-
-        Set<Folder> originalChildFolders = []
-        originalChildFolders.addAll(original.childFolders)
-
-        original.childFolders = []
-        original.childFolders.add(originalChildFolders.collect { cf ->
-            cf.id = null
-            cf.discard()
-            cf.annotations = []
-            cf.rules = []
-            cf.metadata = []
-            cf.semanticLinks = []
-            cf.referenceFiles = []
-
-            Set<Folder> cfChildFolders = []
-            cfChildFolders.addAll(cf.childFolders)
-
-            cf.childFolders = []
-            cfChildFolders.each { cf2 ->
-                cf2.id = null
-                cf2.discard()
-
-                cf2.childFolders = []
-                cf2.metadata = []
-                cf2.annotations = []
-                cf2.rules = []
-                cf2.semanticLinks = []
-                cf2.referenceFiles = []
-                cf.addToChildFolders(cf2)
-            }
-            cf
-        })
-        sessionFactory.currentSession.flush()
-        // Now save it again as a new thing
-
-
-        original.branchName = "main"
-        original.modelVersion = null
-        original.finalised = false
-
-        //original.validate()
-        //original.annotations.clear()
-        //original.childFolders.clear()
-
-        original.annotations = []
-        original.rules = []
-
-        //original.save(flush: true)
-        versionedFolderService.saveFolderHierarchy(original)
-
-        //sessionFactory.currentSession.flush()
-        //sessionFactory.currentSession.clear()
-        Folder old = versionedFolderService.get(versionedFolderId)
-        versionedFolderService.setFolderIsNewBranchModelVersionOfFolder(original, old, currentUser)
-        original.versionLinks.each {
-            it.save()
-        }
-
-        //versionedFolderService.setFolderIsNewBranchModelVersionOfFolder(newCopy, original, currentUser)
-        //versionedFolderService.saveFolderHierarchy(newCopy)
-
-        /*
-        VersionedFolder originalVersionedFolder = versionedFolderService.get(versionedFolderId)
-        versionedFolder = versionedFolderService.get(versionedFolder.id)
-
-        versionedFolder.label = originalVersionedFolder.label
-        System.err.println(versionedFolder.validate())
-        versionedFolder.save()
-        */
-        return original.id
     }
 
     List<Folder> branches(/*UserSecurityPolicyManager userSecurityPolicyManager */) {
@@ -313,17 +204,18 @@ class NhsDataDictionaryService {
 
 
     NhsDataDictionary buildDataDictionary(UUID versionedFolderId) {
-        NhsDataDictionary dataDictionary = newDataDictionary()
-        dataDictionary.containingVersionedFolder = folderRepository.readById(versionedFolderId)
+        NhsDataDictionary dataDictionary = newDataDictionary(versionedFolderId)
 
         buildWorkItemDetails(dataDictionary.containingVersionedFolder, dataDictionary)
 
 
         Terminology busDefTerminology = getBusinessDefinitionTerminology(versionedFolderId)
-        Terminology supDefTerminology = getSupportingDefinitionTerminology(versionedFolderId)
+        Terminology supDefTerminology = getSupportingInformationTerminology(versionedFolderId)
         Terminology dataSetConstraintsTerminology = getDataSetConstraintTerminology(versionedFolderId)
 
-        Folder dataSetsFolder = dataDictionary.containingVersionedFolder.childFolders.find {it.label == NhsDataDictionary.DATA_SETS_FOLDER_NAME}
+        Folder dataSetsFolder =
+        folderRepository.readAllByParentFolder(dataDictionary.containingVersionedFolder).find
+            {it.label == NhsDataDictionary.DATA_SETS_FOLDER_NAME}
 
         DataModel classesModel = getClassesModel(versionedFolderId)
 
@@ -369,17 +261,20 @@ class NhsDataDictionaryService {
 
     Terminology getBusinessDefinitionTerminology(UUID versionedFolderId) {
         List<Terminology> terminologies = terminologyRepository.findAllByFolderId(versionedFolderId)
-        terminologies.find {it.label == NhsDataDictionary.BUSINESS_DEFINITIONS_TERMINOLOGY_NAME}
+        Terminology busDefTerminology = terminologies.find {it.label == NhsDataDictionary.BUSINESS_DEFINITIONS_TERMINOLOGY_NAME}
+        terminologyContentRepository.readWithContentById(busDefTerminology.id)
     }
 
-    Terminology getSupportingDefinitionTerminology(UUID versionedFolderId) {
+    Terminology getSupportingInformationTerminology(UUID versionedFolderId) {
         List<Terminology> terminologies = terminologyRepository.findAllByFolderId(versionedFolderId)
-        terminologies.find {it.label == NhsDataDictionary.SUPPORTING_DEFINITIONS_TERMINOLOGY_NAME}
+        Terminology supDefTerminology = terminologies.find {it.label == NhsDataDictionary.SUPPORTING_DEFINITIONS_TERMINOLOGY_NAME}
+        terminologyContentRepository.readWithContentById(supDefTerminology.id)
     }
 
     Terminology getDataSetConstraintTerminology(UUID versionedFolderId) {
         List<Terminology> terminologies = terminologyRepository.findAllByFolderId(versionedFolderId)
-        terminologies.find {it.label == NhsDataDictionary.DATA_SET_CONSTRAINTS_TERMINOLOGY_NAME}
+        Terminology dataSetConstraintTerminology = terminologies.find {it.label == NhsDataDictionary.DATA_SET_CONSTRAINTS_TERMINOLOGY_NAME}
+        terminologyContentRepository.readWithContentById(dataSetConstraintTerminology.id)
     }
 
     DataModel getElementsModel(UUID versionedFolderId) {
@@ -485,18 +380,6 @@ class NhsDataDictionaryService {
         Map<List<String>, Set<DataModel>> dataSetModelMap = dataSetService.getAllDataSets([], dataSetsFolder)
         dataSetModelMap.each {path, dataModels ->
             dataModels.each { dataModel ->
-                List<UUID> allIds = []
-                allIds.addAll(dataModel.getAllDataElements().collect{it.id})
-                allIds.addAll(dataModel.getDataClasses().collect {it.id})
-                List<Metadata> dataSetsMetadata = Metadata.byMultiFacetAwareItemIdInList(allIds).list()
-                dataSetsMetadata.each { metadata ->
-                    if(dataDictionary.dataSetsMetadata[metadata.multiFacetAwareItemId]) {
-                        dataDictionary.dataSetsMetadata[metadata.multiFacetAwareItemId].add(metadata)
-                    } else {
-                        dataDictionary.dataSetsMetadata[metadata.multiFacetAwareItemId] = [metadata]
-                    }
-                }
-
                 NhsDDDataSet dataSet = new NhsDDDataSet().fromMauroItem(dataDictionary, mauroPersistenceService, dataModel)
                 dataSet.path.addAll(path)
                 dataDictionary.dataSets[dataModel.label] = dataSet
@@ -728,11 +611,7 @@ class NhsDataDictionaryService {
         NhsDataDictionary previousDataDictionary = buildDataDictionary(previousVersion.id)
 
         MauroCatalogueItemPathResolver pathResolver = new MauroCatalogueItemPathResolver(
-            thisDictionary,
-            dataModelService,
-            dataClassService,
-            dataElementService,
-            terminologyService)
+            thisDictionary)
 
         ChangePaperPreview preview = ChangePaperHtmlUtility.generateChangePaper(
             pathResolver,
@@ -787,10 +666,11 @@ class NhsDataDictionaryService {
         return response
     }
 
-    NhsDataDictionary newDataDictionary() {
+    NhsDataDictionary newDataDictionary(UUID versionedFolderId) {
         NhsDataDictionary nhsDataDictionary = new NhsDataDictionary()
         setApiProperties(nhsDataDictionary)
         loadBranchInformation(nhsDataDictionary)
+        nhsDataDictionary.containingVersionedFolder = folderRepository.readById(versionedFolderId)
         return nhsDataDictionary
     }
 

@@ -188,12 +188,12 @@ class NhsDataDictionary {
             dataSetFolders.values().flatten()) as List<NhsDataDictionaryComponent>
     }
 
-    Map<String, List<NhsDataDictionaryComponent>> allComponentsByIndex(boolean includeRetired = false) {
+    Map<String, List<NhsDataDictionaryComponent>> allComponentsByIndex(Boolean includeRetired = false) {
         componentsByIndex(getAllComponents(), includeRetired)
     }
 
     Map<String, List<NhsDataDictionaryComponent>> componentsByIndex(Collection<NhsDataDictionaryComponent> components,
-                                                                    boolean includeRetired = false) {
+                                                                    Boolean includeRetired = false) {
 
         Map<String, List<NhsDataDictionaryComponent>> indexMap = [:]
 

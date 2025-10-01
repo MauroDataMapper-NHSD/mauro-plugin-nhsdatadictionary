@@ -50,8 +50,8 @@ abstract class DataDictionaryComponentController<T extends AdministeredItem> {
     abstract String getParameterIdKey()
 
 
-    def index() {
-        respond getService().index(UUID.fromString(params.versionedFolderId), params.boolean('includeRetired')?:false)
+    def index(UUID dictionaryId, Boolean includeDeleted = false) {
+        return getService().index(UUID.fromString(params.versionedFolderId), params.boolean('includeRetired')?:false)
     }
 
     def show() {

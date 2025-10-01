@@ -54,11 +54,6 @@ class NhsElementStructureSpec extends DataDictionaryComponentStructureSpec<NhsDD
     NhsDDElement previousItemFormatChange
 
     @Override
-    protected NhsDataDictionary createDataDictionary() {
-        dataDictionaryService.newDataDictionary()
-    }
-
-    @Override
     String getDefinition() {
         """<p>The type of Ablative Therapy given to a <a href="dm:Classes and Attributes|dc:PATIENT">PATIENT</a> 
 during a Liver Cancer Care Spell.</p>"""

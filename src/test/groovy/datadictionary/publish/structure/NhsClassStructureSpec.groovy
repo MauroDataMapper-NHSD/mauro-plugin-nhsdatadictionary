@@ -49,11 +49,6 @@ class NhsClassStructureSpec extends DataDictionaryComponentStructureSpec<NhsDDCl
     NhsDDClass relatedCareProfessionalClass
 
     @Override
-    protected NhsDataDictionary createDataDictionary() {
-        dataDictionaryService.newDataDictionary()
-    }
-
-    @Override
     String getDefinition() {
         """<p>A provision of <a href="dm:Classes and Attributes|dc:SERVICE">SERVICES</a> 
 to a <a href="dm:Classes and Attributes|dc:PATIENT">PATIENT</a> by one or more 

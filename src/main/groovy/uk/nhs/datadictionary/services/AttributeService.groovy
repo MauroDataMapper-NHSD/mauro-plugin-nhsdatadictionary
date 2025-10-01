@@ -48,10 +48,13 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
     AttributeService() {
     }
 
+    String getStereotype() {
+        "attribute"
+    }
+
     @Override
-    NhsDDAttribute show(UUID versionedFolderId, String id) {
-        NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary()
-        dataDictionary.containingVersionedFolder = versionedFolderService.get(versionedFolderId)
+    NhsDDAttribute show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
+        NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary(versionedFolderId)
 
         DataElement attributeElement = dataElementService.get(id)
         NhsDDAttribute attribute = new NhsDDAttribute().fromMauroItem(dataDictionary, mauroPersistenceService, attributeElement)
@@ -78,16 +81,12 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
 
 
     @Override
-    Set<DataElement> getAll(UUID versionedFolderId, boolean includeRetired = false) {
-
+    Set<DataElement> getAll(UUID versionedFolderId, NhsDataDictionaryService nhsDataDictionaryService, Boolean includeRetired = false) {
         DataModel classesModel = nhsDataDictionaryService.getClassesModel(versionedFolderId)
-        List<DataElement> attributes = DataElement.byDataModelId(classesModel.id).list()
-        attributes.findAll {dataElement ->
-            //dataElement.metadata.size()
+        return classesModel.dataElements.findAll {dataElement ->
             !(dataElement.dataType.dataTypeKind == DataType.DataTypeKind.REFERENCE_TYPE) &&
-                    (includeRetired || !catalogueItemIsRetired(dataElement))
+            (includeRetired || !catalogueItemIsRetired(dataElement))
         }
-
     }
 
 

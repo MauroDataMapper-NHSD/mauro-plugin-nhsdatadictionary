@@ -29,10 +29,14 @@ import uk.nhs.datadictionary.NhsDataDictionary
 @Singleton
 class SupportingInformationService extends DataDictionaryComponentService<Term, NhsDDSupportingInformation> {
 
+    String getStereotype() {
+        "supportingInformation"
+    }
+
+
     @Override
-    NhsDDSupportingInformation show(UUID versionedFolderId, String id) {
-        NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary()
-        dataDictionary.containingVersionedFolder = versionedFolderService.get(versionedFolderId)
+    NhsDDSupportingInformation show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
+        NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary(versionedFolderId)
 
         Term supportingInformationTerm = termService.get(id)
         NhsDDSupportingInformation supportingInformation = new NhsDDSupportingInformation().fromMauroItem(dataDictionary, mauroPersistenceService, supportingInformationTerm)
@@ -41,10 +45,9 @@ class SupportingInformationService extends DataDictionaryComponentService<Term, 
     }
 
     @Override
-    Set<Term> getAll(UUID versionedFolderId, boolean includeRetired = false) {
-        Terminology supInfTerminology = nhsDataDictionaryService.getSupportingDefinitionTerminology(versionedFolderId)
-        List<Term> terms = termService.findAllByTerminologyId(supInfTerminology.id)
-        terms.findAll {term ->
+    Set<Term> getAll(UUID versionedFolderId, NhsDataDictionaryService nhsDataDictionaryService, Boolean includeRetired = false) {
+        Terminology supInfTerminology = nhsDataDictionaryService.getSupportingInformationTerminology(versionedFolderId)
+        supInfTerminology.terms.findAll {term ->
             includeRetired || !catalogueItemIsRetired(term)
         }
     }

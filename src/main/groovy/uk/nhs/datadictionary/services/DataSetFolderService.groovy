@@ -21,6 +21,7 @@ import groovy.util.logging.Slf4j
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import org.maurodata.domain.folder.Folder
+import org.maurodata.persistence.folder.FolderRepository
 import uk.nhs.datadictionary.NhsDDDataSet
 import uk.nhs.datadictionary.NhsDDDataSetFolder
 import uk.nhs.datadictionary.NhsDataDictionary
@@ -32,10 +33,16 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
     @Inject
     DataSetService dataSetService
 
+    @Inject FolderRepository folderRepository
+
+    String getStereotype() {
+        "dataSetFolder"
+    }
+
+
     @Override
-    NhsDDDataSetFolder show(UUID versionedFolderId, String id) {
-        NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary()
-        dataDictionary.containingVersionedFolder = versionedFolderService.get(versionedFolderId)
+    NhsDDDataSetFolder show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
+        NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary(versionedFolderId)
 
         Folder folderFolder
         if(id && id != "root") {
@@ -70,7 +77,7 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
     }
 
     @Override
-    Set<Folder> getAll(UUID versionedFolderId, boolean includeRetired = false) {
+    Set<Folder> getAll(UUID versionedFolderId, NhsDataDictionaryService nhsDataDictionaryService, Boolean includeRetired = false) {
         Folder dataSetsFolder = nhsDataDictionaryService.getDataSetsFolder(versionedFolderId)
 
         Map<List<String>, Set<Folder>> allFolders = getAllFolders([], dataSetsFolder, includeRetired)
@@ -90,20 +97,18 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
         return returnFolders
     }
 
-    Map<List<String>, Set<Folder>> getAllFolders(List<String> currentPath, Folder dataSetsFolder, boolean includeRetired = false) {
+    Map<List<String>, Set<Folder>> getAllFolders(List<String> currentPath, Folder dataSetsFolder, Boolean includeRetired = false) {
         Map<List<String>, Set<Folder>> returnFolders = [:]
-        folderService.findAllByParentId(dataSetsFolder.id).each {
+        folderRepository.readAllByParentFolder(dataSetsFolder).each {subFolder ->
             if(returnFolders[currentPath]) {
-                returnFolders[currentPath].add(it)
+                returnFolders[currentPath].add(subFolder)
             } else {
-                returnFolders[currentPath] = ([it] as Set)
+                returnFolders[currentPath] = ([subFolder] as Set)
             }
-        }
-        dataSetsFolder.childFolders.each {childFolder ->
             List<String> newPath = []
             newPath.addAll(currentPath)
-            newPath.add(childFolder.label)
-            returnFolders.putAll(getAllFolders(newPath, childFolder, includeRetired))
+            newPath.add(subFolder.label)
+            returnFolders.putAll(getAllFolders(newPath, subFolder, includeRetired))
         }
         return returnFolders
     }

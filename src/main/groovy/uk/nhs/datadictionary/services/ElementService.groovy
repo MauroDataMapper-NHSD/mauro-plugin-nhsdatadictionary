@@ -48,10 +48,14 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
     @Inject
     DDCodeSetProfileProviderService ddCodeSetProfileProviderService
 
+    String getStereotype() {
+        "element"
+    }
+
+
     @Override
-    NhsDDElement show(UUID versionedFolderId, String id) {
-        NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary()
-        dataDictionary.containingVersionedFolder = versionedFolderService.get(versionedFolderId)
+    NhsDDElement show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
+        NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary(versionedFolderId)
 
         DataElement elementElement = dataElementService.get(id)
         NhsDDElement element = new NhsDDElement().fromMauroItem(dataDictionary, mauroPersistenceService, elementElement)
@@ -69,100 +73,10 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
         return element
     }
 
-    /*    @Override
-        def show(UUID versionedFolderId, String id) {
-            DataElement dataElement = dataElementService.get(id)
-
-            String description = convertLinksInDescription(branch, dataElement.description)
-
-            DataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(branch)
-            String shortDesc = replaceLinksInShortDescription(getShortDescription(dataElement, null))
-            def result = [
-                    catalogueId: dataElement.id.toString(),
-                    name: dataElement.label,
-                    stereotype: "element",
-                    shortDescription: shortDesc,
-                    description: description,
-                    alsoKnownAs: getAliases(dataElement)
-            ]
-            String formatLength = DDHelperFunctions.getMetadataValue(dataElement, "format-length")
-
-            if(!isRetired(dataElement) && formatLength) {
-                result["formatLength"] = formatLength
-            }
-
-            List<DataElement> elementAttributes = getElementAttributes(dataElement, dataDictionary)
-
-           if (dataElement.dataType instanceof EnumerationType) {
-                List<EnumerationValue> enumValues = ((EnumerationType) dataElement.dataType).enumerationValues.sort {
-                    enumValue ->
-                        String webOrderString = DDHelperFunctions.getMetadataValue(enumValue, "Web Order")
-                        if (webOrderString) {
-                            return Integer.parseInt(webOrderString)
-                        } else return 0
-                }
-                List<EnumerationValue> permittedNationalCodes = enumValues.findAll {
-                    DDHelperFunctions.getMetadataValue(it, "Permitted National Code") == "true"
-                }
-                if (permittedNationalCodes.size() > 0) {
-                    String nationalCodesTitle = "permittedNationalCodes"
-                    if(elementAttributes.size() == 1 &&
-                            elementAttributes.get(0).dataType.getClass() == EnumerationType.class) {
-                        List<EnumerationValue> attributeValues =
-                                ((EnumerationType)elementAttributes.get(0).dataType).getEnumerationValues()
-                        if(attributeValues.size() == permittedNationalCodes.size()) {
-                            nationalCodesTitle = "nationalCodes"
-                        }
-                    }
-
-                    result[nationalCodesTitle] = generateCodeList(permittedNationalCodes)
-                }
-                List<EnumerationValue> nationalCodes = enumValues.findAll {
-                    !DDHelperFunctions.getMetadataValue(it, "Permitted National Code") &&
-                            DDHelperFunctions.getMetadataValue(it, "Web Order") != "0"
-                }
-                if (nationalCodes.size() > 0) {
-                    String nationalCodesTitle = "permittedNationalCodes"
-                    if(elementAttributes.size() == 1 &&
-                            elementAttributes.get(0).dataType.getClass() == EnumerationType.class) {
-                        Set<EnumerationValue> attributeValues =
-                                ((EnumerationType)getElementAttributes(dataElement, dataDictionary).get(0).dataType).getEnumerationValues()
-                        if(attributeValues.size() == nationalCodes.size()) {
-                            nationalCodesTitle = "nationalCodes"
-                        }
-                    }
-                    result[nationalCodesTitle] = generateCodeList(nationalCodes)
-                }
-                List<EnumerationValue> defaultCodes = enumValues.findAll {
-                    //DDHelperFunctions.getMetadataValue(it, "Default Code") == "true"
-                    DDHelperFunctions.getMetadataValue(it, "Web Order") == "0"
-                }
-                if (defaultCodes.size() > 0) {
-                    result["defaultCodes"] = generateCodeList(defaultCodes)
-                }
-            }
-
-            if(elementAttributes.size() > 0) {
-                List<Map> elementAttributesList = []
-                elementAttributes.each {attribute ->
-                    Map attributeMap = [
-                        catalogueId: attribute.id.toString(),
-                        name: attribute.label,
-                        stereotype: "attribute",
-                    ]
-                    elementAttributesList.add(attributeMap)
-                }
-                result["attributes"] = elementAttributesList
-            }
-            return result
-        }
-    */
-
     @Override
-    Set<DataElement> getAll(UUID versionedFolderId, boolean includeRetired = false) {
+    Set<DataElement> getAll(UUID versionedFolderId, NhsDataDictionaryService nhsDataDictionaryService, Boolean includeRetired = false) {
         DataModel coreModel = nhsDataDictionaryService.getElementsModel(versionedFolderId)
-
-        return coreModel.allDataElements.findAll {dataElement ->
+        return coreModel.dataElements.findAll {dataElement ->
             includeRetired || !catalogueItemIsRetired(dataElement)
         }
     }
@@ -299,3 +213,93 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
     }
 
 }
+
+/*    @Override
+    def show(UUID versionedFolderId, String id) {
+        DataElement dataElement = dataElementService.get(id)
+
+        String description = convertLinksInDescription(branch, dataElement.description)
+
+        DataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(branch)
+        String shortDesc = replaceLinksInShortDescription(getShortDescription(dataElement, null))
+        def result = [
+                catalogueId: dataElement.id.toString(),
+                name: dataElement.label,
+                stereotype: "element",
+                shortDescription: shortDesc,
+                description: description,
+                alsoKnownAs: getAliases(dataElement)
+        ]
+        String formatLength = DDHelperFunctions.getMetadataValue(dataElement, "format-length")
+
+        if(!isRetired(dataElement) && formatLength) {
+            result["formatLength"] = formatLength
+        }
+
+        List<DataElement> elementAttributes = getElementAttributes(dataElement, dataDictionary)
+
+       if (dataElement.dataType instanceof EnumerationType) {
+            List<EnumerationValue> enumValues = ((EnumerationType) dataElement.dataType).enumerationValues.sort {
+                enumValue ->
+                    String webOrderString = DDHelperFunctions.getMetadataValue(enumValue, "Web Order")
+                    if (webOrderString) {
+                        return Integer.parseInt(webOrderString)
+                    } else return 0
+            }
+            List<EnumerationValue> permittedNationalCodes = enumValues.findAll {
+                DDHelperFunctions.getMetadataValue(it, "Permitted National Code") == "true"
+            }
+            if (permittedNationalCodes.size() > 0) {
+                String nationalCodesTitle = "permittedNationalCodes"
+                if(elementAttributes.size() == 1 &&
+                        elementAttributes.get(0).dataType.getClass() == EnumerationType.class) {
+                    List<EnumerationValue> attributeValues =
+                            ((EnumerationType)elementAttributes.get(0).dataType).getEnumerationValues()
+                    if(attributeValues.size() == permittedNationalCodes.size()) {
+                        nationalCodesTitle = "nationalCodes"
+                    }
+                }
+
+                result[nationalCodesTitle] = generateCodeList(permittedNationalCodes)
+            }
+            List<EnumerationValue> nationalCodes = enumValues.findAll {
+                !DDHelperFunctions.getMetadataValue(it, "Permitted National Code") &&
+                        DDHelperFunctions.getMetadataValue(it, "Web Order") != "0"
+            }
+            if (nationalCodes.size() > 0) {
+                String nationalCodesTitle = "permittedNationalCodes"
+                if(elementAttributes.size() == 1 &&
+                        elementAttributes.get(0).dataType.getClass() == EnumerationType.class) {
+                    Set<EnumerationValue> attributeValues =
+                            ((EnumerationType)getElementAttributes(dataElement, dataDictionary).get(0).dataType).getEnumerationValues()
+                    if(attributeValues.size() == nationalCodes.size()) {
+                        nationalCodesTitle = "nationalCodes"
+                    }
+                }
+                result[nationalCodesTitle] = generateCodeList(nationalCodes)
+            }
+            List<EnumerationValue> defaultCodes = enumValues.findAll {
+                //DDHelperFunctions.getMetadataValue(it, "Default Code") == "true"
+                DDHelperFunctions.getMetadataValue(it, "Web Order") == "0"
+            }
+            if (defaultCodes.size() > 0) {
+                result["defaultCodes"] = generateCodeList(defaultCodes)
+            }
+        }
+
+        if(elementAttributes.size() > 0) {
+            List<Map> elementAttributesList = []
+            elementAttributes.each {attribute ->
+                Map attributeMap = [
+                    catalogueId: attribute.id.toString(),
+                    name: attribute.label,
+                    stereotype: "attribute",
+                ]
+                elementAttributesList.add(attributeMap)
+            }
+            result["attributes"] = elementAttributesList
+        }
+        return result
+    }
+*/
+

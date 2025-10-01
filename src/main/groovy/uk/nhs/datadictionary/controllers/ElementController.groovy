@@ -17,12 +17,27 @@
  */
 package uk.nhs.datadictionary.controllers
 
+import groovy.util.logging.Slf4j
+import io.micronaut.core.annotation.Nullable
+import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Get
+import io.micronaut.security.annotation.Secured
+import io.micronaut.security.rules.SecurityRule
+import jakarta.inject.Inject
 import org.maurodata.domain.datamodel.DataElement
 import uk.nhs.datadictionary.services.DataDictionaryComponentService
+import uk.nhs.datadictionary.services.ElementService
 
+@Controller()
+@Secured(SecurityRule.IS_AUTHENTICATED)
+@Slf4j
 
 class ElementController extends DataDictionaryComponentController<DataElement>{
-	static responseFormats = ['json', 'xml']
+
+    @Inject ElementService elementService
+
+
+
 
     @Override
     String getParameterIdKey() {

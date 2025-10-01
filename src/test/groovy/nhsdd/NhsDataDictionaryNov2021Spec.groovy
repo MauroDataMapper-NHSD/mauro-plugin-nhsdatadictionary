@@ -45,6 +45,7 @@ import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 import uk.nhs.datadictionary.DataDictionaryImportParameters
+import uk.nhs.datadictionary.NhsDDElement
 import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.NhsDataDictionaryImporter
 import uk.nhs.datadictionary.controllers.NhsDataDictionaryController
@@ -187,6 +188,13 @@ class NhsDataDictionaryNov2021Spec extends Specification {
 
         then:
         List<Folder> branches = nhsDataDictionaryController.branches()
+
+        when:
+        List<NhsDDElement> elements = nhsDataDictionaryController.indexElements(branches.first().id, false)
+
+        then:
+        elements.size() == 2714
+
         System.err.println(nhsDataDictionaryController.statistics(branches.first().id))
         System.err.println(nhsDataDictionaryController.statistics(branches.first().id))
     }

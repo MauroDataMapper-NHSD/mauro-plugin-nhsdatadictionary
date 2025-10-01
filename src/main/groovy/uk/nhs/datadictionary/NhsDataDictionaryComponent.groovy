@@ -17,6 +17,7 @@
  */
 package uk.nhs.datadictionary
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import groovy.util.logging.Slf4j
 import org.maurodata.dita.elements.langref.base.DitaMap
 import org.maurodata.dita.elements.langref.base.Topic
@@ -56,23 +57,38 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
 
     abstract String getMetadataNamespace()
 
+    @JsonIgnore
     NhsDataDictionary dataDictionary
 
+    @JsonIgnore
     T catalogueItem
     UUID catalogueItemId
+
+    @JsonIgnore
     UUID branchId
+
+    @JsonIgnore
     String catalogueItemModelId
+
+    @JsonIgnore
     String catalogueItemParentId
 
     String name
+
+    @JsonIgnore
     String definition = ""
 
+    @JsonIgnore
     Map<String, String> otherProperties = [:]
 
+    @JsonIgnore
     Map<NhsDataDictionaryComponent, String> whereUsed = [:]
 
     List<NhsDDChangeLog> changeLog = []
+
+    @JsonIgnore
     String changeLogHeaderText = ""
+    @JsonIgnore
     String changeLogFooterText = ""
 
     abstract String calculateShortDescription()
@@ -89,6 +105,7 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
         !isRetired() && !isPreparatory()
     }
 
+    @JsonIgnore
     String getUin() {
         otherProperties["uin"]
     }
@@ -101,6 +118,7 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
         }
     }
 
+    @JsonIgnore
     String getTitleCaseName() {
         otherProperties["titleCaseName"]
     }
@@ -154,10 +172,12 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
         }
     }
 
+    @JsonIgnore
     boolean isValidXmlNode(def xmlNode) {
         return true
     }
 
+    @JsonIgnore
     abstract String getXmlNodeName()
 
     void addWhereUsed(NhsDataDictionaryComponent component, String description) {
@@ -180,6 +200,7 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
         return aliases
     }
 
+    @JsonIgnore
     Map<String, String> getUrlReplacements() {
         String ddUrl = this.otherProperties["ddUrl"]
 
@@ -188,12 +209,15 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
         ]
     }
 
+    @JsonIgnore
     String getNameWithoutNonAlphaNumerics() {
         name.replaceAll("[^A-Za-z0-9- ]", "").replace(" ", "_")
     }
 
+    @JsonIgnore
     abstract String getMauroPath()
 
+    @JsonIgnore
     String getDitaKey() {
         String key = getStereotype().replace(" ", "_") + "_" + getNameWithoutNonAlphaNumerics()
         if(isRetired()) {
@@ -212,15 +236,16 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
         }
     }
 
-
+    @JsonIgnore
     String getNameWithRetired() {
         if(isRetired()) {
             return this.name + " (Retired)"
         } else {
             return this.name
         }
-}
+    }
 
+    @JsonIgnore
     String getDataDictionaryUrl() {
         String domain = NhsDataDictionary.WEBSITE_URL
         String stereotype = getPluralStereotypeForWebsite()
@@ -241,6 +266,7 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
         }
     }
 
+    @JsonIgnore
     LocalDate getToDate() {
         if(otherProperties["validTo"]) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -249,6 +275,7 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
         return null
     }
 
+    @JsonIgnore
     LocalDate getFromDate() {
         if(otherProperties["validFrom"]) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -257,6 +284,7 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
         return null
     }
 
+    @JsonIgnore
     DictionaryItem.DictionaryItemState getItemState() {
         isRetired()
             ? DictionaryItem.DictionaryItemState.RETIRED
@@ -265,6 +293,7 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
             : DictionaryItem.DictionaryItemState.ACTIVE
     }
 
+    @JsonIgnore
     DictionaryItem getPublishStructure() {
         DictionaryItem dictionaryItem = DictionaryItem.create(this)
 
@@ -311,6 +340,7 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
         dictionaryItem.addSection(new ChangeLogSection(dictionaryItem, changeLogHeaderText, changeLogFooterText, changeLogRows))
     }
 
+    @JsonIgnore
     List<Topic> getWebsiteTopics() {
         List<Topic> topics = []
         topics.add(descriptionTopic())
@@ -447,6 +477,7 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
         }
     }
 
+    @JsonIgnore
     XRef getExternalXRef(String url, String text) {
         XRef.build(
             scope: Scope.EXTERNAL,
@@ -457,6 +488,7 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
         }
     }
 
+    @JsonIgnore
     String getOutputClass() {
         String outputClass = getStereotypeForPreview()
         if(isRetired()) {
@@ -490,10 +522,12 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
         return response
     }
 
+    @JsonIgnore
     static List<String> getNodeSentences(String str) {
         return str.split("\\.")
     }
 
+    @JsonIgnore
     static List<String> getNodeSentences(Node xml) {
         List<String> response = []
         xml.children().each { childNode ->
@@ -526,10 +560,12 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
     }
 
 
+    @JsonIgnore
     String getFirstSentence(String html = this.getDescription()) {
         getSentence(html, 0)
     }
 
+    @JsonIgnore
     String getSentence(String html = this.definition, int i) {
         if(!html) {
             return null
@@ -550,6 +586,7 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
         return response
     }
 
+    @JsonIgnore
     List<String> getWebPath() {
         if(otherProperties["baseUri"]) {
             // This is really for when we're ingesting
@@ -582,11 +619,11 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
     /*
     Helper functions to resolve type checking issues in grails views
      */
-
+    @JsonIgnore
     String getCatalogueItemIdAsString() {
         return catalogueItem.id.toString()
     }
-
+    @JsonIgnore
     String getCatalogueItemDomainTypeAsString() {
         return catalogueItem.domainType.toString()
     }
@@ -636,6 +673,7 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
         return this
     }
 
+    @JsonIgnore
     static Pattern CHANGE_LOG_BRANCH_NAME_PATTERN = Pattern.compile(/(?<=\$)(.*?(?='))/)
 
     void setNhsDataDictionaryComponentChangeLog(NhsDataDictionary dataDictionary) {
@@ -664,6 +702,7 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
             }
     }
 
+    @JsonIgnore
     List<Edit> getMergeEditsForChangeLog() {
         catalogueItem.edits.findAll {
             it.title = EditType.MERGE
@@ -672,6 +711,7 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
         //editService.findAllByResourceAndTitle(component.catalogueItem.domainType, component.catalogueItem.id, EditTitle.MERGE)
     }
 
+    @JsonIgnore
     List<NhsDDCode> getCodesForTerms(List<Term> terms, NhsDataDictionary nhsDataDictionary) {
         List<NhsDDCode> codes = []
         // Assume facets already loaded from teh db
