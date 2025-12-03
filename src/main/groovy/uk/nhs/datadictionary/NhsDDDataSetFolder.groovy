@@ -22,7 +22,7 @@ import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.folder.Folder
 
 @Slf4j
-class NhsDDDataSetFolder implements NhsDataDictionaryComponent <Folder> {
+class NhsDDDataSetFolder extends NhsDataDictionaryComponent <Folder> {
 
     List<String> folderPath = []
 
@@ -100,7 +100,7 @@ class NhsDDDataSetFolder implements NhsDataDictionaryComponent <Folder> {
 
     @Override
     void fromXml(def xml, NhsDataDictionary dataDictionary) {
-        NhsDataDictionaryComponent.super.fromXml(xml, dataDictionary)
+        super.fromXml(xml, dataDictionary)
         //dataDictionary.webPagesByUin[getUin()] = this
         if(otherProperties["baseUri"].contains("Messages")) {
             folderPath = getWebPath()

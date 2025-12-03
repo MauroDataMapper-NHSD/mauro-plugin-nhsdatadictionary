@@ -17,10 +17,12 @@
  */
 package uk.nhs.datadictionary.integritychecks
 
+import jakarta.inject.Singleton
 import org.maurodata.domain.datamodel.DataModel
 import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.NhsDataDictionaryComponent
 
+@Singleton
 class DataSetsIncludePreparatoryItem implements IntegrityCheck {
 
     String name = "Data Sets that include preparatory items"
@@ -32,15 +34,13 @@ class DataSetsIncludePreparatoryItem implements IntegrityCheck {
 
         List<NhsDataDictionaryComponent> prepItems = dataDictionary.elements.values().findAll {it.isPreparatory()}
 
-        errors = dataDictionary.dataSets.values()
+        dataDictionary.dataSets.values()
             .findAll {component ->
-                ((DataModel)component.catalogueItem).allDataElements.find {dataElement ->
+                ((DataModel)component.catalogueItem).dataElements.find {dataElement ->
                     prepItems.find {it.name == dataElement.label}
                 }
             }
             .collect { component -> new IntegrityCheckError(component) }
-
-        return errors
     }
 
 }

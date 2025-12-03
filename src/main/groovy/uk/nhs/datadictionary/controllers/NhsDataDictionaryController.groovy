@@ -17,6 +17,9 @@
  */
 package uk.nhs.datadictionary.controllers
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.databind.MapperFeature
+import com.fasterxml.jackson.databind.ObjectMapper
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import groovy.xml.XmlParser
@@ -31,22 +34,32 @@ import jakarta.inject.Inject
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.security.CatalogueUser
 import uk.nhs.datadictionary.DataDictionaryImportParameters
+import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.NhsDDBusinessDefinition
+import uk.nhs.datadictionary.NhsDDClass
+import uk.nhs.datadictionary.NhsDDDataSetFolder
 import uk.nhs.datadictionary.NhsDDElement
+import uk.nhs.datadictionary.NhsDDSupportingInformation
 import uk.nhs.datadictionary.services.AttributeService
 import uk.nhs.datadictionary.services.BusinessDefinitionService
 import uk.nhs.datadictionary.services.ClassService
+import uk.nhs.datadictionary.services.DataSetFolderService
 import uk.nhs.datadictionary.services.DataSetService
 import uk.nhs.datadictionary.services.ElementService
 import uk.nhs.datadictionary.services.NhsDataDictionaryService
 import uk.nhs.datadictionary.services.SupportingInformationService
 import uk.nhs.datadictionary.utils.StereotypedCatalogueItem
 
-//@CompileStatic
+import java.lang.reflect.Field
+import java.lang.reflect.Method
+
+@CompileStatic
 @Controller()
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Slf4j
 class NhsDataDictionaryController {
+
+    @Inject ObjectMapper objectMapper
 
     @Inject NhsDataDictionaryService nhsDataDictionaryService
 
@@ -56,6 +69,7 @@ class NhsDataDictionaryController {
     @Inject BusinessDefinitionService businessDefinitionService
     @Inject SupportingInformationService supportingInformationService
     @Inject DataSetService dataSetService
+    @Inject DataSetFolderService dataSetFolderService
 
     NhsDataDictionaryController() {
     }
@@ -70,6 +84,25 @@ class NhsDataDictionaryController {
         nhsDataDictionaryService.buildDataDictionary(dictionaryId).statistics()
     }
 
+    @Get('/api/nhsdd/{dictionaryId}/integrityChecks')
+    List<LinkedHashMap<String, Object>> integrityChecks(UUID dictionaryId) {
+        nhsDataDictionaryService.integrityChecks(dictionaryId).collect {integrityCheck, errors ->
+            [
+                checkName: integrityCheck.name,
+                description: integrityCheck.description,
+                errors: errors.collect {error -> [
+                    type: error.component.getStereotype(),
+                    label: error.component.name,
+                    id: error.component.catalogueItem.id.toString(),
+                    domainType: error.component.catalogueItem.domainType.toString(),
+                    parentId: error.component.catalogueItem.parent.id,
+                    modelId: error.component.catalogueItemParentId,
+                    details: error.details
+                ]}
+            ]
+        }
+    }
+
     @Get('api/nhsdd/{dictionaryId}/preview/elements')
     List<StereotypedCatalogueItem> indexElements(UUID dictionaryId, @Nullable @QueryValue Boolean includeDeleted) {
         elementService.index(dictionaryId, nhsDataDictionaryService, includeDeleted)
@@ -77,6 +110,23 @@ class NhsDataDictionaryController {
 
     @Get('api/nhsdd/{dictionaryId}/preview/elements/{elementId}')
     NhsDDElement showElement(UUID dictionaryId, UUID elementId) {
+        Class<?> cls = NhsDDElement.class;
+
+        try {
+            Field f = cls.getDeclaredField("dataDictionary"); // <- replace with real field name
+            System.out.println("Field has JsonIgnore? " +
+                               (f.getAnnotation(JsonIgnore.class) != null));
+        } catch (NoSuchFieldException e) {
+            System.out.println("No such field: " + e.getMessage());
+        }
+
+        try {
+            Method getter = cls.getMethod("getDataDictionary"); // <- replace with getter name
+            System.out.println("Getter has JsonIgnore? " +
+                               (getter.getAnnotation(JsonIgnore.class) != null));
+        } catch (NoSuchMethodException e) {
+            System.out.println("No such getter: " + e.getMessage());
+        }
         elementService.show(dictionaryId, elementId, nhsDataDictionaryService)
     }
 
@@ -85,10 +135,22 @@ class NhsDataDictionaryController {
         attributeService.index(dictionaryId, nhsDataDictionaryService, includeDeleted)
     }
 
+    @Get('api/nhsdd/{dictionaryId}/preview/attributes/{attributeId}')
+    NhsDDAttribute showAttribute(UUID dictionaryId, UUID attributeId) {
+        attributeService.show(dictionaryId, attributeId, nhsDataDictionaryService)
+    }
+
+
     @Get('api/nhsdd/{dictionaryId}/preview/classes')
     List<StereotypedCatalogueItem> indexClasses(UUID dictionaryId, @Nullable @QueryValue Boolean includeDeleted) {
         classService.index(dictionaryId, nhsDataDictionaryService, includeDeleted)
     }
+
+    @Get('api/nhsdd/{dictionaryId}/preview/classes/{classId}')
+    NhsDDClass showClass(UUID dictionaryId, UUID classId) {
+        classService.show(dictionaryId, classId, nhsDataDictionaryService)
+    }
+
 
     @Get('api/nhsdd/{dictionaryId}/preview/businessDefinitions')
     List<StereotypedCatalogueItem> indexBusinessDefinitions(UUID dictionaryId, @Nullable @QueryValue Boolean includeDeleted) {
@@ -105,9 +167,25 @@ class NhsDataDictionaryController {
         supportingInformationService.index(dictionaryId, nhsDataDictionaryService, includeDeleted)
     }
 
+    @Get('api/nhsdd/{dictionaryId}/preview/supportingInformation/{supportingInformationId}')
+    NhsDDSupportingInformation showSupportingInformation(UUID dictionaryId, UUID supportingInformationId) {
+        supportingInformationService.show(dictionaryId, supportingInformationId, nhsDataDictionaryService)
+    }
+
+
     @Get('api/nhsdd/{dictionaryId}/preview/dataSets')
     List<StereotypedCatalogueItem> indexDataSets(UUID dictionaryId, @Nullable @QueryValue Boolean includeDeleted) {
         dataSetService.index(dictionaryId, nhsDataDictionaryService, includeDeleted)
+    }
+
+    @Get('api/nhsdd/{dictionaryId}/preview/dataSetFolders/root')
+    NhsDDDataSetFolder indexDataSetFolders(UUID dictionaryId) {
+        dataSetFolderService.show(dictionaryId, null, nhsDataDictionaryService)
+    }
+
+    @Get('api/nhsdd/{dictionaryId}/preview/dataSetFolders/{dataSetFolderId}')
+    NhsDDDataSetFolder indexDataSetFolders(UUID dictionaryId, UUID dataSetFolderId) {
+        dataSetFolderService.show(dictionaryId, dataSetFolderId, nhsDataDictionaryService)
     }
 
 
@@ -124,7 +202,7 @@ class NhsDataDictionaryController {
             respond([newVersionedFolderId.toString()])
         }
     */
-
+/*
     def previewChangePaper() {
         UUID versionedFolderId = UUID.fromString(params.versionedFolderId)
         boolean includeDataSets = params.boolean('includeDataSets') ?: false
@@ -193,5 +271,6 @@ class NhsDataDictionaryController {
         String response = nhsDataDictionaryService.iso11179(versionedFolderId)
         render (text: response, contentType: "text/xml", encoding: "UTF-8")
     }
+*/
 
 }

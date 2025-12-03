@@ -17,9 +17,11 @@
  */
 package uk.nhs.datadictionary.integritychecks
 
+import jakarta.inject.Singleton
 import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.NhsDataDictionary
 
+@Singleton
 class AttributesLinkedToAClass implements IntegrityCheck {
 
     String name = "Attributes linked to a class"
@@ -41,11 +43,9 @@ class AttributesLinkedToAClass implements IntegrityCheck {
             attribute.isRetired()
         }
 
-        errors = allUnusedAttributesMap
+        allUnusedAttributesMap
             .values()
             .collect { component -> new IntegrityCheckError(component) }
-
-        return errors
     }
 
 }

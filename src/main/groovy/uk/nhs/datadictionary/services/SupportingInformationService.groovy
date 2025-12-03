@@ -57,8 +57,7 @@ class SupportingInformationService extends DataDictionaryComponentService<Term, 
 
         Terminology terminology = new Terminology(
             label: NhsDataDictionary.SUPPORTING_DEFINITIONS_TERMINOLOGY_NAME,
-            folder: dictionaryFolder,
-            branchName: dataDictionary.branchName)
+            folder: dictionaryFolder)
         dictionaryFolder.terminologies.add(terminology)
         TreeMap<String, Term> allTerms = new TreeMap<>()
         dataDictionary.supportingInformation.each {name, supportingInformation ->

@@ -17,9 +17,11 @@
  */
 package uk.nhs.datadictionary.integritychecks
 
+import jakarta.inject.Singleton
 import uk.nhs.datadictionary.NhsDataDictionary
 
 
+@Singleton
 class ElementsLinkedToAnAttribute implements IntegrityCheck {
 
     String name = "Elements linked to an attribute"
@@ -29,15 +31,13 @@ class ElementsLinkedToAnAttribute implements IntegrityCheck {
     @Override
     List<IntegrityCheckError> runCheck(NhsDataDictionary dataDictionary) {
 
-        errors = dataDictionary.elements.values()
+        dataDictionary.elements.values()
             .findAll {ddElement ->
                 // log.debug(ddAttribute.classLinks.size())
                 !ddElement.isRetired() &&
                 ddElement.getInstantiatesAttributes() == []
             }
             .collect { component -> new IntegrityCheckError(component) }
-
-        return errors
     }
 
 }

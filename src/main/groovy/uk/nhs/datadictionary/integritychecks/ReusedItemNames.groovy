@@ -17,9 +17,11 @@
  */
 package uk.nhs.datadictionary.integritychecks
 
+import jakarta.inject.Singleton
 import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.NhsDataDictionaryComponent
 
+@Singleton
 class ReusedItemNames implements IntegrityCheck {
 
     String name = "Re-used item names"
@@ -50,11 +52,10 @@ class ReusedItemNames implements IntegrityCheck {
             }
         }
 
-        errors = foundDuplicates
+        foundDuplicates
             .toList()
             .collect { component -> new IntegrityCheckError(component) }
 
-        return errors
     }
 
     private static <T> Set<T> findDuplicates(Collection<T> collection) {

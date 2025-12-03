@@ -23,7 +23,7 @@ import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.terminology.Term
 
 @Slf4j
-class NhsDDBusinessDefinition implements NhsDataDictionaryComponent <Term> {
+class NhsDDBusinessDefinition extends NhsDataDictionaryComponent <Term> {
 
     @Override
     String getStereotype() {
@@ -78,7 +78,7 @@ class NhsDDBusinessDefinition implements NhsDataDictionaryComponent <Term> {
     @JsonIgnore
     @Override
     void fromXml(def xml, NhsDataDictionary dataDictionary) {
-        NhsDataDictionaryComponent.super.fromXml(xml, dataDictionary)
+        super.fromXml(xml, dataDictionary)
     }
 
     @JsonIgnore

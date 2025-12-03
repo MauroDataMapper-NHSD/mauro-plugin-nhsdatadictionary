@@ -63,8 +63,7 @@ class DataSetConstraintService extends DataDictionaryComponentService<Term, NhsD
 
         Terminology terminology = new Terminology(
             label: NhsDataDictionary.DATA_SET_CONSTRAINTS_TERMINOLOGY_NAME,
-            folder: dictionaryFolder,
-            branchName: dataDictionary.branchName)
+            folder: dictionaryFolder)
         dictionaryFolder.terminologies.add(terminology)
         TreeMap<String, Term> allTerms = new TreeMap<>()
         dataDictionary.dataSetConstraints.each {name, dataSetConstraint ->

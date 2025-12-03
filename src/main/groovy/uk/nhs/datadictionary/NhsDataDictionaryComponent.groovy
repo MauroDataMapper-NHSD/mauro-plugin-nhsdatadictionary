@@ -32,6 +32,7 @@ import org.maurodata.domain.facet.EditType
 import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.model.AdministeredItem
 import org.maurodata.domain.terminology.Term
+import uk.nhs.datadictionary.publish.changePaper.ChangeAware
 import uk.nhs.datadictionary.publish.structure.AliasesRow
 import uk.nhs.datadictionary.publish.structure.AliasesSection
 import uk.nhs.datadictionary.publish.structure.ChangeLogRow
@@ -49,7 +50,7 @@ import java.time.format.DateTimeFormatter
 import java.util.regex.Pattern
 
 @Slf4j
-trait NhsDataDictionaryComponent <T extends AdministeredItem > {
+abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  implements ChangeAware {
 
     abstract String getStereotype()
     abstract String getStereotypeForPreview()
@@ -740,8 +741,10 @@ trait NhsDataDictionaryComponent <T extends AdministeredItem > {
         return codes
     }
 
-
-
-
+    @JsonIgnore
+    @Override
+    String getDiscriminator() {
+        name
+    }
 
 }

@@ -27,6 +27,7 @@ import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.TermC
 import org.maurodata.persistence.terminology.dto.TermDTORepository
 import uk.nhs.datadictionary.NhsDDBusinessDefinition
 import uk.nhs.datadictionary.NhsDataDictionary
+import uk.nhs.datadictionary.utils.StereotypedCatalogueItem
 
 @Slf4j
 @Singleton
@@ -67,8 +68,7 @@ class BusinessDefinitionService extends DataDictionaryComponentService<Term, Nhs
 
         Terminology terminology = new Terminology(
             label: NhsDataDictionary.BUSINESS_DEFINITIONS_TERMINOLOGY_NAME,
-            folder: dictionaryFolder,
-            branchName: dataDictionary.branchName)
+            folder: dictionaryFolder)
         dictionaryFolder.terminologies.add(terminology)
         TreeMap<String, Term> allTerms = new TreeMap<>()
         dataDictionary.businessDefinitions.each {name, businessDefinition ->

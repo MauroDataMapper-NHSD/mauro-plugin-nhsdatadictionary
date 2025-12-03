@@ -17,11 +17,13 @@
  */
 package uk.nhs.datadictionary.integritychecks
 
+import jakarta.inject.Singleton
 import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.NhsDataDictionaryComponent
 
 import java.time.LocalDate
 
+@Singleton
 class AllItemsAreWithinValidDateRange implements IntegrityCheck {
 
     String name = "All items are within their validity dates"
@@ -30,16 +32,13 @@ class AllItemsAreWithinValidDateRange implements IntegrityCheck {
 
     @Override
     List<IntegrityCheckError> runCheck(NhsDataDictionary dataDictionary) {
-        errors = dataDictionary.getAllComponents()
+        dataDictionary.getAllComponents()
             .findAll {component -> !component.isRetired() && validateDateRange(component, LocalDate.now()) }
             .collect { component -> new IntegrityCheckError(component) }
-
-        return errors
     }
 
     //there's a test set for this that runs through the various scenarios, see: AllItemsAreWithinValidDateRangeSpec
     static Boolean validateDateRange(NhsDataDictionaryComponent component, LocalDate dateNow){
-
         if (component.fromDate && component.toDate) {
             {
                 if (component.toDate.isBefore(component.fromDate)) {
@@ -51,10 +50,9 @@ class AllItemsAreWithinValidDateRange implements IntegrityCheck {
                 }
             }
         }
-            if (component.toDate && !component.fromDate){
-                return true
-            }
-
+        if (component.toDate && !component.fromDate){
+            return true
+        }
        return false
     }
 

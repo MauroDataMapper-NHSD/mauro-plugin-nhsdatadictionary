@@ -17,11 +17,12 @@
  */
 package uk.nhs.datadictionary.integritychecks
 
+import jakarta.inject.Singleton
 import org.maurodata.domain.datamodel.DataModel
 import uk.nhs.datadictionary.NhsDDElement
 import uk.nhs.datadictionary.NhsDataDictionary
 
-
+@Singleton
 class DataSetsIncludeRetiredItem implements IntegrityCheck {
 
     String name = "Data Sets that include retired items"
@@ -31,11 +32,9 @@ class DataSetsIncludeRetiredItem implements IntegrityCheck {
     @Override
     List<IntegrityCheckError> runCheck(NhsDataDictionary dataDictionary) {
 
-        //List<NhsDataDictionaryComponent> prepItems = dataDictionary.elements.values().findAll {it.isPreparatory()}
-
-        errors = dataDictionary.dataSets.values()
+        dataDictionary.dataSets.values()
             .findAll {component ->
-                ((DataModel)component.catalogueItem).allDataElements.find {dataElement ->
+                ((DataModel)component.catalogueItem).dataElements.find {dataElement ->
                     NhsDDElement foundElement = dataDictionary.elementsByCatalogueId[dataElement.id]
                     if(foundElement) {
                         return foundElement.isRetired()
@@ -46,8 +45,6 @@ class DataSetsIncludeRetiredItem implements IntegrityCheck {
                 }
             }
             .collect { component -> new IntegrityCheckError(component) }
-
-        return errors
     }
 
 }

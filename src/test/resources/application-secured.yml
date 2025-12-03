@@ -5,9 +5,9 @@ mauro:
 micronaut:
     server:
         port: -1
-        max-request-size: 100mb
+        max-request-size: 200mb
         multipart:
-            max-file-size: 100mb
+            max-file-size: 200mb
         netty:
             idle-timeout: 30m
     http:

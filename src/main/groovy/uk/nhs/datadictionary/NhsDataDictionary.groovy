@@ -30,6 +30,7 @@ import org.maurodata.domain.datamodel.DataModelType
 import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.facet.VersionLink
 import org.maurodata.domain.folder.Folder
+import org.maurodata.domain.model.Model
 import org.maurodata.domain.model.version.ModelVersion
 import org.maurodata.domain.terminology.Terminology
 import org.maurodata.exception.MauroApplicationException
@@ -225,7 +226,7 @@ class NhsDataDictionary {
 
 
     void buildFromXml(DataDictionaryImportParameters parameters) {
-        def xml = new XmlParser().parse(parameters.importFile.inputStream)
+        Node xml = new XmlParser().parse(parameters.importFile.inputStream)
 
         System.err.println(nhsDataDictionaryService)
         System.err.println(classService)
@@ -283,7 +284,7 @@ class NhsDataDictionary {
 
     Folder generateFolder(DataDictionaryImportParameters parameters) {
 
-        Folder dictionaryFolder = new Folder(label: folderName)
+        Folder dictionaryFolder = new Folder(label: folderName, branchName: Model.DEFAULT_BRANCH_NAME)
 
         nhsDataDictionaryService.defaultProfileMetadata().each { defaultMetadata ->
             dictionaryFolder.metadata(defaultMetadata)
@@ -300,8 +301,7 @@ class NhsDataDictionary {
                 new DataModel(label: CLASSES_MODEL_NAME,
                               description: "NHS Data Dictionary Data Model (Classes and Attributes)",
                               dataModelType: DataModelType.DATA_STANDARD,
-                              folder: dictionaryFolder,
-                              branchName: branchName)
+                              folder: dictionaryFolder)
             dictionaryFolder.dataModels.add(classesDataModel)
             classService.createClassesModel(this, classesDataModel, attributeClassesByUin, attributeUinIsKey)
 
@@ -316,8 +316,7 @@ class NhsDataDictionary {
                 new DataModel(label: ELEMENTS_MODEL_NAME,
                               description: "NHS Data Dictionary Data Elements",
                               folder: dictionaryFolder,
-                              dataModelType: DataModelType.DATA_STANDARD,
-                              branchName: branchName)
+                              dataModelType: DataModelType.DATA_STANDARD)
             dictionaryFolder.dataModels.add(elementDataModel)
             elementService.persistElements(this, dictionaryFolder, elementDataModel, attributeTerminologiesByName)
         }

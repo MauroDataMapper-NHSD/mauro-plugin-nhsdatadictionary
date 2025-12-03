@@ -21,13 +21,14 @@ import groovy.util.logging.Slf4j
 import groovy.xml.XmlParser
 import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.datamodel.DataModelType
+import spock.lang.Specification
 import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.datasets.parser.CDSDataSetParser
 import uk.nhs.datadictionary.datasets.parser.DataSetParser
 
 
 @Slf4j
-class DataSetParserSpec {
+class DataSetParserSpec extends Specification {
 
 
     static XmlParser xmlParser = new XmlParser(false, false)
@@ -53,10 +54,10 @@ class DataSetParserSpec {
             //createdBy: currentUser.emailAddress,
             dataModelType: DataModelType.DATA_STANDARD,
             //authority: authorityService.defaultAuthority,
-            folder: folder,
+            //folder: folder,
             //branchName: newDataDictionary.branchName
         )
-        folder.dataModels.add(dataSetDataModel)
+        // folder.dataModels.add(dataSetDataModel)
 
         if (filename.startsWith("CDS")) {
             CDSDataSetParser.parseCDSDataSet(xmlParser.parseText(testFileContents), dataSetDataModel, newDataDictionary)
@@ -71,7 +72,8 @@ class DataSetParserSpec {
 
         expect:
             DataModel dm = parseDataSet(filename)
-            dm.allDataElements.size() == elements
+            dm.setAssociations()
+            dm.dataElements.size() == elements
 
         where:
             filename << testFiles

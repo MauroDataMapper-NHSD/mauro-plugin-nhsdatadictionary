@@ -18,9 +18,11 @@
 package uk.nhs.datadictionary.integritychecks
 
 import groovy.util.logging.Slf4j
+import jakarta.inject.Singleton
 import uk.nhs.datadictionary.NhsDDDataSetFolder
 import uk.nhs.datadictionary.NhsDataDictionary
 
+@Singleton
 @Slf4j
 class AllItemsHaveShortDescription implements IntegrityCheck {
 
@@ -30,8 +32,7 @@ class AllItemsHaveShortDescription implements IntegrityCheck {
 
     @Override
     List<IntegrityCheckError> runCheck(NhsDataDictionary dataDictionary) {
-
-        errors = dataDictionary.getAllComponents()
+        dataDictionary.getAllComponents()
             .findAll {component ->
                 String shortDesc = component.getShortDescription()
                 if(component instanceof NhsDDDataSetFolder) {
@@ -41,8 +42,6 @@ class AllItemsHaveShortDescription implements IntegrityCheck {
                 return (shortDesc == null || shortDesc == "")
             }
             .collect { component -> new IntegrityCheckError(component) }
-
-        return errors
     }
 
 }

@@ -29,16 +29,13 @@ import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.datamodel.DataType
 import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.folder.Folder
-import org.maurodata.domain.security.CatalogueUser
 import org.maurodata.domain.terminology.Terminology
+import org.maurodata.persistence.ContentsService
 import org.maurodata.persistence.cache.AdministeredItemCacheableRepository
 import org.maurodata.persistence.cache.ItemCacheableRepository
 import org.maurodata.persistence.datamodel.DataElementRepository
-import org.maurodata.persistence.datamodel.DataModelContentRepository
 import org.maurodata.persistence.datamodel.DataModelRepository
-import org.maurodata.persistence.folder.FolderContentRepository
 import org.maurodata.persistence.folder.FolderRepository
-import org.maurodata.persistence.terminology.TerminologyContentRepository
 import org.maurodata.persistence.terminology.TerminologyRepository
 import uk.nhs.datadictionary.DataDictionaryImportParameters
 import uk.nhs.datadictionary.NhsDDAttribute
@@ -55,6 +52,7 @@ import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.fhir.FhirBundle
 import uk.nhs.datadictionary.fhir.FhirEntry
 import uk.nhs.datadictionary.integritychecks.IntegrityCheck
+import uk.nhs.datadictionary.integritychecks.IntegrityCheckError
 import uk.nhs.datadictionary.publish.MauroCatalogueItemPathResolver
 import uk.nhs.datadictionary.publish.changePaper.ChangePaperPreview
 import uk.nhs.datadictionary.services.profiles.DDWorkItemProfileProviderService
@@ -71,6 +69,9 @@ import java.util.zip.ZipOutputStream
 @Slf4j
 @Singleton
 class NhsDataDictionaryService {
+
+    @Inject
+    List<IntegrityCheck> integrityChecks
 
     static final Map<String, String> KNOWN_KEYS = [
         (API_PROPERTY_RETIRED_TEMPLATE): '<p>This item has been retired from the NHS Data Model and Dictionary.</p>' +
@@ -113,12 +114,6 @@ class NhsDataDictionaryService {
     DataModelRepository dataModelRepository
 
     @Inject
-    DataModelContentRepository dataModelContentRepository
-
-    @Inject
-    TerminologyContentRepository terminologyContentRepository
-
-    @Inject
     DataSetService dataSetService
 
     @Inject
@@ -145,10 +140,8 @@ class NhsDataDictionaryService {
     @Inject
     DDWorkItemProfileProviderService ddWorkItemProfileProviderService
 
-    NhsDataDictionaryService(DataModelRepository dataModelRepository, DataModelContentRepository dataModelContentRepository) {
-        this.dataModelContentRepository = dataModelContentRepository
-        this.dataModelContentRepository.administeredItemRepository = dataModelRepository
-    }
+    @Inject
+    ContentsService contentsService
 
     List<Folder> branches(/*UserSecurityPolicyManager userSecurityPolicyManager */) {
         folderRepository.readAll().findAll {
@@ -170,56 +163,31 @@ class NhsDataDictionaryService {
 */
     }
 
-    List<IntegrityCheck> integrityChecks(UUID versionedFolderId) {
-
-        log.error("Building data dictionary...")
+    Map<IntegrityCheck, List<IntegrityCheckError>> integrityChecks(UUID versionedFolderId) {
         NhsDataDictionary dataDictionary = buildDataDictionary(versionedFolderId)
-        log.error("Built data dictionary...")
 
-        List<Class<IntegrityCheck>> integrityCheckClasses = [
-            InternalLinksInDescriptions,
-            AllClassesHaveRelationships,
-            ClassLinkedToRetiredAttribute,
-            AttributesLinkedToAClass,
-            ElementsLinkedToAnAttribute,
-            DataSetsHaveAnOverview,
-            DataSetsIncludePreparatoryItem,
-            DataSetsIncludeRetiredItem,
-            AllItemsHaveShortDescription,
-            AllItemsHaveAlias,
-            AllItemsAreWithinValidDateRange,
-            ReusedItemNames//,
-            //BrokenLinks
-        ]
-
-        List<IntegrityCheck> integrityChecks = integrityCheckClasses.collect {checkClass ->
-            IntegrityCheck integrityCheck = checkClass.getDeclaredConstructor().newInstance()
-            integrityCheck.runCheck(dataDictionary)
-            integrityCheck.sortErrors()
-            integrityCheck
-        }
-
-        return integrityChecks
+        integrityChecks.findAll {it.enabled}
+            .collectEntries {integrityCheck ->
+                [integrityCheck, integrityCheck.runCheck(dataDictionary).sort {it.component.name }]
+            }
     }
 
 
     NhsDataDictionary buildDataDictionary(UUID versionedFolderId) {
         NhsDataDictionary dataDictionary = newDataDictionary(versionedFolderId)
+        Folder contentsFolder = (Folder) contentsService.loadWithContent(folderRepository.readById(versionedFolderId))
 
         buildWorkItemDetails(dataDictionary.containingVersionedFolder, dataDictionary)
 
+        Terminology busDefTerminology = contentsFolder.terminologies.find {it.label == NhsDataDictionary.BUSINESS_DEFINITIONS_TERMINOLOGY_NAME }
+        Terminology supDefTerminology = contentsFolder.terminologies.find {it.label == NhsDataDictionary.SUPPORTING_DEFINITIONS_TERMINOLOGY_NAME}
+        Terminology dataSetConstraintsTerminology = contentsFolder.terminologies.find {it.label == NhsDataDictionary.DATA_SET_CONSTRAINTS_TERMINOLOGY_NAME}
 
-        Terminology busDefTerminology = getBusinessDefinitionTerminology(versionedFolderId)
-        Terminology supDefTerminology = getSupportingInformationTerminology(versionedFolderId)
-        Terminology dataSetConstraintsTerminology = getDataSetConstraintTerminology(versionedFolderId)
+        Folder dataSetsFolder = contentsFolder.childFolders.find {it.label == NhsDataDictionary.DATA_SETS_FOLDER_NAME}
 
-        Folder dataSetsFolder =
-        folderRepository.readAllByParentFolder(dataDictionary.containingVersionedFolder).find
-            {it.label == NhsDataDictionary.DATA_SETS_FOLDER_NAME}
+        DataModel classesModel = contentsFolder.dataModels.find {it.label == NhsDataDictionary.CLASSES_MODEL_NAME}
 
-        DataModel classesModel = getClassesModel(versionedFolderId)
-
-        DataModel elementsModel = getElementsModel(versionedFolderId)
+        DataModel elementsModel = contentsFolder.dataModels.find {it.label == NhsDataDictionary.ELEMENTS_MODEL_NAME}
 
         if(classesModel) {
             addAttributesToDictionary(classesModel, dataDictionary)
@@ -262,31 +230,31 @@ class NhsDataDictionaryService {
     Terminology getBusinessDefinitionTerminology(UUID versionedFolderId) {
         List<Terminology> terminologies = terminologyRepository.findAllByFolderId(versionedFolderId)
         Terminology busDefTerminology = terminologies.find {it.label == NhsDataDictionary.BUSINESS_DEFINITIONS_TERMINOLOGY_NAME}
-        terminologyContentRepository.readWithContentById(busDefTerminology.id)
+        (Terminology) contentsService.loadWithContent(busDefTerminology)
     }
 
     Terminology getSupportingInformationTerminology(UUID versionedFolderId) {
         List<Terminology> terminologies = terminologyRepository.findAllByFolderId(versionedFolderId)
         Terminology supDefTerminology = terminologies.find {it.label == NhsDataDictionary.SUPPORTING_DEFINITIONS_TERMINOLOGY_NAME}
-        terminologyContentRepository.readWithContentById(supDefTerminology.id)
+        (Terminology) contentsService.loadWithContent(supDefTerminology)
     }
 
     Terminology getDataSetConstraintTerminology(UUID versionedFolderId) {
         List<Terminology> terminologies = terminologyRepository.findAllByFolderId(versionedFolderId)
         Terminology dataSetConstraintTerminology = terminologies.find {it.label == NhsDataDictionary.DATA_SET_CONSTRAINTS_TERMINOLOGY_NAME}
-        terminologyContentRepository.readWithContentById(dataSetConstraintTerminology.id)
+        (Terminology) contentsService.loadWithContent(dataSetConstraintTerminology)
     }
 
     DataModel getElementsModel(UUID versionedFolderId) {
         List<DataModel> dataModels = dataModelRepository.findAllByFolderId(versionedFolderId)
         DataModel elementsModel = dataModels.find {it.label == NhsDataDictionary.ELEMENTS_MODEL_NAME}
-        dataModelContentRepository.findWithContentById(elementsModel.id)
+        (DataModel) contentsService.loadWithContent(elementsModel)
     }
 
     DataModel getClassesModel(UUID versionedFolderId) {
         List<DataModel> dataModels = dataModelRepository.findAllByFolderId(versionedFolderId)
         DataModel classesDataModel = dataModels.find {it.label == NhsDataDictionary.CLASSES_MODEL_NAME}
-        dataModelContentRepository.findWithContentById(classesDataModel.id)
+        (DataModel) contentsService.loadWithContent(classesDataModel)
     }
 
     Folder getDataSetsFolder(UUID versionedFolderId) {
@@ -309,18 +277,6 @@ class NhsDataDictionaryService {
 
     void addElementsToDictionary(DataModel elementsModel, NhsDataDictionary dataDictionary) {
         Set<DataElement> elementElements = elementsModel.dataElements
-
-        // Assume metadata already read in
-        /*
-        List<Metadata> elementMetadata = Metadata.byMultiFacetAwareItemIdInList(elementElements.collect {it.id} as List).list()
-        elementMetadata.each { metadata ->
-            if(dataDictionary.elementsMetadata[metadata.multiFacetAwareItemId]) {
-                dataDictionary.elementsMetadata[metadata.multiFacetAwareItemId].add(metadata)
-            } else {
-                dataDictionary.elementsMetadata[metadata.multiFacetAwareItemId] = [metadata]
-            }
-        }
-         */
 
         dataDictionary.elements = elementElements.collectEntries {ci ->
                 [ci.label, new NhsDDElement().fromMauroItem(dataDictionary, mauroPersistenceService, ci)]
@@ -534,20 +490,6 @@ class NhsDataDictionaryService {
             zipOut.write(bytes, 0, length);
         }
         fis.close();
-    }
-
-    private static <T> Set<T> findDuplicates(Collection<T> collection) {
-
-        Set<T> duplicates = new HashSet<>(1000);
-        Set<T> uniques = new HashSet<>();
-
-        for (T t : collection) {
-            if (!uniques.add(t)) {
-                duplicates.add(t);
-            }
-        }
-
-        return duplicates;
     }
 
 

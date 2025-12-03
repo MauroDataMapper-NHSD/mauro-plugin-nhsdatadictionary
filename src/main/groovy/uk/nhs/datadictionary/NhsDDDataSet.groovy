@@ -34,7 +34,7 @@ import uk.nhs.datadictionary.publish.structure.datasets.other.OtherDataSetTable
 import uk.nhs.datadictionary.services.profiles.MauroPersistenceService
 
 @Slf4j
-class NhsDDDataSet implements NhsDataDictionaryComponent <DataModel> {
+class NhsDDDataSet extends NhsDataDictionaryComponent <DataModel> {
 
 
 
@@ -71,7 +71,7 @@ class NhsDDDataSet implements NhsDataDictionaryComponent <DataModel> {
 
     @Override
     void fromXml(def xml, NhsDataDictionary dataDictionary) {
-        NhsDataDictionaryComponent.super.fromXml(xml, dataDictionary)
+        super.fromXml(xml, dataDictionary)
         NhsDDWebPage explanatoryWebPage = dataDictionary.webPagesByUin[xml.explanatoryPage.text()]
         if(explanatoryWebPage) {
             definition = explanatoryWebPage.definition
@@ -225,7 +225,7 @@ class NhsDDDataSet implements NhsDataDictionaryComponent <DataModel> {
 
     @Override
     NhsDataDictionaryComponent<DataModel> fromMauroItem(NhsDataDictionary dataDictionary, MauroPersistenceService mauroPersistenceService, DataModel catalogueItem) {
-        NhsDataDictionaryComponent.super.fromMauroItem(dataDictionary, mauroPersistenceService, catalogueItem)
+        super.fromMauroItem(dataDictionary, mauroPersistenceService, catalogueItem)
         this.catalogueItem.childDataClasses.each {dataClass ->
             dataSetClasses.add(new NhsDDDataSetClass(dataClass, dataDictionary))
         }

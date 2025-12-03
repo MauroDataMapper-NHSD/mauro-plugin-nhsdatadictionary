@@ -74,25 +74,20 @@ class NhsDDDataSetElement implements NhsDDDataSetComponent {
             }
         }
 
-        List<Metadata> thisElementMetadata
-        if(dataDictionary && !dataDictionary.dataSetsMetadata.isEmpty()) {
-            thisElementMetadata = dataDictionary.dataSetsMetadata[dataElement.id]
-        } else {
-            thisElementMetadata = Metadata.byMultiFacetAwareItemId(dataElement.id).list()
+        mandation = dataElement.metadata.find { it.key == NhsDataDictionary.DATASET_TABLE_KEY_MRO }?.value
+        if(mandation && !mandation.isEmpty()) {
+            mandation = mandation.trim().toUpperCase().subSequence(0,1)
         }
+        constraints = dataElement.metadata.find { it.key == NhsDataDictionary.DATASET_TABLE_KEY_RULES }?.value
+        groupRepeats = dataElement.metadata.find { it.key == NhsDataDictionary.DATASET_TABLE_KEY_GROUP_REPEATS }?.value
+        rules = dataElement.metadata.find { it.key == NhsDataDictionary.DATASET_TABLE_KEY_RULES }?.value
+        uin = dataElement.metadata.find { it.key == "uin" }?.value
 
-
-        mandation = thisElementMetadata.find { it.key == NhsDataDictionary.DATASET_TABLE_KEY_MRO }?.value?.toUpperCase()?.subSequence(0,1)
-        constraints = thisElementMetadata.find { it.key == NhsDataDictionary.DATASET_TABLE_KEY_RULES }?.value
-        groupRepeats = thisElementMetadata.find { it.key == NhsDataDictionary.DATASET_TABLE_KEY_GROUP_REPEATS }?.value
-        rules = thisElementMetadata.find { it.key == NhsDataDictionary.DATASET_TABLE_KEY_RULES }?.value
-        uin = thisElementMetadata.find { it.key == "uin" }?.value
-
-        Metadata md = thisElementMetadata.find {it.key == NhsDataDictionary.DATASET_TABLE_KEY_WEB_ORDER }
+        Metadata md = dataElement.metadata.find {it.key == NhsDataDictionary.DATASET_TABLE_KEY_WEB_ORDER }
         if(md) {
             webOrder = Integer.parseInt(md.value)
         } else {
-            webOrder = dataElement.idx
+            webOrder = dataElement.order
         }
     }
 

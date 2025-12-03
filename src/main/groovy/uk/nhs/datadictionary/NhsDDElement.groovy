@@ -37,7 +37,7 @@ import uk.nhs.datadictionary.publish.structure.ItemLinkListSection
 import uk.nhs.datadictionary.services.profiles.MauroPersistenceService
 
 @Slf4j
-class NhsDDElement implements NhsDataDictionaryComponent <DataElement>, ChangeAware {
+class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
 
     @Override
     String getStereotype() {
@@ -127,7 +127,7 @@ class NhsDDElement implements NhsDataDictionaryComponent <DataElement>, ChangeAw
 
     @Override
     void fromXml(def xml, NhsDataDictionary dataDictionary) {
-        NhsDataDictionaryComponent.super.fromXml(xml, dataDictionary)
+        super.fromXml(xml, dataDictionary)
         String capitalizedCodeSetName = xml.name[0].text()
 
         instantiatesAttributes.addAll(xml."link".collect {link ->
@@ -243,7 +243,7 @@ class NhsDDElement implements NhsDataDictionaryComponent <DataElement>, ChangeAw
 
     @Override
     void replaceLinksInDefinition(Map<String, NhsDataDictionaryComponent> pathLookup) {
-        NhsDataDictionaryComponent.super.replaceLinksInDefinition(pathLookup)
+        super.replaceLinksInDefinition(pathLookup)
         codes.each { code ->
             code.webPresentation = replaceLinksInString(code.webPresentation, pathLookup)
         }
@@ -484,7 +484,7 @@ class NhsDDElement implements NhsDataDictionaryComponent <DataElement>, ChangeAw
 
     @Override
     NhsDataDictionaryComponent<DataElement> fromMauroItem(NhsDataDictionary dataDictionary, MauroPersistenceService mauroPersistenceService, DataElement catalogueItem) {
-        NhsDataDictionaryComponent.super.fromMauroItem(dataDictionary, mauroPersistenceService, catalogueItem)
+        super.fromMauroItem(dataDictionary, mauroPersistenceService, catalogueItem)
         catalogueItem.semanticLinks.each {
             if(it.linkType == SemanticLinkType.REFINES) {
                 NhsDDAttribute linkedAttribute = dataDictionary.attributesByCatalogueId[it.targetMultiFacetAwareItemId]

@@ -18,17 +18,22 @@
 package uk.nhs.datadictionary.integritychecks
 
 import groovy.util.logging.Slf4j
+import jakarta.inject.Singleton
 import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.NhsDataDictionaryComponent
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
+@Singleton
 @Slf4j
 class InternalLinksInDescriptions implements IntegrityCheck {
     String name = "Internal Links in Descriptions"
 
     String description = "Check that all internal links to other dictionary items are valid"
+
+    @Override
+    boolean isEnabled() { false }
 
     @Override
     List<IntegrityCheckError> runCheck(NhsDataDictionary dataDictionary) {
@@ -41,9 +46,7 @@ class InternalLinksInDescriptions implements IntegrityCheck {
             }
         }
 
-        errors = foundErrors
-
-        errors
+        foundErrors
     }
 
     static IntegrityCheckError checkDefinitionInternalLinksAreValid(

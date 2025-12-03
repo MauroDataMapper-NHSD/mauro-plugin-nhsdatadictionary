@@ -21,6 +21,7 @@ import groovy.util.logging.Slf4j
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import org.maurodata.domain.folder.Folder
+import org.maurodata.persistence.datamodel.DataModelRepository
 import org.maurodata.persistence.folder.FolderRepository
 import uk.nhs.datadictionary.NhsDDDataSet
 import uk.nhs.datadictionary.NhsDDDataSetFolder
@@ -34,6 +35,7 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
     DataSetService dataSetService
 
     @Inject FolderRepository folderRepository
+    @Inject DataModelRepository dataModelRepository
 
     String getStereotype() {
         "dataSetFolder"
@@ -45,15 +47,16 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
         NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary(versionedFolderId)
 
         Folder folderFolder
-        if(id && id != "root") {
-            folderFolder = folderService.get(id)
+        if(id) {
+            folderFolder = folderRepository.readById(id)
         } else {
-            Folder vf = versionedFolderService.get(versionedFolderId)
-            folderFolder = vf.childFolders.find {it.label == NhsDataDictionary.DATA_SETS_FOLDER_NAME}
+            folderFolder = folderRepository.readAllByParentFolder(dataDictionary.containingVersionedFolder).find {
+                it.label == NhsDataDictionary.DATA_SETS_FOLDER_NAME
+            }
         }
-        NhsDDDataSetFolder dataSetFolder = new NhsDDDataSetFolder().fromMauroItem(dataDictionary, mauroPersistenceService, folderFolder)
+        NhsDDDataSetFolder dataSetFolder = new NhsDDDataSetFolder().fromMauroItem(dataDictionary, mauroPersistenceService, folderFolder) as NhsDDDataSetFolder
         dataSetFolder.definition = convertLinksInDescription(versionedFolderId, dataSetFolder.getDescription())
-        if(id && id != 'root') {
+        if(id) {
             List<String> folderPath = [folderFolder.label]
             Folder parentFolder = (Folder) folderFolder.getParent()
             while(parentFolder.label != "Data Sets") {
@@ -66,7 +69,8 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
             NhsDDDataSetFolder childFolder = new NhsDDDataSetFolder().fromMauroItem(dataDictionary, mauroPersistenceService, it)
             dataSetFolder.childFolders[it.label] = childFolder
         }
-        dataModelService.findAllByFolderId(folderFolder.id).each {
+
+        dataModelRepository.findAllByFolderId(folderFolder.id).each {
             NhsDDDataSet childDataSet = new NhsDDDataSet().fromMauroItem(dataDictionary, mauroPersistenceService, it)
             if (!childDataSet.isRetired()) {
                 dataSetFolder.dataSets[it.label] = childDataSet

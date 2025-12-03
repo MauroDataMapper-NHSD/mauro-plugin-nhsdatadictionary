@@ -36,7 +36,7 @@ import uk.nhs.datadictionary.publish.structure.ItemLinkListSection
 import uk.nhs.datadictionary.services.profiles.MauroPersistenceService
 
 @Slf4j
-class NhsDDAttribute implements NhsDataDictionaryComponent <DataElement>, ChangeAware {
+class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
 
     @Override
     String getStereotype() {
@@ -96,7 +96,7 @@ class NhsDDAttribute implements NhsDataDictionaryComponent <DataElement>, Change
 
     @Override
     void fromXml(def xml, NhsDataDictionary dataDictionary) {
-        NhsDataDictionaryComponent.super.fromXml(xml, dataDictionary)
+        super.fromXml(xml, dataDictionary)
 
         if (xml."code-system".size() > 0) {
             codesVersion = xml."code-system"[0].Bundle.entry.resource.CodeSystem.version."@value".text()
@@ -163,7 +163,7 @@ class NhsDDAttribute implements NhsDataDictionaryComponent <DataElement>, Change
 
     @Override
     void replaceLinksInDefinition(Map<String, NhsDataDictionaryComponent> pathLookup) {
-        NhsDataDictionaryComponent.super.replaceLinksInDefinition(pathLookup)
+        super.replaceLinksInDefinition(pathLookup)
         codes.each { code ->
             code.webPresentation = replaceLinksInString(code.webPresentation, pathLookup)
         }
@@ -300,7 +300,7 @@ class NhsDDAttribute implements NhsDataDictionaryComponent <DataElement>, Change
 
     @Override
     NhsDataDictionaryComponent<DataElement> fromMauroItem(NhsDataDictionary dataDictionary, MauroPersistenceService mauroPersistenceService, DataElement catalogueItem) {
-        NhsDataDictionaryComponent.super.fromMauroItem(dataDictionary, mauroPersistenceService, catalogueItem)
+        super.fromMauroItem(dataDictionary, mauroPersistenceService, catalogueItem)
         if (catalogueItem.dataType.dataTypeKind == DataType.DataTypeKind.MODEL_TYPE) {
             List<Term> terms = mauroPersistenceService.termCacheableRepository.findAllByTerminology(new Terminology(id: catalogueItem.dataType.modelResourceId))
             List<NhsDDCode> codesForTerms = getCodesForTerms(terms, dataDictionary)

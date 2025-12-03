@@ -19,6 +19,7 @@ package uk.nhs.datadictionary.integritychecks
 
 import uk.nhs.datadictionary.NhsDataDictionary
 
+@Singleton
 class AllItemsHaveAlias implements IntegrityCheck {
 
     String name = "All items have an alias"
@@ -27,15 +28,13 @@ class AllItemsHaveAlias implements IntegrityCheck {
 
     @Override
     List<IntegrityCheckError> runCheck(NhsDataDictionary dataDictionary) {
-
-        errors = dataDictionary.getAllComponents()
+        dataDictionary.getAllComponents()
             .findAll {component ->
                 !component.isRetired() &&
                 (component.hasNoAliases() &&
                  (!component.otherProperties["noAliasesRequired"] || component.otherProperties["noAliasesRequired"] != "true"))
             }
             .collect { component -> new IntegrityCheckError(component) }
-        return errors
     }
 
 }

@@ -17,8 +17,10 @@
  */
 package uk.nhs.datadictionary.integritychecks
 
+import jakarta.inject.Singleton
 import uk.nhs.datadictionary.NhsDataDictionary
 
+@Singleton
 class DataSetsHaveAnOverview implements IntegrityCheck {
 
     String name = "Data Sets have an overview"
@@ -28,15 +30,13 @@ class DataSetsHaveAnOverview implements IntegrityCheck {
     @Override
     List<IntegrityCheckError> runCheck(NhsDataDictionary dataDictionary) {
 
-        errors = dataDictionary.dataSets.values()
+        dataDictionary.dataSets.values()
             .findAll {ddDataSet ->
                 // log.debug(ddAttribute.classLinks.size())
                 !ddDataSet.isRetired() &&
                 (ddDataSet.definition == null || ddDataSet.definition == "")
             }
             .collect { component -> new IntegrityCheckError(component) }
-
-        return errors
     }
 
 }

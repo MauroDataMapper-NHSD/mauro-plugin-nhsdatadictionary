@@ -81,59 +81,52 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
         this(dataClass)
         this.dataDictionary = dataDictionary
 
-        List<Metadata> thisClassMetadata
-        if(dataDictionary && !dataDictionary.dataSetsMetadata.isEmpty()) {
-             thisClassMetadata = dataDictionary.dataSetsMetadata[dataClass.id]
-        } else {
-            thisClassMetadata = Metadata.byMultiFacetAwareItemId(dataClass.id).list()
-        }
-
-        isChoice = thisClassMetadata.find {
+        isChoice = dataClass.metadata.find {
             (it.namespace == NhsDataDictionary.METADATA_DATASET_TABLE_NAMESPACE
                 && it.key == NhsDataDictionary.DATASET_TABLE_KEY_CHOICE
                 && it.value == "true")
         }
-        isAnd = thisClassMetadata.find {
+        isAnd = dataClass.metadata.find {
             (it.namespace == NhsDataDictionary.METADATA_DATASET_TABLE_NAMESPACE
                 && it.key == NhsDataDictionary.DATASET_TABLE_KEY_AND
                 && it.value == "true")
         }
-        isInclusiveOr = thisClassMetadata.find {
+        isInclusiveOr = dataClass.metadata.find {
             (it.namespace == NhsDataDictionary.METADATA_DATASET_TABLE_NAMESPACE
                 && it.key == NhsDataDictionary.DATASET_TABLE_KEY_INCLUSIVE_OR
                 && it.value == "true")
         }
-        isAddress = thisClassMetadata.find {
+        isAddress = dataClass.metadata.find {
             (it.namespace == NhsDataDictionary.METADATA_DATASET_TABLE_NAMESPACE
                 && it.key == NhsDataDictionary.DATASET_TABLE_KEY_ADDRESS_CHOICE
                 && it.value == "true")
         }
-        address1 = thisClassMetadata.find {
+        address1 = dataClass.metadata.find {
             (it.namespace == NhsDataDictionary.METADATA_NAMESPACE
                 && it.key == "Address 1")
         }?.value ?: ""
-        address2 = thisClassMetadata.find {
+        address2 = dataClass.metadata.find {
             (it.namespace == NhsDataDictionary.METADATA_NAMESPACE
                 && it.key == "Address 2")
         }?.value ?: ""
 
-        mandation = thisClassMetadata.find { it.key == NhsDataDictionary.DATASET_TABLE_KEY_MRO  }?.value
-        constraints = thisClassMetadata.find { it.key == NhsDataDictionary.DATASET_TABLE_KEY_RULES  }?.value
-        isDataSetReference = thisClassMetadata.find {
+        mandation = dataClass.metadata.find { it.key == NhsDataDictionary.DATASET_TABLE_KEY_MRO  }?.value
+        constraints = dataClass.metadata.find { it.key == NhsDataDictionary.DATASET_TABLE_KEY_RULES  }?.value
+        isDataSetReference = dataClass.metadata.find {
             (it.namespace == NhsDataDictionary.METADATA_DATASET_TABLE_NAMESPACE
                     && it.key == NhsDataDictionary.DATASET_TABLE_KEY_DATA_SET_REFERENCE
                     && it.value == "true")
         }
-        dataSetReferenceTo = thisClassMetadata.find {it.key == NhsDataDictionary.DATASET_TABLE_KEY_DATA_SET_REFERENCE_TO }?.value
-        groupRepeats = thisClassMetadata.find {it.key == NhsDataDictionary.DATASET_TABLE_KEY_GROUP_REPEATS }?.value
-        multiplicityText = thisClassMetadata.find {it.key == NhsDataDictionary.DATASET_TABLE_KEY_MULTIPLICITY_TEXT }?.value
-        rules = thisClassMetadata.find { it.key == NhsDataDictionary.DATASET_TABLE_KEY_RULES  }?.value
+        dataSetReferenceTo = dataClass.metadata.find {it.key == NhsDataDictionary.DATASET_TABLE_KEY_DATA_SET_REFERENCE_TO }?.value
+        groupRepeats = dataClass.metadata.find {it.key == NhsDataDictionary.DATASET_TABLE_KEY_GROUP_REPEATS }?.value
+        multiplicityText = dataClass.metadata.find {it.key == NhsDataDictionary.DATASET_TABLE_KEY_MULTIPLICITY_TEXT }?.value
+        rules = dataClass.metadata.find { it.key == NhsDataDictionary.DATASET_TABLE_KEY_RULES  }?.value
 
-        Metadata md = thisClassMetadata.find {it.key == NhsDataDictionary.DATASET_TABLE_KEY_WEB_ORDER }
+        Metadata md = dataClass.metadata.find {it.key == NhsDataDictionary.DATASET_TABLE_KEY_WEB_ORDER }
         if(md) {
             webOrder = Integer.parseInt(md.value)
         } else {
-            webOrder = dataClass.idx
+            webOrder = dataClass.order
         }
 
         dataClass.dataClasses.each {childDataClass ->

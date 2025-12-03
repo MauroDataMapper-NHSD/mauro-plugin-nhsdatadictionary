@@ -19,24 +19,15 @@ package uk.nhs.datadictionary.services
 
 import groovy.util.logging.Slf4j
 import groovy.xml.XmlParser
-import io.micronaut.transaction.annotation.Transactional
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
-import org.maurodata.domain.datamodel.DataClass
-import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.datamodel.DataModelType
-import org.maurodata.domain.facet.Edit
-import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.folder.Folder
-import org.maurodata.domain.security.CatalogueUser
-import org.maurodata.persistence.datamodel.DataModelContentRepository
 import org.maurodata.persistence.datamodel.DataModelRepository
 import org.maurodata.persistence.folder.FolderRepository
 import uk.nhs.datadictionary.NhsDDDataSet
-import uk.nhs.datadictionary.NhsDDDataSetClass
 import uk.nhs.datadictionary.NhsDataDictionary
-import uk.nhs.datadictionary.NhsDataDictionaryComponent
 import uk.nhs.datadictionary.datasets.parser.CDSDataSetParser
 import uk.nhs.datadictionary.datasets.parser.DataSetParser
 import uk.nhs.datadictionary.publish.ItemLinkScanner
@@ -53,9 +44,6 @@ class DataSetService extends DataDictionaryComponentService<DataModel, NhsDDData
 
     @Inject
     DataModelRepository dataModelRepository
-
-    @Inject
-    DataModelContentRepository dataModelContentRepository
 
     @Inject
     FolderRepository folderRepository
@@ -124,7 +112,7 @@ class DataSetService extends DataDictionaryComponentService<DataModel, NhsDDData
     Map<List<String>, Set<DataModel>> getAllDataSets(List<String> currentPath, Folder dataSetsFolder, Boolean includeRetired = false) {
         Map<List<String>, Set<DataModel>> returnModels = [:]
         returnModels[currentPath] = dataModelRepository.findAllByFolderId(dataSetsFolder.id).collect {
-            dataModelContentRepository.readWithContentById(it.id) as DataModel
+            dataModelRepository.loadWithContent(it.id) as DataModel
         } as Set
         folderRepository.readAllByParentFolder(dataSetsFolder).each {subFolder ->
             List<String> newPath = []
@@ -575,8 +563,7 @@ class DataSetService extends DataDictionaryComponentService<DataModel, NhsDDData
             label: dataSet.name,
             description: dataSet.definition,
             dataModelType: DataModelType.DATA_STANDARD,
-            folder: folder,
-            branchName: nhsDataDictionary.branchName
+            folder: folder
         )
         folder.dataModels.add(dataSetDataModel)
         Node definition = xmlParser.parseText(dataSet.definitionAsXml)

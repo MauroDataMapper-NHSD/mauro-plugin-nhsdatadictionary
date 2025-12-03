@@ -25,7 +25,7 @@ import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.datamodel.DataType
-import org.maurodata.domain.facet.Metadata
+import org.maurodata.domain.facet.SemanticLink
 import org.maurodata.domain.facet.SemanticLinkType
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.model.AdministeredItem
@@ -57,8 +57,8 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
     NhsDDElement show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
         NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary(versionedFolderId)
 
-        DataElement elementElement = dataElementService.get(id)
-        NhsDDElement element = new NhsDDElement().fromMauroItem(dataDictionary, mauroPersistenceService, elementElement)
+        DataElement elementElement = dataElementRepository.loadWithContent(id)
+        NhsDDElement element = new NhsDDElement().fromMauroItem(dataDictionary, mauroPersistenceService, elementElement) as NhsDDElement
         element.instantiatesAttributes.addAll(getAllAttributesForElement(dataDictionary, element))
         element.definition = convertLinksInDescription(versionedFolderId, element.getDescription())
         String attributeText = element.getAttributeTextAsHtml()
@@ -82,14 +82,14 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
     }
 
     Set<NhsDDAttribute> getAllAttributesForElement(NhsDataDictionary dataDictionary, NhsDDElement nhsDDElement) {
-        nhsDDAttribute.catalogueItem.semanticLinks.findAll {semanticLink ->
+        nhsDDElement.catalogueItem.semanticLinks.findAll {semanticLink ->
             semanticLink.linkType == SemanticLinkType.REFINES
         }.collect {semanticLink ->
             DataElement dataElement = dataElementRepository.readById(semanticLink.targetMultiFacetAwareItemId)
             new NhsDDAttribute().fromMauroItem(dataDictionary, mauroPersistenceService, dataElement)
         }.findAll{
             !it.isRetired()
-        }.sort {it.name}
+        }.sort {it.name} as Set<NhsDDAttribute>
 
     }
 
@@ -138,8 +138,7 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
 
                 CodeSet codeSet = new CodeSet(
                     label: name,
-                    folder: subFolder,
-                    branchName: dataDictionary.branchName)
+                    folder: subFolder)
                 subFolder.codeSets.add(codeSet)
                 if(element.codeSetVersion) {
                     codeSet.metadata(ddCodeSetProfileProviderService.metadataNamespace, "version", element.codeSetVersion)
@@ -179,18 +178,18 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
 
             addMetadataFromComponent(elementDataElement, element)
 
-/*
+
             element.instantiatesAttributes.each {attribute ->
                 if(attribute.catalogueItem) {
                     SemanticLink semanticLink = new SemanticLink(
-                            targetMultiFacetAwareItemId: attribute.catalogueItem.id,
-                            targetMultiFacetAwareItemDomainType: DataElement,
-                            linkType: SemanticLinkType.REFINES
+                            target: attribute.catalogueItem,
+                            linkType: SemanticLinkType.REFINES,
+                            multiFacetAwareItem: elementDataElement
                     )
                     elementDataElement.semanticLinks.add(semanticLink)
                 }
             }
-*/
+
             //String elementAttributes = StringUtils.join(element.instantiatesAttributes.collect {it.name}, ";")
             //addToMetadata(elementDataElement, "linkedAttributes", elementAttributes, currentUserEmailAddress)
 

@@ -170,17 +170,17 @@ class NhsDataDictionaryNov2021Spec extends Specification {
     void 'I02 : test ingest and statistics'() {
 
         when:
-        System.out.println(folderApi.getClass());
+        System.out.println(folderApi.getClass())
         ServiceHttpClientConfiguration cfg =
-            beanContext.getBean(ServiceHttpClientConfiguration.class, Qualifiers.byName("mauro"));
-        System.out.println("Mauro read-timeout = " + cfg.getReadTimeout());
+            beanContext.getBean(ServiceHttpClientConfiguration.class, Qualifiers.byName("mauro"))
+        System.out.println("Mauro read-timeout = " + cfg.getReadTimeout())
 
         MultipartBody importRequest = MultipartBody.builder()
         //  .addPart('folderId', folderId.toString()) // Should now be optional
             .addPart('importFile', 'file.json', MediaType.APPLICATION_XML_TYPE, xmlBytes)
             .build()
 
-        folderApi.importModel(
+        def response = folderApi.importModel(
             importRequest,
             nhsDataDictionaryImporter.namespace,
             nhsDataDictionaryImporter.name,

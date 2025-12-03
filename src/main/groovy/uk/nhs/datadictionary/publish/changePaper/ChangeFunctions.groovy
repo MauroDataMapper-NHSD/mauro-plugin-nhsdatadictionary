@@ -23,7 +23,7 @@ import uk.nhs.datadictionary.publish.structure.DiffObjectAware
 import uk.nhs.datadictionary.publish.structure.DiffStatus
 
 class ChangeFunctions {
-    static <T extends ChangeAware> boolean areEqual(List<T> first, List<T> second) {
+    static boolean areEqual(List first, List second) {
         if (!first) {
             return false
         }
@@ -93,7 +93,7 @@ class ChangeFunctions {
 
     // Use publish structure model instead
     @Deprecated
-    static <T extends ChangeAware & NhsDataDictionaryComponent> StringWriter createUnorderedListHtml(String title, List<T> currentItems, List<T> previousItems) {
+    static <T extends NhsDataDictionaryComponent & ChangeAware> StringWriter createUnorderedListHtml(String title, List<T> currentItems, List<T> previousItems) {
         List<T> newItems = getDifferences(currentItems, previousItems)
         List<T> removedItems = getDifferences(previousItems, currentItems)
 

@@ -21,7 +21,7 @@ import groovy.util.logging.Slf4j
 import org.maurodata.domain.terminology.Term
 
 @Slf4j
-class NhsDDSupportingInformation implements NhsDataDictionaryComponent <Term> {
+class NhsDDSupportingInformation extends NhsDataDictionaryComponent <Term> {
 
     @Override
     String getStereotype() {
@@ -75,7 +75,7 @@ class NhsDDSupportingInformation implements NhsDataDictionaryComponent <Term> {
 
     @Override
     void fromXml(def xml, NhsDataDictionary dataDictionary) {
-        NhsDataDictionaryComponent.super.fromXml(xml, dataDictionary)
+        super.fromXml(xml, dataDictionary)
     }
 
     String getMauroPath() {

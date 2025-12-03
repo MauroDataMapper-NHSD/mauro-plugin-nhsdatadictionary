@@ -159,10 +159,10 @@ class DataSetParser {
         if (dataClasses.size() == 1 && !dataClasses[0].label) {
             dataClasses[0].label = "Data Set Data Elements"
         }
-        /*dataClasses.eachWithIndex {dataClass, index ->
+        dataClasses.eachWithIndex {dataClass, index ->
             dataModel.childDataClasses.add(dataClass)
             //setOrder(dataClass, index + 1)
-        } */
+        }
         fixPotentialDuplicates(dataModel)
     }
 
@@ -243,9 +243,9 @@ class DataSetParser {
             return Integer.parseInt(md.value())
         }
         if(item instanceof DataElement) {
-            return item.idx
+            return item.order
         } else if(item instanceof DataClass) {
-            return item.idx
+            return item.order
         }
         else {
             return 0
@@ -253,72 +253,47 @@ class DataSetParser {
 
     }
 
-    static void setOrder(AdministeredItem item, Integer order) {
+    static void setMetadata(AdministeredItem item, String key, String value) {
         if(!item) {
-            log.error("Setting order on null element!")
+            log.error("Setting $key on null element!")
         } else {
             if(item.metadata.find {
-                it.key == NhsDataDictionary.DATASET_TABLE_KEY_WEB_ORDER
+                it.key == key
             }) {
-                throw new Exception("Duplicate web order set!")
+                throw new Exception("Duplicate metadata ($key) set!")
             } else {
-                item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_WEB_ORDER, order.toString())
+                item.metadata(getDataSetNamespace(item), key, value)
             }
         }
+
+    }
+
+    static void setOrder(AdministeredItem item, Integer order) {
+        setMetadata(item, NhsDataDictionary.DATASET_TABLE_KEY_WEB_ORDER, order.toString())
     }
 
     static void setChoice(AdministeredItem item) {
-        if(!item) {
-            log.error("Setting choice on null element!")
-        } else {
-            item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_CHOICE,  "true")
-        }
+        setMetadata(item, NhsDataDictionary.DATASET_TABLE_KEY_CHOICE, "true")
     }
 
     static void setAnd(AdministeredItem item) {
-        if(!item) {
-            log.error("Setting choice on null element!")
-        } else {
-            item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_AND, "true")
-        }
+        setMetadata(item, NhsDataDictionary.DATASET_TABLE_KEY_AND, "true")
     }
 
     static void setAddress(AdministeredItem item) {
-        if(!item) {
-            log.error("Setting address on null element!")
-        } else {
-            item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_ADDRESS_CHOICE, "true")
-        }
+        setMetadata(item, NhsDataDictionary.DATASET_TABLE_KEY_ADDRESS_CHOICE, "true")
     }
 
     static void setNameChoice(AdministeredItem item) {
-        if(!item) {
-            log.error("Setting name choice on null element!")
-        } else {
-            item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_NAME_CHOICE, "true")
-        }
+        setMetadata(item, NhsDataDictionary.DATASET_TABLE_KEY_NAME_CHOICE, "true")
     }
 
     static void setInclusiveOr(AdministeredItem item) {
-        if(!item) {
-            log.error("Setting inclusive or on null element!")
-        } else {
-            item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_INCLUSIVE_OR, "true")
-        }
+        setMetadata(item, NhsDataDictionary.DATASET_TABLE_KEY_INCLUSIVE_OR, "true")
     }
 
     static void setDataSetReference(AdministeredItem item) {
-        if(!item) {
-            log.error("Setting data set reference on null element!")
-        } else {
-            if(item.metadata.find {
-                it.key == NhsDataDictionary.DATASET_TABLE_KEY_DATA_SET_REFERENCE
-            }) {
-                throw new Exception("Duplicate data set reference set!")
-            } else {
-                item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_DATA_SET_REFERENCE, "true")
-            }
-        }
+        setMetadata(item, NhsDataDictionary.DATASET_TABLE_KEY_DATA_SET_REFERENCE, "true")
     }
 
     static boolean isDataSetReference(AdministeredItem item) {
@@ -330,11 +305,7 @@ class DataSetParser {
     }
 
     static void setDataSetReferenceTo(AdministeredItem item, String dataSetName) {
-        if(!item) {
-            log.error("Setting data set reference to on null element!")
-        } else {
-            item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_DATA_SET_REFERENCE_TO, dataSetName)
-        }
+        setMetadata(item, NhsDataDictionary.DATASET_TABLE_KEY_DATA_SET_REFERENCE_TO, dataSetName)
     }
 
 
@@ -343,11 +314,7 @@ class DataSetParser {
     }
 
     static void setMultiplicityText(AdministeredItem item, def multiplicity) {
-        if(!item) {
-            log.error("Setting multiplicity text on null element!")
-        } else {
-            item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_MULTIPLICITY_TEXT, parsePossibleParagraphs(multiplicity))
-        }
+        setMetadata(item, NhsDataDictionary.DATASET_TABLE_KEY_MULTIPLICITY_TEXT, parsePossibleParagraphs(multiplicity))
     }
 
     static String getMultiplicityText(AdministeredItem item) {
@@ -355,18 +322,7 @@ class DataSetParser {
     }
 
     static void setMRO(AdministeredItem item, def mro) {
-        if(!item) {
-            log.error("Setting MRO on null element!")
-        } else {
-            if(item.metadata.find {
-                it.key == NhsDataDictionary.DATASET_TABLE_KEY_MRO
-            }) {
-                System.err.println("Duplicate mandation")
-                throw new Exception("Duplicate mandation set!")
-            } else {
-                item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_MRO, mandationFromMRO(parsePossibleParagraphs(mro)))
-            }
-        }
+        setMetadata(item, NhsDataDictionary.DATASET_TABLE_KEY_MRO, mandationFromMRO(parsePossibleParagraphs(mro)))
     }
 
     static String mandationFromMRO(String mro) {
@@ -394,11 +350,7 @@ class DataSetParser {
     }
 
     static void setRules(AdministeredItem item, def rules) {
-        if(!item) {
-            log.error("Setting rules on null element!")
-        } else {
-            item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_RULES, parsePossibleParagraphs(rules))
-        }
+        setMetadata(item, NhsDataDictionary.DATASET_TABLE_KEY_RULES, parsePossibleParagraphs(rules))
     }
 
     static String getRules(AdministeredItem item) {
@@ -406,17 +358,7 @@ class DataSetParser {
     }
 
     static void setGroupRepeats(AdministeredItem item, def groupRepeats) {
-        if(!item) {
-            log.error("Setting group repeats on null element!")
-        } else {
-            if(item.metadata.find {
-                it.key == NhsDataDictionary.DATASET_TABLE_KEY_GROUP_REPEATS
-            }) {
-                throw new Exception("Duplicate group repeats set!")
-            } else {
-                item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_GROUP_REPEATS, parsePossibleParagraphs(groupRepeats))
-            }
-        }
+        setMetadata(item, NhsDataDictionary.DATASET_TABLE_KEY_GROUP_REPEATS, parsePossibleParagraphs(groupRepeats))
     }
 
     static String getGroupRepeats(AdministeredItem item) {
@@ -425,11 +367,7 @@ class DataSetParser {
 
 
     static void setNotOption(AdministeredItem item) {
-        if(!item) {
-            log.error("Setting not option on null element!")
-        } else {
-            item.metadata(getDataSetNamespace(item), NhsDataDictionary.DATASET_TABLE_KEY_NOT_OPTION, "true")
-        }
+        setMetadata(item, NhsDataDictionary.DATASET_TABLE_KEY_NOT_OPTION, "true")
     }
 
     static boolean isChoice(AdministeredItem item) {
@@ -568,14 +506,14 @@ class DataSetParser {
 
             dataElement = new DataElement(label: DDHelperFunctions.tidyLabel(anchor.text()), dataType: dataType)
             currentClass.dataElements.add(dataElement)
-/*
+
             SemanticLink semanticLink = new SemanticLink(
-                targetMultiFacetAwareItemId: originalDataElement.id,
-                targetMultiFacetAwareItemDomainType: DataElement,
+                target: originalDataElement,
                 linkType: SemanticLinkType.REFINES,
+                multiFacetAwareItem: dataElement
                 )
             dataElement.semanticLinks.add(semanticLink)
- */
+
         }
         return dataElement
     }

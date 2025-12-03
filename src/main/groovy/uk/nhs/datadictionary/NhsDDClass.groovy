@@ -30,7 +30,7 @@ import uk.nhs.datadictionary.publish.structure.DictionaryItem
 import uk.nhs.datadictionary.publish.structure.ItemLink
 
 @Slf4j
-class NhsDDClass implements NhsDataDictionaryComponent <DataClass> {
+class NhsDDClass extends NhsDataDictionaryComponent <DataClass> {
 
     @Override
     String getStereotype() {
@@ -89,7 +89,7 @@ class NhsDDClass implements NhsDataDictionaryComponent <DataClass> {
 
     @Override
     void fromXml(def xml, NhsDataDictionary dataDictionary) {
-        NhsDataDictionaryComponent.super.fromXml(xml, dataDictionary)
+        super.fromXml(xml, dataDictionary)
 
         xml.property.each { property ->
             String attributeUin = property.referencedElement.text()

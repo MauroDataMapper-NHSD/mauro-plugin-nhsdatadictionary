@@ -43,8 +43,8 @@ dependencies {
     compileOnly("io.micronaut.data:micronaut-data-processor")
     platformapi("io.micronaut.data:micronaut-data-jdbc")
     runtimeOnly("org.yaml:snakeyaml")
-    platformapi("org.apache.groovy:groovy-xml")
-    platformapi("org.apache.groovy:groovy-json")
+    implementation group: 'org.apache.groovy', name: 'groovy-json', version: '4.0.19'
+    implementation group: 'org.apache.groovy', name: 'groovy-xml', version: '4.0.25'
     implementation('commons-io:commons-io:2.20.0')
     implementation('org.apache.commons:commons-lang3:3.18.0')
     platformapi("io.micronaut:micronaut-http-client")
@@ -79,7 +79,7 @@ dependencies {
     // Daisy Diff and transitive dependencies.  Used in the generation of change requests
     implementation group: 'org.outerj.daisy', name: 'daisydiff', version: '1.2.3-atlassian-hosted'
 
-    implementation 'org.cyberneko:html:1.9.8'
+    implementation 'net.sourceforge.nekohtml:nekohtml:1.9.22'
     implementation 'xerces:xercesImpl:2.12.2'
     implementation "xml-apis:xml-apis:1.4.01"
     implementation "net.sf.jtidy:jtidy:r938"
@@ -91,7 +91,6 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("io.micronaut.test:micronaut-test-junit5")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
-
 }
 
 

@@ -20,18 +20,14 @@ package uk.nhs.datadictionary.integritychecks
 import uk.nhs.datadictionary.NhsDataDictionary
 
 
+
 trait IntegrityCheck {
 
     String name
     String description
 
-    List<IntegrityCheckError> errors = []
+    boolean enabled = true
 
     abstract List<IntegrityCheckError> runCheck(NhsDataDictionary dataDictionary)
-
-    void sortErrors() {
-        errors = errors.sort { it.component.name }
-    }
-
 
 }

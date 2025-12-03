@@ -19,7 +19,7 @@ package uk.nhs.datadictionary
 
 import org.maurodata.domain.terminology.Term
 
-class NhsDDWebPage implements NhsDataDictionaryComponent <Term> {
+class NhsDDWebPage extends NhsDataDictionaryComponent <Term> {
 
     List<String> path = []
 
@@ -63,7 +63,7 @@ class NhsDDWebPage implements NhsDataDictionaryComponent <Term> {
 
     @Override
     void fromXml(def xml, NhsDataDictionary dataDictionary) {
-        NhsDataDictionaryComponent.super.fromXml(xml, dataDictionary)
+        super.fromXml(xml, dataDictionary)
         dataDictionary.webPagesByUin[getUin()] = this
         if(otherProperties["baseUri"].contains("Messages")) {
             path = getPath()

@@ -17,10 +17,11 @@
  */
 package uk.nhs.datadictionary.integritychecks
 
+import jakarta.inject.Singleton
 import uk.nhs.datadictionary.NhsDDClass
 import uk.nhs.datadictionary.NhsDataDictionary
 
-
+@Singleton
 class AllClassesHaveRelationships implements IntegrityCheck {
 
     String name = "Class Relationships Defined"
@@ -29,11 +30,9 @@ class AllClassesHaveRelationships implements IntegrityCheck {
 
     @Override
     List<IntegrityCheckError> runCheck(NhsDataDictionary dataDictionary) {
-
-        errors = dataDictionary.classes.values()
+        List<IntegrityCheckError> errors = dataDictionary.classes.values()
             .findAll{ddClass -> !ddClass.isRetired() && !classHasRelationships(ddClass) }
             .collect { component -> new IntegrityCheckError(component) }
-
         return errors
     }
 

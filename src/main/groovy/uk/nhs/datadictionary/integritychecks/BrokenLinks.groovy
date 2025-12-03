@@ -18,12 +18,14 @@
 package uk.nhs.datadictionary.integritychecks
 
 import groovy.util.logging.Slf4j
+import jakarta.inject.Singleton
 import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.NhsDataDictionaryComponent
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
+@Singleton
 @Slf4j
 class BrokenLinks implements IntegrityCheck {
 
@@ -80,9 +82,7 @@ class BrokenLinks implements IntegrityCheck {
         threads.each { it.join() }
         List<NhsDataDictionaryComponent> components = (errorComponents.toSet()).toList()
 
-        errors = components.collect { component -> new IntegrityCheckError(component) }
-
-        return errors
+        components.collect { component -> new IntegrityCheckError(component) }
     }
 
 }
