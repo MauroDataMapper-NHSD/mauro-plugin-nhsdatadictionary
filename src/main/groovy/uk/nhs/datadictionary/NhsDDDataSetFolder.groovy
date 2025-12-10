@@ -26,8 +26,8 @@ class NhsDDDataSetFolder extends NhsDataDictionaryComponent <Folder> {
 
     List<String> folderPath = []
 
-    Map<String, NhsDDDataSetFolder> childFolders = [:]
-    Map<String, NhsDDDataSet> dataSets = [:]
+    List<NhsDDDataSetFolder> childFolders = []
+    List<NhsDDDataSet> dataSets = []
 
     @Override
     String getStereotype() {

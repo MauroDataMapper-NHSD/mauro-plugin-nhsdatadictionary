@@ -27,7 +27,6 @@ import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.TermC
 import org.maurodata.persistence.terminology.dto.TermDTORepository
 import uk.nhs.datadictionary.NhsDDBusinessDefinition
 import uk.nhs.datadictionary.NhsDataDictionary
-import uk.nhs.datadictionary.utils.StereotypedCatalogueItem
 
 @Slf4j
 @Singleton

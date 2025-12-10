@@ -122,13 +122,13 @@ class DataSetsWebsiteHelper {
                 keyRef "${folder.getDitaKey()}_overview"
                 toc Toc.YES
                 linking Linking.NORMAL
-                folder.childFolders.values().sort { it.name }.each { childFolder ->
+                folder.childFolders.sort { it.name }.each { childFolder ->
                     topicSet.mapRef {
                         toc Toc.YES
                         keyRef childFolder.getDitaKey()
                     }
                 }
-                folder.dataSets.values().sort {it.name }.each { dataSet ->
+                folder.dataSets.sort {it.name }.each { dataSet ->
                     topicSet.topicRef {
                         toc Toc.YES
                         keyRef dataSet.getDitaKey()

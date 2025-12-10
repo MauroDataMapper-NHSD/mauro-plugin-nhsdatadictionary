@@ -59,6 +59,18 @@ class NhsDDCode implements ChangeAware {
         this.usedByElements.add(owningElement)
     }
 
+    NhsDDCode(Term term) {
+        code = term.code
+        definition = term.definition
+        publishDate = term.metadata.find {it.multiFacetAwareItemId == term.id && it.key == 'publishDate'}?.value
+        webOrder = Integer.parseInt(term.metadata.find {it.multiFacetAwareItemId == term.id && it.key == 'webOrder'}?.value ?: "0")
+        webPresentation = term.metadata.find {it.multiFacetAwareItemId == term.id && it.key == 'webPresentation'}?.value
+        isDefault = Boolean.valueOf(term.metadata.find {it.multiFacetAwareItemId == term.id && it.key == 'isDefault'}?.value ?: "false")
+        isRetired = Boolean.valueOf(term.metadata.find {it.multiFacetAwareItemId == term.id && it.key == 'isRetired'}?.value ?: "false")
+        retiredDate = term.metadata.find {it.multiFacetAwareItemId == term.id && it.key == 'retiredDate'}?.value
+        catalogueItem = term
+    }
+
     NhsDDCode() {
 
     }

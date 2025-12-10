@@ -18,16 +18,21 @@
 package uk.nhs.datadictionary.services
 
 import groovy.util.logging.Slf4j
+import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
+import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.TermCacheableRepository
 import uk.nhs.datadictionary.NhsDDSupportingInformation
 import uk.nhs.datadictionary.NhsDataDictionary
 
 @Slf4j
 @Singleton
 class SupportingInformationService extends DataDictionaryComponentService<Term, NhsDDSupportingInformation> {
+
+    @Inject
+    TermCacheableRepository termCacheableRepository
 
     String getStereotype() {
         "supportingInformation"
@@ -38,7 +43,7 @@ class SupportingInformationService extends DataDictionaryComponentService<Term, 
     NhsDDSupportingInformation show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
         NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary(versionedFolderId)
 
-        Term supportingInformationTerm = termService.get(id)
+        Term supportingInformationTerm = termCacheableRepository.readById(id)
         NhsDDSupportingInformation supportingInformation = new NhsDDSupportingInformation().fromMauroItem(dataDictionary, mauroPersistenceService, supportingInformationTerm)
         supportingInformation.definition = convertLinksInDescription(versionedFolderId, supportingInformation.getDescription())
         return supportingInformation

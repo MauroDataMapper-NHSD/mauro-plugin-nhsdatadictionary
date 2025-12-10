@@ -49,6 +49,7 @@ import uk.nhs.datadictionary.NhsDDDataSetFolder
 import uk.nhs.datadictionary.NhsDDElement
 import uk.nhs.datadictionary.NhsDDSupportingInformation
 import uk.nhs.datadictionary.NhsDataDictionary
+import uk.nhs.datadictionary.NhsDataDictionaryComponent
 import uk.nhs.datadictionary.fhir.FhirBundle
 import uk.nhs.datadictionary.fhir.FhirEntry
 import uk.nhs.datadictionary.integritychecks.IntegrityCheck
@@ -56,7 +57,6 @@ import uk.nhs.datadictionary.integritychecks.IntegrityCheckError
 import uk.nhs.datadictionary.publish.MauroCatalogueItemPathResolver
 import uk.nhs.datadictionary.publish.changePaper.ChangePaperPreview
 import uk.nhs.datadictionary.services.profiles.DDWorkItemProfileProviderService
-import uk.nhs.datadictionary.services.profiles.MauroPersistenceService
 import uk.nhs.datadictionary.utils.StereotypedCatalogueItem
 
 import java.nio.file.Files
@@ -176,6 +176,8 @@ class NhsDataDictionaryService {
     NhsDataDictionary buildDataDictionary(UUID versionedFolderId) {
         NhsDataDictionary dataDictionary = newDataDictionary(versionedFolderId)
         Folder contentsFolder = (Folder) contentsService.loadWithContent(folderRepository.readById(versionedFolderId))
+        log.warn("Loaded content!")
+        dataDictionary.containingVersionedFolder = contentsFolder
 
         buildWorkItemDetails(dataDictionary.containingVersionedFolder, dataDictionary)
 
@@ -190,12 +192,14 @@ class NhsDataDictionaryService {
         DataModel elementsModel = contentsFolder.dataModels.find {it.label == NhsDataDictionary.ELEMENTS_MODEL_NAME}
 
         if(classesModel) {
+            dataDictionary.getTermsForAttributes()
             addAttributesToDictionary(classesModel, dataDictionary)
             addClassesToDictionary(classesModel, dataDictionary)
         } else {
             log.error("No classes model found")
         }
         if(elementsModel) {
+            dataDictionary.getTermsForElements()
             addElementsToDictionary(elementsModel, dataDictionary)
         } else {
             log.error("No elements model found")
@@ -343,7 +347,7 @@ class NhsDataDictionaryService {
                 folderPath.addAll(path)
                 String parentFolderName = folderPath.removeLast()
                 NhsDDDataSetFolder folder = dataDictionary.dataSetFolders[folderPath].find {it.name == parentFolderName }
-                folder.dataSets[dataSet.name] = dataSet
+                folder.dataSets.add(dataSet)
             }
         }
     }
@@ -370,7 +374,7 @@ class NhsDataDictionaryService {
                 childPath.add(dataSetFolder.name)
 
                 dataDictionary.dataSetFolders[childPath].each {childDataSetFolder ->
-                    dataSetFolder.childFolders[childDataSetFolder.name] = childDataSetFolder
+                    dataSetFolder.childFolders.add(childDataSetFolder)
                 }
             }
 
@@ -380,21 +384,21 @@ class NhsDataDictionaryService {
 
     void addBusDefsToDictionary(Terminology busDefsTerminology, NhsDataDictionary dataDictionary) {
         dataDictionary.businessDefinitions =
-            termCacheableRepository.findAllByTerminology(busDefsTerminology).collectEntries {ci ->
+            busDefsTerminology.terms.collectEntries {ci ->
                 [ci.label, new NhsDDBusinessDefinition().fromMauroItem(dataDictionary, mauroPersistenceService, ci)]
             }
     }
 
     void addSupDefsToDictionary(Terminology supDefsTerminology, NhsDataDictionary dataDictionary) {
         dataDictionary.supportingInformation =
-            termCacheableRepository.findAllByTerminology(supDefsTerminology).collectEntries {ci ->
+            supDefsTerminology.terms.collectEntries {ci ->
                 [ci.label, new NhsDDSupportingInformation().fromMauroItem(dataDictionary, mauroPersistenceService, ci)]
             }
         }
 
     void addDataSetConstraintsToDictionary(Terminology dataSetConstraintsTerminology, NhsDataDictionary dataDictionary) {
         dataDictionary.dataSetConstraints =
-            termCacheableRepository.findAllByTerminology(dataSetConstraintsTerminology).collectEntries {ci ->
+            dataSetConstraintsTerminology.terms.collectEntries {ci ->
                 [ci.label, new NhsDDDataSetConstraint().fromMauroItem(dataDictionary, mauroPersistenceService, ci)]
             }
     }
@@ -437,30 +441,16 @@ class NhsDataDictionaryService {
     List<StereotypedCatalogueItem> allItemsIndex(UUID versionedFolderId) {
         NhsDataDictionary dataDictionary = buildDataDictionary(versionedFolderId)
 
-        List<StereotypedCatalogueItem> allItems = []
+        List<NhsDataDictionaryComponent> allItems = []
 
-        allItems.addAll(dataDictionary.dataSets.values().collect {
-            new StereotypedCatalogueItem(it)
-        })
-        allItems.addAll(dataDictionary.classes.values().collect {
-            new StereotypedCatalogueItem(it)
-        })
-        allItems.addAll(dataDictionary.elements.values().collect {
-            new StereotypedCatalogueItem(it)
-        })
-        allItems.addAll(dataDictionary.attributes.values().collect {
-            new StereotypedCatalogueItem(it)
-        })
-        allItems.addAll(dataDictionary.businessDefinitions.values().collect {
-            new StereotypedCatalogueItem(it)
-        })
-        allItems.addAll(dataDictionary.supportingInformation.values().collect {
-            new StereotypedCatalogueItem(it)
-        })
-        allItems.addAll(dataDictionary.dataSetConstraints.values().collect {
-            new StereotypedCatalogueItem(it)
-        })
-        return allItems.sort {it.label.toLowerCase()}
+        allItems.addAll(dataDictionary.dataSets.values())
+        allItems.addAll(dataDictionary.classes.values())
+        allItems.addAll(dataDictionary.elements.values())
+        allItems.addAll(dataDictionary.attributes.values())
+        allItems.addAll(dataDictionary.businessDefinitions.values())
+        allItems.addAll(dataDictionary.supportingInformation.values())
+        allItems.addAll(dataDictionary.dataSetConstraints.values())
+        return allItems.collect {new StereotypedCatalogueItem(it)}.sort {it.name.toLowerCase()}
     }
 
     private static void zipFile(File fileToZip, String fileName, ZipOutputStream zipOut) throws IOException {

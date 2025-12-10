@@ -32,6 +32,7 @@ import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
 import org.maurodata.persistence.datamodel.DataElementRepository
 import uk.nhs.datadictionary.NhsDDAttribute
+import uk.nhs.datadictionary.NhsDDBusinessDefinition
 import uk.nhs.datadictionary.NhsDDElement
 import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.utils.DDHelperFunctions
@@ -54,11 +55,9 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
 
     @Override
     NhsDDAttribute show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
-        NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary(versionedFolderId)
-
-        DataElement attributeElement = dataElementService.get(id)
-        NhsDDAttribute attribute = new NhsDDAttribute().fromMauroItem(dataDictionary, mauroPersistenceService, attributeElement)
-        attribute.instantiatedByElements.addAll (getAllElementsForAttribute(dataDictionary, attribute))
+        DataElement attributeElement = dataElementRepository.readById(id)
+        NhsDDAttribute attribute = new NhsDDAttribute().fromMauroItem(null, mauroPersistenceService, attributeElement)
+        attribute.instantiatedByElements.addAll (getAllElementsForAttribute(null, attribute))
         attribute.definition = convertLinksInDescription(versionedFolderId, attribute.getDescription())
         attribute.codes.each {code ->
             if(code.webPresentation) {
@@ -68,15 +67,19 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
         return attribute
     }
 
-    Set<NhsDDElement> getAllElementsForAttribute(NhsDataDictionary dataDictionary, NhsDDAttribute nhsDDAttribute) {
+    List<NhsDDElement> getAllElementsForAttribute(NhsDataDictionary dataDictionary, NhsDDAttribute nhsDDAttribute) {
         nhsDDAttribute.catalogueItem.semanticLinks.findAll {semanticLink ->
             semanticLink.linkType == SemanticLinkType.REFINES
         }.collect {semanticLink ->
-            DataElement dataElement = dataElementRepository.readById(semanticLink.targetMultiFacetAwareItemId)
-            new NhsDDElement().fromMauroItem(dataDictionary, mauroPersistenceService, dataElement)
+            if(dataDictionary) {
+                return dataDictionary.elementsByCatalogueId[semanticLink.targetMultiFacetAwareItemId]
+            } else {
+                DataElement dataElement = dataElementRepository.readById(semanticLink.targetMultiFacetAwareItemId)
+                new NhsDDElement().fromMauroItem(dataDictionary, mauroPersistenceService, dataElement)
+            }
         }.findAll{
             !it.isRetired()
-        }.sort {it.name}
+        }.sort {it.name} as List<NhsDDElement>
     }
 
 
@@ -94,7 +97,7 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
                            Folder dictionaryFolder, DataModel classesDataModel,
                            Map<String, Terminology> attributeTerminologiesByName, Map<String, DataClass> attributeClassesByUin, Set<String> attributeUinIsKey) {
 
-        Folder attributeTerminologiesFolder = new Folder(label: "Attribute Terminologies")
+        Folder attributeTerminologiesFolder = new Folder(label: NhsDataDictionary.ATTRIBUTE_TERMINOLOGIES_FOLDER_NAME)
         dictionaryFolder.childFolders.add(attributeTerminologiesFolder)
 
         DataType stringDataType = classesDataModel.dataTypes.find {it.label == "String"}

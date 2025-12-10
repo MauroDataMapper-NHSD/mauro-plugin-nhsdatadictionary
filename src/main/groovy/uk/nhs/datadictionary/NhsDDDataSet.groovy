@@ -26,12 +26,11 @@ import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.facet.Edit
 import org.maurodata.domain.facet.EditType
-import org.maurodata.domain.facet.Metadata
 import uk.nhs.datadictionary.publish.structure.DictionaryItem
 import uk.nhs.datadictionary.publish.structure.datasets.DataSetSection
 import uk.nhs.datadictionary.publish.structure.datasets.cds.LegacyCdsDataSetSection
 import uk.nhs.datadictionary.publish.structure.datasets.other.OtherDataSetTable
-import uk.nhs.datadictionary.services.profiles.MauroPersistenceService
+import uk.nhs.datadictionary.services.MauroPersistenceService
 
 @Slf4j
 class NhsDDDataSet extends NhsDataDictionaryComponent <DataModel> {
@@ -224,7 +223,7 @@ class NhsDDDataSet extends NhsDataDictionaryComponent <DataModel> {
     }
 
     @Override
-    NhsDataDictionaryComponent<DataModel> fromMauroItem(NhsDataDictionary dataDictionary, MauroPersistenceService mauroPersistenceService, DataModel catalogueItem) {
+    NhsDDDataSet fromMauroItem(NhsDataDictionary dataDictionary, MauroPersistenceService mauroPersistenceService, DataModel catalogueItem) {
         super.fromMauroItem(dataDictionary, mauroPersistenceService, catalogueItem)
         this.catalogueItem.childDataClasses.each {dataClass ->
             dataSetClasses.add(new NhsDDDataSetClass(dataClass, dataDictionary))
@@ -252,7 +251,7 @@ class NhsDDDataSet extends NhsDataDictionaryComponent <DataModel> {
     }
 
     void loadDataModelMergeEdits(List<Edit> allMergeEdits, DataModel item) {
-        log.info("Getting merge edits for data model '$item.label'")
+        log.trace("Getting merge edits for data model '$item.label'")
         List<Edit> mergeEdits = item.edits.findAll {
             it.title = EditType.MERGE
         }
@@ -264,7 +263,7 @@ class NhsDDDataSet extends NhsDataDictionaryComponent <DataModel> {
     }
 
     void loadDataClassMergeEdits(List<Edit> allMergeEdits, DataClass item) {
-        log.info("Getting merge edits for data class '$item.label'")
+        log.trace("Getting merge edits for data class '$item.label'")
         List<Edit> mergeEdits = item.edits.findAll {
             it.title = EditType.MERGE
         }
@@ -284,7 +283,7 @@ class NhsDDDataSet extends NhsDataDictionaryComponent <DataModel> {
     }
 
     void loadDataElementMergeEdits(List<Edit> allMergeEdits, DataElement item) {
-        log.info("Getting merge edits for data element '$item.label'")
+        log.trace("Getting merge edits for data element '$item.label'")
         List<Edit> mergeEdits = item.edits.findAll {
             it.title = EditType.MERGE
         }

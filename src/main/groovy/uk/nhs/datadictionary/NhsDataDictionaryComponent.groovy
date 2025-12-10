@@ -42,7 +42,7 @@ import uk.nhs.datadictionary.publish.structure.DictionaryItem
 import uk.nhs.datadictionary.publish.structure.ItemLink
 import uk.nhs.datadictionary.publish.structure.WhereUsedRow
 import uk.nhs.datadictionary.publish.structure.WhereUsedSection
-import uk.nhs.datadictionary.services.profiles.MauroPersistenceService
+import uk.nhs.datadictionary.services.MauroPersistenceService
 import uk.nhs.datadictionary.utils.DDHelperFunctions
 
 import java.time.LocalDate
@@ -641,23 +641,23 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         name = catalogueItem.label
         definition = catalogueItem.description?:""
         catalogueItemId = catalogueItem.id
-        branchId = dataDictionary.containingVersionedFolder.id
+        branchId = dataDictionary?.containingVersionedFolder?.id
 
         // This is not obvious, but these parent/model IDs are required in the GSON views for the integrity checks - they are used for the direct
         // URLs to items in the Mauro UI
         if(catalogueItem instanceof DataClass) {
             catalogueItemParentId = ((DataClass)catalogueItem).parentDataClass?.id?.toString()
-            catalogueItemModelId = ((DataClass)catalogueItem).dataModel.id.toString()
+            catalogueItemModelId = ((DataClass)catalogueItem).dataModel?.id?.toString()
         }
         if(catalogueItem instanceof DataElement) {
             catalogueItemParentId = ((DataElement)catalogueItem).dataClass?.id?.toString()
-            catalogueItemModelId = ((DataElement)catalogueItem).dataClass?.dataModel?.id.toString()
+            catalogueItemModelId = ((DataElement)catalogueItem).dataClass?.dataModel?.id?.toString()
         }
         if(catalogueItem instanceof DataModel) {
             catalogueItemModelId = catalogueItem.id.toString()
         }
         if(catalogueItem instanceof Term) {
-            catalogueItemModelId = ((Term)catalogueItem).terminology.id.toString()
+            catalogueItemModelId = ((Term)catalogueItem).terminology?.id?.toString()
         }
 
         List<Metadata> metadata = catalogueItem.metadata.findAll {
@@ -678,8 +678,8 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
     static Pattern CHANGE_LOG_BRANCH_NAME_PATTERN = Pattern.compile(/(?<=\$)(.*?(?='))/)
 
     void setNhsDataDictionaryComponentChangeLog(NhsDataDictionary dataDictionary) {
-        changeLogHeaderText = dataDictionary.changeLogHeaderText
-        changeLogFooterText = dataDictionary.changeLogFooterText
+        changeLogHeaderText = dataDictionary?.changeLogHeaderText
+        changeLogFooterText = dataDictionary?.changeLogFooterText
 
         List<Edit> mergeEdits = getMergeEditsForChangeLog()
         if (mergeEdits.empty) {
@@ -696,10 +696,10 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         }
 
         changeLog = branchNames
-            .findAll { branchName -> dataDictionary.workItemBranches.containsKey(branchName) }
+            .findAll { branchName -> dataDictionary?.workItemBranches?.containsKey(branchName) }
             .collect { branchName ->
-                NhsDDBranch branch = dataDictionary.workItemBranches.get(branchName)
-                new NhsDDChangeLog(branch, dataDictionary.changeRequestUrl)
+                NhsDDBranch branch = dataDictionary?.workItemBranches?.get(branchName)
+                new NhsDDChangeLog(branch, dataDictionary?.changeRequestUrl)
             }
     }
 
@@ -711,7 +711,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         // Assume already loaded in from the database
         //editService.findAllByResourceAndTitle(component.catalogueItem.domainType, component.catalogueItem.id, EditTitle.MERGE)
     }
-
+/*
     @JsonIgnore
     List<NhsDDCode> getCodesForTerms(List<Term> terms, NhsDataDictionary nhsDataDictionary) {
         List<NhsDDCode> codes = []
@@ -740,7 +740,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         })
         return codes
     }
-
+*/
     @JsonIgnore
     @Override
     String getDiscriminator() {

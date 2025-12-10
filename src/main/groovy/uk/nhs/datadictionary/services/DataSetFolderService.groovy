@@ -21,8 +21,10 @@ import groovy.util.logging.Slf4j
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import org.maurodata.domain.folder.Folder
+import org.maurodata.persistence.cache.ModelCacheableRepository
 import org.maurodata.persistence.datamodel.DataModelRepository
 import org.maurodata.persistence.folder.FolderRepository
+import uk.nhs.datadictionary.NhsDDBusinessDefinition
 import uk.nhs.datadictionary.NhsDDDataSet
 import uk.nhs.datadictionary.NhsDDDataSetFolder
 import uk.nhs.datadictionary.NhsDataDictionary
@@ -34,8 +36,8 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
     @Inject
     DataSetService dataSetService
 
-    @Inject FolderRepository folderRepository
-    @Inject DataModelRepository dataModelRepository
+    @Inject ModelCacheableRepository.FolderCacheableRepository folderCacheableRepository
+    @Inject ModelCacheableRepository.DataModelCacheableRepository dataModelCacheableRepository
 
     String getStereotype() {
         "dataSetFolder"
@@ -44,36 +46,34 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
 
     @Override
     NhsDDDataSetFolder show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
-        NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary(versionedFolderId)
-
         Folder folderFolder
         if(id) {
-            folderFolder = folderRepository.readById(id)
+            folderFolder = folderCacheableRepository.readById(id)
         } else {
-            folderFolder = folderRepository.readAllByParentFolder(dataDictionary.containingVersionedFolder).find {
+            folderFolder = folderCacheableRepository.readAllByParentFolder(new Folder(id: id)).find {
                 it.label == NhsDataDictionary.DATA_SETS_FOLDER_NAME
             }
         }
-        NhsDDDataSetFolder dataSetFolder = new NhsDDDataSetFolder().fromMauroItem(dataDictionary, mauroPersistenceService, folderFolder) as NhsDDDataSetFolder
+        NhsDDDataSetFolder dataSetFolder = new NhsDDDataSetFolder().fromMauroItem(null, mauroPersistenceService, folderFolder) as NhsDDDataSetFolder
         dataSetFolder.definition = convertLinksInDescription(versionedFolderId, dataSetFolder.getDescription())
         if(id) {
             List<String> folderPath = [folderFolder.label]
-            Folder parentFolder = (Folder) folderFolder.getParent()
-            while(parentFolder.label != "Data Sets") {
+            Folder parentFolder = folderCacheableRepository.readById(folderFolder.getParentFolder().id)
+            while(parentFolder && parentFolder.label != "Data Sets") {
                 folderPath.add(0, parentFolder.label)
-                parentFolder = (Folder) parentFolder.getParent()
+                parentFolder = folderCacheableRepository.readById(parentFolder.getParentFolder().id)
             }
             dataSetFolder.folderPath = folderPath
         }
-        folderFolder.childFolders.each { it ->
-            NhsDDDataSetFolder childFolder = new NhsDDDataSetFolder().fromMauroItem(dataDictionary, mauroPersistenceService, it)
-            dataSetFolder.childFolders[it.label] = childFolder
+        folderCacheableRepository.readAllByParent(folderFolder).each {
+            NhsDDDataSetFolder childFolder = new NhsDDDataSetFolder().fromMauroItem(null, mauroPersistenceService, it)
+            dataSetFolder.childFolders.add(childFolder)
         }
 
-        dataModelRepository.findAllByFolderId(folderFolder.id).each {
-            NhsDDDataSet childDataSet = new NhsDDDataSet().fromMauroItem(dataDictionary, mauroPersistenceService, it)
+        dataModelCacheableRepository.findAllByFolderId(folderFolder.id).each {
+            NhsDDDataSet childDataSet = new NhsDDDataSet().fromMauroItem(null, mauroPersistenceService, it)
             if (!childDataSet.isRetired()) {
-                dataSetFolder.dataSets[it.label] = childDataSet
+                dataSetFolder.dataSets.add(childDataSet)
             }
         }
 
@@ -103,7 +103,7 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
 
     Map<List<String>, Set<Folder>> getAllFolders(List<String> currentPath, Folder dataSetsFolder, Boolean includeRetired = false) {
         Map<List<String>, Set<Folder>> returnFolders = [:]
-        folderRepository.readAllByParentFolder(dataSetsFolder).each {subFolder ->
+        dataSetsFolder.childFolders.each {subFolder ->
             if(returnFolders[currentPath]) {
                 returnFolders[currentPath].add(subFolder)
             } else {

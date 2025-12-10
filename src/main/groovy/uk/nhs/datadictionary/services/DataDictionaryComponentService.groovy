@@ -19,36 +19,19 @@ package uk.nhs.datadictionary.services
 
 import groovy.util.logging.Slf4j
 import io.micronaut.context.ApplicationContext
-import io.micronaut.transaction.annotation.Transactional
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
-import org.maurodata.domain.datamodel.DataClass
-import org.maurodata.domain.datamodel.DataElement
-import org.maurodata.domain.datamodel.DataModel
-import org.maurodata.domain.datamodel.DataModelService
-import org.maurodata.domain.facet.Edit
-import org.maurodata.domain.facet.EditType
-import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.model.AdministeredItem
 import org.maurodata.domain.model.Item
-import org.maurodata.domain.terminology.Term
-import org.maurodata.domain.terminology.Terminology
-import org.maurodata.domain.terminology.TerminologyService
-import org.maurodata.exception.MauroApplicationException
 import org.maurodata.persistence.cache.FacetCacheableRepository.MetadataCacheableRepository
 import org.maurodata.persistence.cache.ModelCacheableRepository.FolderCacheableRepository
-import uk.nhs.datadictionary.NhsDDBranch
-import uk.nhs.datadictionary.NhsDDChangeLog
-import uk.nhs.datadictionary.NhsDDCode
-import uk.nhs.datadictionary.NhsDDElement
 import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.NhsDataDictionaryComponent
 import uk.nhs.datadictionary.publish.ItemLinkScanner
 import uk.nhs.datadictionary.publish.MauroCatalogueItemPathResolver
 import uk.nhs.datadictionary.publish.PublishContext
 import uk.nhs.datadictionary.publish.PublishTarget
-import uk.nhs.datadictionary.services.profiles.MauroPersistenceService
 import uk.nhs.datadictionary.utils.StereotypedCatalogueItem
 
 import java.util.regex.Matcher
@@ -73,7 +56,9 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
     abstract String getStereotype()
 
     List<StereotypedCatalogueItem> index(UUID dictionaryFolderId, NhsDataDictionaryService nhsDataDictionaryService, Boolean includeRetired = false) {
-        (getAll(dictionaryFolderId, nhsDataDictionaryService, includeRetired)).sort {it.label}.collect {new StereotypedCatalogueItem(it, getStereotype())}
+        getAll(dictionaryFolderId, nhsDataDictionaryService, includeRetired)
+            .collect {new StereotypedCatalogueItem(it, stereotype)}
+            .sort {it.name}
     }
 
     abstract def show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService)
@@ -94,7 +79,7 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
 */
     abstract D getByCatalogueItemId(UUID catalogueItemId, NhsDataDictionary nhsDataDictionary)
 
-    List<StereotypedCatalogueItem> getWhereUsed(UUID versionedFolderId, String id) {
+    List<NhsDataDictionaryComponent> getWhereUsed(UUID versionedFolderId, String id) {
         NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(versionedFolderId)
 
         // Do a full check of every "where used" link type, same as the DITA generation. Only way to be sure that
@@ -113,7 +98,7 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
         component.whereUsed
             .findAll { !it.key.isRetired() }
             .sort { it.key.name }
-            .collect { item, text -> new StereotypedCatalogueItem(item, text) }
+            .collect { item, text -> item }
     }
 
     /**

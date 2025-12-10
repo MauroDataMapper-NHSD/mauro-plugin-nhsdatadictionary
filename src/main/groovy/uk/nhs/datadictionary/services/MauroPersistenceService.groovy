@@ -1,4 +1,4 @@
-package uk.nhs.datadictionary.services.profiles
+package uk.nhs.datadictionary.services
 
 import jakarta.inject.Inject
 import jakarta.inject.Singleton

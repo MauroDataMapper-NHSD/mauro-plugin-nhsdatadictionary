@@ -19,6 +19,7 @@ package uk.nhs.datadictionary.controllers
 
 import jakarta.inject.Inject
 import org.maurodata.domain.model.AdministeredItem
+import uk.nhs.datadictionary.NhsDataDictionaryComponent
 import uk.nhs.datadictionary.services.AttributeService
 import uk.nhs.datadictionary.services.BusinessDefinitionService
 import uk.nhs.datadictionary.services.ClassService
@@ -29,7 +30,6 @@ import uk.nhs.datadictionary.services.DataSetService
 import uk.nhs.datadictionary.services.ElementService
 import uk.nhs.datadictionary.services.NhsDataDictionaryService
 import uk.nhs.datadictionary.services.SupportingInformationService
-import uk.nhs.datadictionary.utils.StereotypedCatalogueItem
 
 abstract class DataDictionaryComponentController<T extends AdministeredItem> {
 	static responseFormats = ['json', 'xml']
@@ -49,7 +49,7 @@ abstract class DataDictionaryComponentController<T extends AdministeredItem> {
 
     abstract String getParameterIdKey()
 
-
+/*
     def index(UUID dictionaryId, Boolean includeDeleted = false) {
         return getService().index(UUID.fromString(params.versionedFolderId), params.boolean('includeRetired')?:false)
     }
@@ -59,8 +59,8 @@ abstract class DataDictionaryComponentController<T extends AdministeredItem> {
     }
 
     def whereUsed() {
-        List<StereotypedCatalogueItem> whereUsed =  getService().getWhereUsed(UUID.fromString(params.versionedFolderId), params[getParameterIdKey()])
+        List<NhsDataDictionaryComponent> whereUsed =  getService().getWhereUsed(UUID.fromString(params.versionedFolderId), params[getParameterIdKey()])
         respond whereUsed
     }
-
+*/
 }

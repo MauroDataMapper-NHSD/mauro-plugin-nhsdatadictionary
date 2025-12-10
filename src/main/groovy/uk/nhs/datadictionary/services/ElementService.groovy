@@ -32,7 +32,7 @@ import org.maurodata.domain.model.AdministeredItem
 import org.maurodata.domain.terminology.CodeSet
 import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
-import org.maurodata.persistence.datamodel.DataElementRepository
+import org.maurodata.persistence.cache.AdministeredItemCacheableRepository
 import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.NhsDDElement
 import uk.nhs.datadictionary.NhsDataDictionary
@@ -43,7 +43,8 @@ import uk.nhs.datadictionary.utils.DDHelperFunctions
 @Singleton
 class ElementService extends DataDictionaryComponentService<DataElement, NhsDDElement> {
 
-    @Inject DataElementRepository dataElementRepository
+    @Inject
+    AdministeredItemCacheableRepository.DataElementCacheableRepository dataElementRepository
 
     @Inject
     DDCodeSetProfileProviderService ddCodeSetProfileProviderService
@@ -55,11 +56,9 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
 
     @Override
     NhsDDElement show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
-        NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary(versionedFolderId)
-
         DataElement elementElement = dataElementRepository.loadWithContent(id)
-        NhsDDElement element = new NhsDDElement().fromMauroItem(dataDictionary, mauroPersistenceService, elementElement) as NhsDDElement
-        element.instantiatesAttributes.addAll(getAllAttributesForElement(dataDictionary, element))
+        NhsDDElement element = new NhsDDElement().fromMauroItem(null, mauroPersistenceService, elementElement) as NhsDDElement
+        element.instantiatesAttributes.addAll(getAllAttributesForElement(null, element))
         element.definition = convertLinksInDescription(versionedFolderId, element.getDescription())
         String attributeText = element.getAttributeTextAsHtml()
         if (attributeText) {
@@ -76,6 +75,7 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
     @Override
     Set<DataElement> getAll(UUID versionedFolderId, NhsDataDictionaryService nhsDataDictionaryService, Boolean includeRetired = false) {
         DataModel coreModel = nhsDataDictionaryService.getElementsModel(versionedFolderId)
+        System.err.println("Got elements model")
         return coreModel.dataElements.findAll {dataElement ->
             includeRetired || !catalogueItemIsRetired(dataElement)
         }
@@ -85,8 +85,12 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
         nhsDDElement.catalogueItem.semanticLinks.findAll {semanticLink ->
             semanticLink.linkType == SemanticLinkType.REFINES
         }.collect {semanticLink ->
-            DataElement dataElement = dataElementRepository.readById(semanticLink.targetMultiFacetAwareItemId)
-            new NhsDDAttribute().fromMauroItem(dataDictionary, mauroPersistenceService, dataElement)
+            if(dataDictionary) {
+                return dataDictionary.attributesByCatalogueId[semanticLink.targetMultiFacetAwareItemId]
+            } else {
+                DataElement dataElement = dataElementRepository.readById(semanticLink.targetMultiFacetAwareItemId)
+                return new NhsDDAttribute().fromMauroItem(dataDictionary, mauroPersistenceService, dataElement)
+            }
         }.findAll{
             !it.isRetired()
         }.sort {it.name} as Set<NhsDDAttribute>
@@ -118,7 +122,7 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
 
 
         Folder dataElementCodeSetsFolder =
-            new Folder(label: "Data Element CodeSets")
+            new Folder(label: NhsDataDictionary.ELEMENT_CODESETS_FOLDER_NAME)
         dictionaryFolder.childFolders.add(dataElementCodeSetsFolder)
 
         DataClass retiredElementsClass = new DataClass(label: "Retired")

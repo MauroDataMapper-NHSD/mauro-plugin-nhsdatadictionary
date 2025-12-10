@@ -90,6 +90,8 @@ class NhsDataDictionary {
     static final String DEFAULT_PROFILE_NAMESPACE = "default.profile"
 
     static final String FOLDER_NAME = "NHS Data Dictionary"
+    static final String ATTRIBUTE_TERMINOLOGIES_FOLDER_NAME = "Attribute Terminologies"
+    static final String ELEMENT_CODESETS_FOLDER_NAME = "Data Element CodeSets"
     static final String ELEMENTS_MODEL_NAME = "Data Elements"
     static final String CLASSES_MODEL_NAME = "Classes and Attributes"
     static final String DATA_SETS_FOLDER_NAME = "Data Sets"
@@ -151,6 +153,9 @@ class NhsDataDictionary {
     Map<UUID, NhsDDClass> classesByCatalogueId = [:]
     Map<UUID, NhsDDElement> elementsByCatalogueId = [:]
     Map<UUID, NhsDDAttribute> attributesByCatalogueId = [:]
+
+    Map<UUID, List<NhsDDCode>> attributeTerminologyCodes = [:]
+    Map<UUID, List<NhsDDCode>> elementCodeSetCodes = [:]
 
     Map<UUID, List<Metadata>> elementsMetadata = [:]
     Map<UUID, List<Metadata>> dataSetsMetadata = [:]
@@ -477,6 +482,49 @@ class NhsDataDictionary {
         return input
     }
 
+    void getTermsForAttributes() {
+        Folder terminologiesFolder = containingVersionedFolder.childFolders.find {it.label == ATTRIBUTE_TERMINOLOGIES_FOLDER_NAME}
+        terminologiesFolder.childFolders.each {childFolder ->
+            childFolder.terminologies.each {terminology ->
+                attributeTerminologyCodes[terminology.id] =
+                    terminology.terms.collect {term ->
+                        new NhsDDCode(term)
+                    }
+            }
+            if(childFolder.childFolders) {
+                childFolder.childFolders.each {childChildFolder ->
+                    childChildFolder.terminologies.each {terminology ->
+                        attributeTerminologyCodes[terminology.id] =
+                            terminology.terms.collect {term ->
+                                new NhsDDCode(term)
+                            }
+                    }
+                }
+            }
+        }
+    }
+    void getTermsForElements() {
+        Folder codeSetsFolder = containingVersionedFolder.childFolders.find {it.label == ELEMENT_CODESETS_FOLDER_NAME}
+        codeSetsFolder.childFolders.each {childFolder ->
+            childFolder.codeSets.each {codeSet ->
+                elementCodeSetCodes[codeSet.id] =
+                    codeSet.terms.collect {term ->
+                        new NhsDDCode(term)
+                    }
+            }
+            if(childFolder.childFolders) {
+                childFolder.childFolders.each {childChildFolder ->
+                    childChildFolder.codeSets.each {terminology ->
+                        elementCodeSetCodes[codeSet.id] =
+                            terminology.terms.collect {term ->
+                                new NhsDDCode(term)
+                            }
+                    }
+                }
+            }
+        }
+    }
+
     static String replaceLinksInStringAndUpdateWhereUsed(
         String source,
         Map<String, NhsDataDictionaryComponent> pathLookup,
@@ -658,5 +706,7 @@ class NhsDataDictionary {
         //"defaultCodes": "default-codes",
         //"valueSet": "value-set",
     ]
+
+
 
 }

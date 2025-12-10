@@ -26,6 +26,7 @@ import org.maurodata.domain.datamodel.DataModelType
 import org.maurodata.domain.folder.Folder
 import org.maurodata.persistence.datamodel.DataModelRepository
 import org.maurodata.persistence.folder.FolderRepository
+import uk.nhs.datadictionary.NhsDDBusinessDefinition
 import uk.nhs.datadictionary.NhsDDDataSet
 import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.datasets.parser.CDSDataSetParser
@@ -111,10 +112,8 @@ class DataSetService extends DataDictionaryComponentService<DataModel, NhsDDData
 
     Map<List<String>, Set<DataModel>> getAllDataSets(List<String> currentPath, Folder dataSetsFolder, Boolean includeRetired = false) {
         Map<List<String>, Set<DataModel>> returnModels = [:]
-        returnModels[currentPath] = dataModelRepository.findAllByFolderId(dataSetsFolder.id).collect {
-            dataModelRepository.loadWithContent(it.id) as DataModel
-        } as Set
-        folderRepository.readAllByParentFolder(dataSetsFolder).each {subFolder ->
+        returnModels[currentPath] = dataSetsFolder.dataModels as Set
+        dataSetsFolder.childFolders.each {subFolder ->
             List<String> newPath = []
             newPath.addAll(currentPath)
             newPath.add(subFolder.label)

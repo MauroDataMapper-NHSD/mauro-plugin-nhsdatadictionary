@@ -18,16 +18,22 @@
 package uk.nhs.datadictionary.services
 
 import groovy.util.logging.Slf4j
+import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.datamodel.DataType
+import org.maurodata.persistence.cache.AdministeredItemCacheableRepository
+import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.DataClassCacheableRepository
+import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.DataElementCacheableRepository
 import uk.nhs.datadictionary.NhsDDAttribute
+import uk.nhs.datadictionary.NhsDDBusinessDefinition
 import uk.nhs.datadictionary.NhsDDClass
 import uk.nhs.datadictionary.NhsDDClassLink
 import uk.nhs.datadictionary.NhsDDClassRelationship
 import uk.nhs.datadictionary.NhsDataDictionary
+import uk.nhs.datadictionary.NhsDataDictionaryComponent
 
 import javax.lang.model.type.PrimitiveType
 
@@ -35,7 +41,14 @@ import javax.lang.model.type.PrimitiveType
 @Singleton
 class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass> {
 
-    AttributeService attributeService
+    @Inject
+    DataClassCacheableRepository dataClassCacheableRepository
+
+    @Inject
+    DataElementCacheableRepository dataElementCacheableRepository
+
+    ClassService() {
+    }
 
     String getStereotype() {
         "class"
@@ -44,18 +57,16 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
 
     @Override
     NhsDDClass show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
-        NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary(versionedFolderId)
-
-        DataClass dataClass = dataClassService.get(id)
-        NhsDDClass nhsClass = new NhsDDClass().fromMauroItem(dataDictionary, mauroPersistenceService, dataClass)
+        DataClass dataClass = dataClassCacheableRepository.readById(id)
+        NhsDDClass nhsClass = new NhsDDClass().fromMauroItem(null, mauroPersistenceService, dataClass) as NhsDDClass
         nhsClass.definition = convertLinksInDescription(versionedFolderId, nhsClass.getDescription())
 
-        List<NhsDDAttribute> attributes = getAttributesForShow(nhsClass, dataDictionary)
+        List<NhsDDAttribute> attributes = getAttributesForShow(nhsClass, null)
         // Assign the attribute by key and non-key types. The NhsDDClass.allAttributes() method will combine them
         nhsClass.keyAttributes = attributes.findAll { it.isKey }.sort { it.name }
         nhsClass.otherAttributes = attributes.findAll { !it.isKey }.sort { it.name }
 
-        List<NhsDDClassRelationship> relationships = getRelationshipsForShow(nhsClass, dataDictionary)
+        List<NhsDDClassRelationship> relationships = getRelationshipsForShow(nhsClass, null)
         List<NhsDDClassRelationship> keyRelationships = relationships
             .findAll { it.isKey }
             .sort { it.targetClass.name }
@@ -68,9 +79,10 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
     }
 
     List<NhsDDAttribute> getAttributesForShow(NhsDDClass nhsClass, NhsDataDictionary dataDictionary) {
-        Set<DataElement> attributeDataElements = nhsClass.catalogueItem.dataElements.findAll {
-            !(it.dataType.dataTypeKind == DataType.DataTypeKind.REFERENCE_TYPE)
-        }
+        Set<DataElement> attributeDataElements = dataElementCacheableRepository.readAllByDataClass_Id(nhsClass.catalogueItem.id)
+            .findAll {
+                !(it.dataType.dataTypeKind == DataType.DataTypeKind.REFERENCE_TYPE)
+            }
 
         // Get a cut-down version of the NhsDDAttribute list, we don't need national codes for previewing an NhsDDClass
         attributeDataElements

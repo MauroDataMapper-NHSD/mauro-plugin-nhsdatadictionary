@@ -19,49 +19,52 @@ package uk.nhs.datadictionary.utils
 
 import groovy.transform.Sortable
 import org.maurodata.domain.model.AdministeredItem
+import uk.nhs.datadictionary.NhsDDDataSetFolder
 import uk.nhs.datadictionary.NhsDataDictionaryComponent
 
 /**
  * @since 06/01/2022
  */
-@Sortable(includes = 'label')
+@Sortable(includes = 'name')
 class StereotypedCatalogueItem {
-    AdministeredItem catalogueItem
-    String label
+
+    String name
     String stereotype
-    Boolean isRetired
+    Boolean retired
     String key
     String description
-    UUID catalogueId
-    String name
+    UUID catalogueItemId
+
+    List<StereotypedCatalogueItem> childFolders
+    List<StereotypedCatalogueItem> dataSets
 
     StereotypedCatalogueItem(AdministeredItem catalogueItem, String stereotype) {
-        this.catalogueItem = catalogueItem
         this.stereotype = stereotype
-        this.isRetired = catalogueItem.metadata.any {
+        this.retired = catalogueItem.metadata.any {
             it.key == "isRetired" &&
             it.value == "true"
         }
         this.key = catalogueItem.metadata.any { it.key == "isKey" && it.value == "true" } ? "Key" : ""
-        this.label = catalogueItem.label
         this.description = catalogueItem.description
-        this.name = this.label
-        this.catalogueId = this.catalogueItem.id
+        this.name = catalogueItem.label
+        this.catalogueItemId = catalogueItem.id
     }
 
     StereotypedCatalogueItem(NhsDataDictionaryComponent component, String description = null) {
-        this.catalogueItem = component.catalogueItem
         this.stereotype = component.stereotypeForPreview
-        this.isRetired = component.isRetired()
+        this.retired = component.isRetired()
         this.key = component.otherProperties.any { it.key == "isKey" && it.value == "true" } ? "Key" : ""
-        this.label = component.getNameWithRetired()
+        this.name = component.getNameWithRetired()
         this.description = description
-        this.name = this.label
-        this.catalogueId = this.catalogueItem.id
-    }
-
-    String getId() {
-        catalogueItem.id.toString()
+        this.catalogueItemId = component.catalogueItem.id
+        if(component instanceof NhsDDDataSetFolder) {
+            this.childFolders = component.childFolders.collect {
+                new StereotypedCatalogueItem(it)
+            }
+            this.dataSets = component.dataSets.collect {
+                new StereotypedCatalogueItem(it)
+            }
+        }
     }
 
 }

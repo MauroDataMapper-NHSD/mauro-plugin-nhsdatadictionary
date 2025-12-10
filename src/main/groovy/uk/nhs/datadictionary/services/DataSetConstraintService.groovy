@@ -19,16 +19,22 @@ package uk.nhs.datadictionary.services
 
 
 import groovy.util.logging.Slf4j
+import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
+import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.TermCacheableRepository
+import uk.nhs.datadictionary.NhsDDBusinessDefinition
 import uk.nhs.datadictionary.NhsDDDataSetConstraint
 import uk.nhs.datadictionary.NhsDataDictionary
 
 @Slf4j
 @Singleton
 class DataSetConstraintService extends DataDictionaryComponentService<Term, NhsDDDataSetConstraint> {
+
+    @Inject
+    TermCacheableRepository termCacheableRepository
 
     String getStereotype() {
         "dataSetConstraint"
@@ -39,8 +45,8 @@ class DataSetConstraintService extends DataDictionaryComponentService<Term, NhsD
     NhsDDDataSetConstraint show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
         NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary(versionedFolderId)
 
-        Term dataSetConstraintTerm = termService.get(id)
-        NhsDDDataSetConstraint dataSetConstraint = new NhsDDDataSetConstraint().fromMauroItem(dataDictionary, dataSetConstraintTerm)
+        Term dataSetConstraintTerm = termCacheableRepository.readById(id)
+        NhsDDDataSetConstraint dataSetConstraint = new NhsDDDataSetConstraint().fromMauroItem(dataDictionary, mauroPersistenceService, dataSetConstraintTerm)
         dataSetConstraint.definition = convertLinksInDescription(versionedFolderId, dataSetConstraint.getDescription())
         return dataSetConstraint
     }
@@ -50,7 +56,7 @@ class DataSetConstraintService extends DataDictionaryComponentService<Term, NhsD
 
         Terminology dataSetConstraintTerminology = nhsDataDictionaryService.getDataSetConstraintTerminology(versionedFolderId)
 
-        List<Term> terms = termService.findAllByTerminologyId(dataSetConstraintTerminology.id)
+        List<Term> terms = termCacheableRepository.readAllByTerminologyIdIn([dataSetConstraintTerminology.id])
 
         terms.findAll {term ->
             includeRetired || !catalogueItemIsRetired(term)

@@ -18,31 +18,29 @@
 package uk.nhs.datadictionary.controllers
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import groovy.xml.XmlParser
 import io.micronaut.core.annotation.Nullable
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.QueryValue
 import io.micronaut.security.annotation.Secured
 import io.micronaut.security.rules.SecurityRule
-import io.micronaut.transaction.annotation.Transactional
 import jakarta.inject.Inject
 import org.maurodata.domain.folder.Folder
-import org.maurodata.domain.security.CatalogueUser
-import uk.nhs.datadictionary.DataDictionaryImportParameters
 import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.NhsDDBusinessDefinition
 import uk.nhs.datadictionary.NhsDDClass
+import uk.nhs.datadictionary.NhsDDDataSetConstraint
 import uk.nhs.datadictionary.NhsDDDataSetFolder
 import uk.nhs.datadictionary.NhsDDElement
 import uk.nhs.datadictionary.NhsDDSupportingInformation
+import uk.nhs.datadictionary.NhsDataDictionaryComponent
 import uk.nhs.datadictionary.services.AttributeService
 import uk.nhs.datadictionary.services.BusinessDefinitionService
 import uk.nhs.datadictionary.services.ClassService
+import uk.nhs.datadictionary.services.DataSetConstraintService
 import uk.nhs.datadictionary.services.DataSetFolderService
 import uk.nhs.datadictionary.services.DataSetService
 import uk.nhs.datadictionary.services.ElementService
@@ -70,9 +68,8 @@ class NhsDataDictionaryController {
     @Inject SupportingInformationService supportingInformationService
     @Inject DataSetService dataSetService
     @Inject DataSetFolderService dataSetFolderService
+    @Inject DataSetConstraintService dataSetConstraintService
 
-    NhsDataDictionaryController() {
-    }
 
     @Get('/api/nhsdd/branches')
     List<Folder> branches() {
@@ -172,6 +169,16 @@ class NhsDataDictionaryController {
         supportingInformationService.show(dictionaryId, supportingInformationId, nhsDataDictionaryService)
     }
 
+    @Get('api/nhsdd/{dictionaryId}/preview/dataSetConstraints')
+    List<StereotypedCatalogueItem> indexDataSetConstraints(UUID dictionaryId, @Nullable @QueryValue Boolean includeDeleted) {
+        dataSetConstraintService.index(dictionaryId, nhsDataDictionaryService, includeDeleted)
+    }
+
+    @Get('api/nhsdd/{dictionaryId}/preview/dataSetConstraints/{dataSetConstraintId}')
+    NhsDDDataSetConstraint showDataSetConstraint(UUID dictionaryId, UUID dataSetConstraintId) {
+        dataSetConstraintService.show(dictionaryId, dataSetConstraintId, nhsDataDictionaryService)
+    }
+
 
     @Get('api/nhsdd/{dictionaryId}/preview/dataSets')
     List<StereotypedCatalogueItem> indexDataSets(UUID dictionaryId, @Nullable @QueryValue Boolean includeDeleted) {
@@ -186,6 +193,11 @@ class NhsDataDictionaryController {
     @Get('api/nhsdd/{dictionaryId}/preview/dataSetFolders/{dataSetFolderId}')
     NhsDDDataSetFolder indexDataSetFolders(UUID dictionaryId, UUID dataSetFolderId) {
         dataSetFolderService.show(dictionaryId, dataSetFolderId, nhsDataDictionaryService)
+    }
+
+    @Get('api/nhsdd/{dictionaryId}/preview/allItemsIndex')
+    List<StereotypedCatalogueItem> allItemsIndex(UUID dictionaryId) {
+        nhsDataDictionaryService.allItemsIndex(dictionaryId)
     }
 
 

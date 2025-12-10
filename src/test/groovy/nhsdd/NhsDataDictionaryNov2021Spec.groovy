@@ -91,10 +91,10 @@ import static org.junit.Assert.assertTrue
  */
 @Slf4j
 @MicronautTest(startApplication = true, environments = ['secured'])
-@Property(name = "datasources.default.driver-class-name",
-    value = "org.testcontainers.jdbc.ContainerDatabaseDriver")
-@Property(name = "datasources.default.url",
-    value = "jdbc:tc:postgresql:16-alpine:///db")
+//@Property(name = "datasources.default.driver-class-name",
+//    value = "org.testcontainers.jdbc.ContainerDatabaseDriver")
+//@Property(name = "datasources.default.url",
+//    value = "jdbc:tc:postgresql:16-alpine:///db")
 //@Ignore("Ingest of older version of Data Dictionary takes too long to test. Keep just in case but skip running these tests.")
 class NhsDataDictionaryNov2021Spec extends Specification {
 

@@ -19,21 +19,17 @@ package uk.nhs.datadictionary
 
 
 import groovy.util.logging.Slf4j
-import jakarta.inject.Inject
 import org.maurodata.dita.elements.langref.base.Topic
 import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataType
-import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
-import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.TermCacheableRepository
-import uk.nhs.datadictionary.publish.changePaper.ChangeAware
 import uk.nhs.datadictionary.publish.structure.CodesRow
 import uk.nhs.datadictionary.publish.structure.CodesSection
 import uk.nhs.datadictionary.publish.structure.DictionaryItem
 import uk.nhs.datadictionary.publish.structure.ItemLink
 import uk.nhs.datadictionary.publish.structure.ItemLinkListSection
-import uk.nhs.datadictionary.services.profiles.MauroPersistenceService
+import uk.nhs.datadictionary.services.MauroPersistenceService
 
 @Slf4j
 class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
@@ -299,14 +295,17 @@ class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
     }
 
     @Override
-    NhsDataDictionaryComponent<DataElement> fromMauroItem(NhsDataDictionary dataDictionary, MauroPersistenceService mauroPersistenceService, DataElement catalogueItem) {
+    NhsDDAttribute fromMauroItem(NhsDataDictionary dataDictionary, MauroPersistenceService mauroPersistenceService, DataElement catalogueItem) {
         super.fromMauroItem(dataDictionary, mauroPersistenceService, catalogueItem)
-        if (catalogueItem.dataType.dataTypeKind == DataType.DataTypeKind.MODEL_TYPE) {
-            List<Term> terms = mauroPersistenceService.termCacheableRepository.findAllByTerminology(new Terminology(id: catalogueItem.dataType.modelResourceId))
-            List<NhsDDCode> codesForTerms = getCodesForTerms(terms, dataDictionary)
-            codesForTerms.each {code ->
+        if(catalogueItem.dataType.dataTypeKind == DataType.DataTypeKind.MODEL_TYPE) {
+            if (dataDictionary) {
+                codes = dataDictionary.attributeTerminologyCodes[catalogueItem.dataType.modelResourceId]
+            } else {
+                List<Term> terms = mauroPersistenceService.termCacheableRepository.findAllByTerminology(new Terminology(id: catalogueItem.dataType.modelResourceId))
+                codes = terms.collect {new NhsDDCode(it)}
+            }
+            codes.each {code ->
                 code.owningAttribute = this
-                codes.add(code)
             }
         }
         parentClass = new NhsDDClass()

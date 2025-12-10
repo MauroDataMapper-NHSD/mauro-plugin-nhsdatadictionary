@@ -23,18 +23,17 @@ import org.maurodata.dita.elements.langref.base.Topic
 import org.maurodata.dita.elements.langref.base.XRef
 import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataType
-import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.facet.SemanticLinkType
 import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
-import uk.nhs.datadictionary.publish.changePaper.ChangeAware
+import org.maurodata.persistence.terminology.dto.CodeSetTermDTO
 import uk.nhs.datadictionary.publish.structure.CodesRow
 import uk.nhs.datadictionary.publish.structure.CodesSection
 import uk.nhs.datadictionary.publish.structure.DictionaryItem
 import uk.nhs.datadictionary.publish.structure.FormatLengthSection
 import uk.nhs.datadictionary.publish.structure.ItemLink
 import uk.nhs.datadictionary.publish.structure.ItemLinkListSection
-import uk.nhs.datadictionary.services.profiles.MauroPersistenceService
+import uk.nhs.datadictionary.services.MauroPersistenceService
 
 @Slf4j
 class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
@@ -483,23 +482,28 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
     }
 
     @Override
-    NhsDataDictionaryComponent<DataElement> fromMauroItem(NhsDataDictionary dataDictionary, MauroPersistenceService mauroPersistenceService, DataElement catalogueItem) {
+    NhsDDElement fromMauroItem(NhsDataDictionary dataDictionary, MauroPersistenceService mauroPersistenceService, DataElement catalogueItem) {
         super.fromMauroItem(dataDictionary, mauroPersistenceService, catalogueItem)
-        catalogueItem.semanticLinks.each {
-            if(it.linkType == SemanticLinkType.REFINES) {
-                NhsDDAttribute linkedAttribute = dataDictionary.attributesByCatalogueId[it.targetMultiFacetAwareItemId]
-                if(linkedAttribute) {
-                    instantiatesAttributes.add(linkedAttribute)
-                    linkedAttribute.instantiatedByElements.add(this)
+        if(dataDictionary) {
+            catalogueItem.semanticLinks.each {
+                if (it.linkType == SemanticLinkType.REFINES) {
+                    NhsDDAttribute linkedAttribute = dataDictionary.attributesByCatalogueId[it.targetMultiFacetAwareItemId]
+                    if (linkedAttribute) {
+                        instantiatesAttributes.add(linkedAttribute)
+                        linkedAttribute.instantiatedByElements.add(this)
+                    }
                 }
             }
         }
-        if (catalogueItem.dataType.dataTypeKind == DataType.DataTypeKind.MODEL_TYPE) {
-            Set<Term> terms = mauroPersistenceService.codeSetCacheableRepository.getTerms(catalogueItem.dataType.modelResourceId)
-            List<NhsDDCode> codesForTerms = getCodesForTerms(terms as List, dataDictionary)
-            codesForTerms.each {code ->
+        if(catalogueItem.dataType.dataTypeKind == DataType.DataTypeKind.MODEL_TYPE) {
+            if (dataDictionary) {
+                codes = dataDictionary.elementCodeSetCodes[catalogueItem.dataType.modelResourceId]
+            } else {
+                List<Term> terms = mauroPersistenceService.codeSetCacheableRepository.getTerms(catalogueItem.dataType.modelResourceId)
+                codes = terms.collect {new NhsDDCode(it)}
+            }
+            codes.each {code ->
                 code.usedByElements.add(this)
-                codes.add(code)
             }
         }
         return this

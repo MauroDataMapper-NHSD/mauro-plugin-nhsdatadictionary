@@ -1,5 +1,6 @@
 package uk.nhs.datadictionary
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import groovy.xml.XmlParser
@@ -8,7 +9,6 @@ import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import org.maurodata.domain.folder.Folder
 import org.maurodata.plugin.importer.FolderImporterPlugin
-import uk.nhs.datadictionary.services.NhsDataDictionaryService
 
 @Slf4j
 @Singleton
@@ -16,8 +16,10 @@ import uk.nhs.datadictionary.services.NhsDataDictionaryService
 class NhsDataDictionaryImporter implements FolderImporterPlugin<DataDictionaryImportParameters> {
 
     @Inject
+    @JsonIgnore
     ApplicationContext applicationContext
 
+    @JsonIgnore
     static final XmlParser xmlParser = new XmlParser(false, false)
 
     @Override
@@ -41,4 +43,6 @@ class NhsDataDictionaryImporter implements FolderImporterPlugin<DataDictionaryIm
     String getVersion() {
         "1.0.0"
     }
+
+    String displayName = 'NHS Data Dictionary XML Importer'
 }
