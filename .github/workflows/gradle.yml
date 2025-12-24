@@ -85,7 +85,7 @@ jobs:
 #          mega-linter.log
 
     -   name: Publish Snapshot to Mauro Snapshot Repository
-        if: success() && github.ref == 'refs/heads/develop'
+        if: github.ref == 'refs/heads/develop'
         run: |
           ./gradlew --stacktrace -PMauroSnapshotRepositoryUsername=${{secrets.MAURO_SNAPSHOT_REPOSITORY_USERNAME}} -PMauroSnapshotRepositoryPassword=${{secrets.MAURO_SNAPSHOT_REPOSITORY_PASSWORD}} publishAllPublicationsToMauroSnapshotRepositoryRepository
 
