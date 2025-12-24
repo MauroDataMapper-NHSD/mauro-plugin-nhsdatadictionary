@@ -21,6 +21,14 @@ import org.maurodata.domain.terminology.Term
 
 class NhsDDWebPage extends NhsDataDictionaryComponent <Term> {
 
+    NhsDDWebPage(Term catalogueItem) {
+        super(catalogueItem)
+    }
+
+    Term newCatalogueItem() {
+        return new Term()
+    }
+
     List<String> path = []
 
     @Override

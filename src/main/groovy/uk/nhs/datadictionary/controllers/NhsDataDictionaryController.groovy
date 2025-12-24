@@ -32,11 +32,14 @@ import org.maurodata.domain.folder.Folder
 import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.NhsDDBusinessDefinition
 import uk.nhs.datadictionary.NhsDDClass
+import uk.nhs.datadictionary.NhsDDDataSet
 import uk.nhs.datadictionary.NhsDDDataSetConstraint
 import uk.nhs.datadictionary.NhsDDDataSetFolder
 import uk.nhs.datadictionary.NhsDDElement
 import uk.nhs.datadictionary.NhsDDSupportingInformation
+import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.NhsDataDictionaryComponent
+import uk.nhs.datadictionary.publish.changePaper.ChangePaperPreview
 import uk.nhs.datadictionary.services.AttributeService
 import uk.nhs.datadictionary.services.BusinessDefinitionService
 import uk.nhs.datadictionary.services.ClassService
@@ -76,6 +79,12 @@ class NhsDataDictionaryController {
         nhsDataDictionaryService.branches()
     }
 
+    @Get('/api/nhsdd/{dictionaryId}/publish/changePaper')
+    File generateChangePaper(UUID dictionaryId, @Nullable @QueryValue Boolean includeDataSets) {
+        nhsDataDictionaryService.generateChangePaper(dictionaryId, includeDataSets)
+    }
+
+
     @Get('/api/nhsdd/{dictionaryId}/statistics')
     Map statistics(UUID dictionaryId) {
         nhsDataDictionaryService.buildDataDictionary(dictionaryId).statistics()
@@ -100,6 +109,13 @@ class NhsDataDictionaryController {
         }
     }
 
+    @Get('api/nhsdd/{dictionaryId}/preview/changePaper')
+    ChangePaperPreview previewChangePaper(UUID dictionaryId, @Nullable @QueryValue Boolean includeDataSets) {
+        nhsDataDictionaryService.previewChangePaper(dictionaryId, includeDataSets)
+
+    }
+
+
     @Get('api/nhsdd/{dictionaryId}/preview/elements')
     List<StereotypedCatalogueItem> indexElements(UUID dictionaryId, @Nullable @QueryValue Boolean includeDeleted) {
         elementService.index(dictionaryId, nhsDataDictionaryService, includeDeleted)
@@ -107,25 +123,15 @@ class NhsDataDictionaryController {
 
     @Get('api/nhsdd/{dictionaryId}/preview/elements/{elementId}')
     NhsDDElement showElement(UUID dictionaryId, UUID elementId) {
-        Class<?> cls = NhsDDElement.class;
-
-        try {
-            Field f = cls.getDeclaredField("dataDictionary"); // <- replace with real field name
-            System.out.println("Field has JsonIgnore? " +
-                               (f.getAnnotation(JsonIgnore.class) != null));
-        } catch (NoSuchFieldException e) {
-            System.out.println("No such field: " + e.getMessage());
-        }
-
-        try {
-            Method getter = cls.getMethod("getDataDictionary"); // <- replace with getter name
-            System.out.println("Getter has JsonIgnore? " +
-                               (getter.getAnnotation(JsonIgnore.class) != null));
-        } catch (NoSuchMethodException e) {
-            System.out.println("No such getter: " + e.getMessage());
-        }
         elementService.show(dictionaryId, elementId, nhsDataDictionaryService)
     }
+
+    @Get('api/nhsdd/{dictionaryId}/preview/elements/{elementId}/whereUsed')
+    List<Map<String, Object>> elementWhereUsed(UUID dictionaryId, UUID elementId) {
+        NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(dictionaryId)
+        elementService.getWhereUsed(dataDictionary, elementId)
+    }
+
 
     @Get('api/nhsdd/{dictionaryId}/preview/attributes')
     List<StereotypedCatalogueItem> indexAttributes(UUID dictionaryId, @Nullable @QueryValue Boolean includeDeleted) {
@@ -135,6 +141,12 @@ class NhsDataDictionaryController {
     @Get('api/nhsdd/{dictionaryId}/preview/attributes/{attributeId}')
     NhsDDAttribute showAttribute(UUID dictionaryId, UUID attributeId) {
         attributeService.show(dictionaryId, attributeId, nhsDataDictionaryService)
+    }
+
+    @Get('api/nhsdd/{dictionaryId}/preview/attributes/{attributeId}/whereUsed')
+    List<Map<String, Object>> attributeWhereUsed(UUID dictionaryId, UUID attributeId) {
+        NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(dictionaryId)
+        attributeService.getWhereUsed(dataDictionary, attributeId)
     }
 
 
@@ -148,6 +160,12 @@ class NhsDataDictionaryController {
         classService.show(dictionaryId, classId, nhsDataDictionaryService)
     }
 
+    @Get('api/nhsdd/{dictionaryId}/preview/classes/{classId}/whereUsed')
+    List<Map<String, Object>> classWhereUsed(UUID dictionaryId, UUID classId) {
+        NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(dictionaryId)
+        classService.getWhereUsed(dataDictionary, classId)
+    }
+
 
     @Get('api/nhsdd/{dictionaryId}/preview/businessDefinitions')
     List<StereotypedCatalogueItem> indexBusinessDefinitions(UUID dictionaryId, @Nullable @QueryValue Boolean includeDeleted) {
@@ -159,6 +177,13 @@ class NhsDataDictionaryController {
         businessDefinitionService.show(dictionaryId, businessDefinitionId, nhsDataDictionaryService)
     }
 
+    @Get('api/nhsdd/{dictionaryId}/preview/businessDefinitions/{businessDefinitionId}/whereUsed')
+    List<Map<String, Object>> businessDefinitionWhereUsed(UUID dictionaryId, UUID businessDefinitionId) {
+        NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(dictionaryId)
+        businessDefinitionService.getWhereUsed(dataDictionary, businessDefinitionId)
+    }
+
+
     @Get('api/nhsdd/{dictionaryId}/preview/supportingInformation')
     List<StereotypedCatalogueItem> indexSupportingInformation(UUID dictionaryId, @Nullable @QueryValue Boolean includeDeleted) {
         supportingInformationService.index(dictionaryId, nhsDataDictionaryService, includeDeleted)
@@ -168,6 +193,13 @@ class NhsDataDictionaryController {
     NhsDDSupportingInformation showSupportingInformation(UUID dictionaryId, UUID supportingInformationId) {
         supportingInformationService.show(dictionaryId, supportingInformationId, nhsDataDictionaryService)
     }
+
+    @Get('api/nhsdd/{dictionaryId}/preview/supportingInformation/{supportingInformationId}/whereUsed')
+    List<Map<String, Object>> supportingInformationWhereUsed(UUID dictionaryId, UUID supportingInformationId) {
+        NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(dictionaryId)
+        supportingInformationService.getWhereUsed(dataDictionary, supportingInformationId)
+    }
+
 
     @Get('api/nhsdd/{dictionaryId}/preview/dataSetConstraints')
     List<StereotypedCatalogueItem> indexDataSetConstraints(UUID dictionaryId, @Nullable @QueryValue Boolean includeDeleted) {
@@ -179,10 +211,26 @@ class NhsDataDictionaryController {
         dataSetConstraintService.show(dictionaryId, dataSetConstraintId, nhsDataDictionaryService)
     }
 
+    @Get('api/nhsdd/{dictionaryId}/preview/dataSetConstraints/{dataSetConstraintId}/whereUsed')
+    List<Map<String, Object>> dataSetConstraintWhereUsed(UUID dictionaryId, UUID dataSetConstraintId) {
+        NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(dictionaryId)
+        dataSetConstraintService.getWhereUsed(dataDictionary, dataSetConstraintId)
+    }
 
     @Get('api/nhsdd/{dictionaryId}/preview/dataSets')
     List<StereotypedCatalogueItem> indexDataSets(UUID dictionaryId, @Nullable @QueryValue Boolean includeDeleted) {
         dataSetService.index(dictionaryId, nhsDataDictionaryService, includeDeleted)
+    }
+
+    @Get('api/nhsdd/{dictionaryId}/preview/dataSets/{dataSetId}')
+    NhsDDDataSet showDataSet(UUID dictionaryId, UUID dataSetId) {
+        dataSetService.show(dictionaryId, dataSetId, nhsDataDictionaryService)
+    }
+
+    @Get('api/nhsdd/{dictionaryId}/preview/dataSets/{dataSetId}/whereUsed')
+    List<Map<String, Object>> dataSetWhereUsed(UUID dictionaryId, UUID dataSetId) {
+        NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(dictionaryId)
+        dataSetService.getWhereUsed(dataDictionary, dataSetId)
     }
 
     @Get('api/nhsdd/{dictionaryId}/preview/dataSetFolders/root')
@@ -195,12 +243,17 @@ class NhsDataDictionaryController {
         dataSetFolderService.show(dictionaryId, dataSetFolderId, nhsDataDictionaryService)
     }
 
+    @Get('api/nhsdd/{dictionaryId}/preview/dataSetFolders/{dataSetFolderId}/whereUsed')
+    List<Map<String, Object>> dataSetFolderWhereUsed(UUID dictionaryId, UUID dataSetFolderId) {
+        NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(dictionaryId)
+        dataSetFolderService.getWhereUsed(dataDictionary, dataSetFolderId)
+    }
+
+
     @Get('api/nhsdd/{dictionaryId}/preview/allItemsIndex')
     List<StereotypedCatalogueItem> allItemsIndex(UUID dictionaryId) {
         nhsDataDictionaryService.allItemsIndex(dictionaryId)
     }
-
-
 
     /*
         @Transactional

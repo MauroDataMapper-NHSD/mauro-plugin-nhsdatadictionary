@@ -25,6 +25,7 @@ import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.facet.Metadata
 import uk.nhs.datadictionary.publish.structure.ItemLink
 import uk.nhs.datadictionary.publish.structure.datasets.other.OtherDataSetItemLinkCell
+import uk.nhs.datadictionary.services.MauroPersistenceService
 
 class NhsDDDataSetElement implements NhsDDDataSetComponent {
 
@@ -41,6 +42,7 @@ class NhsDDDataSetElement implements NhsDDDataSetComponent {
     String groupRepeats
     String rules
     String uin
+    String branchId
 
     NhsDDElement reuseElement
     NhsDataDictionary dataDictionary
@@ -62,15 +64,22 @@ class NhsDDDataSetElement implements NhsDDDataSetComponent {
         this.maxMultiplicity = dataElement.maxMultiplicity
 
     }
-    NhsDDDataSetElement(DataElement dataElement, NhsDataDictionary dataDictionary) {
+    NhsDDDataSetElement(DataElement dataElement, NhsDataDictionary dataDictionary, MauroPersistenceService mauroPersistenceService, UUID branchId) {
         this(dataElement)
-
+        this.branchId = branchId
         if(dataDictionary) {
             this.dataDictionary = dataDictionary
             if(dataDictionary.elements[name]) {
                 this.reuseElement = dataDictionary.elements[name]
             } else {
                 System.err.println("Cannot find element: ${dataElement.label}, $name!")
+            }
+        } else {
+            if(dataElement.semanticLinks.size() == 1) {
+                DataElement targetDataElement = mauroPersistenceService.dataElementCacheableRepository.findById(dataElement.semanticLinks[0].targetMultiFacetAwareItemId)
+                reuseElement = new NhsDDElement(targetDataElement).fromMauroItem(dataDictionary, mauroPersistenceService, targetDataElement)
+                reuseElement.branchId = branchId
+                reuseElement.codes = []
             }
         }
 

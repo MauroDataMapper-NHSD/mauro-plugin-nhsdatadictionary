@@ -18,20 +18,24 @@
 package uk.nhs.datadictionary.publish.changePaper
 
 import groovy.util.logging.Slf4j
+import net.lingala.zip4j.ZipFile
 import org.maurodata.dita.DitaProject
+import org.maurodata.dita.elements.langref.base.Section
 import org.maurodata.dita.elements.langref.base.Topic
+import org.maurodata.dita.elements.langref.base.TopicRef
+import org.maurodata.dita.enums.Scope
+import org.maurodata.dita.enums.Toc
+import org.maurodata.dita.helpers.HtmlHelper
 import org.maurodata.dita.meta.SpaceSeparatedStringList
 import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.publish.ItemLinkScanner
 import uk.nhs.datadictionary.publish.NhsDataDictionaryComponentPathResolver
 import uk.nhs.datadictionary.publish.PublishContext
 import uk.nhs.datadictionary.publish.PublishTarget
-import uk.nhs.datadictionary.publish.structure.Section
 
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.text.SimpleDateFormat
-import java.util.zip.ZipFile
 
 @Slf4j
 class ChangePaperPdfUtility {

@@ -17,6 +17,10 @@
  */
 package uk.nhs.datadictionary.services
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import io.micronaut.context.ApplicationContext
+import org.maurodata.api.model.ModelVersionedRefDTO
+import org.maurodata.controller.folder.VersionedFolderController
 import org.maurodata.iso11179.domain.MetadataBundle
 
 import groovy.util.logging.Slf4j
@@ -55,6 +59,8 @@ import uk.nhs.datadictionary.fhir.FhirEntry
 import uk.nhs.datadictionary.integritychecks.IntegrityCheck
 import uk.nhs.datadictionary.integritychecks.IntegrityCheckError
 import uk.nhs.datadictionary.publish.MauroCatalogueItemPathResolver
+import uk.nhs.datadictionary.publish.changePaper.ChangePaperHtmlUtility
+import uk.nhs.datadictionary.publish.changePaper.ChangePaperPdfUtility
 import uk.nhs.datadictionary.publish.changePaper.ChangePaperPreview
 import uk.nhs.datadictionary.services.profiles.DDWorkItemProfileProviderService
 import uk.nhs.datadictionary.utils.StereotypedCatalogueItem
@@ -143,6 +149,14 @@ class NhsDataDictionaryService {
     @Inject
     ContentsService contentsService
 
+    @Inject VersionedFolderController versionedFolderController
+
+    @Inject
+    ApplicationContext applicationContext
+
+    @Inject ChangePaperHtmlUtility changePaperHtmlUtility
+
+
     List<Folder> branches(/*UserSecurityPolicyManager userSecurityPolicyManager */) {
         folderRepository.readAll().findAll {
             it.label.startsWith("NHS Data Dictionary")
@@ -175,8 +189,7 @@ class NhsDataDictionaryService {
 
     NhsDataDictionary buildDataDictionary(UUID versionedFolderId) {
         NhsDataDictionary dataDictionary = newDataDictionary(versionedFolderId)
-        Folder contentsFolder = (Folder) contentsService.loadWithContent(folderRepository.readById(versionedFolderId))
-        log.warn("Loaded content!")
+        Folder contentsFolder = (Folder) contentsService.loadWithContent(folderRepository.findById(versionedFolderId))
         dataDictionary.containingVersionedFolder = contentsFolder
 
         buildWorkItemDetails(dataDictionary.containingVersionedFolder, dataDictionary)
@@ -536,16 +549,15 @@ class NhsDataDictionaryService {
 
 
     ChangePaperPreview previewChangePaper(UUID versionedFolderId, boolean includeDataSets = false) {
-        Folder thisDictionary = versionedFolderService.get(versionedFolderId)
-        Folder previousVersion = versionedFolderService.getFinalisedParent(thisDictionary)
+        NhsDataDictionary thisDataDictionary = buildDataDictionary(versionedFolderId)
+        ModelVersionedRefDTO modelVersionedRefDTO = versionedFolderController.latestFinalisedModel(versionedFolderId)
+        NhsDataDictionary previousDataDictionary = buildDataDictionary(modelVersionedRefDTO.id)
 
-        NhsDataDictionary thisDataDictionary = buildDataDictionary(thisDictionary.id)
-        NhsDataDictionary previousDataDictionary = buildDataDictionary(previousVersion.id)
+        MauroCatalogueItemPathResolver pathResolver = applicationContext.createBean(MauroCatalogueItemPathResolver)
+        pathResolver.setVersionedFolderId(versionedFolderId)
 
-        MauroCatalogueItemPathResolver pathResolver = new MauroCatalogueItemPathResolver(
-            thisDictionary)
 
-        ChangePaperPreview preview = ChangePaperHtmlUtility.generateChangePaper(
+        ChangePaperPreview preview = changePaperHtmlUtility.generateChangePaper(
             pathResolver,
             thisDataDictionary,
             previousDataDictionary,
@@ -556,16 +568,9 @@ class NhsDataDictionaryService {
 
     File generateChangePaper(UUID versionedFolderId, boolean includeDataSets = false, boolean isTest = false) {
 
-        Folder thisDictionary = versionedFolderService.get(versionedFolderId)
-
-        Folder previousVersion
-        if(thisDictionary.isFinalised()) {
-            previousVersion = versionedFolderService.get(versionLinkService.findBySourceModelAndLinkType(thisDictionary, VersionLinkType.NEW_MODEL_VERSION_OF)?.targetModelId)
-        } else {
-            previousVersion = versionedFolderService.getFinalisedParent(thisDictionary)
-        }
-        NhsDataDictionary thisDataDictionary = buildDataDictionary(thisDictionary.id)
-        NhsDataDictionary previousDataDictionary = previousVersion ? buildDataDictionary(previousVersion.id) : null
+        NhsDataDictionary thisDataDictionary = buildDataDictionary(versionedFolderId)
+        ModelVersionedRefDTO modelVersionedRefDTO = versionedFolderController.latestFinalisedModel(versionedFolderId)
+        NhsDataDictionary previousDataDictionary = buildDataDictionary(modelVersionedRefDTO.id)
 
         Path outputPath = Paths.get(getTestOutputPath())
         if(!isTest) {
@@ -602,7 +607,7 @@ class NhsDataDictionaryService {
         NhsDataDictionary nhsDataDictionary = new NhsDataDictionary()
         setApiProperties(nhsDataDictionary)
         loadBranchInformation(nhsDataDictionary)
-        nhsDataDictionary.containingVersionedFolder = folderRepository.readById(versionedFolderId)
+        nhsDataDictionary.containingVersionedFolder = folderRepository.findById(versionedFolderId)
         return nhsDataDictionary
     }
 

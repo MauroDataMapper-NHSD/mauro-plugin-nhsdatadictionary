@@ -30,7 +30,7 @@ class StereotypedClassRelationship {
     String stereotype
 
     StereotypedClassRelationship(NhsDDClassRelationship classRelationship) {
-        key = classRelationship.isKey ? "Key" : ""
+        key = classRelationship.key ? "Key" : ""
         relationship = classRelationship.relationshipDescription
         targetClass = classRelationship.targetClass.catalogueItem
         stereotype = classRelationship.targetClass.stereotypeForPreview

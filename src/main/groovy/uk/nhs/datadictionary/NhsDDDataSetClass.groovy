@@ -37,6 +37,7 @@ import uk.nhs.datadictionary.publish.structure.datasets.other.OtherDataSetHeader
 import uk.nhs.datadictionary.publish.structure.datasets.other.OtherDataSetItemLinkCell
 import uk.nhs.datadictionary.publish.structure.datasets.other.OtherDataSetRow
 import uk.nhs.datadictionary.publish.structure.datasets.other.OtherDataSetTable
+import uk.nhs.datadictionary.services.MauroPersistenceService
 
 @Slf4j
 class NhsDDDataSetClass implements NhsDDDataSetComponent {
@@ -44,6 +45,7 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
     String name
     String description
 
+    UUID branchId
     String mandation
     String minMultiplicity
     String maxMultiplicity
@@ -77,10 +79,10 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
     }
 
 
-    NhsDDDataSetClass(DataClass dataClass, NhsDataDictionary dataDictionary) {
+    NhsDDDataSetClass(DataClass dataClass, NhsDataDictionary dataDictionary, MauroPersistenceService mauroPersistenceService, UUID branchId) {
         this(dataClass)
         this.dataDictionary = dataDictionary
-
+        this.branchId = branchId
         isChoice = dataClass.metadata.find {
             (it.namespace == NhsDataDictionary.METADATA_DATASET_TABLE_NAMESPACE
                 && it.key == NhsDataDictionary.DATASET_TABLE_KEY_CHOICE
@@ -130,7 +132,7 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
         }
 
         dataClass.dataClasses.each {childDataClass ->
-            dataSetClasses.add(new NhsDDDataSetClass(childDataClass, dataDictionary))
+            dataSetClasses.add(new NhsDDDataSetClass(childDataClass, dataDictionary, mauroPersistenceService, branchId))
         }
         dataSetClasses = dataSetClasses.sort { it.webOrder }
         /*
@@ -139,7 +141,7 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
         }
          */
         dataClass.getDataElements().each { dataElement ->
-            dataSetElements.add(new NhsDDDataSetElement(dataElement, dataDictionary))
+            dataSetElements.add(new NhsDDDataSetElement(dataElement, dataDictionary, mauroPersistenceService, branchId))
         }
 
         dataSetElements = dataSetElements.sort {it.webOrder}

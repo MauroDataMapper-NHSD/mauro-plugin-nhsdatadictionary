@@ -26,7 +26,6 @@ import uk.nhs.datadictionary.NhsDDChangeLog
 import uk.nhs.datadictionary.NhsDDClass
 import uk.nhs.datadictionary.NhsDDClassRelationship
 import uk.nhs.datadictionary.NhsDDElement
-import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.publish.structure.AliasesSection
 import uk.nhs.datadictionary.publish.structure.ChangeLogSection
 import uk.nhs.datadictionary.publish.structure.ClassAttributeSection
@@ -120,8 +119,8 @@ to a <a href="dm:Classes and Attributes|dc:PATIENT">PATIENT</a> by one or more
         activeItem.otherAttributes.add(new NhsDDAttribute(name: "ACTIVITY COUNT"))
         activeItem.otherAttributes.add(new NhsDDAttribute(name: "ACTIVITY DURATION"))
 
-        activeItem.classRelationships.add(new NhsDDClassRelationship(isKey: true, relationshipDescription: "supplied by", targetClass: new NhsDDClass(name: "ORGANISATION")))
-        activeItem.classRelationships.add(new NhsDDClassRelationship(isKey: false, relationshipDescription: "located at", targetClass: new NhsDDClass(name: "ADDRESS")))
+        activeItem.classRelationships.add(new NhsDDClassRelationship(key: true, relationshipDescription: "supplied by", targetClass: new NhsDDClass(name: "ORGANISATION")))
+        activeItem.classRelationships.add(new NhsDDClassRelationship(key: false, relationshipDescription: "located at", targetClass: new NhsDDClass(name: "ADDRESS")))
     }
 
     @Override

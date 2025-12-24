@@ -22,7 +22,6 @@ import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.BeanContext
-import io.micronaut.context.annotation.Property
 import io.micronaut.http.MediaType
 import io.micronaut.http.client.ServiceHttpClientConfiguration
 import io.micronaut.http.client.multipart.MultipartBody
@@ -53,9 +52,6 @@ import uk.nhs.datadictionary.integritychecks.IntegrityCheck
 import uk.nhs.datadictionary.services.NhsDataDictionaryService
 import uk.nhs.datadictionary.services.TestingService
 
-import java.lang.annotation.ElementType
-import java.lang.annotation.Inherited
-import java.lang.annotation.Target
 import java.nio.file.Files
 import java.nio.file.Path
 

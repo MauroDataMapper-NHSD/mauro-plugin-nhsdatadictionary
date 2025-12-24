@@ -48,30 +48,30 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
     NhsDDDataSetFolder show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
         Folder folderFolder
         if(id) {
-            folderFolder = folderCacheableRepository.readById(id)
+            folderFolder = folderCacheableRepository.findById(id)
         } else {
-            folderFolder = folderCacheableRepository.readAllByParentFolder(new Folder(id: id)).find {
+            folderFolder = folderCacheableRepository.findAllByFolderId(versionedFolderId).find {
                 it.label == NhsDataDictionary.DATA_SETS_FOLDER_NAME
             }
         }
-        NhsDDDataSetFolder dataSetFolder = new NhsDDDataSetFolder().fromMauroItem(null, mauroPersistenceService, folderFolder) as NhsDDDataSetFolder
-        dataSetFolder.definition = convertLinksInDescription(versionedFolderId, dataSetFolder.getDescription())
+        NhsDDDataSetFolder dataSetFolder = new NhsDDDataSetFolder(folderFolder).fromMauroItem(null, mauroPersistenceService, folderFolder) as NhsDDDataSetFolder
+        dataSetFolder.htmlDescription = convertLinksInDescription(versionedFolderId, dataSetFolder.getDescription())
         if(id) {
             List<String> folderPath = [folderFolder.label]
-            Folder parentFolder = folderCacheableRepository.readById(folderFolder.getParentFolder().id)
+            Folder parentFolder = folderCacheableRepository.findById(folderFolder.getParentFolder().id)
             while(parentFolder && parentFolder.label != "Data Sets") {
                 folderPath.add(0, parentFolder.label)
-                parentFolder = folderCacheableRepository.readById(parentFolder.getParentFolder().id)
+                parentFolder = folderCacheableRepository.findById(parentFolder.getParentFolder().id)
             }
             dataSetFolder.folderPath = folderPath
         }
-        folderCacheableRepository.readAllByParent(folderFolder).each {
-            NhsDDDataSetFolder childFolder = new NhsDDDataSetFolder().fromMauroItem(null, mauroPersistenceService, it)
+        folderCacheableRepository.findAllByFolderId(folderFolder.id).each {
+            NhsDDDataSetFolder childFolder = new NhsDDDataSetFolder(it).fromMauroItem(null, mauroPersistenceService, it)
             dataSetFolder.childFolders.add(childFolder)
         }
 
         dataModelCacheableRepository.findAllByFolderId(folderFolder.id).each {
-            NhsDDDataSet childDataSet = new NhsDDDataSet().fromMauroItem(null, mauroPersistenceService, it)
+            NhsDDDataSet childDataSet = new NhsDDDataSet(it).fromMauroItem(null, mauroPersistenceService, it)
             if (!childDataSet.isRetired()) {
                 dataSetFolder.dataSets.add(childDataSet)
             }

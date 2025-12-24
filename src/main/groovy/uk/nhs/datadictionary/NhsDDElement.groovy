@@ -17,16 +17,16 @@
  */
 package uk.nhs.datadictionary
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import groovy.util.logging.Slf4j
 import org.maurodata.dita.elements.langref.base.Topic
 import org.maurodata.dita.elements.langref.base.XRef
 import org.maurodata.domain.datamodel.DataElement
+import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.datamodel.DataType
 import org.maurodata.domain.facet.SemanticLinkType
 import org.maurodata.domain.terminology.Term
-import org.maurodata.domain.terminology.Terminology
-import org.maurodata.persistence.terminology.dto.CodeSetTermDTO
 import uk.nhs.datadictionary.publish.structure.CodesRow
 import uk.nhs.datadictionary.publish.structure.CodesSection
 import uk.nhs.datadictionary.publish.structure.DictionaryItem
@@ -37,6 +37,15 @@ import uk.nhs.datadictionary.services.MauroPersistenceService
 
 @Slf4j
 class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
+
+    NhsDDElement(DataElement catalogueItem) {
+        super(catalogueItem)
+    }
+
+    DataElement newCatalogueItem() {
+        return new DataElement()
+    }
+
 
     @Override
     String getStereotype() {
@@ -59,12 +68,16 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
         NhsDataDictionary.METADATA_NAMESPACE + ".element"
     }
 
+    @JsonIgnore
     List<NhsDDCode> codes = []
 
+    @JsonIgnore
     XRef formatLinkXref
 
+    @JsonIgnore
     String codeSetVersion
 
+    @JsonProperty('attributes')
     List<NhsDDAttribute> instantiatesAttributes = []
 
     String getFormatLength() {
@@ -109,6 +122,7 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
                 }
                 else {
                     System.err.println("Couldn't set short description: $stereotype $name")
+                    System.err.println("$firstSentence")
                     System.err.println("$description")
                 }
             } catch (Exception e) {
@@ -256,24 +270,21 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
         */
     }
 
-    String getAttributeTextAsHtml() {
+    String getDescription() {
         if (!isActivePage()) {
             return null
         }
-        /*
-        if (otherProperties["attributeText"]) {
-            return otherProperties["attributeText"]
-        }
-        */
         List<NhsDDAttribute> activeAttributes = instantiatesAttributes.findAll {!it.isRetired() }
         if (activeAttributes.size() == 1 && otherProperties["suppressFirstSentence"] != 'true') {
             NhsDDAttribute attribute = activeAttributes[0]
-            //System.err.println(attribute.name)
-            //System.err.println(attribute.getMauroPath())
-            return "<a href=\"${this.getMauroPath()}\">${this.name}</a> is the same as attribute <a href=\"${attribute.getMauroPath()}\">${attribute.name}</a>."
+            String ret = "<a href=\"${this.getMauroPath()}\">${this.name}</a> is the same as attribute <a href=\"${attribute.getMauroPath()}\">${attribute.name}</a>. "
+            if(catalogueItem) {
+                ret += catalogueItem.description
+            }
+            return ret
         }
 
-        return null
+        return catalogueItem.description
     }
 
     @Override
@@ -312,11 +323,11 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
 
         if (itemState == DictionaryItem.DictionaryItemState.ACTIVE) {
             if (hasNationalCodes()) {
-                List<CodesRow> nationalCodes = createCodesSectionRows(orderedNationalCodes)
+                List<CodesRow> nationalCodes = createCodesSectionRows(getNationalCodes())
                 dictionaryItem.addSection(CodesSection.createNationalCodes(dictionaryItem, nationalCodes))
             }
             if (hasDefaultCodes()) {
-                List<CodesRow> defaultCodes = createCodesSectionRows(orderedDefaultCodes)
+                List<CodesRow> defaultCodes = createCodesSectionRows(getDefaultCodes())
                 dictionaryItem.addSection(CodesSection.createDefaultCodes(dictionaryItem, defaultCodes))
             }
             addAliasesSection(dictionaryItem)
@@ -390,6 +401,7 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
         return topics
     }
 
+    @JsonIgnore
     Topic getFormatLengthTopic() {
         Topic.build (id: getDitaKey() + "_formatLength") {
             title "Format / Length"
@@ -406,7 +418,7 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
         }
     }
 
-    List<NhsDDCode> getOrderedNationalCodes() {
+    List<NhsDDCode> getNationalCodes() {
         List<NhsDDCode> orderedCodes = codes.findAll { !it.isDefault }
         if(codes.find { it.webOrder}) {
             orderedCodes = orderedCodes.sort {it.webOrder }
@@ -416,7 +428,7 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
         orderedCodes
     }
 
-    List<NhsDDCode> getOrderedDefaultCodes() {
+    List<NhsDDCode> getDefaultCodes() {
         List<NhsDDCode> orderedCodes = codes.findAll { it.isDefault }
         if(codes.find { it.webOrder}) {
             orderedCodes = orderedCodes.sort {it.webOrder }
@@ -426,8 +438,9 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
         orderedCodes
     }
 
+    @JsonIgnore
     Topic getNationalCodesTopic() {
-        List<NhsDDCode> orderedCodes = getOrderedNationalCodes()
+        List<NhsDDCode> orderedCodes = getNationalCodes()
         String topicTitle = "National Codes"
         if(instantiatesAttributes) {
             if(orderedCodes.size() < instantiatesAttributes[0].codes.findAll { !it.isDefault }.size()) {
@@ -438,12 +451,13 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
         NhsDDCode.getCodesTopic(getDitaKey() + "_nationalCodes", topicTitle, orderedCodes)
     }
 
+    @JsonIgnore
     Topic getDefaultCodesTopic() {
-        List<NhsDDCode> orderedCodes = getOrderedDefaultCodes()
+        List<NhsDDCode> orderedCodes = getDefaultCodes()
         NhsDDCode.getCodesTopic(getDitaKey() + "_defaultCodes", "Default Codes", orderedCodes)
     }
 
-
+    @JsonIgnore
     Topic getLinkedAttributesTopic() {
         List<NhsDDAttribute> attributes = instantiatesAttributes
             .findAll { attribute -> !attribute.isRetired() }
@@ -477,6 +491,7 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
     }
 
     @Override
+    @JsonIgnore
     String getDiscriminator() {
         name
     }
@@ -484,6 +499,7 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
     @Override
     NhsDDElement fromMauroItem(NhsDataDictionary dataDictionary, MauroPersistenceService mauroPersistenceService, DataElement catalogueItem) {
         super.fromMauroItem(dataDictionary, mauroPersistenceService, catalogueItem)
+        catalogueItem.dataType = mauroPersistenceService.dataTypeCacheableRepository.findById(catalogueItem.dataType.id)
         if(dataDictionary) {
             catalogueItem.semanticLinks.each {
                 if (it.linkType == SemanticLinkType.REFINES) {
@@ -495,11 +511,14 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
                 }
             }
         }
+        System.err.println(catalogueItem.dataType.dataTypeKind)
+        System.err.println(dataDictionary)
         if(catalogueItem.dataType.dataTypeKind == DataType.DataTypeKind.MODEL_TYPE) {
             if (dataDictionary) {
                 codes = dataDictionary.elementCodeSetCodes[catalogueItem.dataType.modelResourceId]
             } else {
-                List<Term> terms = mauroPersistenceService.codeSetCacheableRepository.getTerms(catalogueItem.dataType.modelResourceId)
+                Set<Term> terms = mauroPersistenceService.termCacheableRepository.findAllByCodeSetsIdIn([catalogueItem.dataType.modelResourceId])
+                System.err.println("Terms size: ${terms.size()}")
                 codes = terms.collect {new NhsDDCode(it)}
             }
             codes.each {code ->

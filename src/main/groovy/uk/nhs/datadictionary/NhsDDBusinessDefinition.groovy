@@ -19,11 +19,26 @@ package uk.nhs.datadictionary
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import groovy.util.logging.Slf4j
+import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.terminology.Term
 
 @Slf4j
 class NhsDDBusinessDefinition extends NhsDataDictionaryComponent <Term> {
+
+    NhsDDBusinessDefinition(Term term) {
+        super(term)
+    }
+
+    @Override
+    String getName() {
+        catalogueItem.code
+    }
+
+
+    Term newCatalogueItem() {
+        return new Term()
+    }
 
     @Override
     String getStereotype() {

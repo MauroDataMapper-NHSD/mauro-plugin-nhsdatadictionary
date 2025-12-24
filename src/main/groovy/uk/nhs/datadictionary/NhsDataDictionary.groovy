@@ -233,8 +233,6 @@ class NhsDataDictionary {
     void buildFromXml(DataDictionaryImportParameters parameters) {
         Node xml = new XmlParser().parse(parameters.importFile.inputStream)
 
-        System.err.println(nhsDataDictionaryService)
-        System.err.println(classService)
         log.info('Building new NHS Data Dictionary from XML')
         Instant startTime = Instant.now()
 
@@ -270,12 +268,12 @@ class NhsDataDictionary {
             log.info("${componentClassName} built in ${Duration.between(componentStartTime, Instant.now()).toString()}")
         }
         Instant componentStartTime = Instant.now()
-        if(parameters.publishDataSetFolders) {
+        if(!parameters.omitDataSetFolders) {
             processDataSetFolders()
         }
         log.info("Data Set Folders built in ${Duration.between(componentStartTime, Instant.now()).toString()}")
         componentStartTime = Instant.now()
-        if(parameters.publishClasses) {
+        if(!parameters.omitClasses) {
             processClassLinks()
         }
         log.info("Class Links built in ${Duration.between(componentStartTime, Instant.now()).toString()}")
@@ -290,6 +288,21 @@ class NhsDataDictionary {
     Folder generateFolder(DataDictionaryImportParameters parameters) {
 
         Folder dictionaryFolder = new Folder(label: folderName, branchName: Model.DEFAULT_BRANCH_NAME)
+        if(parameters.branchName && parameters.finalised == false){
+            dictionaryFolder.finalised = false
+            dictionaryFolder.branchName = parameters.branchName
+        } else if (parameters.folderVersionNo && parameters.releaseDate) {
+            dictionaryFolder.finalised = true
+            dictionaryFolder.modelVersion = ModelVersion.from(parameters.folderVersionNo)
+            dictionaryFolder.modelVersionTag = parameters.releaseDate
+        }
+        if(parameters.prevVersion) {
+            VersionLink versionLink = new VersionLink()
+            versionLink.versionLinkType = VersionLink.NEW_MODEL_VERSION_OF
+            versionLink.target = new Folder(id: parameters.prevVersion)
+            dictionaryFolder.versionLinks.add(versionLink)
+        }
+
 
         nhsDataDictionaryService.defaultProfileMetadata().each { defaultMetadata ->
             dictionaryFolder.metadata(defaultMetadata)
@@ -300,7 +313,7 @@ class NhsDataDictionary {
         Map<String, DataClass> attributeClassesByUin = [:]
         Set<String> attributeUinIsKey = []
 
-        if(parameters.publishAttributes || parameters.publishClasses) {
+        if(!parameters.omitAttributes && !parameters.omitClasses) {
 
             DataModel classesDataModel =
                 new DataModel(label: CLASSES_MODEL_NAME,
@@ -310,13 +323,13 @@ class NhsDataDictionary {
             dictionaryFolder.dataModels.add(classesDataModel)
             classService.createClassesModel(this, classesDataModel, attributeClassesByUin, attributeUinIsKey)
 
-            if(parameters.publishAttributes) {
+            if(!parameters.omitAttributes) {
                 attributeService.createAttributes(this, dictionaryFolder, classesDataModel, attributeTerminologiesByName, attributeClassesByUin, attributeUinIsKey)
             }
         }
 
         DataModel elementDataModel = null
-        if (parameters.publishElements) {
+        if (!parameters.omitElements) {
             elementDataModel =
                 new DataModel(label: ELEMENTS_MODEL_NAME,
                               description: "NHS Data Dictionary Data Elements",
@@ -326,23 +339,23 @@ class NhsDataDictionary {
             elementService.persistElements(this, dictionaryFolder, elementDataModel, attributeTerminologiesByName)
         }
 
-        if(parameters.publishBusinessDefinitions) {
+        if(!parameters.omitBusinessDefinitions) {
             businessDefinitionService.persistBusinessDefinitions(this, dictionaryFolder)
         }
 
-        if(parameters.publishSupportingInformation) {
+        if(!parameters.omitSupportingInformation) {
             supportingInformationService.persistSupportingInformation(this, dictionaryFolder)
         }
 
-        if(parameters.publishDataSetConstraints) {
+        if(!parameters.omitDataSetConstraints) {
             dataSetConstraintService.persistDataSetConstraints(this, dictionaryFolder)
         }
 
-        if(parameters.publishDataSetFolders) {
+        if(!parameters.omitDataSetFolders) {
             dataSetFolderService.persistDataSetFolders(this, dictionaryFolder)
         }
 
-        if(parameters.publishDataSets) {
+        if(!parameters.omitDataSets) {
             dataSetService.persistDataSets(this, dictionaryFolder, elementDataModel)
         }
 

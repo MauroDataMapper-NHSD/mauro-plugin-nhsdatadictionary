@@ -58,16 +58,29 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
     NhsDDElement show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
         DataElement elementElement = dataElementRepository.loadWithContent(id)
         NhsDDElement element = new NhsDDElement().fromMauroItem(null, mauroPersistenceService, elementElement) as NhsDDElement
+
         element.instantiatesAttributes.addAll(getAllAttributesForElement(null, element))
+
         element.definition = convertLinksInDescription(versionedFolderId, element.getDescription())
+        element.htmlDescription = convertLinksInDescription(versionedFolderId, element.getDescription())
+        /*
         String attributeText = element.getAttributeTextAsHtml()
         if (attributeText) {
             element.previewAttributeText = convertLinksInDescription(versionedFolderId, attributeText)
         }
+        */
         element.codes.each {code ->
             if(code.webPresentation) {
                 code.webPresentation = convertLinksInDescription(versionedFolderId, code.webPresentation)
             }
+        }
+        // ensure no recursion
+        element.instantiatesAttributes.each {
+            it.codes = []
+        }
+        element.codes.each {code ->
+            code.usedByElements = []
+            code.owningAttribute = null
         }
         return element
     }
@@ -88,7 +101,7 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
             if(dataDictionary) {
                 return dataDictionary.attributesByCatalogueId[semanticLink.targetMultiFacetAwareItemId]
             } else {
-                DataElement dataElement = dataElementRepository.readById(semanticLink.targetMultiFacetAwareItemId)
+                DataElement dataElement = dataElementRepository.findById(semanticLink.targetMultiFacetAwareItemId)
                 return new NhsDDAttribute().fromMauroItem(dataDictionary, mauroPersistenceService, dataElement)
             }
         }.findAll{

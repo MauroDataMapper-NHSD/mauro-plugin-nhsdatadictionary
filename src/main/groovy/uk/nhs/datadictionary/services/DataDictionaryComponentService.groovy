@@ -17,6 +17,7 @@
  */
 package uk.nhs.datadictionary.services
 
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import io.micronaut.context.ApplicationContext
 import jakarta.inject.Inject
@@ -39,6 +40,7 @@ import java.util.regex.Pattern
 
 @Slf4j
 @Singleton
+@CompileStatic
 abstract class DataDictionaryComponentService<T extends AdministeredItem, D extends NhsDataDictionaryComponent> {
 
     @Inject
@@ -49,9 +51,6 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
     @Inject FolderCacheableRepository folderCacheableRepository
 
     @Inject ApplicationContext applicationContext
-
-    DataDictionaryComponentService() {
-    }
 
     abstract String getStereotype()
 
@@ -79,8 +78,7 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
 */
     abstract D getByCatalogueItemId(UUID catalogueItemId, NhsDataDictionary nhsDataDictionary)
 
-    List<NhsDataDictionaryComponent> getWhereUsed(UUID versionedFolderId, String id) {
-        NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(versionedFolderId)
+    List<Map<String, Object>> getWhereUsed(NhsDataDictionary dataDictionary, UUID id) {
 
         // Do a full check of every "where used" link type, same as the DITA generation. Only way to be sure that
         // every possible link is captured
@@ -89,16 +87,23 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
             pathLookup[component.getMauroPath()] = component
         }
 
-        dataDictionary.allComponents.each {component ->
+        dataDictionary.allComponents.each { component ->
             component.replaceLinksInDefinition(pathLookup)
         }
 
-        NhsDataDictionaryComponent component = getByCatalogueItemId(UUID.fromString(id), dataDictionary)
+        NhsDataDictionaryComponent component = getByCatalogueItemId(id, dataDictionary)
         component.updateWhereUsed()
-        component.whereUsed
+        return component.whereUsed.entrySet()
             .findAll { !it.key.isRetired() }
             .sort { it.key.name }
-            .collect { item, text -> item }
+            .collect { entry ->
+                [   'catalogueId': entry.key.catalogueItem.id.toString(),
+                    'description': entry.value,
+                    'isRetired': entry.key.isRetired(),
+                    'name': entry.key.name,
+                    'stereotype': entry.key.stereotypeForPreview
+                ]
+            } as List<Map<String, Object>>
     }
 
     /**
@@ -230,10 +235,10 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
         //"valueSet": "value-set",
     ]
 
-    void addMetadataFromComponent(Item domainObject, NhsDataDictionaryComponent component) {
+    void addMetadataFromComponent(AdministeredItem domainObject, NhsDataDictionaryComponent component) {
         component.otherProperties.each {key, value ->
             if(!NhsDataDictionary.KEYS_FOR_INGEST_ONLY.contains(key))
-            addToMetadata(domainObject, component.getMetadataNamespace(), key, value)
+                addToMetadata(domainObject, component.getMetadataNamespace(), key, value)
         }
     }
 

@@ -17,10 +17,12 @@
  */
 package uk.nhs.datadictionary
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import groovy.util.logging.Slf4j
 import org.maurodata.dita.elements.langref.base.Topic
 import org.maurodata.domain.datamodel.DataElement
+import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.datamodel.DataType
 import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
@@ -33,6 +35,15 @@ import uk.nhs.datadictionary.services.MauroPersistenceService
 
 @Slf4j
 class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
+
+    NhsDDAttribute(DataElement catalogueItem) {
+        super(catalogueItem)
+    }
+
+    DataElement newCatalogueItem() {
+        return new DataElement()
+    }
+
 
     @Override
     String getStereotype() {
@@ -61,13 +72,15 @@ class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
      */
     NhsDDClass parentClass
 
+    @JsonIgnore
     List<NhsDDCode> codes = []
 
     String codesVersion
 
-    Set<NhsDDElement> instantiatedByElements = [] as Set
+    @JsonProperty('dataElements')
+    Set<NhsDDElement> instantiatedByElements = [] as Set<NhsDDElement>
 
-    boolean getIsKey() {
+    boolean isKey() {
         if (!otherProperties.containsKey("isKey")) {
             return false
         }
@@ -166,6 +179,7 @@ class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
     }
 
     @Override
+    @JsonIgnore
     DictionaryItem getPublishStructure() {
         DictionaryItem dictionaryItem = DictionaryItem.create(this)
 
@@ -188,7 +202,7 @@ class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
             return
         }
 
-        List<NhsDDCode> orderedCodes = getOrderedNationalCodes()
+        List<NhsDDCode> orderedCodes = getNationalCodes()
         List<CodesRow> rows = orderedCodes.collect {code ->
             new CodesRow(code.code, code.description, code.hasWebPresentation())
         }
@@ -238,12 +252,13 @@ class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
         return topics
     }
 
+    @JsonIgnore
     Topic getNationalCodesTopic() {
-        List<NhsDDCode> orderedCodes = getOrderedNationalCodes()
+        List<NhsDDCode> orderedCodes = getNationalCodes()
         NhsDDCode.getCodesTopic(getDitaKey() + "_nationalCodes", "National Codes", orderedCodes)
     }
 
-    List<NhsDDCode> getOrderedNationalCodes() {
+    List<NhsDDCode> getNationalCodes() {
         List<NhsDDCode> orderedCodes = codes.findAll { !it.isDefault }
         if(codes.find { it.webOrder}) {
             orderedCodes = orderedCodes.sort {it.webOrder }
@@ -253,6 +268,7 @@ class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
         orderedCodes
     }
 
+    @JsonIgnore
     Topic getLinkedElementsTopic() {
         def elements = instantiatedByElements
             .<NhsDDElement>findAll { element -> !element.isRetired() }
@@ -297,6 +313,10 @@ class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
     @Override
     NhsDDAttribute fromMauroItem(NhsDataDictionary dataDictionary, MauroPersistenceService mauroPersistenceService, DataElement catalogueItem) {
         super.fromMauroItem(dataDictionary, mauroPersistenceService, catalogueItem)
+        catalogueItem.dataType = mauroPersistenceService.dataTypeCacheableRepository.findById(catalogueItem.dataType.id)
+        if(!dataDictionary) {
+            catalogueItem.dataClass = mauroPersistenceService.dataClassCacheableRepository.findById(catalogueItem.dataClass.id)
+        }
         if(catalogueItem.dataType.dataTypeKind == DataType.DataTypeKind.MODEL_TYPE) {
             if (dataDictionary) {
                 codes = dataDictionary.attributeTerminologyCodes[catalogueItem.dataType.modelResourceId]

@@ -18,6 +18,9 @@
 package uk.nhs.datadictionary
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.maurodata.dita.elements.langref.base.DitaMap
 import org.maurodata.dita.elements.langref.base.Topic
@@ -50,6 +53,7 @@ import java.time.format.DateTimeFormatter
 import java.util.regex.Pattern
 
 @Slf4j
+@CompileDynamic
 abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  implements ChangeAware {
 
     abstract String getStereotype()
@@ -63,6 +67,12 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
 
     @JsonIgnore
     T catalogueItem
+
+    NhsDataDictionaryComponent(T catalogueItem) {
+        this.catalogueItem = catalogueItem
+    }
+
+
     UUID catalogueItemId
 
     @JsonIgnore
@@ -74,10 +84,14 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
     @JsonIgnore
     String catalogueItemParentId
 
-    String name
+    String getName() {
+        catalogueItem.label
+    }
 
     @JsonIgnore
     String definition = ""
+
+    String htmlDescription
 
     @JsonIgnore
     Map<String, String> otherProperties = [:]
@@ -137,11 +151,15 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         otherProperties["shortDescription"] = shortDescription
     }
 
+    abstract T newCatalogueItem()
+
     void fromXml(def xml, NhsDataDictionary dataDictionary) {
+        catalogueItem = newCatalogueItem()
+
         if(xml.name.size() > 0 && xml.name.text()) {
-            this.name = xml.name[0].text().replace("_", " ")
+            catalogueItem.label = xml.name[0].text().replace("_", " ")
         } else { // This should only apply for dataSetConstraints
-            this.name = xml."class".name.text().replace("_", " ")
+            catalogueItem.label = xml."class".name.text().replace("_", " ")
         }
 
         /*  We're doing capitalised items now
@@ -189,6 +207,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         return getAliases().size() == 0
     }
 
+    @JsonProperty("alsoKnownAs")
     Map<String, String> getAliases() {
         Map<String, String> aliases = [:]
         NhsDataDictionary.aliasFields.each {aliasKey, aliasValue ->
@@ -567,15 +586,15 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
     }
 
     @JsonIgnore
-    String getSentence(String html = this.definition, int i) {
+    String getSentence(String html = this.getDescription(), int i) {
         if(!html) {
             return null
         }
-        String sentence = this.calculateSentences(html)[i]
+        String sentence = calculateSentences(html)[i]
         if (!sentence) {
             return null
         }
-        return tidyShortDescription(sentence) + "."
+        return tidyShortDescription(sentence).trim() + "."
     }
 
     String tidyShortDescription(String sentence) {
@@ -638,10 +657,11 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         this.catalogueItem = catalogueItem
         this.dataDictionary = dataDictionary
 
-        name = catalogueItem.label
         definition = catalogueItem.description?:""
         catalogueItemId = catalogueItem.id
-        branchId = dataDictionary?.containingVersionedFolder?.id
+        if(!branchId) {
+            branchId = dataDictionary?.containingVersionedFolder?.id
+        }
 
         // This is not obvious, but these parent/model IDs are required in the GSON views for the integrity checks - they are used for the direct
         // URLs to items in the Mauro UI

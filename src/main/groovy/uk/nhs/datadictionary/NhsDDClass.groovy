@@ -17,7 +17,9 @@
  */
 package uk.nhs.datadictionary
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
+import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 import org.maurodata.dita.elements.langref.base.Topic
 import org.maurodata.dita.meta.SpaceSeparatedStringList
@@ -30,21 +32,30 @@ import uk.nhs.datadictionary.publish.structure.DictionaryItem
 import uk.nhs.datadictionary.publish.structure.ItemLink
 
 @Slf4j
+@CompileDynamic
 class NhsDDClass extends NhsDataDictionaryComponent <DataClass> {
+
+    NhsDDClass(DataClass catalogueItem) {
+        super(catalogueItem)
+    }
+
+    DataClass newCatalogueItem() {
+        return new DataClass()
+    }
 
     @Override
     String getStereotype() {
-        "Class"
+        'Class'
     }
 
     @Override
     String getStereotypeForPreview() {
-        "class"
+        'class'
     }
 
     @Override
     String getPluralStereotypeForWebsite() {
-        "classes"
+        'classes'
     }
 
     @Override
@@ -54,9 +65,13 @@ class NhsDDClass extends NhsDataDictionaryComponent <DataClass> {
 
     List<NhsDDClass> extendsClasses = []
 
+    @JsonIgnore
     List<NhsDDAttribute> keyAttributes = []
+
+    @JsonIgnore
     List<NhsDDAttribute> otherAttributes = []
 
+    @JsonProperty('relationships')
     List<NhsDDClassRelationship> classRelationships = []
 
     List<NhsDDClassLink> classLinks = []
@@ -68,7 +83,7 @@ class NhsDDClass extends NhsDataDictionaryComponent <DataClass> {
         } else {
             try {
                 String firstSentence = getFirstSentence()
-                if (firstSentence.toLowerCase().contains("a subtype of")) {
+                if (firstSentence && firstSentence.toLowerCase().contains("a subtype of")) {
                     String secondSentence = getSentence(1)
                     return secondSentence
                 } else {
@@ -112,7 +127,8 @@ class NhsDDClass extends NhsDataDictionaryComponent <DataClass> {
         dataDictionary.classesByUin[getUin()] = this
     }
 
-    List<NhsDDAttribute> allAttributes() {
+
+    List<NhsDDAttribute> getAttributes() {
         keyAttributes + otherAttributes
     }
 
@@ -120,7 +136,7 @@ class NhsDDClass extends NhsDataDictionaryComponent <DataClass> {
         classRelationships
             .findAll { it.targetClass.itemState != DictionaryItem.DictionaryItemState.RETIRED }
             .sort { a, b ->
-                b.isKey <=> a.isKey ?: a.targetClass.name.toLowerCase() <=> b.targetClass.name.toLowerCase()
+                b.key <=> a.key ?: a.targetClass.name.toLowerCase() <=> b.targetClass.name.toLowerCase()
             }
     }
 
@@ -154,12 +170,12 @@ class NhsDDClass extends NhsDataDictionaryComponent <DataClass> {
         List<ClassAttributeRow> keyRows = keyAttributes
             .findAll { attribute -> !attribute.isRetired() }
             .sort { attribute -> attribute.name.toLowerCase() }
-            .collect { attribute -> new ClassAttributeRow(attribute.isKey, ItemLink.create(attribute))}
+            .collect { attribute -> new ClassAttributeRow(attribute.key, ItemLink.create(attribute))}
 
         List<ClassAttributeRow> otherRows = otherAttributes
             .findAll { attribute -> !attribute.isRetired() }
             .sort { attribute -> attribute.name.toLowerCase() }
-            .collect { attribute -> new ClassAttributeRow(attribute.isKey, ItemLink.create(attribute))}
+            .collect { attribute -> new ClassAttributeRow(attribute.key, ItemLink.create(attribute))}
 
         List<ClassAttributeRow> allRows = keyRows + otherRows
 
@@ -170,7 +186,7 @@ class NhsDDClass extends NhsDataDictionaryComponent <DataClass> {
         if (classRelationships) {
             List<ClassRelationshipRow> rows = allRelationships().collect {relationship ->
                 new ClassRelationshipRow(
-                    relationship.isKey,
+                    relationship.key,
                     relationship.relationshipDescription,
                     ItemLink.create(relationship.targetClass))
             }
@@ -200,7 +216,7 @@ class NhsDDClass extends NhsDataDictionaryComponent <DataClass> {
     }
 
     Topic attributesTopic() {
-        List<NhsDDAttribute> attributes = allAttributes().findAll { !it.isRetired() }
+        List<NhsDDAttribute> attributes = getAttributes().findAll { !it.isRetired() }
 
         Topic.build (id: getDitaKey() + "_attributes") {
             title "Attributes"
@@ -254,7 +270,7 @@ class NhsDDClass extends NhsDataDictionaryComponent <DataClass> {
                     }
                     allRelationships().each {relationship ->
                         strow {
-                            stentry relationship.isKey?'Key':''
+                            stentry relationship.key ? 'Key' : ''
                             stentry relationship.relationshipDescription
                             stentry {
                                 xRef relationship.targetClass.calculateXRef()

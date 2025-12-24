@@ -17,12 +17,14 @@
  */
 package uk.nhs.datadictionary.publish.changePaper
 
+import jakarta.inject.Singleton
 import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.publish.ItemLinkScanner
 import uk.nhs.datadictionary.publish.MauroCatalogueItemPathResolver
 import uk.nhs.datadictionary.publish.PublishContext
 import uk.nhs.datadictionary.publish.PublishTarget
 
+@Singleton
 class ChangePaperHtmlUtility {
     static ChangePaperPreview generateChangePaper(
         MauroCatalogueItemPathResolver pathResolver,

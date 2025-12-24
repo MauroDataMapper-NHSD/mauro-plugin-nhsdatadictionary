@@ -62,36 +62,41 @@ class DataSetService extends DataDictionaryComponentService<DataModel, NhsDDData
 
     @Override
     NhsDDDataSet show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
-        NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary(versionedFolderId)
+        //NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary(versionedFolderId)
 
         // Load all available Data Elements into the dictionary so that the Data Set preview, when loading classes/element rows, can
         // match up elements in the specification tables
-        DataModel elementsModel = nhsDataDictionaryService.getElementsModel(versionedFolderId)
-        nhsDataDictionaryService.addElementsToDictionary(elementsModel, dataDictionary)
+        //DataModel elementsModel = nhsDataDictionaryService.getElementsModel(versionedFolderId)
+        //nhsDataDictionaryService.addElementsToDictionary(elementsModel, dataDictionary)
 
-        DataModel dataModel = dataModelService.get(id)
+        DataModel dataModel = dataModelRepository.loadWithContent(id)
 
-        NhsDDDataSet dataSet = new NhsDDDataSet().nhsDataDictionaryComponentFromCatalogueItem(dataDictionary, dataModel)
-        dataSet.definition = convertLinksInDescription(versionedFolderId, dataSet.getDescription())
+        NhsDDDataSet dataSet = new NhsDDDataSet(dataModel)
+        dataSet.branchId = versionedFolderId
+        dataSet.fromMauroItem(null, mauroPersistenceService, dataModel)
+        dataSet.htmlDescription = convertLinksInDescription(versionedFolderId, dataSet.getDescription())
 
         DictionaryItem structure = dataSet.getPublishStructure()
         Section specificationSection = structure.sections.find { it instanceof DataSetSection }
         if (specificationSection) {
             // TODO: Improve this preview, all HTML preview items should use publish model, this just gets a quick result for a data set specification fix
-            MauroCatalogueItemPathResolver pathResolver = new MauroCatalogueItemPathResolver(
-                dataDictionary.containingVersionedFolder)
+            //MauroCatalogueItemPathResolver pathResolver = new MauroCatalogueItemPathResolver(dataDictionary.containingVersionedFolder)
+            MauroCatalogueItemPathResolver pathResolver = applicationContext.createBean(MauroCatalogueItemPathResolver)
+            pathResolver.setVersionedFolderId(versionedFolderId)
 
             PublishContext publishContext = new PublishContext(PublishTarget.WEBSITE)
             publishContext.setItemLinkScanner(
                 ItemLinkScanner.createForHtmlPreview(
-                    dataDictionary.containingVersionedFolder.id,
+                    versionedFolderId,
                     pathResolver))
 
             // Don't pretty print the output, try to reduce the response size
             publishContext.prettyPrintHtml = false
 
-            String specificationHtml = specificationSection.generateHtml(publishContext)
-            dataSet.htmlStructure = specificationHtml
+
+            dataSet.htmlStructure = specificationSection.generateHtml(publishContext)
+
+             //= convertLinksInDescription(versionedFolderId, specificationSection.generateHtml(publishContext))
         }
 
         return dataSet

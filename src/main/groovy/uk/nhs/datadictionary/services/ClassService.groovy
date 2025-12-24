@@ -24,16 +24,13 @@ import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.datamodel.DataType
-import org.maurodata.persistence.cache.AdministeredItemCacheableRepository
 import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.DataClassCacheableRepository
 import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.DataElementCacheableRepository
 import uk.nhs.datadictionary.NhsDDAttribute
-import uk.nhs.datadictionary.NhsDDBusinessDefinition
 import uk.nhs.datadictionary.NhsDDClass
 import uk.nhs.datadictionary.NhsDDClassLink
 import uk.nhs.datadictionary.NhsDDClassRelationship
 import uk.nhs.datadictionary.NhsDataDictionary
-import uk.nhs.datadictionary.NhsDataDictionaryComponent
 
 import javax.lang.model.type.PrimitiveType
 
@@ -57,31 +54,39 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
 
     @Override
     NhsDDClass show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
-        DataClass dataClass = dataClassCacheableRepository.readById(id)
+        DataClass dataClass = dataClassCacheableRepository.findById(id)
         NhsDDClass nhsClass = new NhsDDClass().fromMauroItem(null, mauroPersistenceService, dataClass) as NhsDDClass
-        nhsClass.definition = convertLinksInDescription(versionedFolderId, nhsClass.getDescription())
+        nhsClass.htmlDescription = convertLinksInDescription(versionedFolderId, nhsClass.getDescription())
 
         List<NhsDDAttribute> attributes = getAttributesForShow(nhsClass, null)
-        // Assign the attribute by key and non-key types. The NhsDDClass.allAttributes() method will combine them
-        nhsClass.keyAttributes = attributes.findAll { it.isKey }.sort { it.name }
-        nhsClass.otherAttributes = attributes.findAll { !it.isKey }.sort { it.name }
+        // Assign the attribute by key and non-key types. The NhsDDClass.getAttributes() method will combine them
+        nhsClass.keyAttributes = attributes.findAll { it.key }.sort { it.name }
+        nhsClass.otherAttributes = attributes.findAll { !it.key }.sort { it.name }
 
         List<NhsDDClassRelationship> relationships = getRelationshipsForShow(nhsClass, null)
         List<NhsDDClassRelationship> keyRelationships = relationships
-            .findAll { it.isKey }
+            .findAll { it.key }
             .sort { it.targetClass.name }
         List<NhsDDClassRelationship> otherRelationships = relationships
-            .findAll { !it.isKey }
+            .findAll { !it.key }
             .sort { it.targetClass.name }
         nhsClass.classRelationships = keyRelationships + otherRelationships
+
+        // Stop the JSON ouptut from recursing
+        nhsClass.getAttributes().each {
+            it.codes = []
+        }
 
         return nhsClass
     }
 
     List<NhsDDAttribute> getAttributesForShow(NhsDDClass nhsClass, NhsDataDictionary dataDictionary) {
-        Set<DataElement> attributeDataElements = dataElementCacheableRepository.readAllByDataClass_Id(nhsClass.catalogueItem.id)
-            .findAll {
-                !(it.dataType.dataTypeKind == DataType.DataTypeKind.REFERENCE_TYPE)
+        Set<DataElement> attributeDataElements = dataElementCacheableRepository.findAllByDataClass(nhsClass.catalogueItem)
+            .each {dataElement ->
+                dataElement.dataType = mauroPersistenceService.dataTypeCacheableRepository.findById(dataElement.dataType.id)
+            }
+            .findAll {dataElement ->
+                !(dataElement.dataType.dataTypeKind == DataType.DataTypeKind.REFERENCE_TYPE)
             }
 
         // Get a cut-down version of the NhsDDAttribute list, we don't need national codes for previewing an NhsDDClass
@@ -96,12 +101,16 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
     }
 
     List<NhsDDClassRelationship> getRelationshipsForShow(NhsDDClass nhsClass, NhsDataDictionary dataDictionary) {
-        Set<DataElement> relationshipDataElements = nhsClass.catalogueItem.dataElements.findAll {
-            it.dataType == DataType.DataTypeKind.REFERENCE_TYPE
-        }
+        Set<DataElement> relationshipDataElements = dataElementCacheableRepository.findAllByDataClass(nhsClass.catalogueItem)
+            .each {dataElement ->
+                dataElement.dataType = mauroPersistenceService.dataTypeCacheableRepository.findById(dataElement.dataType.id)
+            }
+            .findAll {
+                it.dataType.dataTypeKind == DataType.DataTypeKind.REFERENCE_TYPE
+            }
 
         relationshipDataElements.collect { dataElement ->
-            DataClass referencedClass = ((DataType)dataElement.dataType).referenceClass
+            DataClass referencedClass = dataClassCacheableRepository.findById(dataElement.dataType.referenceClass.id)
             NhsDDClass referencedNhsClass = new NhsDDClass().fromMauroItem(dataDictionary, mauroPersistenceService, referencedClass)
             NhsDDClassRelationship relationship = new NhsDDClassRelationship(dataElement, referencedNhsClass)
             relationship
@@ -151,7 +160,7 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
             // However, since the classes contain the information about which attribute appears in which class,
             // we'll maintain a map here
 
-            clazz.allAttributes().each {
+            clazz.getAttributes().each {
                 attributeClassesByUin[it.uin] = dataClass
             }
             clazz.keyAttributes.each {

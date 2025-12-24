@@ -18,11 +18,21 @@
 package uk.nhs.datadictionary
 
 import groovy.util.logging.Slf4j
+import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.folder.Folder
 
 @Slf4j
 class NhsDDDataSetFolder extends NhsDataDictionaryComponent <Folder> {
+
+    NhsDDDataSetFolder(Folder catalogueItem) {
+        super(catalogueItem)
+    }
+
+    Folder newCatalogueItem() {
+        return new Folder()
+    }
+
 
     List<String> folderPath = []
 
@@ -36,7 +46,7 @@ class NhsDDDataSetFolder extends NhsDataDictionaryComponent <Folder> {
 
     @Override
     String getStereotypeForPreview() {
-        "dataSet"
+        "dataSetFolder"
     }
 
 

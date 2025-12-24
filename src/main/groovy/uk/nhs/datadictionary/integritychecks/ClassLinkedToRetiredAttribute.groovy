@@ -35,7 +35,7 @@ class ClassLinkedToRetiredAttribute implements IntegrityCheck {
         dataDictionary.classes.values()
             .findAll { ddClass -> !ddClass.isRetired() }
             .forEach { ddClass ->
-                List<NhsDDAttribute> retiredAttributes = ddClass.allAttributes().findAll { it.isRetired() }
+                List<NhsDDAttribute> retiredAttributes = ddClass.getAttributes().findAll { it.isRetired() }
                 if (!retiredAttributes.empty) {
                     List<String> attributeNames = retiredAttributes.collect { it.name }
                     foundErrors.add(new IntegrityCheckError(ddClass, attributeNames))

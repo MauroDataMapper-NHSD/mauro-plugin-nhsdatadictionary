@@ -34,7 +34,7 @@ class AttributesLinkedToAClass implements IntegrityCheck {
         Map<String, NhsDDAttribute> allUnusedAttributesMap = new HashMap<String, NhsDDAttribute>(dataDictionary.attributes)
 
         dataDictionary.classes.values().each {dataClass ->
-            dataClass.allAttributes().each {attribute ->
+            dataClass.getAttributes().each {attribute ->
                 allUnusedAttributesMap.remove(attribute.name)
             }
         }

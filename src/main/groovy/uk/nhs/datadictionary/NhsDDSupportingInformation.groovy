@@ -18,10 +18,25 @@
 package uk.nhs.datadictionary
 
 import groovy.util.logging.Slf4j
+import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.terminology.Term
 
 @Slf4j
 class NhsDDSupportingInformation extends NhsDataDictionaryComponent <Term> {
+
+    NhsDDSupportingInformation(Term catalogueItem) {
+        super(catalogueItem)
+    }
+
+    Term newCatalogueItem() {
+        return new Term()
+    }
+
+    @Override
+    String getName() {
+        catalogueItem.code
+    }
+
 
     @Override
     String getStereotype() {

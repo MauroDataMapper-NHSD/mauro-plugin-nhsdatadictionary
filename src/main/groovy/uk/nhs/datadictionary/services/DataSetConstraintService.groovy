@@ -45,9 +45,9 @@ class DataSetConstraintService extends DataDictionaryComponentService<Term, NhsD
     NhsDDDataSetConstraint show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
         NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary(versionedFolderId)
 
-        Term dataSetConstraintTerm = termCacheableRepository.readById(id)
+        Term dataSetConstraintTerm = termCacheableRepository.findById(id)
         NhsDDDataSetConstraint dataSetConstraint = new NhsDDDataSetConstraint().fromMauroItem(dataDictionary, mauroPersistenceService, dataSetConstraintTerm)
-        dataSetConstraint.definition = convertLinksInDescription(versionedFolderId, dataSetConstraint.getDescription())
+        dataSetConstraint.htmlDescription = convertLinksInDescription(versionedFolderId, dataSetConstraint.getDescription())
         return dataSetConstraint
     }
 

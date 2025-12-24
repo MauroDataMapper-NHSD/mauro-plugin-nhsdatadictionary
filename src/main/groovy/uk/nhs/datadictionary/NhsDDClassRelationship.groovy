@@ -17,19 +17,34 @@
  */
 package uk.nhs.datadictionary
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.maurodata.domain.datamodel.DataElement
 import uk.nhs.datadictionary.publish.changePaper.ChangeAware
 
 class NhsDDClassRelationship implements ChangeAware {
 
+    @JsonProperty('relationship')
     String relationshipDescription
     NhsDDClass targetClass
     String role
     boolean hasMultiple
-    boolean isKey
+
+    @JsonProperty('key')
+    boolean key
+
+    @JsonProperty('choice')
     boolean isChoice
+
     int minMultiplicity
     int maxMultiplicity
+
+    String getName() {
+        targetClass.name
+    }
+
+    String getStereotype() {
+        targetClass.stereotypeForPreview
+    }
 
     /**
      * This describes the full description of the relationship, including relationship label, target class and key. This should
@@ -37,7 +52,7 @@ class NhsDDClassRelationship implements ChangeAware {
      */
     @Override
     String getDiscriminator() {
-        "${isKey ? "Key: " : ""}$relationshipDescription $targetClass.name"
+        "${key ? "Key: " : ""}$relationshipDescription $targetClass.name"
     }
 
     NhsDDClassRelationship() {
@@ -53,7 +68,7 @@ class NhsDDClassRelationship implements ChangeAware {
         this.hasMultiple = !relationshipElement.label.findAll("\\(\\d+\\)").empty
         this.minMultiplicity = relationshipElement.minMultiplicity ?: 0
         this.maxMultiplicity = relationshipElement.maxMultiplicity ?: 0
-        this.isKey = relationshipElement.metadata.find { it.key == NhsDDClassLink.IS_KEY_METADATA_KEY }?.value == "true" ?: false
+        this.key = relationshipElement.metadata.find {it.key == NhsDDClassLink.IS_KEY_METADATA_KEY }?.value == "true" ?: false
         this.isChoice = relationshipElement.metadata.find { it.key == NhsDDClassLink.IS_CHOICE_METADATA_KEY }?.value == "true" ?: false
         this.relationshipDescription = this.buildDescription()
     }

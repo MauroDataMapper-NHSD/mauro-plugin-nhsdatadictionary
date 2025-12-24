@@ -172,21 +172,21 @@ class WebsiteUtility {
 
     static void generateIndexTopics(NhsDataDictionary dataDictionary, DitaProject ditaProject, DataDictionaryImportParameters parameters) {
 
-        if(parameters.isPublishElements()) {
+        if(!parameters.omitElements()) {
             generateIndexMap(ditaProject, "data_elements", "Elements", dataDictionary, dataDictionary.elements.values())
 
         }
-        if(parameters.isPublishAttributes()) {
+        if(!parameters.omitAttributes()) {
             generateIndexMap(ditaProject, "attributes", "Attributes", dataDictionary, dataDictionary.attributes.values())
         }
-        if(parameters.isPublishClasses()) {
+        if(!parameters.omitClasses()) {
             generateIndexMap(ditaProject, "classes", "Classes", dataDictionary, dataDictionary.classes.values())
         }
-        if(parameters.isPublishBusinessDefinitions()) {
+        if(!parameters.omitBusinessDefinitions()) {
             generateIndexMap(ditaProject, "nhs_business_definitions", "NHS Business Definitions", dataDictionary, dataDictionary.businessDefinitions.values())
 
         }
-        if(parameters.isPublishSupportingInformation()) {
+        if(!parameters.omitSupportingInformation()) {
             generateIndexMap(ditaProject, "supporting_information", "Supporting Information", dataDictionary, dataDictionary.supportingInformation.values())
         }
     }

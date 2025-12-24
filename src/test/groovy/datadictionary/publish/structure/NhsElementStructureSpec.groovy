@@ -21,6 +21,7 @@ import io.micronaut.context.annotation.Property
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
 import org.maurodata.dita.elements.langref.base.Topic
+import org.maurodata.domain.datamodel.DataClass
 import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.NhsDDBusinessDefinition
 import uk.nhs.datadictionary.NhsDDChangeLog
@@ -62,9 +63,10 @@ during a Liver Cancer Care Spell.</p>"""
     @Override
     void setupRelatedItems() {
         relatedPatientClass = new NhsDDClass(
-            catalogueItemId: UUID.fromString("ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6"),
-            branchId: branchId,
-            name: "PATIENT")
+            new DataClass(label: 'PATIENT'))
+            //catalogueItemId: UUID.fromString("ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6"),
+            //branchId: branchId,
+            //name: "PATIENT")
 
         relatedRadiofrequncyAblationDef = new NhsDDBusinessDefinition(
             catalogueItemId: UUID.fromString("685a7609-a5ba-4112-bbd3-d8d5df0cdf4f"),

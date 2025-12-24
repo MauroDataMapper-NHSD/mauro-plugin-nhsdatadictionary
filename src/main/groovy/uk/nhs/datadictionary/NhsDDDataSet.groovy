@@ -35,7 +35,13 @@ import uk.nhs.datadictionary.services.MauroPersistenceService
 @Slf4j
 class NhsDDDataSet extends NhsDataDictionaryComponent <DataModel> {
 
+    NhsDDDataSet(DataModel catalogueItem) {
+        super(catalogueItem)
+    }
 
+    DataModel newCatalogueItem() {
+        return new DataModel()
+    }
 
     @Override
     String getStereotype() {
@@ -226,7 +232,7 @@ class NhsDDDataSet extends NhsDataDictionaryComponent <DataModel> {
     NhsDDDataSet fromMauroItem(NhsDataDictionary dataDictionary, MauroPersistenceService mauroPersistenceService, DataModel catalogueItem) {
         super.fromMauroItem(dataDictionary, mauroPersistenceService, catalogueItem)
         this.catalogueItem.childDataClasses.each {dataClass ->
-            dataSetClasses.add(new NhsDDDataSetClass(dataClass, dataDictionary))
+            dataSetClasses.add(new NhsDDDataSetClass(dataClass, dataDictionary, mauroPersistenceService, branchId))
         }
         dataSetClasses = dataSetClasses.sort { it.webOrder }
         return this
