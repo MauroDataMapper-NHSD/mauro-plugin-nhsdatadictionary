@@ -35,12 +35,12 @@ import uk.nhs.datadictionary.publish.structure.ItemLink
 @CompileDynamic
 class NhsDDClass extends NhsDataDictionaryComponent <DataClass> {
 
-    NhsDDClass(DataClass catalogueItem) {
-        super(catalogueItem)
+    NhsDDClass(DataClass catalogueItem = null, UUID branchId = null) {
+        super(catalogueItem, branchId)
     }
 
-    DataClass newCatalogueItem() {
-        return new DataClass()
+    DataClass newCatalogueItem(String name = null) {
+        return new DataClass(label: name)
     }
 
     @Override

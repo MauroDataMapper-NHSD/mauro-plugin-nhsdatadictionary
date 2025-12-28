@@ -23,7 +23,6 @@ import groovy.util.logging.Slf4j
 import org.maurodata.dita.elements.langref.base.Topic
 import org.maurodata.dita.elements.langref.base.XRef
 import org.maurodata.domain.datamodel.DataElement
-import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.datamodel.DataType
 import org.maurodata.domain.facet.SemanticLinkType
 import org.maurodata.domain.terminology.Term
@@ -38,12 +37,12 @@ import uk.nhs.datadictionary.services.MauroPersistenceService
 @Slf4j
 class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
 
-    NhsDDElement(DataElement catalogueItem) {
-        super(catalogueItem)
+    NhsDDElement(DataElement catalogueItem = null, UUID branchId = null) {
+        super(catalogueItem, branchId)
     }
 
-    DataElement newCatalogueItem() {
-        return new DataElement()
+    DataElement newCatalogueItem(String name = null) {
+        return new DataElement(label: name)
     }
 
 

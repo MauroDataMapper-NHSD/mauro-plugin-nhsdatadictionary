@@ -24,12 +24,12 @@ import org.maurodata.domain.terminology.Term
 @Slf4j
 class NhsDDDataSetConstraint extends NhsDataDictionaryComponent <Term> {
 
-    NhsDDDataSetConstraint(Term catalogueItem) {
-        super(catalogueItem)
+    NhsDDDataSetConstraint(Term catalogueItem = null, UUID branchId = null) {
+        super(catalogueItem, branchId)
     }
 
-    Term newCatalogueItem() {
-        return new Term()
+    Term newCatalogueItem(String name = null) {
+        return new Term(code: name)
     }
 
     @Override

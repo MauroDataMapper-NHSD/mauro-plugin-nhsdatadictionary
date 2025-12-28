@@ -21,13 +21,15 @@ import io.micronaut.context.annotation.Property
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
 import org.maurodata.dita.elements.langref.base.Topic
+import org.maurodata.domain.datamodel.DataClass
+import org.maurodata.domain.datamodel.DataElement
+import org.maurodata.domain.datamodel.DataModel
 import uk.nhs.datadictionary.NhsDDChangeLog
 import uk.nhs.datadictionary.NhsDDClass
 import uk.nhs.datadictionary.NhsDDDataSet
 import uk.nhs.datadictionary.NhsDDDataSetClass
 import uk.nhs.datadictionary.NhsDDDataSetElement
 import uk.nhs.datadictionary.NhsDDElement
-import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.publish.structure.AliasesSection
 import uk.nhs.datadictionary.publish.structure.ChangeLogSection
 import uk.nhs.datadictionary.publish.structure.DescriptionSection
@@ -72,43 +74,48 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
     @Override
     void setupRelatedItems() {
         relatedPatientClass = new NhsDDClass(
-            catalogueItemId: UUID.fromString("ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6"),
-            branchId: branchId,
-            name: "PATIENT")
+            new DataClass(
+                id: UUID.fromString("ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6"),
+                label: "PATIENT"),
+            branchId)
 
         // These are the elements for the data set tables
         elementNhsNumber = new NhsDDElement(
-            catalogueItemId: UUID.fromString("dcdbc88d-d20e-49a8-bb2b-450bbf56900a"),
-            branchId: branchId,
-            name: "NHS NUMBER")
+            new DataElement(
+                id: UUID.fromString("dcdbc88d-d20e-49a8-bb2b-450bbf56900a"),
+                label: "NHS NUMBER"),
+            branchId)
 
         elementPersonGivenName = new NhsDDElement(
-            catalogueItemId: UUID.fromString("7e9642c3-14ae-4b59-bd3d-0160ea7f7616"),
-            branchId: branchId,
-            name: "PERSON GIVEN NAME")
+            new DataElement(
+                id: UUID.fromString("7e9642c3-14ae-4b59-bd3d-0160ea7f7616"),
+                label: "PERSON GIVEN NAME"),
+            branchId)
 
         elementPersonBirthDate = new NhsDDElement(
-            catalogueItemId: UUID.fromString("01c9734f-85e4-4fcf-a881-983621414673"),
-            branchId: branchId,
-            name: "PERSON BIRTH DATE")
+            new DataElement(
+                id: UUID.fromString("01c9734f-85e4-4fcf-a881-983621414673"),
+                label: "PERSON BIRTH DATE"),
+            branchId)
 
         elementPatientUsualAddress = new NhsDDElement(
-            catalogueItemId: UUID.fromString("d76f35ec-7fa6-47a3-ae4c-db246714ba8c"),
-            branchId: branchId,
-            name: "PATIENT USUAL ADDRESS")
+            new DataElement(
+                id: UUID.fromString("d76f35ec-7fa6-47a3-ae4c-db246714ba8c"),
+                label: "PATIENT USUAL ADDRESS"),
+            branchId)
 
         elementDiseaseType = new NhsDDElement(
-            catalogueItemId: UUID.fromString("875b1b59-9c9d-452f-9cfb-354409f441a3"),
-            branchId: branchId,
-            name: "DISEASE TYPE")
+            new DataElement(
+                id: UUID.fromString("875b1b59-9c9d-452f-9cfb-354409f441a3"),
+                label: "DISEASE TYPE"),
+            branchId)
 
         elementReferrerCodeRetired = new NhsDDElement(
-            catalogueItemId: UUID.fromString("8df9772d-bdb5-45a7-b77a-334e83e012af"),
-            branchId: branchId,
-            name: "REFERRER CODE",
-            otherProperties: [
-                'isRetired': true.toString()
-            ])
+            new DataElement(
+                id: UUID.fromString("8df9772d-bdb5-45a7-b77a-334e83e012af"),
+                label: "REFERRER CODE"),
+            branchId)
+        elementReferrerCodeRetired.otherProperties = ['isRetired': true.toString()]
     }
 
     @Override
@@ -128,26 +135,25 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
     protected void setupCatalogueItemPathResolver() {
         super.setupCatalogueItemPathResolver()
 
-        catalogueItemPathResolver.add(relatedPatientClass.getMauroPath(), relatedPatientClass.catalogueItemId)
-        catalogueItemPathResolver.add(elementNhsNumber.getMauroPath(), elementNhsNumber.catalogueItemId)
-        catalogueItemPathResolver.add(elementPersonGivenName.getMauroPath(), elementPersonGivenName.catalogueItemId)
-        catalogueItemPathResolver.add(elementPersonBirthDate.getMauroPath(), elementPersonBirthDate.catalogueItemId)
-        catalogueItemPathResolver.add(elementPatientUsualAddress.getMauroPath(), elementPatientUsualAddress.catalogueItemId)
-        catalogueItemPathResolver.add(elementDiseaseType.getMauroPath(), elementDiseaseType.catalogueItemId)
-        catalogueItemPathResolver.add(elementReferrerCodeRetired.getMauroPath(), elementReferrerCodeRetired.catalogueItemId)
+        catalogueItemPathResolver.add(relatedPatientClass.getMauroPath(), relatedPatientClass.catalogueItem.id)
+        catalogueItemPathResolver.add(elementNhsNumber.getMauroPath(), elementNhsNumber.catalogueItem.id)
+        catalogueItemPathResolver.add(elementPersonGivenName.getMauroPath(), elementPersonGivenName.catalogueItem.id)
+        catalogueItemPathResolver.add(elementPersonBirthDate.getMauroPath(), elementPersonBirthDate.catalogueItem.id)
+        catalogueItemPathResolver.add(elementPatientUsualAddress.getMauroPath(), elementPatientUsualAddress.catalogueItem.id)
+        catalogueItemPathResolver.add(elementDiseaseType.getMauroPath(), elementDiseaseType.catalogueItem.id)
+        catalogueItemPathResolver.add(elementReferrerCodeRetired.getMauroPath(), elementReferrerCodeRetired.catalogueItem.id)
     }
 
     @Override
     void setupActiveItem() {
         activeItem = new NhsDDDataSet(
-            catalogueItemId: UUID.fromString("901c2d3d-0111-41d1-acc9-5b501c1dc397"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: "Diagnostic Data Set",
-            definition: definition,
-            otherProperties: [
-                'aliasPlural': 'Diagnostics Data Set'
-            ])
+            new DataModel(
+                id: UUID.fromString("901c2d3d-0111-41d1-acc9-5b501c1dc397"),
+                label: "Diagnostic Data Set"),
+            branchId)
+        activeItem.dataDictionary = dataDictionary
+        activeItem.definition = definition
+        activeItem.otherProperties = ['aliasPlural': 'Diagnostics Data Set']
 
         addWhereUsed(activeItem, activeItem)     // Self reference
 
@@ -350,61 +356,66 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
     @Override
     void setupRetiredItem() {
         retiredItem = new NhsDDDataSet(
-            catalogueItemId: UUID.fromString("fb096f90-3273-4c66-8023-c1e32ac5b795"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: this.activeItem.name,
-            definition: this.activeItem.definition,
-            otherProperties: copyMap(this.activeItem.otherProperties),
-            whereUsed: copyMap(this.activeItem.whereUsed))
+            new DataModel(
+                id: UUID.fromString("fb096f90-3273-4c66-8023-c1e32ac5b795"),
+                label: this.activeItem.name),
+            branchId)
+        retiredItem.dataDictionary = dataDictionary
+        retiredItem.definition = this.activeItem.definition
+        retiredItem.otherProperties = copyMap(this.activeItem.otherProperties)
+        retiredItem.whereUsed = copyMap(this.activeItem.whereUsed)
     }
 
     @Override
     void setupPreparatoryItem() {
         preparatoryItem = new NhsDDDataSet(
-            catalogueItemId: UUID.fromString("f5276a0c-5458-4fa5-9bd3-ff786aef932f"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: this.activeItem.name,
-            definition: this.activeItem.definition,
-            otherProperties: copyMap(this.activeItem.otherProperties),
-            whereUsed: copyMap(this.activeItem.whereUsed))
+            new DataModel(
+                id: UUID.fromString("f5276a0c-5458-4fa5-9bd3-ff786aef932f"),
+                label: this.activeItem.name),
+            branchId)
+        preparatoryItem.dataDictionary = dataDictionary
+        preparatoryItem.definition = this.activeItem.definition
+        preparatoryItem.otherProperties = copyMap(this.activeItem.otherProperties)
+        preparatoryItem.whereUsed = copyMap(this.activeItem.whereUsed)
     }
 
     @Override
     void setupPreviousItems() {
         previousItemDescriptionChange = new NhsDDDataSet(
-            catalogueItemId: UUID.fromString("22710e00-7c41-4335-97da-2cafe9728804"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: this.activeItem.name,
-            definition: "The previous description",
-            otherProperties: copyMap(this.activeItem.otherProperties))
+            new DataModel(
+                id: UUID.fromString("22710e00-7c41-4335-97da-2cafe9728804"),
+                label: this.activeItem.name),
+            branchId)
+        previousItemDescriptionChange.dataDictionary = dataDictionary
+        previousItemDescriptionChange.definition = "The previous description"
+        previousItemDescriptionChange.otherProperties = copyMap(this.activeItem.otherProperties)
 
         // Don't test data set specifications, handled in other tests
         previousItemDescriptionChange.dataSetClasses = this.activeItem.dataSetClasses
 
         previousItemAliasesChange = new NhsDDDataSet(
-            catalogueItemId: UUID.fromString("8049682f-761f-4eab-b533-c00781615207"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: this.activeItem.name,
-            definition: this.activeItem.definition,
-            otherProperties: [
+            new DataModel(
+                id: UUID.fromString("8049682f-761f-4eab-b533-c00781615207"),
+                label: this.activeItem.name),
+            branchId)
+        previousItemAliasesChange.dataDictionary = dataDictionary
+        previousItemAliasesChange.definition = this.activeItem.definition
+        previousItemAliasesChange.otherProperties = [
                 'aliasPlural': "Baby's First Feeds",
                 'aliasAlsoKnownAs': 'Baby Food',
-            ])
+            ]
 
         // Don't test data set specifications, handled in other tests
         previousItemAliasesChange.dataSetClasses = this.activeItem.dataSetClasses
 
         previousItemAllChange = new NhsDDDataSet(
-            catalogueItemId: UUID.fromString("eeb8929f-819a-4cfe-9209-1e9867fa2b68"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: this.activeItem.name,
-            definition: previousItemDescriptionChange.definition,
-            otherProperties: copyMap(previousItemAliasesChange.otherProperties))
+            new DataModel(
+                id: UUID.fromString("eeb8929f-819a-4cfe-9209-1e9867fa2b68"),
+                label: this.activeItem.name),
+            branchId)
+        previousItemAllChange.dataDictionary = dataDictionary
+        previousItemAllChange.definition = previousItemDescriptionChange.definition
+        previousItemAllChange.otherProperties = copyMap(previousItemAliasesChange.otherProperties)
 
         // Don't test data set specifications, handled in other tests
         previousItemAllChange.dataSetClasses = this.activeItem.dataSetClasses
@@ -421,12 +432,12 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
         String definition = "The definition"
 
         previousCellsChange = new NhsDDDataSet(
-            catalogueItemId: UUID.fromString("e55b9656-3747-4ea9-92ed-cd98c2e0413b"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: name,
-            definition: definition
-        )
+            new DataModel(
+                id: UUID.fromString("e55b9656-3747-4ea9-92ed-cd98c2e0413b"),
+                label: name),
+            branchId)
+        previousCellsChange.dataDictionary = dataDictionary
+        previousCellsChange.definition = definition
 
         def previousTable = new NhsDDDataSetClass(
             name: "Table",
@@ -451,12 +462,12 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
         previousCellsChange.dataSetClasses.add(previousTable)
 
         currentCellsChange = new NhsDDDataSet(
-            catalogueItemId: UUID.fromString("fb2dfd75-952b-428b-8165-f7cc0b7eb9bb"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: name,
-            definition: definition
-        )
+            new DataModel(
+                id: UUID.fromString("fb2dfd75-952b-428b-8165-f7cc0b7eb9bb"),
+                label: name),
+            branchId)
+        currentCellsChange.dataDictionary = dataDictionary
+        currentCellsChange.definition = definition
 
         def currentTable = new NhsDDDataSetClass(
             name: previousTable.name,
@@ -497,12 +508,12 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
         String definition = "The definition"
 
         previousRowsChange = new NhsDDDataSet(
-            catalogueItemId: UUID.fromString("85b5b447-f946-49b6-8928-05cb9d32f8c3"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: name,
-            definition: definition
-        )
+            new DataModel(
+                id: UUID.fromString("85b5b447-f946-49b6-8928-05cb9d32f8c3"),
+                label: name),
+            branchId)
+        previousRowsChange.dataDictionary = dataDictionary
+        previousRowsChange.definition = definition
 
         def previousTable = new NhsDDDataSetClass(
             name: "Table",
@@ -541,12 +552,13 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
         previousRowsChange.dataSetClasses.add(previousTable)
 
         currentRowsChange = new NhsDDDataSet(
-            catalogueItemId: UUID.fromString("d1de1670-965b-49ff-aab2-027b059570d4"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: name,
-            definition: definition
-        )
+            new DataModel(
+                id: UUID.fromString("d1de1670-965b-49ff-aab2-027b059570d4"),
+                label: name),
+            branchId)
+        currentRowsChange.dataDictionary = dataDictionary
+        currentRowsChange.definition = definition
+
 
         def currentTable = new NhsDDDataSetClass(
             name: previousTable.name,
@@ -587,12 +599,12 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
         String definition = "The definition"
 
         previousGroupsChange = new NhsDDDataSet(
-            catalogueItemId: UUID.fromString("f9546c65-77f3-4f44-9711-f6106f94ee0c"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: name,
-            definition: definition
-        )
+            new DataModel(
+                id: UUID.fromString("f9546c65-77f3-4f44-9711-f6106f94ee0c"),
+                label: name),
+            branchId)
+        previousGroupsChange.dataDictionary = dataDictionary
+        previousGroupsChange.definition = definition
 
         def previousTable = new NhsDDDataSetClass(
             name: "Table",
@@ -630,12 +642,12 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
         previousGroupsChange.dataSetClasses.add(previousTable)
 
         currentGroupsChange = new NhsDDDataSet(
-            catalogueItemId: UUID.fromString("08a60808-9d38-4b2d-9b9b-8f1a870f339f"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: name,
-            definition: definition
-        )
+            new DataModel(
+                id: UUID.fromString("08a60808-9d38-4b2d-9b9b-8f1a870f339f"),
+                label: name),
+            branchId)
+        currentGroupsChange.dataDictionary = dataDictionary
+        currentGroupsChange.definition = definition
 
         def currentTable = new NhsDDDataSetClass(
             name: previousTable.name,
@@ -680,12 +692,12 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
         String definition = "The definition"
 
         previousTablesChange = new NhsDDDataSet(
-            catalogueItemId: UUID.fromString("112e2106-a8cd-4b08-9a82-82121d3dfa24"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: name,
-            definition: definition
-        )
+            new DataModel(
+                id: UUID.fromString("112e2106-a8cd-4b08-9a82-82121d3dfa24"),
+                label: name),
+            branchId)
+        previousTablesChange.dataDictionary = dataDictionary
+        previousTablesChange.definition = definition
 
         def previousTable1 = new NhsDDDataSetClass(
             name: "Table 1",
@@ -715,12 +727,12 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
         previousTablesChange.dataSetClasses.add(previousTable2)
 
         currentTablesChange = new NhsDDDataSet(
-            catalogueItemId: UUID.fromString("011ddcdb-da6e-48fb-9e5f-1dace51ef542"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: name,
-            definition: definition
-        )
+            new DataModel(
+                id: UUID.fromString("011ddcdb-da6e-48fb-9e5f-1dace51ef542"),
+                label: name),
+            branchId)
+        currentTablesChange.dataDictionary = dataDictionary
+        currentTablesChange.definition = definition
 
         // Change: Remove TABLE 1
 

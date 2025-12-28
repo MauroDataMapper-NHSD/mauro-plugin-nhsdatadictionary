@@ -112,7 +112,7 @@ class DataDictionaryImportParameters extends FileImportParameters {
             order = -1
         )
     )
-    boolean omitBusinessDefinitions = true
+    boolean omitBusinessDefinitions = false
 
     @ImportParameterConfig(
         displayName = 'Omit Supporting Information',
@@ -124,7 +124,7 @@ class DataDictionaryImportParameters extends FileImportParameters {
             order = -1
         )
     )
-    boolean omitSupportingInformation = true
+    boolean omitSupportingInformation = false
 
     @ImportParameterConfig(
         displayName = 'Omit Data Set Constraints',
@@ -136,7 +136,7 @@ class DataDictionaryImportParameters extends FileImportParameters {
             order = -1
         )
     )
-    boolean omitDataSetConstraints = true
+    boolean omitDataSetConstraints = false
 
     @ImportParameterConfig(
         displayName = 'Omit Data Set Folders',
@@ -148,7 +148,7 @@ class DataDictionaryImportParameters extends FileImportParameters {
             order = -1
         )
     )
-    boolean omitDataSetFolders = true
+    boolean omitDataSetFolders = false
 
     boolean isPublishableComponent(NhsDataDictionaryComponent dataDictionaryComponent) {
         if(dataDictionaryComponent instanceof NhsDDAttribute) {

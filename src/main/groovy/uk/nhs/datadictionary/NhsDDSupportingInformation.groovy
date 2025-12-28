@@ -24,12 +24,12 @@ import org.maurodata.domain.terminology.Term
 @Slf4j
 class NhsDDSupportingInformation extends NhsDataDictionaryComponent <Term> {
 
-    NhsDDSupportingInformation(Term catalogueItem) {
-        super(catalogueItem)
+    NhsDDSupportingInformation(Term catalogueItem = null, UUID branchId = null) {
+        super(catalogueItem, branchId)
     }
 
-    Term newCatalogueItem() {
-        return new Term()
+    Term newCatalogueItem(String name = null) {
+        return new Term(code: name)
     }
 
     @Override

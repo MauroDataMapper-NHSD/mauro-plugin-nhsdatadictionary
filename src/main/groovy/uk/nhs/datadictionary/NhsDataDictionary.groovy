@@ -392,7 +392,7 @@ class NhsDataDictionary {
         paths.each {path ->
 
             NhsDDDataSetFolder dataSetFolder = new NhsDDDataSetFolder()
-            dataSetFolder.name = path.last()
+            dataSetFolder.catalogueItem = new Folder(label: path.last())
             dataSetFolder.folderPath.addAll(path)
             if(path.contains("Retired")) {
                 dataSetFolder.otherProperties["isRetired"] = "true"

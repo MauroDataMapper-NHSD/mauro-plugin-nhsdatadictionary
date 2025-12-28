@@ -104,7 +104,7 @@ abstract class DataDictionaryComponentStructureSpec<T extends NhsDataDictionaryC
         catalogueItemPathResolver = new MockCatalogueItemPathResolver()
 
         // Self-reference this item
-        catalogueItemPathResolver.add(activeItem.getMauroPath(), activeItem.catalogueItemId)
+        catalogueItemPathResolver.add(activeItem.getMauroPath(), activeItem.catalogueItem.id)
     }
 
     private void setupPublishContexts() {

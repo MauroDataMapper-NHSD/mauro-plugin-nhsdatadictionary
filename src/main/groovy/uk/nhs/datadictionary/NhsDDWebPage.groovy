@@ -21,12 +21,12 @@ import org.maurodata.domain.terminology.Term
 
 class NhsDDWebPage extends NhsDataDictionaryComponent <Term> {
 
-    NhsDDWebPage(Term catalogueItem) {
-        super(catalogueItem)
+    NhsDDWebPage(Term catalogueItem = null, UUID branchId = null) {
+        super(catalogueItem, branchId)
     }
 
-    Term newCatalogueItem() {
-        return new Term()
+    Term newCatalogueItem(String name = null) {
+        return new Term(code: name)
     }
 
     List<String> path = []

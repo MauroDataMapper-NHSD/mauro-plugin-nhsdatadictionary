@@ -68,8 +68,12 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
     @JsonIgnore
     T catalogueItem
 
-    NhsDataDictionaryComponent(T catalogueItem) {
+    NhsDataDictionaryComponent(T catalogueItem = null, UUID branchId = null) {
         this.catalogueItem = catalogueItem
+        if(catalogueItem) {
+            this.catalogueItemId = catalogueItem.id
+        }
+        this.branchId = branchId
     }
 
 
@@ -151,16 +155,16 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         otherProperties["shortDescription"] = shortDescription
     }
 
-    abstract T newCatalogueItem()
+    abstract T newCatalogueItem(String name = null)
 
     void fromXml(def xml, NhsDataDictionary dataDictionary) {
-        catalogueItem = newCatalogueItem()
-
+        String label
         if(xml.name.size() > 0 && xml.name.text()) {
-            catalogueItem.label = xml.name[0].text().replace("_", " ")
+            label = xml.name[0].text().replace("_", " ")
         } else { // This should only apply for dataSetConstraints
-            catalogueItem.label = xml."class".name.text().replace("_", " ")
+            label = xml."class".name.text().replace("_", " ")
         }
+        catalogueItem = newCatalogueItem(label)
 
         /*  We're doing capitalised items now
         if(xml.TitleCaseName.text()) {

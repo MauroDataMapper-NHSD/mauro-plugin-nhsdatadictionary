@@ -21,6 +21,9 @@ import io.micronaut.context.annotation.Property
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
 import org.maurodata.dita.elements.langref.base.Topic
+import org.maurodata.domain.datamodel.DataClass
+import org.maurodata.domain.datamodel.DataElement
+import org.maurodata.domain.terminology.Term
 import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.NhsDDBusinessDefinition
 import uk.nhs.datadictionary.NhsDDChangeLog
@@ -57,9 +60,9 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
     @Override
     void setupRelatedItems() {
         relatedItem = new NhsDDClass(
-            catalogueItemId: UUID.fromString("a57843dd-c1a7-4d37-996c-fcb67e496cb9"),
-            branchId: branchId,
-            name: "PERSON PROPERTY")
+            new DataClass(id: UUID.fromString("a57843dd-c1a7-4d37-996c-fcb67e496cb9"),
+                          label: "PERSON PROPERTY"),
+              branchId)
     }
 
     @Override
@@ -73,41 +76,39 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
     protected void setupCatalogueItemPathResolver() {
         super.setupCatalogueItemPathResolver()
 
-        catalogueItemPathResolver.add(relatedItem.getMauroPath(), relatedItem.catalogueItemId)
+        catalogueItemPathResolver.add(relatedItem.getMauroPath(), relatedItem.catalogueItem.id)
     }
 
     @Override
     void setupActiveItem() {
         activeItem = new NhsDDBusinessDefinition(
-            catalogueItemId: UUID.fromString("901c2d3d-0111-41d1-acc9-5b501c1dc397"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: "Baby First Feed",
-            definition: definition,
-            otherProperties: [
-                'aliasPlural': 'Baby First Feeds'
-            ])
+            new Term(id: UUID.fromString("901c2d3d-0111-41d1-acc9-5b501c1dc397"),
+                code: "Baby First Feed"),
+                 branchId)
+        activeItem.definition = definition
+        activeItem.dataDictionary = dataDictionary
+        activeItem.otherProperties = ['aliasPlural': 'Baby First Feeds']
 
         addWhereUsed(
             activeItem,
-            new NhsDDElement(
-                name: "BABY FIRST FEED TIME",
-                catalogueItemId: UUID.fromString("b5170409-97aa-464e-9aad-657c8b2e00f8"),
-                branchId: branchId))
+            new NhsDDElement( new DataElement (
+                label: "BABY FIRST FEED TIME",
+                id: UUID.fromString("b5170409-97aa-464e-9aad-657c8b2e00f8")),
+                branchId))
 
         addWhereUsed(
             activeItem,
-            new NhsDDElement(
-                name: "BABY FIRST FEED DATE",
-                catalogueItemId: UUID.fromString("542a6963-cce2-4c8f-b60d-b86b13d43bbe"),
-                branchId: branchId))
+            new NhsDDElement( new DataElement(
+                label: "BABY FIRST FEED DATE",
+                id: UUID.fromString("542a6963-cce2-4c8f-b60d-b86b13d43bbe")),
+                branchId))
 
         addWhereUsed(
             activeItem,
-            new NhsDDAttribute(
-                name: "BABY FIRST FEED BREAST MILK INDICATION CODE",
-                catalogueItemId: UUID.fromString("cc9b5d18-12a0-4c53-b06e-fa5c649494f2"),
-                branchId: branchId))
+            new NhsDDAttribute( new DataElement(
+                label: "BABY FIRST FEED BREAST MILK INDICATION CODE",
+                id: UUID.fromString("cc9b5d18-12a0-4c53-b06e-fa5c649494f2")),
+                branchId))
 
         addWhereUsed(activeItem, activeItem)     // Self reference
 
@@ -120,55 +121,61 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
     @Override
     void setupRetiredItem()  {
         retiredItem = new NhsDDBusinessDefinition(
-            catalogueItemId: UUID.fromString("fb096f90-3273-4c66-8023-c1e32ac5b795"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: this.activeItem.name,
-            definition: this.activeItem.definition,
-            otherProperties: copyMap(this.activeItem.otherProperties),
-            whereUsed: copyMap(this.activeItem.whereUsed))
+            new Term(
+            id: UUID.fromString("fb096f90-3273-4c66-8023-c1e32ac5b795"),
+            code: this.activeItem.name),
+            branchId)
+        retiredItem.definition = this.activeItem.definition
+        retiredItem.dataDictionary = dataDictionary
+        retiredItem.otherProperties = copyMap(this.activeItem.otherProperties)
+        retiredItem.whereUsed = copyMap(this.activeItem.whereUsed)
     }
 
     @Override
     void setupPreparatoryItem() {
         preparatoryItem = new NhsDDBusinessDefinition(
-            catalogueItemId: UUID.fromString("f5276a0c-5458-4fa5-9bd3-ff786aef932f"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: this.activeItem.name,
-            definition: this.activeItem.definition,
-            otherProperties: copyMap(this.activeItem.otherProperties),
-            whereUsed: copyMap(this.activeItem.whereUsed))
+            new Term(
+            id: UUID.fromString("f5276a0c-5458-4fa5-9bd3-ff786aef932f"),
+            code: this.activeItem.name),
+            branchId)
+
+        preparatoryItem.definition = this.activeItem.definition
+        preparatoryItem.dataDictionary = dataDictionary
+        preparatoryItem.otherProperties = copyMap(this.activeItem.otherProperties)
+        preparatoryItem.whereUsed = copyMap(this.activeItem.whereUsed)
     }
 
     @Override
     void setupPreviousItems() {
         previousItemDescriptionChange = new NhsDDBusinessDefinition(
-            catalogueItemId: UUID.fromString("22710e00-7c41-4335-97da-2cafe9728804"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: this.activeItem.name,
-            definition: "The previous description",
-            otherProperties: copyMap(this.activeItem.otherProperties))
+            new Term(
+                id: UUID.fromString("22710e00-7c41-4335-97da-2cafe9728804"),
+                code: this.activeItem.name),
+            branchId)
+        previousItemDescriptionChange.definition = "The previous description"
+        previousItemDescriptionChange.dataDictionary = dataDictionary
+        previousItemDescriptionChange.otherProperties = copyMap(this.activeItem.otherProperties)
 
         previousItemAliasesChange = new NhsDDBusinessDefinition(
-            catalogueItemId: UUID.fromString("8049682f-761f-4eab-b533-c00781615207"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: this.activeItem.name,
-            definition: this.activeItem.definition,
-            otherProperties: [
+            new Term(
+                id: UUID.fromString("8049682f-761f-4eab-b533-c00781615207"),
+                code: this.activeItem.name),
+            branchId)
+        previousItemAliasesChange.definition = this.activeItem.definition
+        previousItemAliasesChange.dataDictionary = dataDictionary
+        previousItemAliasesChange.otherProperties = [
                 'aliasPlural': "Baby's First Feeds",
                 'aliasAlsoKnownAs': 'Baby Food',
-            ])
+            ]
 
         previousItemAllChange = new NhsDDBusinessDefinition(
-            catalogueItemId: UUID.fromString("eeb8929f-819a-4cfe-9209-1e9867fa2b68"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: this.activeItem.name,
-            definition: previousItemDescriptionChange.definition,
-            otherProperties: copyMap(previousItemAliasesChange.otherProperties))
+            new Term(
+                id: UUID.fromString("eeb8929f-819a-4cfe-9209-1e9867fa2b68"),
+                code: this.activeItem.name),
+            branchId)
+        previousItemAllChange.definition = previousItemDescriptionChange.definition
+        previousItemAllChange.dataDictionary = dataDictionary
+        previousItemAllChange.otherProperties = copyMap(previousItemAliasesChange.otherProperties)
     }
 
     void "should have the correct active item structure"() {

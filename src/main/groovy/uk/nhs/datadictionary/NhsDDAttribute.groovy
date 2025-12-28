@@ -36,12 +36,14 @@ import uk.nhs.datadictionary.services.MauroPersistenceService
 @Slf4j
 class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
 
-    NhsDDAttribute(DataElement catalogueItem) {
-        super(catalogueItem)
+
+
+    NhsDDAttribute(DataElement catalogueItem = null, UUID branchId = null) {
+        super(catalogueItem, branchId)
     }
 
-    DataElement newCatalogueItem() {
-        return new DataElement()
+    DataElement newCatalogueItem(String name = null) {
+        return new DataElement(label: name)
     }
 
 

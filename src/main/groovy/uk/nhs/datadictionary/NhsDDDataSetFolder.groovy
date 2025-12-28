@@ -25,12 +25,12 @@ import org.maurodata.domain.folder.Folder
 @Slf4j
 class NhsDDDataSetFolder extends NhsDataDictionaryComponent <Folder> {
 
-    NhsDDDataSetFolder(Folder catalogueItem) {
-        super(catalogueItem)
+    NhsDDDataSetFolder(Folder catalogueItem = null, UUID branchId = null) {
+        super(catalogueItem, branchId)
     }
 
-    Folder newCatalogueItem() {
-        return new Folder()
+    Folder newCatalogueItem(String name = null) {
+        return new Folder(label: name)
     }
 
 

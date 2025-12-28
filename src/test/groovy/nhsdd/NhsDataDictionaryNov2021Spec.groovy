@@ -183,10 +183,12 @@ class NhsDataDictionaryNov2021Spec extends Specification {
             nhsDataDictionaryImporter.version)
 
         then:
+        response.items.size() == 1
         List<Folder> branches = nhsDataDictionaryController.branches()
+        branches.find{it.id == response.items.first().id}
 
         when:
-        List<NhsDDElement> elements = nhsDataDictionaryController.indexElements(branches.first().id, false)
+        List<NhsDDElement> elements = nhsDataDictionaryController.indexElements(response.items.first().id, false)
 
         then:
         elements.size() == 2714

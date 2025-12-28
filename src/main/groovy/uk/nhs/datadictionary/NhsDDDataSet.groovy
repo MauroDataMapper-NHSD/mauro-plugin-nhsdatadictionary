@@ -35,12 +35,12 @@ import uk.nhs.datadictionary.services.MauroPersistenceService
 @Slf4j
 class NhsDDDataSet extends NhsDataDictionaryComponent <DataModel> {
 
-    NhsDDDataSet(DataModel catalogueItem) {
-        super(catalogueItem)
+    NhsDDDataSet(DataModel catalogueItem = null, UUID branchId = null) {
+        super(catalogueItem, branchId)
     }
 
-    DataModel newCatalogueItem() {
-        return new DataModel()
+    DataModel newCatalogueItem(String name = null) {
+        return new DataModel(label: name)
     }
 
     @Override

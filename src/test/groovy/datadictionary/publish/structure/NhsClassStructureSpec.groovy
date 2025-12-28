@@ -21,6 +21,8 @@ import io.micronaut.context.annotation.Property
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
 import org.maurodata.dita.elements.langref.base.Topic
+import org.maurodata.domain.datamodel.DataClass
+import org.maurodata.domain.datamodel.DataElement
 import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.NhsDDChangeLog
 import uk.nhs.datadictionary.NhsDDClass
@@ -57,19 +59,22 @@ to a <a href="dm:Classes and Attributes|dc:PATIENT">PATIENT</a> by one or more
     @Override
     void setupRelatedItems() {
         relatedServiceClass = new NhsDDClass(
-            catalogueItemId: UUID.fromString("79ab1e21-4407-4aae-b777-7b7920fa1963"),
-            branchId: branchId,
-            name: "SERVICE")
+            new DataClass(
+                id: UUID.fromString("79ab1e21-4407-4aae-b777-7b7920fa1963"),
+                label: "SERVICE"),
+            branchId)
 
         relatedPatientClass = new NhsDDClass(
-            catalogueItemId: UUID.fromString("ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6"),
-            branchId: branchId,
-            name: "PATIENT")
+            new DataClass(
+                id: UUID.fromString("ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6"),
+                label: "PATIENT"),
+            branchId)
 
         relatedCareProfessionalClass = new NhsDDClass(
-            catalogueItemId: UUID.fromString("9ac6a0b2-b4bf-48af-ad4d-0ecfe268df57"),
-            branchId: branchId,
-            name: "CARE PROFESSIONAL")
+            new DataClass(
+                id : UUID.fromString("9ac6a0b2-b4bf-48af-ad4d-0ecfe268df57"),
+                label: "CARE PROFESSIONAL"),
+            branchId)
     }
 
     @Override
@@ -85,96 +90,119 @@ to a <a href="dm:Classes and Attributes|dc:PATIENT">PATIENT</a> by one or more
     protected void setupCatalogueItemPathResolver() {
         super.setupCatalogueItemPathResolver()
 
-        catalogueItemPathResolver.add(relatedServiceClass.getMauroPath(), relatedServiceClass.catalogueItemId)
-        catalogueItemPathResolver.add(relatedPatientClass.getMauroPath(), relatedPatientClass.catalogueItemId)
+        catalogueItemPathResolver.add(relatedServiceClass.getMauroPath(), relatedServiceClass.catalogueItem.id)
+        catalogueItemPathResolver.add(relatedPatientClass.getMauroPath(), relatedPatientClass.catalogueItem.id)
         catalogueItemPathResolver.add(relatedCareProfessionalClass.getMauroPath(), relatedCareProfessionalClass.catalogueItemId)
     }
 
     @Override
     void setupActiveItem() {
         activeItem = new NhsDDClass(
-            catalogueItemId: UUID.fromString("901c2d3d-0111-41d1-acc9-5b501c1dc397"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: "ACTIVITY",
-            definition: definition,
-            otherProperties: [
-                'aliasPlural': 'ACTIVITIES'
-            ])
+            new DataClass(
+            id: UUID.fromString("901c2d3d-0111-41d1-acc9-5b501c1dc397"),
+            label: "ACTIVITY"),
+        branchId)
+        activeItem.dataDictionary = dataDictionary
+        activeItem.definition = definition
+        activeItem.otherProperties = ['aliasPlural': 'ACTIVITIES']
 
         addWhereUsed(activeItem, activeItem)    // Self reference
         addWhereUsed(
             activeItem,
-            new NhsDDAttribute(name: "ACTIVITY COUNT", catalogueItemId: UUID.fromString("b5170409-97aa-464e-9aad-657c8b2e00f8"), branchId: branchId))
+            new NhsDDAttribute(
+                new DataElement(
+                    label: "ACTIVITY COUNT",
+                    id: UUID.fromString("b5170409-97aa-464e-9aad-657c8b2e00f8")),
+            branchId))
+
         addWhereUsed(
             activeItem,
-            new NhsDDElement(name: "ACTIVITY COUNT (POINT OF DELIVERY)", catalogueItemId: UUID.fromString("542a6963-cce2-4c8f-b60d-b86b13d43bbe"), branchId: branchId))
+            new NhsDDElement(
+                new DataElement(
+                    label: "ACTIVITY COUNT (POINT OF DELIVERY)",
+                    id: UUID.fromString("542a6963-cce2-4c8f-b60d-b86b13d43bbe")),
+            branchId))
 
         addChangeLog(
             activeItem,
             new NhsDDChangeLog(reference: "CR1000", referenceUrl: "https://test.nhs.uk/change/cr1000", description: "Change 1000", implementationDate: "01 April 2024"),
             new NhsDDChangeLog(reference: "CR2000", referenceUrl: "https://test.nhs.uk/change/cr2000", description: "Change 2000", implementationDate: "01 September 2024"))
 
-        activeItem.keyAttributes.add(new NhsDDAttribute(name: "ACTIVITY IDENTIFIER", otherProperties: ["isKey": "true"]))
-        activeItem.otherAttributes.add(new NhsDDAttribute(name: "ACTIVITY COUNT"))
-        activeItem.otherAttributes.add(new NhsDDAttribute(name: "ACTIVITY DURATION"))
 
-        activeItem.classRelationships.add(new NhsDDClassRelationship(key: true, relationshipDescription: "supplied by", targetClass: new NhsDDClass(name: "ORGANISATION")))
-        activeItem.classRelationships.add(new NhsDDClassRelationship(key: false, relationshipDescription: "located at", targetClass: new NhsDDClass(name: "ADDRESS")))
+        NhsDDAttribute attribute1 = new NhsDDAttribute(
+            new DataElement(label: "ACTIVITY IDENTIFIER"))
+        attribute1.otherProperties = ["isKey": "true"]
+        activeItem.keyAttributes.add(attribute1)
+
+        activeItem.otherAttributes.add(
+            new NhsDDAttribute(
+                new DataElement(label: "ACTIVITY COUNT")))
+
+        activeItem.otherAttributes.add(
+            new NhsDDAttribute(
+                new DataElement(label: "ACTIVITY DURATION")))
+
+        activeItem.classRelationships.add(new NhsDDClassRelationship(key: true, relationshipDescription: "supplied by", targetClass: new NhsDDClass(new DataClass(label: "ORGANISATION"))))
+        activeItem.classRelationships.add(new NhsDDClassRelationship(key: false, relationshipDescription: "located at", targetClass: new NhsDDClass(new DataClass(label: "ADDRESS"))))
     }
 
     @Override
     void setupRetiredItem() {
         retiredItem = new NhsDDClass(
-            catalogueItemId: UUID.fromString("fb096f90-3273-4c66-8023-c1e32ac5b795"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: this.activeItem.name,
-            definition: this.activeItem.definition,
-            otherProperties: copyMap(this.activeItem.otherProperties),
-            whereUsed: copyMap(this.activeItem.whereUsed))
+            new DataClass(
+                id: UUID.fromString("fb096f90-3273-4c66-8023-c1e32ac5b795"),
+                label: this.activeItem.name),
+            branchId)
+        retiredItem.dataDictionary = dataDictionary
+        retiredItem.definition = this.activeItem.definition
+        retiredItem.otherProperties = copyMap(this.activeItem.otherProperties)
+        retiredItem.whereUsed = copyMap(this.activeItem.whereUsed)
     }
 
     @Override
     void setupPreparatoryItem() {
         preparatoryItem = new NhsDDClass(
-            catalogueItemId: UUID.fromString("f5276a0c-5458-4fa5-9bd3-ff786aef932f"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: this.activeItem.name,
-            definition: this.activeItem.definition,
-            otherProperties: copyMap(this.activeItem.otherProperties),
-            whereUsed: copyMap(this.activeItem.whereUsed))
+            new DataClass(
+                id: UUID.fromString("f5276a0c-5458-4fa5-9bd3-ff786aef932f"),
+                label: this.activeItem.name),
+            branchId)
+        preparatoryItem.dataDictionary = dataDictionary
+        preparatoryItem.definition = this.activeItem.definition
+        preparatoryItem.otherProperties = copyMap(this.activeItem.otherProperties)
+        preparatoryItem.whereUsed = copyMap(this.activeItem.whereUsed)
     }
 
     @Override
     void setupPreviousItems() {
         previousItemDescriptionChange = new NhsDDClass(
-            catalogueItemId: UUID.fromString("22710e00-7c41-4335-97da-2cafe9728804"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: this.activeItem.name,
-            definition: "The previous description",
-            otherProperties: copyMap(this.activeItem.otherProperties))
+            new DataClass(
+                id: UUID.fromString("22710e00-7c41-4335-97da-2cafe9728804"),
+                label: this.activeItem.name),
+            branchId)
+        previousItemDescriptionChange.dataDictionary = dataDictionary
+        previousItemDescriptionChange.definition = "The previous description"
+        previousItemDescriptionChange.otherProperties = copyMap(this.activeItem.otherProperties)
 
         previousItemAliasesChange = new NhsDDClass(
-            catalogueItemId: UUID.fromString("8049682f-761f-4eab-b533-c00781615207"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: this.activeItem.name,
-            definition: this.activeItem.definition,
-            otherProperties: [
+            new DataClass(
+                id: UUID.fromString("8049682f-761f-4eab-b533-c00781615207"),
+                label: this.activeItem.name),
+            branchId)
+        previousItemAliasesChange.dataDictionary = dataDictionary
+        previousItemAliasesChange.definition = this.activeItem.definition
+        previousItemAliasesChange.otherProperties = [
                 'aliasPlural': "ACTIVITY GROUP",
                 'aliasAlsoKnownAs': 'ALTERNATIVE',
-            ])
+            ]
 
         previousItemAllChange = new NhsDDClass(
-            catalogueItemId: UUID.fromString("eeb8929f-819a-4cfe-9209-1e9867fa2b68"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: this.activeItem.name,
-            definition: previousItemDescriptionChange.definition,
-            otherProperties: copyMap(previousItemAliasesChange.otherProperties))
+            new DataClass(
+                id: UUID.fromString("eeb8929f-819a-4cfe-9209-1e9867fa2b68"),
+                label: this.activeItem.name),
+            branchId)
+        previousItemAllChange.dataDictionary = dataDictionary
+        previousItemAllChange.definition = previousItemDescriptionChange.definition
+        previousItemAllChange.otherProperties = copyMap(previousItemAliasesChange.otherProperties)
     }
 
     void "should have the correct active item structure"() {

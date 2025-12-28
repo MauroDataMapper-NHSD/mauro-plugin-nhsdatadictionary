@@ -22,6 +22,9 @@ import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
 import org.maurodata.dita.elements.langref.base.Topic
 import org.maurodata.domain.datamodel.DataClass
+import org.maurodata.domain.datamodel.DataElement
+import org.maurodata.domain.datamodel.DataModel
+import org.maurodata.domain.terminology.Term
 import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.NhsDDBusinessDefinition
 import uk.nhs.datadictionary.NhsDDChangeLog
@@ -29,7 +32,6 @@ import uk.nhs.datadictionary.NhsDDClass
 import uk.nhs.datadictionary.NhsDDCode
 import uk.nhs.datadictionary.NhsDDDataSet
 import uk.nhs.datadictionary.NhsDDElement
-import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.publish.structure.AliasesSection
 import uk.nhs.datadictionary.publish.structure.ChangeLogSection
 import uk.nhs.datadictionary.publish.structure.CodesSection
@@ -63,15 +65,16 @@ during a Liver Cancer Care Spell.</p>"""
     @Override
     void setupRelatedItems() {
         relatedPatientClass = new NhsDDClass(
-            new DataClass(label: 'PATIENT'))
-            //catalogueItemId: UUID.fromString("ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6"),
-            //branchId: branchId,
-            //name: "PATIENT")
+            new DataClass(
+                id: UUID.fromString("ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6"),
+                label: "PATIENT"),
+            branchId)
 
         relatedRadiofrequncyAblationDef = new NhsDDBusinessDefinition(
-            catalogueItemId: UUID.fromString("685a7609-a5ba-4112-bbd3-d8d5df0cdf4f"),
-            branchId: branchId,
-            name: "Radiofrequency Ablation")
+            new Term(
+                id: UUID.fromString("685a7609-a5ba-4112-bbd3-d8d5df0cdf4f"),
+                code: "Radiofrequency Ablation"),
+            branchId)
     }
 
     @Override
@@ -93,20 +96,25 @@ during a Liver Cancer Care Spell.</p>"""
     @Override
     void setupActiveItem() {
         activeItem = new NhsDDElement(
-            catalogueItemId: UUID.fromString("901c2d3d-0111-41d1-acc9-5b501c1dc397"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: "ABLATIVE THERAPY TYPE",
-            definition: definition,
-            otherProperties: [
+            new DataElement(
+                id: UUID.fromString("901c2d3d-0111-41d1-acc9-5b501c1dc397"),
+                label: "ABLATIVE THERAPY TYPE"),
+            branchId)
+        activeItem.dataDictionary = dataDictionary
+        activeItem.definition = definition
+        activeItem.otherProperties = [
                 'formatLength': 'an1',
                 'aliasPlural': 'ABLATIVE THERAPY TYPES'
-            ])
+            ]
 
         addWhereUsed(activeItem, activeItem)    // Self reference
         addWhereUsed(
             activeItem,
-            new NhsDDDataSet(name: "Cancer Outcomes and Services Data Set - Liver", catalogueItemId: UUID.fromString("542a6963-cce2-4c8f-b60d-b86b13d43bbe"), branchId: branchId))
+            new NhsDDDataSet(
+                new DataModel(
+                    label: "Cancer Outcomes and Services Data Set - Liver",
+                    id: UUID.fromString("542a6963-cce2-4c8f-b60d-b86b13d43bbe")),
+                branchId))
 
         addChangeLog(
             activeItem,
@@ -137,63 +145,69 @@ during a Liver Cancer Care Spell.</p>"""
 
         activeItem.instantiatesAttributes.add(
             new NhsDDAttribute(
-                name: "ABLATIVE THERAPY TYPE",
-                catalogueItemId: UUID.fromString("faff11f5-cbfb-4faa-84d8-6d3b1eccd03b"),
-                branchId: branchId))
+                new DataElement(
+                    label: "ABLATIVE THERAPY TYPE",
+                    id: UUID.fromString("faff11f5-cbfb-4faa-84d8-6d3b1eccd03b")),
+                branchId))
     }
 
     @Override
     void setupRetiredItem() {
         retiredItem = new NhsDDElement(
-            catalogueItemId: UUID.fromString("fb096f90-3273-4c66-8023-c1e32ac5b795"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: this.activeItem.name,
-            definition: this.activeItem.definition,
-            otherProperties: copyMap(this.activeItem.otherProperties),
-            whereUsed: copyMap(this.activeItem.whereUsed))
+            new DataElement(
+                id: UUID.fromString("fb096f90-3273-4c66-8023-c1e32ac5b795"),
+                label: this.activeItem.name),
+            branchId)
+        retiredItem.dataDictionary = dataDictionary
+        retiredItem.definition = this.activeItem.definition
+        retiredItem.otherProperties = copyMap(this.activeItem.otherProperties)
+        retiredItem.whereUsed = copyMap(this.activeItem.whereUsed)
     }
 
     @Override
     void setupPreparatoryItem() {
         preparatoryItem = new NhsDDElement(
-            catalogueItemId: UUID.fromString("f5276a0c-5458-4fa5-9bd3-ff786aef932f"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: this.activeItem.name,
-            definition: this.activeItem.definition,
-            otherProperties: copyMap(this.activeItem.otherProperties),
-            whereUsed: copyMap(this.activeItem.whereUsed))
+            new DataElement(
+                id: UUID.fromString("f5276a0c-5458-4fa5-9bd3-ff786aef932f"),
+                label: this.activeItem.name),
+            branchId)
+        preparatoryItem.dataDictionary = dataDictionary
+        preparatoryItem.definition = this.activeItem.definition
+        preparatoryItem.otherProperties = copyMap(this.activeItem.otherProperties)
+        preparatoryItem.whereUsed = copyMap(this.activeItem.whereUsed)
     }
 
     @Override
     void setupPreviousItems() {
         previousItemDescriptionChange = new NhsDDElement(
-            catalogueItemId: UUID.fromString("22710e00-7c41-4335-97da-2cafe9728804"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: this.activeItem.name,
-            definition: "The previous description",
-            otherProperties: copyMap(this.activeItem.otherProperties))
+            new DataElement(
+                id: UUID.fromString("22710e00-7c41-4335-97da-2cafe9728804"),
+                label: this.activeItem.name),
+            branchId)
+        previousItemDescriptionChange.dataDictionary = dataDictionary
+        previousItemDescriptionChange.definition = "The previous description"
+        previousItemDescriptionChange.otherProperties = copyMap(this.activeItem.otherProperties)
 
         previousItemAliasesChange = new NhsDDElement(
-            catalogueItemId: UUID.fromString("8049682f-761f-4eab-b533-c00781615207"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: this.activeItem.name,
-            definition: this.activeItem.definition,
-            otherProperties: [
+            new DataElement(
+                id: UUID.fromString("8049682f-761f-4eab-b533-c00781615207"),
+                label: this.activeItem.name),
+            branchId)
+        previousItemAliasesChange.dataDictionary = dataDictionary
+        previousItemAliasesChange.definition = this.activeItem.definition
+        previousItemAliasesChange.otherProperties = [
                 'aliasPlural': "ACTIVITIES DATE",
                 'aliasAlsoKnownAs': 'ACTIVITY DATE STAMP',
-            ])
+            ]
 
         previousItemCodesChange = new NhsDDElement(
-            catalogueItemId: UUID.fromString("c95f7856-3d6c-4a23-b4b5-c4e5615ea2fc"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: this.activeItem.name,
-            definition: "The current description",
-            otherProperties: copyMap(this.activeItem.otherProperties))
+            new DataElement(
+                id: UUID.fromString("c95f7856-3d6c-4a23-b4b5-c4e5615ea2fc"),
+                label: this.activeItem.name),
+            branchId)
+        previousItemCodesChange.dataDictionary = dataDictionary
+        previousItemCodesChange.definition = "The current description"
+        previousItemCodesChange.otherProperties = copyMap(this.activeItem.otherProperties)
 
         previousItemCodesChange.codes.add(
             new NhsDDCode(
@@ -225,40 +239,45 @@ during a Liver Cancer Care Spell.</p>"""
                 definition: "Undefined"))
 
         previousItemLinkedAttributesChange = new NhsDDElement(
-            catalogueItemId: UUID.fromString("76a9cac0-19d2-4880-87e7-c6061c4edadd"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: this.activeItem.name,
-            definition: "The current description",
-            otherProperties: copyMap(this.activeItem.otherProperties))
+            new DataElement(
+                id: UUID.fromString("76a9cac0-19d2-4880-87e7-c6061c4edadd"),
+                label: this.activeItem.name),
+            branchId)
+        previousItemLinkedAttributesChange.dataDictionary = dataDictionary
+        previousItemLinkedAttributesChange.definition = "The current description"
+        previousItemLinkedAttributesChange.otherProperties = copyMap(this.activeItem.otherProperties)
 
         previousItemLinkedAttributesChange.instantiatesAttributes.add(
             new NhsDDAttribute(
-                name: "ABLATIVE THERAPY TYPE",
-                catalogueItemId: UUID.fromString("faff11f5-cbfb-4faa-84d8-6d3b1eccd03b"),
-                branchId: branchId))
+                new DataElement(
+                    label: "ABLATIVE THERAPY TYPE",
+                    id: UUID.fromString("faff11f5-cbfb-4faa-84d8-6d3b1eccd03b")),
+                branchId))
 
         previousItemLinkedAttributesChange.instantiatesAttributes.add(
             new NhsDDAttribute(
-                name: "BINET STAGE",
-                catalogueItemId: UUID.fromString("94f02a26-1db9-45f2-9dfa-9a588c961b13"),
-                branchId: branchId))
+                new DataElement(
+                    label: "BINET STAGE",
+                    id: UUID.fromString("94f02a26-1db9-45f2-9dfa-9a588c961b13")),
+                branchId))
 
         previousItemAllChange = new NhsDDElement(
-            catalogueItemId: UUID.fromString("eeb8929f-819a-4cfe-9209-1e9867fa2b68"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: this.activeItem.name,
-            definition: previousItemDescriptionChange.definition,
-            otherProperties: copyMap(previousItemAliasesChange.otherProperties))
+            new DataElement(
+                id: UUID.fromString("eeb8929f-819a-4cfe-9209-1e9867fa2b68"),
+                label: this.activeItem.name),
+            branchId)
+        previousItemAllChange.dataDictionary = dataDictionary
+        previousItemAllChange.definition = previousItemDescriptionChange.definition
+        previousItemAllChange.otherProperties = copyMap(previousItemAliasesChange.otherProperties)
 
         previousItemFormatChange = new NhsDDElement(
-            catalogueItemId: UUID.fromString("22710e00-7c41-4335-97da-2cafe9728804"),
-            branchId: branchId,
-            dataDictionary: dataDictionary,
-            name: this.activeItem.name,
-            definition: "The current description",
-            otherProperties: copyMap(this.activeItem.otherProperties))
+            new DataElement(
+                id: UUID.fromString("22710e00-7c41-4335-97da-2cafe9728804"),
+                label: this.activeItem.name),
+            branchId)
+        previousItemFormatChange.dataDictionary = dataDictionary
+        previousItemFormatChange.definition = "The current description"
+        previousItemFormatChange.otherProperties = copyMap(this.activeItem.otherProperties)
         previousItemFormatChange.otherProperties['formatLength'] = "an10 CCYY-MM-DD"
     }
 

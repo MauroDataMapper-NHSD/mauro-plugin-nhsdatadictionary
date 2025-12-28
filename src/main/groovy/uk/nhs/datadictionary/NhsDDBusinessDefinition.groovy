@@ -26,8 +26,8 @@ import org.maurodata.domain.terminology.Term
 @Slf4j
 class NhsDDBusinessDefinition extends NhsDataDictionaryComponent <Term> {
 
-    NhsDDBusinessDefinition(Term term) {
-        super(term)
+    NhsDDBusinessDefinition(Term term = null, UUID branchId = null) {
+        super(term, branchId)
     }
 
     @Override
@@ -36,8 +36,8 @@ class NhsDDBusinessDefinition extends NhsDataDictionaryComponent <Term> {
     }
 
 
-    Term newCatalogueItem() {
-        return new Term()
+    Term newCatalogueItem(String name = null) {
+        return new Term(code: name)
     }
 
     @Override
