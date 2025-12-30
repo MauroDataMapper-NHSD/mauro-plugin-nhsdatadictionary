@@ -52,7 +52,6 @@ class DDAttributeProfileProviderService extends JsonBasedProfile {
         '1.0.0'
     }
 
-
     @Override
     List<String> getProfileApplicableForDomains() {
         return ['DataElement']

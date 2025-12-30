@@ -57,6 +57,4 @@ class DDElementProfileProviderService extends JsonBasedProfile {
         return ['DataElement']
     }
 
-
-
 }

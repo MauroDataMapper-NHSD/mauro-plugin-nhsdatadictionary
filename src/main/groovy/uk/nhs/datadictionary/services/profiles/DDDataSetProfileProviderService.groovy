@@ -57,6 +57,4 @@ class DDDataSetProfileProviderService extends JsonBasedProfile {
         return ['DataModel']
     }
 
-
-
 }

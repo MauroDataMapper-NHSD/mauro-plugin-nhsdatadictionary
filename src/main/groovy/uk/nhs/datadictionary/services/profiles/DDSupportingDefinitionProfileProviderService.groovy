@@ -57,6 +57,4 @@ class DDSupportingDefinitionProfileProviderService extends JsonBasedProfile {
         return ['Term']
     }
 
-
-
 }

@@ -56,7 +56,4 @@ class DDBusinessDefinitionProfileProviderService extends JsonBasedProfile {
     List<String> getProfileApplicableForDomains() {
         return ['Term']
     }
-
-
-
 }

@@ -57,6 +57,4 @@ class DDClassProfileProviderService extends JsonBasedProfile {
         return ['DataClass']
     }
 
-
-
 }

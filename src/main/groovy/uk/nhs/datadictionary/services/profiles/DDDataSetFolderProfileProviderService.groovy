@@ -57,6 +57,4 @@ class DDDataSetFolderProfileProviderService extends JsonBasedProfile {
         return ['Folder']
     }
 
-
-
 }

@@ -57,6 +57,4 @@ class DDWebPageProfileProviderService extends JsonBasedProfile {
         return ['Term']
     }
 
-
-
 }

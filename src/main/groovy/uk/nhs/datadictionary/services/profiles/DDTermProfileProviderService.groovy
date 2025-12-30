@@ -57,6 +57,4 @@ class DDTermProfileProviderService extends JsonBasedProfile {
         return ['Term']
     }
 
-
-
 }
