@@ -295,6 +295,7 @@ class NhsDataDictionary {
             dictionaryFolder.finalised = true
             dictionaryFolder.modelVersion = ModelVersion.from(parameters.folderVersionNo)
             dictionaryFolder.modelVersionTag = parameters.releaseDate
+            dictionaryFolder.branchName = null
         }
         if(parameters.prevVersion) {
             VersionLink versionLink = new VersionLink()
