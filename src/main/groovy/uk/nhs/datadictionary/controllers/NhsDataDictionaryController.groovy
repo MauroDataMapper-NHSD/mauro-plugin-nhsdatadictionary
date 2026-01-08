@@ -22,9 +22,13 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import io.micronaut.core.annotation.Nullable
+import io.micronaut.http.HttpHeaders
+import io.micronaut.http.HttpResponse
+import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.QueryValue
+import io.micronaut.http.server.types.files.StreamedFile
 import io.micronaut.security.annotation.Secured
 import io.micronaut.security.rules.SecurityRule
 import jakarta.inject.Inject
@@ -80,8 +84,12 @@ class NhsDataDictionaryController {
     }
 
     @Get('/api/nhsdd/{dictionaryId}/publish/changePaper')
-    File generateChangePaper(UUID dictionaryId, @Nullable @QueryValue Boolean includeDataSets) {
-        nhsDataDictionaryService.generateChangePaper(dictionaryId, includeDataSets)
+    HttpResponse<StreamedFile> generateChangePaper(UUID dictionaryId, @Nullable @QueryValue Boolean includeDataSets) {
+        File f = nhsDataDictionaryService.generateChangePaper(dictionaryId, includeDataSets)
+        return HttpResponse.ok(new StreamedFile(new ByteArrayInputStream(f.readBytes()), MediaType.ZIP_TYPE))
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=\"${f.name}\"")
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_ZIP)
+            .header("Access-Control-Expose-Headers", "Content-Disposition, Content-Length")
     }
 
 

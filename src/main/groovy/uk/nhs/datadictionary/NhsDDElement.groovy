@@ -510,8 +510,6 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
                 }
             }
         }
-        System.err.println(catalogueItem.dataType.dataTypeKind)
-        System.err.println(dataDictionary)
         if(catalogueItem.dataType.dataTypeKind == DataType.DataTypeKind.MODEL_TYPE) {
             if (dataDictionary) {
                 codes = dataDictionary.elementCodeSetCodes[catalogueItem.dataType.modelResourceId]
