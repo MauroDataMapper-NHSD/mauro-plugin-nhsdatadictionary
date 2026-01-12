@@ -418,23 +418,11 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
     }
 
     List<NhsDDCode> getNationalCodes() {
-        List<NhsDDCode> orderedCodes = codes.findAll { !it.isDefault }
-        if(codes.find { it.webOrder}) {
-            orderedCodes = orderedCodes.sort {it.webOrder }
-        } else {
-            orderedCodes = orderedCodes.sort {it.code}
-        }
-        orderedCodes
+        NhsDDCode.sortCodes(codes.findAll { !it.isDefault })
     }
 
     List<NhsDDCode> getDefaultCodes() {
-        List<NhsDDCode> orderedCodes = codes.findAll { it.isDefault }
-        if(codes.find { it.webOrder}) {
-            orderedCodes = orderedCodes.sort {it.webOrder }
-        } else {
-            orderedCodes = orderedCodes.sort {it.code}
-        }
-        orderedCodes
+        NhsDDCode.sortCodes(codes.findAll { it.isDefault })
     }
 
     @JsonIgnore

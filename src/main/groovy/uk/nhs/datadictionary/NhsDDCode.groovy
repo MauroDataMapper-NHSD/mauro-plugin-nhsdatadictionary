@@ -139,4 +139,16 @@ class NhsDDCode implements ChangeAware {
     String getDiscriminator() {
         "${code} - ${definition}"
     }
+
+
+    static List<NhsDDCode> sortCodes(List<NhsDDCode> codes) {
+        // First return those with web order set (including if set to 0.
+        // Then return those without web order set, in alphabetical order
+
+        return (
+            codes.findAll { it.webOrder != null }.sort {it.webOrder}
+            +
+            codes.findAll { it.webOrder == null}.sort {it.code}
+        )
+    }
 }
