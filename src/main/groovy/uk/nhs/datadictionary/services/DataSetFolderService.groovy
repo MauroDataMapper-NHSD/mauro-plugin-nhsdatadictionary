@@ -76,6 +76,7 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
                 dataSetFolder.dataSets.add(childDataSet)
             }
         }
+        dataSetFolder.dataSets = dataSetFolder.dataSets.sort {it.name}
 
         return dataSetFolder
     }
