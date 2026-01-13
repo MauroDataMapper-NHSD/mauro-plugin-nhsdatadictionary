@@ -189,6 +189,7 @@ during a Liver Cancer Care Spell.</p>"""
         previousItemDescriptionChange = new NhsDDElement(
             new DataElement(
                 id: UUID.fromString("22710e00-7c41-4335-97da-2cafe9728804"),
+                description: "The previous description",
                 label: this.activeItem.name),
             branchId)
         previousItemDescriptionChange.dataDictionary = dataDictionary
@@ -198,6 +199,7 @@ during a Liver Cancer Care Spell.</p>"""
         previousItemAliasesChange = new NhsDDElement(
             new DataElement(
                 id: UUID.fromString("8049682f-761f-4eab-b533-c00781615207"),
+                description: "The previous description",
                 label: this.activeItem.name),
             branchId)
         previousItemAliasesChange.dataDictionary = dataDictionary
@@ -210,6 +212,7 @@ during a Liver Cancer Care Spell.</p>"""
         previousItemCodesChange = new NhsDDElement(
             new DataElement(
                 id: UUID.fromString("c95f7856-3d6c-4a23-b4b5-c4e5615ea2fc"),
+                description: "The current description",
                 label: this.activeItem.name),
             branchId)
         previousItemCodesChange.dataDictionary = dataDictionary
@@ -248,6 +251,7 @@ during a Liver Cancer Care Spell.</p>"""
         previousItemLinkedAttributesChange = new NhsDDElement(
             new DataElement(
                 id: UUID.fromString("76a9cac0-19d2-4880-87e7-c6061c4edadd"),
+                description: "The current description",
                 label: this.activeItem.name),
             branchId)
         previousItemLinkedAttributesChange.dataDictionary = dataDictionary
@@ -271,6 +275,7 @@ during a Liver Cancer Care Spell.</p>"""
         previousItemAllChange = new NhsDDElement(
             new DataElement(
                 id: UUID.fromString("eeb8929f-819a-4cfe-9209-1e9867fa2b68"),
+                description: "The previous description",
                 label: this.activeItem.name),
             branchId)
         previousItemAllChange.dataDictionary = dataDictionary
@@ -280,6 +285,7 @@ during a Liver Cancer Care Spell.</p>"""
         previousItemFormatChange = new NhsDDElement(
             new DataElement(
                 id: UUID.fromString("22710e00-7c41-4335-97da-2cafe9728804"),
+                description: "The current description",
                 label: this.activeItem.name),
             branchId)
         previousItemFormatChange.dataDictionary = dataDictionary
@@ -931,7 +937,8 @@ during a Liver Cancer Care Spell.</p></p>
 
     void "should produce a diff for an updated item description to change paper dita"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
+        activeItem.otherProperties["suppressFirstSentence"] = 'true'
         DictionaryItem previousStructure = previousItemDescriptionChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
 
@@ -1022,6 +1029,8 @@ during a Liver Cancer Care Spell.</p></p>
     void "should produce a diff for an updated item aliases to change paper dita"() {
         given: "the publish structures are built"
         DictionaryItem previousStructure = previousItemAliasesChange.getPublishStructure()
+        activeItem.catalogueItem.description = previousItemAliasesChange.catalogueItem.description
+        activeItem.otherProperties["suppressFirstSentence"] = 'true'
         DictionaryItem currentStructure = activeItem.getPublishStructure()
 
         when: "a diff is produced against the previous item"
@@ -1129,7 +1138,10 @@ during a Liver Cancer Care Spell.</p></p>
 
     void "should produce a diff for all changes to change paper dita"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+
+        activeItem.catalogueItem.description = "The current description"
+        activeItem.otherProperties["suppressFirstSentence"] = 'true'
+
         DictionaryItem previousStructure = previousItemAllChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
 
@@ -1324,7 +1336,7 @@ during a Liver Cancer Care Spell.</p></p>
       <p class="new">an1</p>
     </div>
     <div class="new">
-      <p><p>The type of Ablative Therapy given to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6">PATIENT</a> 
+      <p><a class="element" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/901c2d3d-0111-41d1-acc9-5b501c1dc397">ABLATIVE THERAPY TYPE</a> is the same as attribute <a class="attribute" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ABLATIVE THERAPY TYPE</a>. <p>The type of Ablative Therapy given to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6">PATIENT</a> 
 during a Liver Cancer Care Spell.</p></p>
     </div>
     <p>
@@ -1415,8 +1427,8 @@ during a Liver Cancer Care Spell.</p></p>
 
     void "should produce a diff for an updated item description to change paper html"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
-
+        activeItem.catalogueItem.description = "The current description"
+        activeItem.otherProperties["suppressFirstSentence"] = 'true'
         DictionaryItem previousStructure = previousItemDescriptionChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
 
@@ -1509,6 +1521,10 @@ during a Liver Cancer Care Spell.</p></p>
     void "should produce a diff for an updated item aliases to change paper html"() {
         given: "the publish structures are built"
         DictionaryItem previousStructure = previousItemAliasesChange.getPublishStructure()
+        activeItem.catalogueItem.description = "The current description"
+        activeItem.otherProperties["suppressFirstSentence"] = 'true'
+        activeItem.catalogueItem.description = previousItemAliasesChange.catalogueItem.description
+
         DictionaryItem currentStructure = activeItem.getPublishStructure()
 
         when: "a diff is produced against the previous item"
@@ -1631,7 +1647,8 @@ during a Liver Cancer Care Spell.</p></p>
 
     void "should produce a diff for all changes to change paper html"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
+        activeItem.otherProperties["suppressFirstSentence"] = 'true'
 
         DictionaryItem previousStructure = previousItemAllChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
@@ -1759,7 +1776,9 @@ during a Liver Cancer Care Spell.</p></p>
 
     void "should produce a diff for an updated item codes to change paper dita"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
+        activeItem.otherProperties["suppressFirstSentence"] = 'true'
+
         DictionaryItem previousStructure = previousItemCodesChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
 
@@ -1849,7 +1868,8 @@ during a Liver Cancer Care Spell.</p></p>
 
     void "should produce a diff for an updated item codes to change paper html"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
+        activeItem.otherProperties["suppressFirstSentence"] = 'true'
         DictionaryItem previousStructure = previousItemCodesChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
 
@@ -1946,7 +1966,8 @@ during a Liver Cancer Care Spell.</p></p>
 
     void "should produce a diff for an updated item linked elements to change paper dita"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
+        activeItem.otherProperties["suppressFirstSentence"] = 'true'
         DictionaryItem previousStructure = previousItemLinkedAttributesChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
 
@@ -2031,7 +2052,9 @@ during a Liver Cancer Care Spell.</p></p>
 
     void "should produce a diff for an updated item linked elements to change paper html"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
+        activeItem.otherProperties["suppressFirstSentence"] = 'true'
+
         DictionaryItem previousStructure = previousItemLinkedAttributesChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
 
@@ -2123,7 +2146,9 @@ during a Liver Cancer Care Spell.</p></p>
 
     void "should produce a diff for an updated item format length to change paper dita"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
+        activeItem.otherProperties["suppressFirstSentence"] = 'true'
+
         DictionaryItem previousStructure = previousItemFormatChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
 
@@ -2212,7 +2237,9 @@ during a Liver Cancer Care Spell.</p></p>
 
     void "should produce a diff for an updated item format length to change paper html"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
+        activeItem.otherProperties["suppressFirstSentence"] = 'true'
+
         DictionaryItem previousStructure = previousItemFormatChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
 

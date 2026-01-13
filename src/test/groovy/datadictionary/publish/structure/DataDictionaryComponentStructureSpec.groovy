@@ -44,7 +44,6 @@ abstract class DataDictionaryComponentStructureSpec<T extends NhsDataDictionaryC
     T preparatoryItem
 
     T previousItemDescriptionChange
-    T newItemDescriptionChange
     T previousItemAliasesChange
     T previousItemAllChange
 
