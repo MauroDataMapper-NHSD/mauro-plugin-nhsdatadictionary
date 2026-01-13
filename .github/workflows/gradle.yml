@@ -23,6 +23,21 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: sandbox
+          POSTGRES_DB: sandbox
+          POSTGRES_PASSWORD: sandbox
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 1s
+          --health-timeout 5s
+          --health-retries 50
+        ports:
+          - 5432:5432
+
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 17
