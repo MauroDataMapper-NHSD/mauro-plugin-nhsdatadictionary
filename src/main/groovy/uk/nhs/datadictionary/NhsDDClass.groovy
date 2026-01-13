@@ -150,7 +150,7 @@ class NhsDDClass extends NhsDataDictionaryComponent <DataClass> {
 
     @Override
     DictionaryItem getPublishStructure() {
-        DictionaryItem dictionaryItem = DictionaryItem.create(this)
+        DictionaryItem dictionaryItem = new DictionaryItem(this, this.branchId)
 
         addDescriptionSection(dictionaryItem)
 

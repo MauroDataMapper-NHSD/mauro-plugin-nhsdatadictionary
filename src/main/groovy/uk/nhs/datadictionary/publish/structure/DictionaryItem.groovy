@@ -28,46 +28,45 @@ import uk.nhs.datadictionary.publish.changePaper.Change
 
 
 class DictionaryItem implements DitaAware<Topic>, HtmlAware, DiffAware<DictionaryItem, DictionaryItem> {
+
+    final NhsDataDictionaryComponent component
+    final UUID branchId
+    final String changeType
+
     enum DictionaryItemState {
         ACTIVE,
         RETIRED,
         PREPARATORY
     }
-    final UUID id
-    final UUID branchId
-    final String stereotype
-    final String name
-    final DictionaryItemState state
-    final String outputClass
-    final String description
-    final List<Section> sections = []
+    UUID getId() { component.catalogueItemId }
 
-    DictionaryItem(
-        UUID id,
-        UUID branchId,
-        String stereotype,
-        String name,
-        DictionaryItemState state,
-        String outputClass,
-        String description) {
-        this.id = id
-        this.branchId = branchId
-        this.stereotype = stereotype
-        this.name = name
-        this.state = state
-        this.outputClass = outputClass
-        this.description = description
+    String getStereotype() { component.getStereotype() }
+    String getName() { component.name }
+    DictionaryItemState getState() {
+        if(component.isRetired()) {
+            return DictionaryItemState.RETIRED
+        } else if(component.isPreparatory()) {
+            return DictionaryItemState.PREPARATORY
+        } else {
+            return DictionaryItemState.ACTIVE
+        }
     }
 
-    static DictionaryItem create(NhsDataDictionaryComponent component) {
-        new DictionaryItem(
-            component.catalogueItemId,
-            component.branchId,
-            component.stereotype,
-            component.name,
-            component.itemState,
-            component.outputClass,
-            component.shortDescription)
+    String getOutputClass() { component.outputClass}
+    String getDescription() { component.description }
+    String getShortDescription() {component.calculateShortDescription()}
+    final List<Section> sections = []
+
+    DictionaryItem(NhsDataDictionaryComponent component, UUID branchId, String changeType = null) {
+        this.component = component
+        this.branchId = branchId
+        this.changeType = changeType
+    }
+
+    DictionaryItem(DictionaryItem dictionaryItem, UUID branchId, String changeType = null) {
+        this.component = dictionaryItem.component
+        this.branchId = branchId
+        this.changeType = changeType
     }
 
     DictionaryItem addSection(Section section) {
@@ -100,7 +99,7 @@ class DictionaryItem implements DitaAware<Topic>, HtmlAware, DiffAware<Dictionar
             return null
         }
 
-        DictionaryItem diff = new DictionaryItem(
+/*        DictionaryItem diff = new DictionaryItem(
             this.id,
             this.branchId,
             this.stereotype,
@@ -108,6 +107,10 @@ class DictionaryItem implements DitaAware<Topic>, HtmlAware, DiffAware<Dictionar
             this.state,
             this.outputClass,
             getSummaryOfSectionTitlesForDiff(diffSections))
+*/
+
+        DictionaryItem diff = new DictionaryItem(this, this.branchId, getSummaryOfSectionTitlesForDiff(diffSections))
+
 
         diffSections.each {diffSection ->
             diff.addSection(diffSection)
@@ -122,15 +125,15 @@ class DictionaryItem implements DitaAware<Topic>, HtmlAware, DiffAware<Dictionar
 
         String topicTitle = context.target == PublishTarget.WEBSITE ? getOfficialName() : name
 
-        String shortDescription = context.target == PublishTarget.CHANGE_PAPER
-            ? "Change to ${stereotype}: ${description}"
-            : description
+        String shortDesc = context.target == PublishTarget.CHANGE_PAPER
+            ? "Change to ${stereotype}: ${changeType}"
+            : shortDescription
 
         Topic.build(id: xrefId) {
             title(outputClass: titleOutputClass) {
                 text topicTitle
             }
-            shortdesc shortDescription
+            shortdesc shortDesc
 
             if (context.target == PublishTarget.CHANGE_PAPER) {
                 body {
@@ -164,10 +167,10 @@ class DictionaryItem implements DitaAware<Topic>, HtmlAware, DiffAware<Dictionar
             mkp.yield(getOfficialName())
         }
 
-        if (description) {
+        if (shortDescription) {
             builder.div(class: HtmlConstants.CSS_TOPIC_BODY) {
                 builder.p(class: HtmlConstants.CSS_TOPIC_SHORTDESC) {
-                    mkp.yield(description)
+                    mkp.yield(context.replaceLinksInString(shortDescription))
                 }
             }
         }
@@ -181,7 +184,7 @@ class DictionaryItem implements DitaAware<Topic>, HtmlAware, DiffAware<Dictionar
 
         builder.div {
             h3 name
-            h4 "Change to ${stereotype}: ${description}"
+            h4 "Change to ${stereotype}: ${changeType}"
             div {
                 this.sections.each { section ->
                     section.buildHtml(context, builder)

@@ -20,6 +20,7 @@ package uk.nhs.datadictionary
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import groovy.util.logging.Slf4j
+import org.maurodata.dita.elements.langref.base.P
 import org.maurodata.dita.elements.langref.base.Topic
 import org.maurodata.dita.elements.langref.base.XRef
 import org.maurodata.domain.datamodel.DataElement
@@ -270,20 +271,22 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
     }
 
     String getDescription() {
-        if (!isActivePage()) {
-            return null
-        }
-        List<NhsDDAttribute> activeAttributes = instantiatesAttributes.findAll {!it.isRetired() }
-        if (activeAttributes.size() == 1 && otherProperties["suppressFirstSentence"] != 'true') {
-            NhsDDAttribute attribute = activeAttributes[0]
-            String ret = "<a href=\"${this.getMauroPath()}\">${this.name}</a> is the same as attribute <a href=\"${attribute.getMauroPath()}\">${attribute.name}</a>. "
-            if(catalogueItem) {
-                ret += catalogueItem.description
+        if(dataDictionary && isRetired()) {
+            return dataDictionary.retiredItemText
+        } else if(dataDictionary && isPreparatory()) {
+            return dataDictionary.preparatoryItemText
+        } else {
+            List<NhsDDAttribute> activeAttributes = instantiatesAttributes.findAll {!it.isRetired()}
+            if (activeAttributes.size() == 1 && otherProperties["suppressFirstSentence"] != 'true') {
+                NhsDDAttribute attribute = activeAttributes[0]
+                String ret = "<a href=\"${this.getMauroPath()}\">${this.name}</a> is the same as attribute <a href=\"${attribute.getMauroPath()}\">${attribute.name}</a>. "
+                if (catalogueItem) {
+                    ret += catalogueItem.description
+                }
+                return ret
             }
-            return ret
+            return catalogueItem.description
         }
-
-        return catalogueItem.description
     }
 
     @Override
@@ -312,7 +315,7 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
 
     @Override
     DictionaryItem getPublishStructure() {
-        DictionaryItem dictionaryItem = DictionaryItem.create(this)
+        DictionaryItem dictionaryItem = new DictionaryItem(this, this.branchId)
 
         if (itemState == DictionaryItem.DictionaryItemState.ACTIVE) {
             addFormatLengthSection(dictionaryItem)

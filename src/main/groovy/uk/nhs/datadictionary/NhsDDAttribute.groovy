@@ -22,7 +22,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import groovy.util.logging.Slf4j
 import org.maurodata.dita.elements.langref.base.Topic
 import org.maurodata.domain.datamodel.DataElement
-import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.datamodel.DataType
 import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
@@ -183,7 +182,7 @@ class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
     @Override
     @JsonIgnore
     DictionaryItem getPublishStructure() {
-        DictionaryItem dictionaryItem = DictionaryItem.create(this)
+        DictionaryItem dictionaryItem = new DictionaryItem(this, this.branchId)
 
         addDescriptionSection(dictionaryItem)
 

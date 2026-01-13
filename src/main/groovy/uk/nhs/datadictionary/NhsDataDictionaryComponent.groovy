@@ -319,7 +319,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
 
     @JsonIgnore
     DictionaryItem getPublishStructure() {
-        DictionaryItem dictionaryItem = DictionaryItem.create(this)
+        DictionaryItem dictionaryItem = new DictionaryItem(this, this.branchId)
 
         addDescriptionSection(dictionaryItem)
 

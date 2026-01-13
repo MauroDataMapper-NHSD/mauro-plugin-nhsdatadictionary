@@ -51,10 +51,12 @@ class NhsElementStructureSpec extends DataDictionaryComponentStructureSpec<NhsDD
 
     NhsDDClass relatedPatientClass
     NhsDDBusinessDefinition relatedRadiofrequncyAblationDef
+    NhsDDAttribute instantiatesAttribute
 
     NhsDDElement previousItemCodesChange
     NhsDDElement previousItemLinkedAttributesChange
     NhsDDElement previousItemFormatChange
+
 
     @Override
     String getDefinition() {
@@ -83,6 +85,7 @@ during a Liver Cancer Care Spell.</p>"""
 
         componentPathResolver.add(relatedPatientClass.getMauroPath(), relatedPatientClass)
         componentPathResolver.add(relatedRadiofrequncyAblationDef.getMauroPath(), relatedRadiofrequncyAblationDef)
+        componentPathResolver.add(instantiatesAttribute.getMauroPath(), instantiatesAttribute)
     }
 
     @Override
@@ -91,6 +94,9 @@ during a Liver Cancer Care Spell.</p>"""
 
         catalogueItemPathResolver.add(relatedPatientClass.getMauroPath(), relatedPatientClass.catalogueItemId)
         catalogueItemPathResolver.add(relatedRadiofrequncyAblationDef.getMauroPath(), relatedRadiofrequncyAblationDef.catalogueItemId)
+
+        catalogueItemPathResolver.add(instantiatesAttribute.getMauroPath(), instantiatesAttribute.catalogueItemId)
+
     }
 
     @Override
@@ -98,7 +104,8 @@ during a Liver Cancer Care Spell.</p>"""
         activeItem = new NhsDDElement(
             new DataElement(
                 id: UUID.fromString("901c2d3d-0111-41d1-acc9-5b501c1dc397"),
-                label: "ABLATIVE THERAPY TYPE"),
+                label: "ABLATIVE THERAPY TYPE",
+                description: definition),
             branchId)
         activeItem.dataDictionary = dataDictionary
         activeItem.definition = definition
@@ -143,12 +150,12 @@ during a Liver Cancer Care Spell.</p>"""
                 code: "9",
                 definition: "Not Known"))
 
-        activeItem.instantiatesAttributes.add(
-            new NhsDDAttribute(
-                new DataElement(
-                    label: "ABLATIVE THERAPY TYPE",
-                    id: UUID.fromString("faff11f5-cbfb-4faa-84d8-6d3b1eccd03b")),
-                branchId))
+
+        instantiatesAttribute = new NhsDDAttribute(
+            new DataElement(label: "ABLATIVE THERAPY TYPE", id: UUID.fromString("faff11f5-cbfb-4faa-84d8-6d3b1eccd03b"), description: definition),
+            branchId)
+        instantiatesAttribute.definition = definition
+        activeItem.instantiatesAttributes.add(instantiatesAttribute)
     }
 
     @Override
@@ -363,6 +370,10 @@ during a Liver Cancer Care Spell.</p>"""
     <title>Description</title>
     <body>
       <div>
+        <xref outputclass='element' keyref='data_element_ablative_therapy_type' scope='local'>ABLATIVE THERAPY TYPE</xref> is the same as attribute 
+
+        <xref outputclass='attribute' keyref='attribute_ablative_therapy_type' scope='local'>ABLATIVE THERAPY TYPE</xref>. 
+
         <p>The type of Ablative Therapy given to a 
 
           <xref outputclass='class' keyref='class_patient' scope='local'>PATIENT</xref> during a Liver Cancer Care Spell.
@@ -605,7 +616,7 @@ during a Liver Cancer Care Spell.</p>"""
             descriptionHtml
             descriptionHtml == """<div class="- topic/body body">
   <div class="- topic/div div">
-    <p class="- topic/p p"><p>The type of Ablative Therapy given to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6">PATIENT</a> 
+    <p class="- topic/p p"><a class="element" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/901c2d3d-0111-41d1-acc9-5b501c1dc397">ABLATIVE THERAPY TYPE</a> is the same as attribute <a class="attribute" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ABLATIVE THERAPY TYPE</a>. <p>The type of Ablative Therapy given to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6">PATIENT</a> 
 during a Liver Cancer Care Spell.</p></p>
   </div>
 </div>"""
@@ -842,6 +853,10 @@ during a Liver Cancer Care Spell.</p></p>
     </div>
     <div outputclass='new'>
       <div>
+        <xref outputclass='element' keyref='data_element_ablative_therapy_type' scope='local'>ABLATIVE THERAPY TYPE</xref> is the same as attribute 
+
+        <xref outputclass='attribute' keyref='attribute_ablative_therapy_type' scope='local'>ABLATIVE THERAPY TYPE</xref>. 
+
         <p>The type of Ablative Therapy given to a 
 
           <xref outputclass='class' keyref='class_patient' scope='local'>PATIENT</xref> during a Liver Cancer Care Spell.

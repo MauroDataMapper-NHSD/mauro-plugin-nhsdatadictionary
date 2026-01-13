@@ -381,14 +381,7 @@ class ChangePaper {
             return
         }
 
-        DictionaryItem changedDataSetStructure = new DictionaryItem(
-            standardStructure.id,
-            standardStructure.branchId,
-            standardStructure.stereotype,
-            standardStructure.name,
-            standardStructure.state,
-            standardStructure.outputClass,
-            Change.CHANGED_DATA_SET_TYPE)
+        DictionaryItem changedDataSetStructure = new DictionaryItem(component, component.branchId, Change.CHANGED_DATA_SET_TYPE)
 
         changedDataSetStructure.addSection(descriptionSection)
 
