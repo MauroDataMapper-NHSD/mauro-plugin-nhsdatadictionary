@@ -66,7 +66,7 @@ class NhsDataDictionaryController {
 
     @Inject ObjectMapper objectMapper
 
-    @Inject NhsDataDictionaryService nhsDataDictionaryService
+    NhsDataDictionaryService nhsDataDictionaryService
 
     @Inject ElementService elementService
     @Inject AttributeService attributeService
@@ -76,6 +76,10 @@ class NhsDataDictionaryController {
     @Inject DataSetService dataSetService
     @Inject DataSetFolderService dataSetFolderService
     @Inject DataSetConstraintService dataSetConstraintService
+
+    NhsDataDictionaryController(NhsDataDictionaryService nhsDataDictionaryService) {
+        this.nhsDataDictionaryService = nhsDataDictionaryService
+    }
 
 
     @Get('/api/nhsdd/branches')
