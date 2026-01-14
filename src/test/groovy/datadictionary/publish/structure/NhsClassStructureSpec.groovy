@@ -38,8 +38,7 @@ import uk.nhs.datadictionary.publish.structure.WhereUsedSection
 import uk.nhs.datadictionary.services.NhsDataDictionaryService
 
 
-@MicronautTest(startApplication = false, environments = ['secured'])
-@Property(name = "flyway.enabled", value = "false")
+@MicronautTest(startApplication = true, environments = ['secured'])
 class NhsClassStructureSpec extends DataDictionaryComponentStructureSpec<NhsDDClass> {
 
     @Inject
@@ -100,10 +99,10 @@ to a <a href="dm:Classes and Attributes|dc:PATIENT">PATIENT</a> by one or more
         activeItem = new NhsDDClass(
             new DataClass(
             id: UUID.fromString("901c2d3d-0111-41d1-acc9-5b501c1dc397"),
-            label: "ACTIVITY"),
+            label: "ACTIVITY",
+            description: definition),
         branchId)
         activeItem.dataDictionary = dataDictionary
-        activeItem.definition = definition
         activeItem.otherProperties = ['aliasPlural': 'ACTIVITIES']
 
         addWhereUsed(activeItem, activeItem)    // Self reference
@@ -151,10 +150,10 @@ to a <a href="dm:Classes and Attributes|dc:PATIENT">PATIENT</a> by one or more
         retiredItem = new NhsDDClass(
             new DataClass(
                 id: UUID.fromString("fb096f90-3273-4c66-8023-c1e32ac5b795"),
-                label: this.activeItem.name),
+                label: this.activeItem.name,
+                description: this.activeItem.description),
             branchId)
         retiredItem.dataDictionary = dataDictionary
-        retiredItem.definition = this.activeItem.definition
         retiredItem.otherProperties = copyMap(this.activeItem.otherProperties)
         retiredItem.whereUsed = copyMap(this.activeItem.whereUsed)
     }
@@ -164,10 +163,10 @@ to a <a href="dm:Classes and Attributes|dc:PATIENT">PATIENT</a> by one or more
         preparatoryItem = new NhsDDClass(
             new DataClass(
                 id: UUID.fromString("f5276a0c-5458-4fa5-9bd3-ff786aef932f"),
-                label: this.activeItem.name),
+                label: this.activeItem.name,
+                description: this.activeItem.description),
             branchId)
         preparatoryItem.dataDictionary = dataDictionary
-        preparatoryItem.definition = this.activeItem.definition
         preparatoryItem.otherProperties = copyMap(this.activeItem.otherProperties)
         preparatoryItem.whereUsed = copyMap(this.activeItem.whereUsed)
     }
@@ -177,19 +176,19 @@ to a <a href="dm:Classes and Attributes|dc:PATIENT">PATIENT</a> by one or more
         previousItemDescriptionChange = new NhsDDClass(
             new DataClass(
                 id: UUID.fromString("22710e00-7c41-4335-97da-2cafe9728804"),
-                label: this.activeItem.name),
+                label: this.activeItem.name,
+                description: 'The previous description'),
             branchId)
         previousItemDescriptionChange.dataDictionary = dataDictionary
-        previousItemDescriptionChange.definition = "The previous description"
         previousItemDescriptionChange.otherProperties = copyMap(this.activeItem.otherProperties)
 
         previousItemAliasesChange = new NhsDDClass(
             new DataClass(
                 id: UUID.fromString("8049682f-761f-4eab-b533-c00781615207"),
-                label: this.activeItem.name),
+                label: this.activeItem.name,
+                description: this.activeItem.description),
             branchId)
         previousItemAliasesChange.dataDictionary = dataDictionary
-        previousItemAliasesChange.definition = this.activeItem.definition
         previousItemAliasesChange.otherProperties = [
                 'aliasPlural': "ACTIVITY GROUP",
                 'aliasAlsoKnownAs': 'ALTERNATIVE',
@@ -198,10 +197,10 @@ to a <a href="dm:Classes and Attributes|dc:PATIENT">PATIENT</a> by one or more
         previousItemAllChange = new NhsDDClass(
             new DataClass(
                 id: UUID.fromString("eeb8929f-819a-4cfe-9209-1e9867fa2b68"),
-                label: this.activeItem.name),
+                label: this.activeItem.name,
+                description: previousItemDescriptionChange.description),
             branchId)
         previousItemAllChange.dataDictionary = dataDictionary
-        previousItemAllChange.definition = previousItemDescriptionChange.definition
         previousItemAllChange.otherProperties = copyMap(previousItemAliasesChange.otherProperties)
     }
 
@@ -880,7 +879,7 @@ to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class
 
     void "should produce a diff for an updated item description to change paper dita"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
         DictionaryItem previousStructure = previousItemDescriptionChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
 
@@ -1078,7 +1077,7 @@ to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class
 
     void "should produce a diff for all changes to change paper dita"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
         DictionaryItem previousStructure = previousItemAllChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
 
@@ -1364,7 +1363,7 @@ to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class
 
     void "should produce a diff for an updated item description to change paper html"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
 
         DictionaryItem previousStructure = previousItemDescriptionChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
@@ -1590,7 +1589,7 @@ to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class
 
     void "should produce a diff for all changes to change paper html"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
 
         DictionaryItem previousStructure = previousItemAllChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()

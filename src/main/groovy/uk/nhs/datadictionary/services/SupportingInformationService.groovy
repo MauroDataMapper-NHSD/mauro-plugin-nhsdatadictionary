@@ -45,7 +45,7 @@ class SupportingInformationService extends DataDictionaryComponentService<Term, 
 
         Term supportingInformationTerm = termCacheableRepository.findById(id)
         NhsDDSupportingInformation supportingInformation = new NhsDDSupportingInformation().fromMauroItem(dataDictionary, mauroPersistenceService, supportingInformationTerm)
-        supportingInformation.htmlDescription = convertLinksInDescription(versionedFolderId, supportingInformation.getDescription())
+        // supportingInformation.htmlDescription = convertLinksInDescription(versionedFolderId, supportingInformation.getDescription())
         return supportingInformation
     }
 
@@ -78,7 +78,7 @@ class SupportingInformationService extends DataDictionaryComponentService<Term, 
                     definition: name,
                     // Leave Url blank for now
                     // url: businessDefinition.otherProperties["ddUrl"].replaceAll(" ", "%20"),
-                    description: supportingInformation.definition,
+                    description: supportingInformation.description,
                     depth: 1,
                     terminology: terminology)
 

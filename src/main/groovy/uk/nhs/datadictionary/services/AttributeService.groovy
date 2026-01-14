@@ -60,7 +60,7 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
         DataElement attributeElement = dataElementRepository.findById(id)
         NhsDDAttribute attribute = new NhsDDAttribute(attributeElement).fromMauroItem(null, mauroPersistenceService, attributeElement)
         attribute.instantiatedByElements.addAll (getAllElementsForAttribute(null, attribute))
-        attribute.htmlDescription = convertLinksInDescription(versionedFolderId, attribute.getDescription())
+        //attribute.htmlDescription = convertLinksInDescription(versionedFolderId, attribute.getDescription())
         attribute.codes.each {code ->
             if(code.webPresentation) {
                 code.webPresentation = convertLinksInDescription(versionedFolderId, code.webPresentation)
@@ -148,7 +148,7 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
 
             DataElement attributeDataElement = new DataElement(
                 label: name,
-                description: attribute.definition,
+                description: attribute.description,
                 dataType: dataType)
 
             addMetadataFromComponent(attributeDataElement, attribute)

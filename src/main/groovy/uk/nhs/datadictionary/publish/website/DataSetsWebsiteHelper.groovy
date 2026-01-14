@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils
 import org.maurodata.dita.DitaProject
 import org.maurodata.dita.elements.langref.base.DitaMap
 import org.maurodata.dita.elements.langref.base.Topic
+import org.maurodata.dita.helpers.HtmlHelper
 import uk.nhs.datadictionary.DataDictionaryImportParameters
 import uk.nhs.datadictionary.NhsDDDataSetFolder
 import uk.nhs.datadictionary.NhsDataDictionary
@@ -146,8 +147,8 @@ class DataSetsWebsiteHelper {
             title folder.getNameWithRetired()
             shortdesc folder.getShortDescription()
             body {
-                if (folder.definition) {
-                    div HtmlHelper.replaceHtmlWithDita(folder.definition)
+                if (folder.description) {
+                    div HtmlHelper.replaceHtmlWithDita(folder.description)
                 }
             }
         }

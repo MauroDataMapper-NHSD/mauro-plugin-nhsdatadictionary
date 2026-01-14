@@ -37,8 +37,7 @@ import uk.nhs.datadictionary.publish.structure.ItemLinkListSection
 import uk.nhs.datadictionary.publish.structure.WhereUsedSection
 import uk.nhs.datadictionary.services.NhsDataDictionaryService
 
-@MicronautTest(startApplication = false, environments = ['secured'])
-@Property(name = "flyway.enabled", value = "false")
+@MicronautTest(startApplication = true, environments = ['secured'])
 class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<NhsDDAttribute> {
 
     @Inject
@@ -79,10 +78,9 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
     @Override
     void setupActiveItem() {
         activeItem = new NhsDDAttribute(
-            new DataElement(id: UUID.fromString("901c2d3d-0111-41d1-acc9-5b501c1dc397"), label: 'ACTIVITY DATE'),
+            new DataElement(id: UUID.fromString("901c2d3d-0111-41d1-acc9-5b501c1dc397"), label: 'ACTIVITY DATE', description: definition),
             branchId)
         activeItem.dataDictionary = dataDictionary
-        activeItem.definition = definition
         activeItem.otherProperties = ['aliasPlural': 'ACTIVITY DATES']
 
         NhsDDElement relatedActivityDateElement = new NhsDDElement(
@@ -117,10 +115,9 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
     @Override
     void setupRetiredItem() {
         retiredItem = new NhsDDAttribute(
-            new DataElement(id: UUID.fromString('fb096f90-3273-4c66-8023-c1e32ac5b795'), label: activeItem.name),
+            new DataElement(id: UUID.fromString('fb096f90-3273-4c66-8023-c1e32ac5b795'), label: activeItem.name, description: activeItem.description),
             branchId)
         retiredItem.dataDictionary = dataDictionary
-        retiredItem.definition = activeItem.definition
         retiredItem.otherProperties = copyMap(activeItem.otherProperties)
         retiredItem.whereUsed = copyMap(activeItem.whereUsed)
     }
@@ -128,10 +125,9 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
     @Override
     void setupPreparatoryItem() {
         preparatoryItem = new NhsDDAttribute(
-            new DataElement(id: UUID.fromString('f5276a0c-5458-4fa5-9bd3-ff786aef932f'), label: activeItem.name ),
+            new DataElement(id: UUID.fromString('f5276a0c-5458-4fa5-9bd3-ff786aef932f'), label: activeItem.name, description: activeItem.description ),
             branchId)
         preparatoryItem.dataDictionary = dataDictionary
-        preparatoryItem.definition = activeItem.definition
         preparatoryItem.otherProperties = copyMap(activeItem.otherProperties)
         preparatoryItem.whereUsed = copyMap(activeItem.whereUsed)
     }
@@ -139,27 +135,24 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
     @Override
     void setupPreviousItems() {
         previousItemDescriptionChange = new NhsDDAttribute(
-            new DataElement(id: UUID.fromString('22710e00-7c41-4335-97da-2cafe9728804'), label: activeItem.name),
+            new DataElement(id: UUID.fromString('22710e00-7c41-4335-97da-2cafe9728804'), label: activeItem.name, description: "The previous description"),
             branchId)
         previousItemDescriptionChange.dataDictionary = dataDictionary
-        previousItemDescriptionChange.definition = "The previous description"
         previousItemDescriptionChange.otherProperties = copyMap(this.activeItem.otherProperties)
 
         previousItemAliasesChange = new NhsDDAttribute(
-            new DataElement(id: UUID.fromString('8049682f-761f-4eab-b533-c00781615207'), label: activeItem.name),
+            new DataElement(id: UUID.fromString('8049682f-761f-4eab-b533-c00781615207'), label: activeItem.name, description: activeItem.description),
             branchId)
         previousItemAliasesChange.dataDictionary = dataDictionary
-        previousItemAliasesChange.definition = activeItem.definition
         previousItemAliasesChange.otherProperties = [
                 'aliasPlural': "ACTIVITIES DATE",
                 'aliasAlsoKnownAs': 'ACTIVITY DATE STAMP',
             ]
 
         previousItemCodesChange = new NhsDDAttribute(
-            new DataElement(id: UUID.fromString('c95f7856-3d6c-4a23-b4b5-c4e5615ea2fc'), label: activeItem.name),
+            new DataElement(id: UUID.fromString('c95f7856-3d6c-4a23-b4b5-c4e5615ea2fc'), label: activeItem.name, description: 'The current description'),
             branchId)
         previousItemCodesChange.dataDictionary = dataDictionary
-        previousItemCodesChange.definition = 'The current description'
         previousItemCodesChange.otherProperties = copyMap(activeItem.otherProperties)
 
         previousItemCodesChange.codes.add(new NhsDDCode(code: "S", definition: "Standard", webOrder: 1))
@@ -167,10 +160,9 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
         previousItemCodesChange.codes.add(new NhsDDCode(code: "U", definition: "Universal Time (UTC)", webOrder: 2))
 
         previousItemLinkedElementsChange = new NhsDDAttribute(
-            new DataElement(id: UUID.fromString('76a9cac0-19d2-4880-87e7-c6061c4edadd'), label: activeItem.name),
+            new DataElement(id: UUID.fromString('76a9cac0-19d2-4880-87e7-c6061c4edadd'), label: activeItem.name, description: 'The current description'),
             branchId)
         previousItemLinkedElementsChange.dataDictionary = dataDictionary
-        previousItemLinkedElementsChange.definition = 'The current description'
         previousItemLinkedElementsChange.otherProperties = copyMap(activeItem.otherProperties)
 
         NhsDDElement instantiatedByElement1 = new NhsDDElement(
@@ -184,10 +176,9 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
         previousItemLinkedElementsChange.instantiatedByElements.add(instantiatedByElement2)
 
         previousItemAllChange = new NhsDDAttribute(
-            new DataElement(id: UUID.fromString('eeb8929f-819a-4cfe-9209-1e9867fa2b68'), label: activeItem.name),
+            new DataElement(id: UUID.fromString('eeb8929f-819a-4cfe-9209-1e9867fa2b68'), label: activeItem.name, description: previousItemDescriptionChange.description),
             branchId)
         previousItemAllChange.dataDictionary = dataDictionary
-        previousItemAllChange.definition = previousItemDescriptionChange.definition
         previousItemAllChange.otherProperties = copyMap(previousItemAliasesChange.otherProperties)
     }
 
@@ -888,7 +879,7 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
 
     void "should produce a diff for an updated item description to change paper dita"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
         DictionaryItem previousStructure = previousItemDescriptionChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
 
@@ -1066,7 +1057,7 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
 
     void "should produce a diff for all changes to change paper dita"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
         DictionaryItem previousStructure = previousItemAllChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
 
@@ -1221,7 +1212,7 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
 
     void "should produce a diff for an updated item description to change paper html"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
 
         DictionaryItem previousStructure = previousItemDescriptionChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
@@ -1399,7 +1390,7 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
 
     void "should produce a diff for all changes to change paper html"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
 
         DictionaryItem previousStructure = previousItemAllChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
@@ -1505,7 +1496,7 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
 
     void "should produce a diff for an updated item codes to change paper dita"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
         DictionaryItem previousStructure = previousItemCodesChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
 
@@ -1588,7 +1579,7 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
 
     void "should produce a diff for an updated item codes to change paper html"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
         DictionaryItem previousStructure = previousItemCodesChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
 
@@ -1669,7 +1660,7 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
 
     void "should produce a diff for an updated item linked elements to change paper dita"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
         DictionaryItem previousStructure = previousItemLinkedElementsChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
 
@@ -1747,7 +1738,7 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
 
     void "should produce a diff for an updated item linked elements to change paper html"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
         DictionaryItem previousStructure = previousItemLinkedElementsChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
 

@@ -34,7 +34,7 @@ class DataSetsHaveAnOverview implements IntegrityCheck {
             .findAll {ddDataSet ->
                 // log.debug(ddAttribute.classLinks.size())
                 !ddDataSet.isRetired() &&
-                (ddDataSet.definition == null || ddDataSet.definition == "")
+                (ddDataSet.description == null || ddDataSet.description == "")
             }
             .collect { component -> new IntegrityCheckError(component) }
     }

@@ -61,8 +61,7 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
 
         element.instantiatesAttributes.addAll(getAllAttributesForElement(null, element))
 
-        element.definition = convertLinksInDescription(versionedFolderId, element.getDescription())
-        element.htmlDescription = convertLinksInDescription(versionedFolderId, element.getDescription())
+        // element.htmlDescription = convertLinksInDescription(versionedFolderId, element.getDescription())
         /*
         String attributeText = element.getAttributeTextAsHtml()
         if (attributeText) {
@@ -189,7 +188,7 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
             }
             DataElement elementDataElement = new DataElement(
                 label: name,
-                description: element.definition,
+                description: element.description,
                 dataType: dataType,
                 order: idx++)
 

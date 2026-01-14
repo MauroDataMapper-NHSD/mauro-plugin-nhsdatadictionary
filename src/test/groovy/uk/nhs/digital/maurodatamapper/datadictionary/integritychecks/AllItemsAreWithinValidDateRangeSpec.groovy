@@ -25,7 +25,7 @@ import uk.nhs.datadictionary.integritychecks.AllItemsAreWithinValidDateRange
 
 import java.time.LocalDate
 
-@MicronautTest(startApplication = false, environments = ['secured'])
+@MicronautTest(startApplication = true, environments = ['secured'])
 @Property(name = "flyway.enabled", value = "false")
 class AllItemsAreWithinValidDateRangeSpec extends Specification {
 

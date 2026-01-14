@@ -90,7 +90,7 @@ class NhsDDClass extends NhsDataDictionaryComponent <DataClass> {
                     return firstSentence
                 }
             } catch (Exception e) {
-                log.error("Couldn't parse: " + definition)
+                log.error("Couldn't parse: " + description)
                 e.printStackTrace()
                 return name
             }

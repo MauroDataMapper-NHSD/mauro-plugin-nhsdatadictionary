@@ -37,8 +37,7 @@ import uk.nhs.datadictionary.publish.structure.DictionaryItem
 import uk.nhs.datadictionary.publish.structure.WhereUsedSection
 import uk.nhs.datadictionary.services.NhsDataDictionaryService
 
-@MicronautTest(startApplication = false, environments = ['secured'])
-@Property(name = "flyway.enabled", value = "false")
+@MicronautTest(startApplication = true, environments = ['secured'])
 class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructureSpec<NhsDDBusinessDefinition> {
 
     @Inject
@@ -83,9 +82,9 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
     void setupActiveItem() {
         activeItem = new NhsDDBusinessDefinition(
             new Term(id: UUID.fromString("901c2d3d-0111-41d1-acc9-5b501c1dc397"),
-                code: "Baby First Feed"),
+                code: "Baby First Feed",
+                     description: definition),
                  branchId)
-        activeItem.definition = definition
         activeItem.dataDictionary = dataDictionary
         activeItem.otherProperties = ['aliasPlural': 'Baby First Feeds']
 
@@ -123,9 +122,9 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
         retiredItem = new NhsDDBusinessDefinition(
             new Term(
             id: UUID.fromString("fb096f90-3273-4c66-8023-c1e32ac5b795"),
-            code: this.activeItem.name),
+            code: this.activeItem.name,
+            description: this.activeItem.description),
             branchId)
-        retiredItem.definition = this.activeItem.definition
         retiredItem.dataDictionary = dataDictionary
         retiredItem.otherProperties = copyMap(this.activeItem.otherProperties)
         retiredItem.whereUsed = copyMap(this.activeItem.whereUsed)
@@ -136,10 +135,10 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
         preparatoryItem = new NhsDDBusinessDefinition(
             new Term(
             id: UUID.fromString("f5276a0c-5458-4fa5-9bd3-ff786aef932f"),
-            code: this.activeItem.name),
+            code: this.activeItem.name,
+            description: this.activeItem.description),
             branchId)
 
-        preparatoryItem.definition = this.activeItem.definition
         preparatoryItem.dataDictionary = dataDictionary
         preparatoryItem.otherProperties = copyMap(this.activeItem.otherProperties)
         preparatoryItem.whereUsed = copyMap(this.activeItem.whereUsed)
@@ -150,18 +149,18 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
         previousItemDescriptionChange = new NhsDDBusinessDefinition(
             new Term(
                 id: UUID.fromString("22710e00-7c41-4335-97da-2cafe9728804"),
-                code: this.activeItem.name),
+                code: this.activeItem.name,
+                description: 'The previous description'),
             branchId)
-        previousItemDescriptionChange.definition = "The previous description"
         previousItemDescriptionChange.dataDictionary = dataDictionary
         previousItemDescriptionChange.otherProperties = copyMap(this.activeItem.otherProperties)
 
         previousItemAliasesChange = new NhsDDBusinessDefinition(
             new Term(
                 id: UUID.fromString("8049682f-761f-4eab-b533-c00781615207"),
-                code: this.activeItem.name),
+                code: this.activeItem.name,
+                description: this.activeItem.description),
             branchId)
-        previousItemAliasesChange.definition = this.activeItem.definition
         previousItemAliasesChange.dataDictionary = dataDictionary
         previousItemAliasesChange.otherProperties = [
                 'aliasPlural': "Baby's First Feeds",
@@ -171,9 +170,9 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
         previousItemAllChange = new NhsDDBusinessDefinition(
             new Term(
                 id: UUID.fromString("eeb8929f-819a-4cfe-9209-1e9867fa2b68"),
-                code: this.activeItem.name),
+                code: this.activeItem.name,
+                description: previousItemDescriptionChange.description),
             branchId)
-        previousItemAllChange.definition = previousItemDescriptionChange.definition
         previousItemAllChange.dataDictionary = dataDictionary
         previousItemAllChange.otherProperties = copyMap(previousItemAliasesChange.otherProperties)
     }
@@ -683,7 +682,7 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
 
     void "should produce a diff for an updated item description to change paper dita"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
         DictionaryItem previousStructure = previousItemDescriptionChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
 
@@ -725,7 +724,7 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
 
     void "should produce a diff for an updated item description with complex HTML to change paper dita"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description include a <table></table>"
+        activeItem.catalogueItem.description = "The current description include a <table></table>"
         DictionaryItem previousStructure = previousItemDescriptionChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
 
@@ -818,7 +817,7 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
 
     void "should produce a diff for an updated item description and aliases to change paper dita"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
         DictionaryItem previousStructure = previousItemAllChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
 
@@ -989,7 +988,7 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
 
     void "should produce a diff for an updated item description to change paper html"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
 
         DictionaryItem previousStructure = previousItemDescriptionChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
@@ -1022,7 +1021,7 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
 
     void "should produce a diff for an updated item description with complex HTML to change paper html"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description including a <table></table>"
+        activeItem.catalogueItem.description = "The current description including a <table></table>"
 
         DictionaryItem previousStructure = previousItemDescriptionChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
@@ -1113,7 +1112,7 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
 
     void "should produce a diff for an updated item description and aliases to change paper html"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
 
         DictionaryItem previousStructure = previousItemAllChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()

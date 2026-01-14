@@ -50,8 +50,8 @@ class BusinessDefinitionService extends DataDictionaryComponentService<Term, Nhs
         NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary(versionedFolderId)
         Term businessDefinitionTerm = termDTORepository.findById(id)
         NhsDDBusinessDefinition businessDefinition = new NhsDDBusinessDefinition().fromMauroItem(dataDictionary, mauroPersistenceService, businessDefinitionTerm)
-        businessDefinition.htmlDescription = convertLinksInDescription(versionedFolderId, businessDefinition.getDescription())
-        businessDefinition.definition =
+        //businessDefinition.htmlDescription = convertLinksInDescription(versionedFolderId, businessDefinition.getDescription())
+        businessDefinition.catalogueItem.description =
             convertLinksInDescription(versionedFolderId, businessDefinition.getDescription())
         return businessDefinition
     }
@@ -84,7 +84,7 @@ class BusinessDefinitionService extends DataDictionaryComponentService<Term, Nhs
                     definition: name,
                     // Leave Url blank for now
                     // url: businessDefinition.otherProperties["ddUrl"].replaceAll(" ", "%20"),
-                    description: businessDefinition.definition,
+                    description: businessDefinition.description,
                     depth: 1,
                     terminology: terminology)
 

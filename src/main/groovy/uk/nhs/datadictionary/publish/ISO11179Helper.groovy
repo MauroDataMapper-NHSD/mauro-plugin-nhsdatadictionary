@@ -117,7 +117,7 @@ class ISO11179Helper {
 
                                 definition.add(new Definition().tap {
                                     text = new Text().tap {
-                                        value = nhsDDElement.definition
+                                        value = nhsDDElement.description
                                     }
                                     language = getLanguage()
                                     scope.add(getDefinitionScope())

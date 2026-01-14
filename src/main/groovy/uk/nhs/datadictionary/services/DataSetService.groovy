@@ -74,7 +74,7 @@ class DataSetService extends DataDictionaryComponentService<DataModel, NhsDDData
         NhsDDDataSet dataSet = new NhsDDDataSet(dataModel)
         dataSet.branchId = versionedFolderId
         dataSet.fromMauroItem(null, mauroPersistenceService, dataModel)
-        dataSet.htmlDescription = convertLinksInDescription(versionedFolderId, dataSet.getDescription())
+        // dataSet.htmlDescription = convertLinksInDescription(versionedFolderId, dataSet.getDescription())
 
         DictionaryItem structure = dataSet.getPublishStructure()
         Section specificationSection = structure.sections.find { it instanceof DataSetSection }
@@ -565,7 +565,7 @@ class DataSetService extends DataDictionaryComponentService<DataModel, NhsDDData
 
         DataModel dataSetDataModel = new DataModel(
             label: dataSet.name,
-            description: dataSet.definition,
+            description: dataSet.description,
             dataModelType: DataModelType.DATA_STANDARD,
             folder: folder
         )

@@ -78,7 +78,7 @@ class NhsDDBusinessDefinition extends NhsDataDictionaryComponent <Term> {
                     return firstSentence
                 }
             } catch (Exception e) {
-                log.error("Couldn't parse: " + definition)
+                log.error("Couldn't parse: " + description)
                 return name
             }
         }

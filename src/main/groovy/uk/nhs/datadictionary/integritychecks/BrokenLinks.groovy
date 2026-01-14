@@ -40,9 +40,9 @@ class BrokenLinks implements IntegrityCheck {
         Map<String, List<NhsDataDictionaryComponent>> linkComponentMap = [:]
         List<NhsDataDictionaryComponent> errorComponents = Collections.synchronizedList(new ArrayList<NhsDataDictionaryComponent>())
         dataDictionary.allComponents.
-            findAll {!it.isRetired() && it.definition }.
+            findAll {!it.isRetired() && it.description }.
             each {component ->
-                Matcher matcher = pattern.matcher(component.definition)
+                Matcher matcher = pattern.matcher(component.description)
                 while(matcher.find()) {
                     List<NhsDataDictionaryComponent> components = linkComponentMap[matcher.group(1)]
                     if(components) {
@@ -53,28 +53,10 @@ class BrokenLinks implements IntegrityCheck {
                 }
             }
         List<Thread> threads = []
+
         linkComponentMap.each {link, componentList ->
             threads.add(Thread.start {
-                try {
-                    def code = new URL(link).openConnection().with {
-                        requestMethod = 'HEAD'
-                        connect()
-                        responseCode
-                    }
-
-                    if (code != 200) {
-                        componentList.each {component ->
-                            log.error("${component.stereotype},${component.name},${link}, ${code}")
-                        }
-                    }
-                    if (code > 400 && code < 500) {
-                        errorComponents.addAll(componentList)
-                        log.info("Broken link: " + link)
-                    }
-                } catch (Exception e) {
-                    componentList.each {component ->
-                        log.error("${component.stereotype},${component.name},${link}, Exception")
-                    }
+                if (isValidLink(link)) {
                     errorComponents.addAll(componentList)
                 }
             })
@@ -83,6 +65,20 @@ class BrokenLinks implements IntegrityCheck {
         List<NhsDataDictionaryComponent> components = (errorComponents.toSet()).toList()
 
         components.collect { component -> new IntegrityCheckError(component) }
+    }
+
+    static boolean isValidLink(String link) {
+        try {
+            def conn = URI.create(link).toURL().openConnection() as HttpURLConnection
+            conn.requestMethod = 'HEAD'
+            conn.connectTimeout = 5000
+            conn.readTimeout = 5000
+            conn.instanceFollowRedirects = true
+            conn.connect()
+            return conn.responseCode in 200..399
+        } catch (Exception ignored) {
+            return false
+        }
     }
 
 }

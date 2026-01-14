@@ -412,7 +412,7 @@ class NhsDataDictionary {
                 if(introductoryWebPage && !dataSetFolder.isRetired()) {
                     log.info("Introduction page found: " + introductoryWebPage.name)
                     dataSetFolder.otherProperties = introductoryWebPage.otherProperties
-                    dataSetFolder.definition = introductoryWebPage.definition
+                    dataSetFolder.catalogueItem.description = introductoryWebPage.catalogueItem.description
                 }
             }
 
@@ -447,7 +447,7 @@ class NhsDataDictionary {
         }
         Map<String, List<String>> unmatchedUrls = [:]
         getAllComponents().each {component ->
-            component.definition = replaceUrls(component.definition, replacements, unmatchedUrls, component.name)
+            component.catalogueItem.description = replaceUrls(component.catalogueItem.description, replacements, unmatchedUrls, component.name)
             if(component instanceof NhsDDElement) {
 
                 ((NhsDDElement)component).codes.each {code ->

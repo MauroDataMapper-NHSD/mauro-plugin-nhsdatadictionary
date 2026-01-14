@@ -23,6 +23,7 @@ import groovy.util.logging.Slf4j
 import org.maurodata.dita.elements.langref.base.P
 import org.maurodata.dita.elements.langref.base.Topic
 import org.maurodata.dita.elements.langref.base.XRef
+import org.maurodata.dita.helpers.HtmlHelper
 import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataType
 import org.maurodata.domain.facet.SemanticLinkType
@@ -127,7 +128,7 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
                 }
             } catch (Exception e) {
                 e.printStackTrace()
-                log.error("Couldn't parse: ${definition}")
+                log.error("Couldn't parse: ${description}")
                 return name
             }
         }
@@ -212,8 +213,8 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
         }
 
         if(!isRetired()) {
-            if (definition.find(regex)) {
-                definition = definition.replaceFirst(regex, "").trim()
+            if (description.find(regex)) {
+                catalogueItem.description = description.replaceFirst(regex, "").trim()
                 otherProperties["suppressFirstSentence"] = 'false'
             } else {
                 //Node definitionXml = HtmlHelper.tidyAndConvertToNode("<p>" + definition + "<p>")
@@ -306,8 +307,8 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
                     }
                 }
 
-                if (definition) {
-                    div HtmlHelper.replaceHtmlWithDita(definition.replace('<table', '<table class=\"table-striped\"'))
+                if (description) {
+                    div HtmlHelper.replaceHtmlWithDita(description.replace('<table', '<table class=\"table-striped\"'))
                 }
             }
         }

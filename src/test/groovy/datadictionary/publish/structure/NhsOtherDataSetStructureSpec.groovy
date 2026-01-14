@@ -38,8 +38,7 @@ import uk.nhs.datadictionary.publish.structure.WhereUsedSection
 import uk.nhs.datadictionary.publish.structure.datasets.DataSetSection
 import uk.nhs.datadictionary.services.NhsDataDictionaryService
 
-@MicronautTest(startApplication = false, environments = ['secured'])
-@Property(name = "flyway.enabled", value = "false")
+@MicronautTest(startApplication = true, environments = ['secured'])
 class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<NhsDDDataSet> {
     @Inject
     NhsDataDictionaryService dataDictionaryService
@@ -149,10 +148,10 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
         activeItem = new NhsDDDataSet(
             new DataModel(
                 id: UUID.fromString("901c2d3d-0111-41d1-acc9-5b501c1dc397"),
-                label: "Diagnostic Data Set"),
+                label: "Diagnostic Data Set",
+                description: definition),
             branchId)
         activeItem.dataDictionary = dataDictionary
-        activeItem.definition = definition
         activeItem.otherProperties = ['aliasPlural': 'Diagnostics Data Set']
 
         addWhereUsed(activeItem, activeItem)     // Self reference
@@ -358,10 +357,10 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
         retiredItem = new NhsDDDataSet(
             new DataModel(
                 id: UUID.fromString("fb096f90-3273-4c66-8023-c1e32ac5b795"),
-                label: this.activeItem.name),
+                label: this.activeItem.name,
+                description: this.activeItem.description),
             branchId)
         retiredItem.dataDictionary = dataDictionary
-        retiredItem.definition = this.activeItem.definition
         retiredItem.otherProperties = copyMap(this.activeItem.otherProperties)
         retiredItem.whereUsed = copyMap(this.activeItem.whereUsed)
     }
@@ -371,10 +370,10 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
         preparatoryItem = new NhsDDDataSet(
             new DataModel(
                 id: UUID.fromString("f5276a0c-5458-4fa5-9bd3-ff786aef932f"),
-                label: this.activeItem.name),
+                label: this.activeItem.name,
+                description: this.activeItem.description),
             branchId)
         preparatoryItem.dataDictionary = dataDictionary
-        preparatoryItem.definition = this.activeItem.definition
         preparatoryItem.otherProperties = copyMap(this.activeItem.otherProperties)
         preparatoryItem.whereUsed = copyMap(this.activeItem.whereUsed)
     }
@@ -384,10 +383,10 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
         previousItemDescriptionChange = new NhsDDDataSet(
             new DataModel(
                 id: UUID.fromString("22710e00-7c41-4335-97da-2cafe9728804"),
-                label: this.activeItem.name),
+                label: this.activeItem.name,
+                description: 'The previous description'),
             branchId)
         previousItemDescriptionChange.dataDictionary = dataDictionary
-        previousItemDescriptionChange.definition = "The previous description"
         previousItemDescriptionChange.otherProperties = copyMap(this.activeItem.otherProperties)
 
         // Don't test data set specifications, handled in other tests
@@ -396,10 +395,10 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
         previousItemAliasesChange = new NhsDDDataSet(
             new DataModel(
                 id: UUID.fromString("8049682f-761f-4eab-b533-c00781615207"),
-                label: this.activeItem.name),
+                label: this.activeItem.name,
+                description: this.activeItem.description),
             branchId)
         previousItemAliasesChange.dataDictionary = dataDictionary
-        previousItemAliasesChange.definition = this.activeItem.definition
         previousItemAliasesChange.otherProperties = [
                 'aliasPlural': "Baby's First Feeds",
                 'aliasAlsoKnownAs': 'Baby Food',
@@ -411,10 +410,10 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
         previousItemAllChange = new NhsDDDataSet(
             new DataModel(
                 id: UUID.fromString("eeb8929f-819a-4cfe-9209-1e9867fa2b68"),
-                label: this.activeItem.name),
+                label: this.activeItem.name,
+                description: previousItemDescriptionChange.description),
             branchId)
         previousItemAllChange.dataDictionary = dataDictionary
-        previousItemAllChange.definition = previousItemDescriptionChange.definition
         previousItemAllChange.otherProperties = copyMap(previousItemAliasesChange.otherProperties)
 
         // Don't test data set specifications, handled in other tests
@@ -434,10 +433,10 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
         previousCellsChange = new NhsDDDataSet(
             new DataModel(
                 id: UUID.fromString("e55b9656-3747-4ea9-92ed-cd98c2e0413b"),
-                label: name),
+                label: name,
+                description: definition),
             branchId)
         previousCellsChange.dataDictionary = dataDictionary
-        previousCellsChange.definition = definition
 
         def previousTable = new NhsDDDataSetClass(
             name: "Table",
@@ -464,10 +463,10 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
         currentCellsChange = new NhsDDDataSet(
             new DataModel(
                 id: UUID.fromString("fb2dfd75-952b-428b-8165-f7cc0b7eb9bb"),
-                label: name),
+                label: name,
+                description: definition),
             branchId)
         currentCellsChange.dataDictionary = dataDictionary
-        currentCellsChange.definition = definition
 
         def currentTable = new NhsDDDataSetClass(
             name: previousTable.name,
@@ -510,10 +509,10 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
         previousRowsChange = new NhsDDDataSet(
             new DataModel(
                 id: UUID.fromString("85b5b447-f946-49b6-8928-05cb9d32f8c3"),
-                label: name),
+                label: name,
+                description: definition),
             branchId)
         previousRowsChange.dataDictionary = dataDictionary
-        previousRowsChange.definition = definition
 
         def previousTable = new NhsDDDataSetClass(
             name: "Table",
@@ -554,10 +553,10 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
         currentRowsChange = new NhsDDDataSet(
             new DataModel(
                 id: UUID.fromString("d1de1670-965b-49ff-aab2-027b059570d4"),
-                label: name),
+                label: name,
+                description: definition),
             branchId)
         currentRowsChange.dataDictionary = dataDictionary
-        currentRowsChange.definition = definition
 
 
         def currentTable = new NhsDDDataSetClass(
@@ -601,10 +600,10 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
         previousGroupsChange = new NhsDDDataSet(
             new DataModel(
                 id: UUID.fromString("f9546c65-77f3-4f44-9711-f6106f94ee0c"),
-                label: name),
+                label: name,
+                description: definition),
             branchId)
         previousGroupsChange.dataDictionary = dataDictionary
-        previousGroupsChange.definition = definition
 
         def previousTable = new NhsDDDataSetClass(
             name: "Table",
@@ -644,10 +643,10 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
         currentGroupsChange = new NhsDDDataSet(
             new DataModel(
                 id: UUID.fromString("08a60808-9d38-4b2d-9b9b-8f1a870f339f"),
-                label: name),
+                label: name,
+                description: definition),
             branchId)
         currentGroupsChange.dataDictionary = dataDictionary
-        currentGroupsChange.definition = definition
 
         def currentTable = new NhsDDDataSetClass(
             name: previousTable.name,
@@ -694,10 +693,10 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
         previousTablesChange = new NhsDDDataSet(
             new DataModel(
                 id: UUID.fromString("112e2106-a8cd-4b08-9a82-82121d3dfa24"),
-                label: name),
+                label: name,
+                description: definition),
             branchId)
         previousTablesChange.dataDictionary = dataDictionary
-        previousTablesChange.definition = definition
 
         def previousTable1 = new NhsDDDataSetClass(
             name: "Table 1",
@@ -729,10 +728,10 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
         currentTablesChange = new NhsDDDataSet(
             new DataModel(
                 id: UUID.fromString("011ddcdb-da6e-48fb-9e5f-1dace51ef542"),
-                label: name),
+                label: name,
+                description: definition),
             branchId)
         currentTablesChange.dataDictionary = dataDictionary
-        currentTablesChange.definition = definition
 
         // Change: Remove TABLE 1
 
@@ -1270,8 +1269,7 @@ PATIENTS holding data</shortdesc>
   <title outputclass='dataSet retired'>
     <text>Diagnostic Data Set (Retired)</text>
   </title>
-  <shortdesc>The Diagnostic Data Set contains 
-PATIENTS holding data</shortdesc>
+  <shortdesc>This item has been retired from the NHS Data Model and Dictionary</shortdesc>
   <topic id='data_set_diagnostic_data_set_retired_description'>
     <title>Description</title>
     <body>
@@ -2087,7 +2085,7 @@ PATIENTS holding data</p>
 
     void "should produce a diff for an updated item description to change paper dita"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
         DictionaryItem previousStructure = previousItemDescriptionChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()
 
@@ -2542,7 +2540,7 @@ PATIENTS holding data</p>
 
     void "should produce a diff for an updated item description to change paper html"() {
         given: "the publish structures are built"
-        activeItem.definition = "The current description"
+        activeItem.catalogueItem.description = "The current description"
 
         DictionaryItem previousStructure = previousItemDescriptionChange.getPublishStructure()
         DictionaryItem currentStructure = activeItem.getPublishStructure()

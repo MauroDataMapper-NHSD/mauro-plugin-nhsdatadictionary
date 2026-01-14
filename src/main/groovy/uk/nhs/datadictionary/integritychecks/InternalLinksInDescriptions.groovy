@@ -52,13 +52,13 @@ class InternalLinksInDescriptions implements IntegrityCheck {
     static IntegrityCheckError checkDefinitionInternalLinksAreValid(
         NhsDataDictionary dataDictionary,
         NhsDataDictionaryComponent component) {
-        if (!component.definition || component.definition.length() == 0) {
+        if (!component.description || component.description.length() == 0) {
             // Ignore this component
             return null
         }
 
         log.debug("Checking $component.catalogueItemDomainTypeAsString '$component.name' [$component.catalogueItemIdAsString] for internal links")
-        Set<String> paths = getMauroPathsFromHtml(component.definition)
+        Set<String> paths = getMauroPathsFromHtml(component.description)
 
         List<String> invalidLinks = []
         paths.forEach { path ->

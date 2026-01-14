@@ -79,7 +79,7 @@ class NhsDDDataSet extends NhsDataDictionaryComponent <DataModel> {
         super.fromXml(xml, dataDictionary)
         NhsDDWebPage explanatoryWebPage = dataDictionary.webPagesByUin[xml.explanatoryPage.text()]
         if(explanatoryWebPage) {
-            definition = explanatoryWebPage.definition
+            catalogueItem.description = explanatoryWebPage.catalogueItem.description
         } else {
             if(isRetired()) {
                 log.info("Cannot find explanatory page for dataset: {}", name)
@@ -95,7 +95,7 @@ class NhsDDDataSet extends NhsDataDictionaryComponent <DataModel> {
 
     @Override
     String calculateShortDescription() {
-        if(!definition || definition == "") {
+        if(!catalogueItem || !catalogueItem.description || catalogueItem.description == "") {
             return name
         }
         if(isPreparatory()) {
@@ -109,7 +109,7 @@ class NhsDDDataSet extends NhsDataDictionaryComponent <DataModel> {
 
             try {
 
-                List<String> allSentences = calculateSentences(definition)
+                List<String> allSentences = calculateSentences(description)
                 if(isRetired()) {
                     return allSentences[0]
                 } else {
@@ -122,7 +122,7 @@ class NhsDDDataSet extends NhsDataDictionaryComponent <DataModel> {
 
             } catch (Exception e) {
                 e.printStackTrace()
-                log.error("Couldn't parse: " + definition)
+                log.error("Couldn't parse: " + description)
                 return name
             }
         }

@@ -42,8 +42,7 @@ import uk.nhs.datadictionary.publish.structure.ItemLinkListSection
 import uk.nhs.datadictionary.publish.structure.WhereUsedSection
 import uk.nhs.datadictionary.services.NhsDataDictionaryService
 
-@MicronautTest(startApplication = false, environments = ['secured'])
-@Property(name = "flyway.enabled", value = "false")
+@MicronautTest(startApplication = true, environments = ['secured'])
 class NhsElementStructureSpec extends DataDictionaryComponentStructureSpec<NhsDDElement> {
     @Inject
     NhsDataDictionaryService dataDictionaryService
@@ -108,7 +107,6 @@ during a Liver Cancer Care Spell.</p>"""
                 description: definition),
             branchId)
         activeItem.dataDictionary = dataDictionary
-        activeItem.definition = definition
         activeItem.otherProperties = [
                 'formatLength': 'an1',
                 'aliasPlural': 'ABLATIVE THERAPY TYPES'
@@ -154,7 +152,6 @@ during a Liver Cancer Care Spell.</p>"""
         instantiatesAttribute = new NhsDDAttribute(
             new DataElement(label: "ABLATIVE THERAPY TYPE", id: UUID.fromString("faff11f5-cbfb-4faa-84d8-6d3b1eccd03b"), description: definition),
             branchId)
-        instantiatesAttribute.definition = definition
         activeItem.instantiatesAttributes.add(instantiatesAttribute)
     }
 
@@ -163,10 +160,10 @@ during a Liver Cancer Care Spell.</p>"""
         retiredItem = new NhsDDElement(
             new DataElement(
                 id: UUID.fromString("fb096f90-3273-4c66-8023-c1e32ac5b795"),
-                label: this.activeItem.name),
+                label: this.activeItem.name,
+                description: this.activeItem.description),
             branchId)
         retiredItem.dataDictionary = dataDictionary
-        retiredItem.definition = this.activeItem.definition
         retiredItem.otherProperties = copyMap(this.activeItem.otherProperties)
         retiredItem.whereUsed = copyMap(this.activeItem.whereUsed)
     }
@@ -176,10 +173,10 @@ during a Liver Cancer Care Spell.</p>"""
         preparatoryItem = new NhsDDElement(
             new DataElement(
                 id: UUID.fromString("f5276a0c-5458-4fa5-9bd3-ff786aef932f"),
-                label: this.activeItem.name),
+                label: this.activeItem.name,
+                description: this.activeItem.description),
             branchId)
         preparatoryItem.dataDictionary = dataDictionary
-        preparatoryItem.definition = this.activeItem.definition
         preparatoryItem.otherProperties = copyMap(this.activeItem.otherProperties)
         preparatoryItem.whereUsed = copyMap(this.activeItem.whereUsed)
     }
@@ -190,20 +187,18 @@ during a Liver Cancer Care Spell.</p>"""
             new DataElement(
                 id: UUID.fromString("22710e00-7c41-4335-97da-2cafe9728804"),
                 description: "The previous description",
-                label: this.activeItem.name),
+                label: this.activeItem.name,),
             branchId)
         previousItemDescriptionChange.dataDictionary = dataDictionary
-        previousItemDescriptionChange.definition = "The previous description"
         previousItemDescriptionChange.otherProperties = copyMap(this.activeItem.otherProperties)
 
         previousItemAliasesChange = new NhsDDElement(
             new DataElement(
                 id: UUID.fromString("8049682f-761f-4eab-b533-c00781615207"),
                 description: "The previous description",
-                label: this.activeItem.name),
+                label: this.activeItem.name,),
             branchId)
         previousItemAliasesChange.dataDictionary = dataDictionary
-        previousItemAliasesChange.definition = this.activeItem.definition
         previousItemAliasesChange.otherProperties = [
                 'aliasPlural': "ACTIVITIES DATE",
                 'aliasAlsoKnownAs': 'ACTIVITY DATE STAMP',
@@ -216,7 +211,6 @@ during a Liver Cancer Care Spell.</p>"""
                 label: this.activeItem.name),
             branchId)
         previousItemCodesChange.dataDictionary = dataDictionary
-        previousItemCodesChange.definition = "The current description"
         previousItemCodesChange.otherProperties = copyMap(this.activeItem.otherProperties)
 
         previousItemCodesChange.codes.add(
@@ -255,7 +249,6 @@ during a Liver Cancer Care Spell.</p>"""
                 label: this.activeItem.name),
             branchId)
         previousItemLinkedAttributesChange.dataDictionary = dataDictionary
-        previousItemLinkedAttributesChange.definition = "The current description"
         previousItemLinkedAttributesChange.otherProperties = copyMap(this.activeItem.otherProperties)
 
         previousItemLinkedAttributesChange.instantiatesAttributes.add(
@@ -275,11 +268,10 @@ during a Liver Cancer Care Spell.</p>"""
         previousItemAllChange = new NhsDDElement(
             new DataElement(
                 id: UUID.fromString("eeb8929f-819a-4cfe-9209-1e9867fa2b68"),
-                description: "The previous description",
+                description: previousItemDescriptionChange.description,
                 label: this.activeItem.name),
             branchId)
         previousItemAllChange.dataDictionary = dataDictionary
-        previousItemAllChange.definition = previousItemDescriptionChange.definition
         previousItemAllChange.otherProperties = copyMap(previousItemAliasesChange.otherProperties)
 
         previousItemFormatChange = new NhsDDElement(
@@ -289,7 +281,6 @@ during a Liver Cancer Care Spell.</p>"""
                 label: this.activeItem.name),
             branchId)
         previousItemFormatChange.dataDictionary = dataDictionary
-        previousItemFormatChange.definition = "The current description"
         previousItemFormatChange.otherProperties = copyMap(this.activeItem.otherProperties)
         previousItemFormatChange.otherProperties['formatLength'] = "an10 CCYY-MM-DD"
     }

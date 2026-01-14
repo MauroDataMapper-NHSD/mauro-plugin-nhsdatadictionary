@@ -95,7 +95,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
     @JsonIgnore
     String definition = ""
 
-    String htmlDescription
+    //String htmlDescription
 
     @JsonIgnore
     Map<String, String> otherProperties = [:]
@@ -182,7 +182,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         definition = DDHelperFunctions.parseHtml(cleanedDefinition)
         definition = definition.replaceAll("\\s+", " ")
 */
-        definition = (DDHelperFunctions.parseHtml(xml.definition[0])).replace("\u00a0", " ")
+        catalogueItem.description = (DDHelperFunctions.parseHtml(xml.definition[0])).replace("\u00a0", " ")
 
         NhsDataDictionary.METADATA_FIELD_MAPPING.entrySet().each {entry ->
             Node xmlValue = xml[entry.value][0]
@@ -256,7 +256,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         } else if(dataDictionary && isPreparatory()) {
             return dataDictionary.preparatoryItemText
         } else {
-            return definition
+            return catalogueItem.description
         }
     }
 
@@ -399,8 +399,8 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         Topic.build (id: getDitaKey() + "_description") {
             title "Description"
             body {
-                if(definition) {
-                    div HtmlHelper.replaceHtmlWithDita(definition.replace('<table', '<table class=\"table-striped\"'))
+                if(catalogueItem.description) {
+                    div HtmlHelper.replaceHtmlWithDita(catalogueItem.description.replace('<table', '<table class=\"table-striped\"'))
                 }
             }
         }
@@ -523,8 +523,8 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
     }
 
     void replaceLinksInDefinition(Map<String, NhsDataDictionaryComponent> pathLookup) {
-        if(definition) {
-            definition = replaceLinksInString(description, pathLookup)
+        if(catalogueItem.description) {
+            catalogueItem.description = replaceLinksInString(catalogueItem.description, pathLookup)
         }
     }
 
@@ -661,7 +661,6 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         this.catalogueItem = catalogueItem
         this.dataDictionary = dataDictionary
 
-        definition = catalogueItem.description?:""
         catalogueItemId = catalogueItem.id
         if(!branchId) {
             branchId = dataDictionary?.containingVersionedFolder?.id

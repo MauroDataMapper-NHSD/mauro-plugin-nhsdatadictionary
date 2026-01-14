@@ -70,7 +70,7 @@ class NhsDDDataSetFolder extends NhsDataDictionaryComponent <Folder> {
 
     @Override
     String calculateShortDescription() {
-        if(!definition || definition == "") {
+        if(!description || description == "") {
             return name
         }
         if(isPreparatory()) {
@@ -82,7 +82,7 @@ class NhsDDDataSetFolder extends NhsDataDictionaryComponent <Folder> {
 
             try {
 
-                List<String> allSentences = calculateSentences(definition?:"")
+                List<String> allSentences = calculateSentences(description?:"")
 
                 if(isRetired()) {
                     return allSentences[0]
@@ -97,7 +97,7 @@ class NhsDDDataSetFolder extends NhsDataDictionaryComponent <Folder> {
             } catch (Exception e) {
                 e.printStackTrace()
                 log.error("Couldn't parse: " + name)
-                log.error("Couldn't parse: " + definition)
+                log.error("Couldn't parse: " + description)
                 return name
             }
         }

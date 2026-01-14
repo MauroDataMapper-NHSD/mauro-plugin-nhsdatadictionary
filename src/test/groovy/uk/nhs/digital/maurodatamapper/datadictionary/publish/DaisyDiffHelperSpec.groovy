@@ -24,7 +24,7 @@ import spock.lang.Specification
 import uk.nhs.datadictionary.publish.DaisyDiffHelper
 
 
-@MicronautTest(startApplication = false, environments = ['secured'])
+@MicronautTest(startApplication = true, environments = ['secured'])
 @Property(name = "flyway.enabled", value = "false")
 class DaisyDiffHelperSpec extends Specification {
 

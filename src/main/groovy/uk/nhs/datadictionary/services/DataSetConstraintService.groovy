@@ -47,7 +47,7 @@ class DataSetConstraintService extends DataDictionaryComponentService<Term, NhsD
 
         Term dataSetConstraintTerm = termCacheableRepository.findById(id)
         NhsDDDataSetConstraint dataSetConstraint = new NhsDDDataSetConstraint().fromMauroItem(dataDictionary, mauroPersistenceService, dataSetConstraintTerm)
-        dataSetConstraint.htmlDescription = convertLinksInDescription(versionedFolderId, dataSetConstraint.getDescription())
+        // dataSetConstraint.htmlDescription = convertLinksInDescription(versionedFolderId, dataSetConstraint.getDescription())
         return dataSetConstraint
     }
 
@@ -85,7 +85,7 @@ class DataSetConstraintService extends DataDictionaryComponentService<Term, NhsD
                     definition: name,
                     // Leave Url blank for now
                     // url: businessDefinition.otherProperties["ddUrl"].replaceAll(" ", "%20"),
-                    description: dataSetConstraint.definition,
+                    description: dataSetConstraint.description,
                     depth: 1,
                     terminology: terminology)
 

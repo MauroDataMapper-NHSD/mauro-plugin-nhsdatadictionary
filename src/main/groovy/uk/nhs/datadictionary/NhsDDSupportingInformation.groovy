@@ -61,7 +61,7 @@ class NhsDDSupportingInformation extends NhsDataDictionaryComponent <Term> {
 
     @Override
     String calculateShortDescription() {
-        if(!definition || definition == "") {
+        if(!description || description == "") {
             return name
         }
         if(isPreparatory()) {

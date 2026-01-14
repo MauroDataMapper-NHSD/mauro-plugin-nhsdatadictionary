@@ -35,7 +35,7 @@ import uk.nhs.datadictionary.NhsDDElement
 import uk.nhs.datadictionary.NhsDDSupportingInformation
 import uk.nhs.datadictionary.NhsDataDictionary
 
-@MicronautTest(startApplication = false, environments = ['secured'])
+@MicronautTest(startApplication = true, environments = ['secured'])
 @Property(name = "flyway.enabled", value = "false")
 class NhsDataDictionarySpec extends Specification {
     void "should process links from xml for classes and attributes"() {
@@ -46,14 +46,14 @@ class NhsDataDictionarySpec extends Specification {
         eventDateTimeClass.catalogueItem = new DataClass()
         eventDateTimeClass.catalogueItem.label = "EVENT DATE TIME"
         eventDateTimeClass.otherProperties["ddUrl"] = "https://datadictionary.nhs.uk/classes/event_date_time.html"
-        eventDateTimeClass.definition = "Defines individual <a href=\"https://datadictionary.nhs.uk/attributes/event_date.html\">EVENT DATES</a> and <a href=\"https://datadictionary.nhs.uk/attributes/event_time.html\">EVENT TIMES</a>."
+        eventDateTimeClass.catalogueItem.description = "Defines individual <a href=\"https://datadictionary.nhs.uk/attributes/event_date.html\">EVENT DATES</a> and <a href=\"https://datadictionary.nhs.uk/attributes/event_time.html\">EVENT TIMES</a>."
         dataDictionary.classes[eventDateTimeClass.name] = eventDateTimeClass
 
         NhsDDAttribute eventDateAttribute = new NhsDDAttribute()
         eventDateAttribute.catalogueItem = new DataElement()
         eventDateAttribute.catalogueItem.label = "EVENT DATE"
         eventDateAttribute.otherProperties["ddUrl"] = "https://datadictionary.nhs.uk/attributes/event_date.html"
-        eventDateAttribute.definition = "<p>The date, month, year and century, or any combination of these elements, of an <a href=\"https://datadictionary.nhs.uk/classes/event_date_time.html\">EVENT DATE TIME</a>.</p>"
+        eventDateAttribute.catalogueItem.description = "<p>The date, month, year and century, or any combination of these elements, of an <a href=\"https://datadictionary.nhs.uk/classes/event_date_time.html\">EVENT DATE TIME</a>.</p>"
         eventDateAttribute.parentClass = eventDateTimeClass // Required to produce the correct path
         dataDictionary.attributes[eventDateAttribute.name] = eventDateAttribute
 
@@ -61,7 +61,7 @@ class NhsDataDictionarySpec extends Specification {
         eventTimeAttribute.catalogueItem = new DataElement()
         eventTimeAttribute.catalogueItem.label = "EVENT TIME"
         eventTimeAttribute.otherProperties["ddUrl"] = "https://datadictionary.nhs.uk/attributes/event_time.html"
-        eventTimeAttribute.definition = "<p>The time (using a 24 hour clock) at which an <a href=\"https://datadictionary.nhs.uk/classes/event_date_time.html\">EVENT DATE TIME</a>, or the action in an <a href=\"https://datadictionary.nhs.uk/classes/event_date_time.html\">EVENT DATE TIME</a>, takes place.</p><p>This may include representation of a time zone.</p>"
+        eventTimeAttribute.catalogueItem.description = "<p>The time (using a 24 hour clock) at which an <a href=\"https://datadictionary.nhs.uk/classes/event_date_time.html\">EVENT DATE TIME</a>, or the action in an <a href=\"https://datadictionary.nhs.uk/classes/event_date_time.html\">EVENT DATE TIME</a>, takes place.</p><p>This may include representation of a time zone.</p>"
         eventTimeAttribute.parentClass = eventDateTimeClass // Required to produce the correct path
         dataDictionary.attributes[eventTimeAttribute.name] = eventTimeAttribute
 
@@ -74,9 +74,9 @@ class NhsDataDictionarySpec extends Specification {
         String expectedEventDateTimeDefinition = "Defines individual <a href=\"dm:Classes and Attributes|dc:EVENT DATE TIME|de:EVENT DATE\">EVENT DATES</a> and <a href=\"dm:Classes and Attributes|dc:EVENT DATE TIME|de:EVENT TIME\">EVENT TIMES</a>."
 
         verifyAll {
-            eventDateAttribute.definition == expectedEventDateDefinition
-            eventTimeAttribute.definition == expectedEventTimeDefinition
-            eventDateTimeClass.definition == expectedEventDateTimeDefinition
+            eventDateAttribute.description == expectedEventDateDefinition
+            eventTimeAttribute.description == expectedEventTimeDefinition
+            eventDateTimeClass.description == expectedEventDateTimeDefinition
         }
     }
 
@@ -88,21 +88,21 @@ class NhsDataDictionarySpec extends Specification {
         businessDefinition.catalogueItem = new Term()
         businessDefinition.catalogueItem.code = "Abbreviated Mental Test Score"
         businessDefinition.otherProperties["ddUrl"] = "https://datadictionary.nhs.uk/nhs_business_definitions/abbreviated_mental_test_score.html"
-        businessDefinition.definition = "<p>The <a href=\"https://datadictionary.nhs.uk/nhs_business_definitions/abbreviated_mental_test_score.html\">Abbreviated_Mental_Test_Score</a> is an <a href=\"https://datadictionary.nhs.uk/classes/assessment_tool.html\">ASSESSMENT_TOOL</a>.</p>"
+        businessDefinition.catalogueItem.description = "<p>The <a href=\"https://datadictionary.nhs.uk/nhs_business_definitions/abbreviated_mental_test_score.html\">Abbreviated_Mental_Test_Score</a> is an <a href=\"https://datadictionary.nhs.uk/classes/assessment_tool.html\">ASSESSMENT_TOOL</a>.</p>"
         dataDictionary.businessDefinitions[businessDefinition.name] = businessDefinition
 
         NhsDDSupportingInformation supportingInformation = new NhsDDSupportingInformation()
         supportingInformation.catalogueItem = new Term()
         supportingInformation.catalogueItem.code = "Accessible Information"
         supportingInformation.otherProperties["ddUrl"] = "https://datadictionary.nhs.uk/supporting_information/accessible_information.html"
-        supportingInformation.definition = "<a href=\"https://datadictionary.nhs.uk/supporting_information/accessible_information.html\">Accessible Information</a> is information which is able to be read or received and understood by the individual or group for which it is intended.</p>"
+        supportingInformation.catalogueItem.description = "<a href=\"https://datadictionary.nhs.uk/supporting_information/accessible_information.html\">Accessible Information</a> is information which is able to be read or received and understood by the individual or group for which it is intended.</p>"
         dataDictionary.supportingInformation[supportingInformation.name] = supportingInformation
 
         NhsDDDataSetConstraint dataSetConstraint = new NhsDDDataSetConstraint()
         dataSetConstraint.catalogueItem = new Term()
         dataSetConstraint.catalogueItem.code = "Community Services Data Set Constraints"
         dataSetConstraint.otherProperties["ddUrl"] = "https://datadictionary.nhs.uk/data_sets/message_documentation/data_set_constraints/community_services_data_set_constraints.html"
-        dataSetConstraint.definition = "<p>The <a href=\"https://datadictionary.nhs.uk/data_sets/message_documentation/data_set_constraints/community_services_data_set_constraints.html\">constraints</a> applied to the <a href=\"https://datadictionary.nhs.uk/data_sets/clinical_data_sets/community_services_data_set.html\">Community Services Data Set</a>.</p>"
+        dataSetConstraint.catalogueItem.description = "<p>The <a href=\"https://datadictionary.nhs.uk/data_sets/message_documentation/data_set_constraints/community_services_data_set_constraints.html\">constraints</a> applied to the <a href=\"https://datadictionary.nhs.uk/data_sets/clinical_data_sets/community_services_data_set.html\">Community Services Data Set</a>.</p>"
         dataDictionary.dataSetConstraints[dataSetConstraint.name] = dataSetConstraint
 
         when: "links in definitions are replaced"
@@ -113,9 +113,9 @@ class NhsDataDictionarySpec extends Specification {
         String expectedSupportingInformation = "<a href=\"te:Supporting Information|tm:Accessible Information\">Accessible Information</a> is information which is able to be read or received and understood by the individual or group for which it is intended.</p>"
         String expectedDataSetConstraint = "<p>The <a href=\"te:Data Set Constraints|tm:Community Services Data Set Constraints\">constraints</a> applied to the <a href=\"https://datadictionary.nhs.uk/data_sets/clinical_data_sets/community_services_data_set.html\">Community Services Data Set</a>.</p>"
         verifyAll {
-            businessDefinition.definition == expectedBusinessDefinition
-            supportingInformation.definition == expectedSupportingInformation
-            dataSetConstraint.definition == expectedDataSetConstraint
+            businessDefinition.description == expectedBusinessDefinition
+            supportingInformation.description == expectedSupportingInformation
+            dataSetConstraint.description == expectedDataSetConstraint
         }
     }
 
@@ -127,7 +127,7 @@ class NhsDataDictionarySpec extends Specification {
         dataSet.catalogueItem = new DataModel()
         dataSet.catalogueItem.label = "Inter-Provider Transfer Administrative Minimum Data Set"
         dataSet.otherProperties["ddUrl"] = "https://datadictionary.nhs.uk/data_sets/administrative_data_sets/inter-provider_transfer_administrative_minimum_data_set.html"
-        dataSet.definition = "<p>The <a href=\"https://datadictionary.nhs.uk/data_sets/administrative_data_sets/inter-provider_transfer_administrative_minimum_data_set.html\">constraints</a> applied to the <a href=\"https://datadictionary.nhs.uk/data_sets/clinical_data_sets/community_services_data_set.html\">Inter-Provider Transfer Administrative Minimum Data Set</a>.</p>"
+        dataSet.catalogueItem.description = "<p>The <a href=\"https://datadictionary.nhs.uk/data_sets/administrative_data_sets/inter-provider_transfer_administrative_minimum_data_set.html\">constraints</a> applied to the <a href=\"https://datadictionary.nhs.uk/data_sets/clinical_data_sets/community_services_data_set.html\">Inter-Provider Transfer Administrative Minimum Data Set</a>.</p>"
         dataDictionary.dataSets[dataSet.name] = dataSet
 
         NhsDDDataSetFolder dataSetFolder = new NhsDDDataSetFolder()
@@ -135,14 +135,14 @@ class NhsDataDictionarySpec extends Specification {
         dataSetFolder.catalogueItem.label = "Inter-Provider Transfer Administrative Minimum Data Set Overview"
         dataSetFolder.folderPath = ["Administrative Data Sets", "overviews"]
         dataSetFolder.otherProperties["ddUrl"] = "https://datadictionary.nhs.uk/data_sets/administrative_data_sets/overviews/inter-provider_transfer_administrative_minimum_data_set_overview.html"
-        dataSetFolder.definition = "<p>This <a href=\"https://datadictionary.nhs.uk/data_sets/administrative_data_sets/overviews/inter-provider_transfer_administrative_minimum_data_set_overview.html\">Inter-Provider_Transfer_Administrative_Minimum_Data_Set</a> specifies the data necessary to permit the receiving <a href=\"https://datadictionary.nhs.uk/nhs_business_definitions/health_care_provider.html\">Health_Care_Provider</a> to be able to report the <a href=\"https://datadictionary.nhs.uk/classes/patient.html\">PATIENT</a>'s progress along their <a href=\"https://datadictionary.nhs.uk/classes/patient_pathway.html\">PATIENT_PATHWAY</a> and, in particular, their <a href=\"https://datadictionary.nhs.uk/classes/referral_to_treatment_period.html\">REFERRAL_TO_TREATMENT_PERIOD</a>.</p>"
+        dataSetFolder.catalogueItem.description = "<p>This <a href=\"https://datadictionary.nhs.uk/data_sets/administrative_data_sets/overviews/inter-provider_transfer_administrative_minimum_data_set_overview.html\">Inter-Provider_Transfer_Administrative_Minimum_Data_Set</a> specifies the data necessary to permit the receiving <a href=\"https://datadictionary.nhs.uk/nhs_business_definitions/health_care_provider.html\">Health_Care_Provider</a> to be able to report the <a href=\"https://datadictionary.nhs.uk/classes/patient.html\">PATIENT</a>'s progress along their <a href=\"https://datadictionary.nhs.uk/classes/patient_pathway.html\">PATIENT_PATHWAY</a> and, in particular, their <a href=\"https://datadictionary.nhs.uk/classes/referral_to_treatment_period.html\">REFERRAL_TO_TREATMENT_PERIOD</a>.</p>"
         dataDictionary.dataSetFolders[[dataSetFolder.name]] = [dataSetFolder]
 
         NhsDDElement dataElement = new NhsDDElement()
         dataElement.catalogueItem = new DataElement()
         dataElement.catalogueItem.label = "ABBREVIATED MENTAL TEST SCORE"
         dataElement.otherProperties["ddUrl"] = "https://datadictionary.nhs.uk/data_elements/abbreviated_mental_test_score.html"
-        dataElement.definition = "<a href=\"https://datadictionary.nhs.uk/data_elements/abbreviated_mental_test_score.html\">ABBREVIATED_MENTAL_TEST_SCORE</a> is the <a href=\"https://datadictionary.nhs.uk/attributes/person_score.html\">PERSON_SCORE</a> where the <a href=\"https://datadictionary.nhs.uk/classes/assessment_tool.html\">ASSESSMENT_TOOL</a> is <em>'<a href=\"https://datadictionary.nhs.uk/nhs_business_definitions/abbreviated_mental_test_score.html\">Abbreviated_Mental_Test_Score</a>'</em>.<p>The score is in the range 0 to 10.</p>"
+        dataElement.catalogueItem.description = "<a href=\"https://datadictionary.nhs.uk/data_elements/abbreviated_mental_test_score.html\">ABBREVIATED_MENTAL_TEST_SCORE</a> is the <a href=\"https://datadictionary.nhs.uk/attributes/person_score.html\">PERSON_SCORE</a> where the <a href=\"https://datadictionary.nhs.uk/classes/assessment_tool.html\">ASSESSMENT_TOOL</a> is <em>'<a href=\"https://datadictionary.nhs.uk/nhs_business_definitions/abbreviated_mental_test_score.html\">Abbreviated_Mental_Test_Score</a>'</em>.<p>The score is in the range 0 to 10.</p>"
         dataDictionary.elements[dataElement.name] = dataElement
 
         when: "links in definitions are replaced"
@@ -153,9 +153,9 @@ class NhsDataDictionarySpec extends Specification {
         String expectedDataSetFolderDefinition = "<p>This <a href=\"fo:Administrative Data Sets|fo:overviews\">Inter-Provider Transfer Administrative Minimum Data Set</a> specifies the data necessary to permit the receiving <a href=\"https://datadictionary.nhs.uk/nhs_business_definitions/health_care_provider.html\">Health_Care_Provider</a> to be able to report the <a href=\"https://datadictionary.nhs.uk/classes/patient.html\">PATIENT</a>'s progress along their <a href=\"https://datadictionary.nhs.uk/classes/patient_pathway.html\">PATIENT_PATHWAY</a> and, in particular, their <a href=\"https://datadictionary.nhs.uk/classes/referral_to_treatment_period.html\">REFERRAL_TO_TREATMENT_PERIOD</a>.</p>"
         String expectedDataElementDefinition = "<a href=\"dm:Data Elements|dc:A|de:ABBREVIATED MENTAL TEST SCORE\">ABBREVIATED MENTAL TEST SCORE</a> is the <a href=\"https://datadictionary.nhs.uk/attributes/person_score.html\">PERSON_SCORE</a> where the <a href=\"https://datadictionary.nhs.uk/classes/assessment_tool.html\">ASSESSMENT_TOOL</a> is <em>'<a href=\"https://datadictionary.nhs.uk/nhs_business_definitions/abbreviated_mental_test_score.html\">Abbreviated_Mental_Test_Score</a>'</em>.<p>The score is in the range 0 to 10.</p>"
         verifyAll {
-            dataSet.definition == expectedDataSetDefinition
-            dataSetFolder.definition == expectedDataSetFolderDefinition
-            dataElement.definition == expectedDataElementDefinition
+            dataSet.description == expectedDataSetDefinition
+            dataSetFolder.description == expectedDataSetFolderDefinition
+            dataElement.description == expectedDataElementDefinition
         }
     }
 }

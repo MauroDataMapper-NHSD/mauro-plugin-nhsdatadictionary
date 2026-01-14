@@ -98,7 +98,7 @@ class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
                 return getFirstSentence()
             } catch (Exception e) {
                 e.printStackTrace()
-                log.error("Couldn't parse: " + definition)
+                log.error("Couldn't parse: " + description)
                 return name
             }
         }

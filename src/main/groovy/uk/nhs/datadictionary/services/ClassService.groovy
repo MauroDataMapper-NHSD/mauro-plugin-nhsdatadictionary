@@ -56,7 +56,7 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
     NhsDDClass show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
         DataClass dataClass = dataClassCacheableRepository.findById(id)
         NhsDDClass nhsClass = new NhsDDClass().fromMauroItem(null, mauroPersistenceService, dataClass) as NhsDDClass
-        nhsClass.htmlDescription = convertLinksInDescription(versionedFolderId, nhsClass.getDescription())
+        //nhsClass.htmlDescription = convertLinksInDescription(versionedFolderId, nhsClass.getDescription())
 
         List<NhsDDAttribute> attributes = getAttributesForShow(nhsClass, null)
         // Assign the attribute by key and non-key types. The NhsDDClass.getAttributes() method will combine them
@@ -143,7 +143,7 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
         dataDictionary.classes.each {name, clazz ->
             DataClass dataClass = new DataClass(
                 label: name,
-                description: clazz.definition
+                description: clazz.description
             )
 
             // TODO unnecessary as the or statement above excludes all non-retired DCs

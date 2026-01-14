@@ -26,3 +26,14 @@ micronaut:
         #       apikey: 1234
     security:
         enabled: false
+
+logging:
+    level:
+        root: INFO
+        io.micronaut.data: DEBUG
+        com.zaxxer.hikari: INFO
+        org.postgresql: DEBUG
+
+datasources:
+    default:
+        log-sql: true   # if your Micronaut version supports this

@@ -55,7 +55,7 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
             }
         }
         NhsDDDataSetFolder dataSetFolder = new NhsDDDataSetFolder(folderFolder).fromMauroItem(null, mauroPersistenceService, folderFolder) as NhsDDDataSetFolder
-        dataSetFolder.htmlDescription = convertLinksInDescription(versionedFolderId, dataSetFolder.getDescription())
+        // dataSetFolder.htmlDescription = convertLinksInDescription(versionedFolderId, dataSetFolder.getDescription())
         if(id) {
             List<String> folderPath = [folderFolder.label]
             Folder parentFolder = folderCacheableRepository.findById(folderFolder.getParentFolder().id)
@@ -132,8 +132,8 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
 
             Folder newFolder = getFolderAtPath(dataSetsFolder, path)
             folders.each {dataSetFolder ->
-                if(dataSetFolder.definition) {
-                    newFolder.description = dataSetFolder.definition
+                if(dataSetFolder.description) {
+                    newFolder.description = dataSetFolder.description
                 }
                 addMetadataFromComponent(newFolder, dataSetFolder)
             }
