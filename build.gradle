@@ -59,17 +59,17 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.2.0")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.2.0")
 
-    platformapi('org.maurodata:mauro-domain:0.0.2-SNAPSHOT')
-    platformapi('org.maurodata:mauro-persistence:0.0.2-SNAPSHOT')
-    platformapi('org.maurodata:mauro-client:0.0.2-SNAPSHOT')
-
-    platformapi('org.maurodata:mauro-api:0.0.2-SNAPSHOT')
+    platformapi('org.maurodata:mauro-domain:0.0.3-SNAPSHOT')
+    platformapi('org.maurodata:mauro-persistence:0.0.3-SNAPSHOT')
+    platformapi('org.maurodata:mauro-client:0.0.3-SNAPSHOT')
+    platformapi('org.maurodata:mauro-api:0.0.3-SNAPSHOT')
 
     implementation("org.maurodata:dita-dsl-base:2.0.0-SNAPSHOT")
 
     implementation("org.maurodata:iso11179-domain:2.0.0-SNAPSHOT") {
         exclude group: "com.sun.xml.bind", module: "jaxb-impl"
     }
+
     implementation("io.micronaut.sql:micronaut-jdbc-hikari")
     testRuntimeOnly("org.testcontainers:testcontainers")
     testRuntimeOnly("org.testcontainers:postgresql")

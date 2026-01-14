@@ -36,7 +36,6 @@ import uk.nhs.datadictionary.NhsDDSupportingInformation
 import uk.nhs.datadictionary.NhsDataDictionary
 
 @MicronautTest(startApplication = true, environments = ['secured'])
-@Property(name = "flyway.enabled", value = "false")
 class NhsDataDictionarySpec extends Specification {
     void "should process links from xml for classes and attributes"() {
         given: "the dictionary contains components with definitions containing links"
