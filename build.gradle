@@ -1,6 +1,7 @@
 plugins {
     id("groovy")
     id("io.micronaut.library") version "4.6.1"
+    id("io.micronaut.aot") version "4.4.5"
     id("maven-publish")
     id("com.gradleup.shadow") version "8.3.6"
 }
@@ -35,47 +36,37 @@ configurations {
 }
 
 dependencies {
-    platformapi("io.micronaut.groovy:micronaut-runtime-groovy")
-    platformapi("io.micronaut:micronaut-jackson-databind")
+    // Not to include in the jar
+    compileOnly("io.micronaut.groovy:micronaut-runtime-groovy")
+    compileOnly("io.micronaut:micronaut-jackson-databind")
     compileOnly("io.micronaut.security:micronaut-security-annotations")
-    platformapi("io.micronaut.security:micronaut-security-session")
+    compileOnly("io.micronaut.security:micronaut-security-session")
     compileOnly("io.micronaut:micronaut-inject-groovy")
     compileOnly("io.micronaut.data:micronaut-data-processor")
-    platformapi("io.micronaut.data:micronaut-data-jdbc")
-    runtimeOnly("org.yaml:snakeyaml")
-    platformapi ('org.apache.groovy:groovy-json:4.0.19')
-    platformapi group: 'org.apache.groovy', name: 'groovy-xml', version: '4.0.25'
+    compileOnly("io.micronaut.data:micronaut-data-jdbc")
+    // runtimeOnly("org.yaml:snakeyaml")
+    compileOnly ('org.apache.groovy:groovy-json:4.0.19')
+    compileOnly group: 'org.apache.groovy', name: 'groovy-xml', version: '4.0.25'
+    compileOnly("io.micronaut:micronaut-http-client")
+    compileOnly("io.micronaut:micronaut-http-server")
+    compileOnly("io.micronaut.cache:micronaut-cache-core")
+
+    compileOnly('org.maurodata:mauro-domain:0.0.3-SNAPSHOT')
+    compileOnly('org.maurodata:mauro-persistence:0.0.3-SNAPSHOT')
+    compileOnly('org.maurodata:mauro-client:0.0.3-SNAPSHOT')
+    compileOnly('org.maurodata:mauro-api:0.0.3-SNAPSHOT')
+
+    compileOnly("io.micronaut.sql:micronaut-jdbc-hikari")
+
+    // To include in the jar
     implementation('commons-io:commons-io:2.20.0')
     implementation('org.apache.commons:commons-lang3:3.18.0')
-    platformapi("io.micronaut:micronaut-http-client")
-    platformapi("io.micronaut:micronaut-http-server")
-    implementation("io.micronaut.cache:micronaut-cache-core")
-
-    //testImplementation("io.micronaut:micronaut-jdbc-hikari")
-    testRuntimeOnly("org.postgresql:postgresql")
-    testRuntimeOnly("org.flywaydb:flyway-database-postgresql")
-    testImplementation("io.micronaut.test:micronaut-test-spock")
-    testImplementation("io.micronaut.sql:micronaut-jdbc-hikari:2.2.6")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.2.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.2.0")
-
-    platformapi('org.maurodata:mauro-domain:0.0.3-SNAPSHOT')
-    platformapi('org.maurodata:mauro-persistence:0.0.3-SNAPSHOT')
-    platformapi('org.maurodata:mauro-client:0.0.3-SNAPSHOT')
-    platformapi('org.maurodata:mauro-api:0.0.3-SNAPSHOT')
 
     implementation("org.maurodata:dita-dsl-base:2.0.0-SNAPSHOT")
 
     implementation("org.maurodata:iso11179-domain:2.0.0-SNAPSHOT") {
         exclude group: "com.sun.xml.bind", module: "jaxb-impl"
     }
-
-    implementation("io.micronaut.sql:micronaut-jdbc-hikari")
-    testRuntimeOnly("org.testcontainers:testcontainers")
-    testRuntimeOnly("org.testcontainers:postgresql")
-    testImplementation("io.micronaut:micronaut-http-server-netty")
-    testRuntimeOnly("org.postgresql:postgresql")
-
 
     // Daisy Diff and transitive dependencies.  Used in the generation of change requests
     implementation group: 'org.outerj.daisy', name: 'daisydiff', version: '1.2.3-atlassian-hosted'
@@ -90,9 +81,51 @@ dependencies {
     implementation group: 'xalan', name: 'xalan', version: '2.7.3'
     implementation group: 'xalan', name: 'serializer', version: '2.7.3'
 
+    // for build / assemble
+    compileOnly("io.micronaut:micronaut-core-reactive")
+    aotPlugins("io.micronaut:micronaut-core-reactive")
+
+    // Testing
+    //testImplementation("io.micronaut:micronaut-jdbc-hikari")
+    testRuntimeOnly("org.postgresql:postgresql")
+    testRuntimeOnly("org.flywaydb:flyway-database-postgresql")
+    testImplementation("io.micronaut.test:micronaut-test-spock")
+    testImplementation("io.micronaut.sql:micronaut-jdbc-hikari:2.2.6")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.2.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.2.0")
+
+    testRuntimeOnly("org.testcontainers:testcontainers")
+    testRuntimeOnly("org.testcontainers:postgresql")
+    testImplementation("io.micronaut:micronaut-http-server-netty")
+    testRuntimeOnly("org.postgresql:postgresql")
+
     testImplementation("junit:junit:4.13.2")
     testImplementation("io.micronaut.test:micronaut-test-junit5")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
+
+    // all of the compileOnly (above) added to test
+
+    testImplementation("io.micronaut.groovy:micronaut-runtime-groovy")
+    testImplementation("io.micronaut:micronaut-jackson-databind")
+    testImplementation("io.micronaut.security:micronaut-security-annotations")
+    testImplementation("io.micronaut.security:micronaut-security-session")
+    testImplementation("io.micronaut:micronaut-inject-groovy")
+    testImplementation("io.micronaut.data:micronaut-data-processor")
+    testImplementation("io.micronaut.data:micronaut-data-jdbc")
+
+    testImplementation ('org.apache.groovy:groovy-json:4.0.19')
+    testImplementation group: 'org.apache.groovy', name: 'groovy-xml', version: '4.0.25'
+
+    testImplementation("io.micronaut:micronaut-http-client")
+    testImplementation("io.micronaut:micronaut-http-server")
+    testImplementation("io.micronaut.cache:micronaut-cache-core")
+
+    testImplementation('org.maurodata:mauro-domain:0.0.3-SNAPSHOT')
+    testImplementation('org.maurodata:mauro-persistence:0.0.3-SNAPSHOT')
+    testImplementation('org.maurodata:mauro-client:0.0.3-SNAPSHOT')
+    testImplementation('org.maurodata:mauro-api:0.0.3-SNAPSHOT')
+
+    testImplementation("io.micronaut.sql:micronaut-jdbc-hikari")
 }
 
 
