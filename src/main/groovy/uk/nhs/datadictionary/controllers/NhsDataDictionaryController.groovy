@@ -17,7 +17,6 @@
  */
 package uk.nhs.datadictionary.controllers
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.ObjectMapper
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -33,6 +32,9 @@ import io.micronaut.security.annotation.Secured
 import io.micronaut.security.rules.SecurityRule
 import jakarta.inject.Inject
 import org.maurodata.domain.folder.Folder
+import org.maurodata.plugin.MauroPluginDTO
+import org.maurodata.plugin.MauroPluginService
+import org.maurodata.security.AccessControlService
 import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.NhsDDBusinessDefinition
 import uk.nhs.datadictionary.NhsDDClass
@@ -42,7 +44,6 @@ import uk.nhs.datadictionary.NhsDDDataSetFolder
 import uk.nhs.datadictionary.NhsDDElement
 import uk.nhs.datadictionary.NhsDDSupportingInformation
 import uk.nhs.datadictionary.NhsDataDictionary
-import uk.nhs.datadictionary.NhsDataDictionaryComponent
 import uk.nhs.datadictionary.publish.changePaper.ChangePaperPreview
 import uk.nhs.datadictionary.services.AttributeService
 import uk.nhs.datadictionary.services.BusinessDefinitionService
@@ -55,8 +56,7 @@ import uk.nhs.datadictionary.services.NhsDataDictionaryService
 import uk.nhs.datadictionary.services.SupportingInformationService
 import uk.nhs.datadictionary.utils.StereotypedCatalogueItem
 
-import java.lang.reflect.Field
-import java.lang.reflect.Method
+import java.sql.DriverManager
 
 @CompileStatic
 @Controller()
@@ -66,7 +66,7 @@ class NhsDataDictionaryController {
 
     @Inject ObjectMapper objectMapper
 
-    NhsDataDictionaryService nhsDataDictionaryService
+    @Inject NhsDataDictionaryService nhsDataDictionaryService
 
     @Inject ElementService elementService
     @Inject AttributeService attributeService
@@ -77,9 +77,8 @@ class NhsDataDictionaryController {
     @Inject DataSetFolderService dataSetFolderService
     @Inject DataSetConstraintService dataSetConstraintService
 
-    NhsDataDictionaryController(NhsDataDictionaryService nhsDataDictionaryService) {
-        this.nhsDataDictionaryService = nhsDataDictionaryService
-    }
+    @Inject
+    AccessControlService accessControlService
 
 
     @Get('/api/nhsdd/branches')
@@ -267,18 +266,39 @@ class NhsDataDictionaryController {
         nhsDataDictionaryService.allItemsIndex(dictionaryId)
     }
 
-    /*
-        @Transactional
-        def newVersion() {
-            log.debug("Creating a new version...")
-            CatalogueUser currentUser = getCurrentUser()
-            long startTime = System.currentTimeMillis()
-            UUID versionedFolderId = UUID.fromString(params.versionedFolderId)
-            UUID newVersionedFolderId = nhsDataDictionaryService.newVersion(currentUser, versionedFolderId)
-            log.debug(Utils.timeTaken(startTime))
-            respond([newVersionedFolderId.toString()])
-        }
-    */
+    @Get('api/admin/status')
+    Map status() {
+        accessControlService.checkAuthenticated()
+        List<Map<String, Serializable>> databaseDrivers = DriverManager.getDrivers().asIterator().collect { driver ->
+                return [
+                    "class"  : driver.getClass().canonicalName,
+                    "version": "${driver.majorVersion}.${driver.minorVersion}",
+                ] as Map<String, Serializable>
+            }
+
+        return [
+            'Mauro Data Mapper Version'       : '0.0.3-SNAPSHOT',
+            'Java Version'                    : System.getProperty('java.version'),
+            'Java Vendor'                     : System.getProperty('java.vendor'),
+            'OS Name'                         : System.getProperty('os.name'),
+            'OS Version'                      : System.getProperty('os.version'),
+            'OS Architecture'                 : System.getProperty('os.arch'),
+            'Driver Manager Drivers Available': databaseDrivers
+        ]
+    }
+
+        /*
+            @Transactional
+            def newVersion() {
+                log.debug("Creating a new version...")
+                CatalogueUser currentUser = getCurrentUser()
+                long startTime = System.currentTimeMillis()
+                UUID versionedFolderId = UUID.fromString(params.versionedFolderId)
+                UUID newVersionedFolderId = nhsDataDictionaryService.newVersion(currentUser, versionedFolderId)
+                log.debug(Utils.timeTaken(startTime))
+                respond([newVersionedFolderId.toString()])
+            }
+        */
 /*
     def previewChangePaper() {
         UUID versionedFolderId = UUID.fromString(params.versionedFolderId)
