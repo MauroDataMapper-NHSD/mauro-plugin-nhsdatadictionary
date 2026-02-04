@@ -32,8 +32,6 @@ import io.micronaut.security.annotation.Secured
 import io.micronaut.security.rules.SecurityRule
 import jakarta.inject.Inject
 import org.maurodata.domain.folder.Folder
-import org.maurodata.plugin.MauroPluginDTO
-import org.maurodata.plugin.MauroPluginService
 import org.maurodata.security.AccessControlService
 import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.NhsDDBusinessDefinition
@@ -44,6 +42,7 @@ import uk.nhs.datadictionary.NhsDDDataSetFolder
 import uk.nhs.datadictionary.NhsDDElement
 import uk.nhs.datadictionary.NhsDDSupportingInformation
 import uk.nhs.datadictionary.NhsDataDictionary
+import uk.nhs.datadictionary.api.NhsDataDictionaryApi
 import uk.nhs.datadictionary.publish.changePaper.ChangePaperPreview
 import uk.nhs.datadictionary.services.AttributeService
 import uk.nhs.datadictionary.services.BusinessDefinitionService
@@ -62,7 +61,7 @@ import java.sql.DriverManager
 @Controller()
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Slf4j
-class NhsDataDictionaryController {
+class NhsDataDictionaryController implements NhsDataDictionaryApi {
 
     @Inject ObjectMapper objectMapper
 

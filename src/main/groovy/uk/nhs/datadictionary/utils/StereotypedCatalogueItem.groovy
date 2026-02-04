@@ -38,6 +38,9 @@ class StereotypedCatalogueItem {
     List<StereotypedCatalogueItem> childFolders
     List<StereotypedCatalogueItem> dataSets
 
+    // Default constructor for Jackson
+    StereotypedCatalogueItem() { }
+
     StereotypedCatalogueItem(AdministeredItem catalogueItem, String stereotype) {
         this.stereotype = stereotype
         this.retired = catalogueItem.metadata.any {
