@@ -1,12 +1,9 @@
-package datadictionary
+package uk.nhs.digital.maurodatamapper.datadictionary
 
 import groovy.util.logging.Slf4j
-import io.micronaut.http.HttpResponse
 import io.micronaut.http.MutableHttpRequest
-import io.micronaut.http.MutableHttpResponse
 import io.micronaut.http.annotation.ClientFilter
 import io.micronaut.http.annotation.RequestFilter
-import io.micronaut.http.annotation.ResponseFilter
 import io.micronaut.http.uri.UriBuilder
 import io.micronaut.runtime.server.EmbeddedServer
 import jakarta.inject.Inject

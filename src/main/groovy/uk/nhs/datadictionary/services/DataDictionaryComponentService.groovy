@@ -22,13 +22,17 @@ import groovy.util.logging.Slf4j
 import io.micronaut.context.ApplicationContext
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
+import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.model.AdministeredItem
 import org.maurodata.domain.model.Item
 import org.maurodata.persistence.cache.FacetCacheableRepository.MetadataCacheableRepository
 import org.maurodata.persistence.cache.ModelCacheableRepository.FolderCacheableRepository
+import org.maurodata.persistence.model.PathRepository
+import uk.nhs.datadictionary.NhsDDElement
 import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.NhsDataDictionaryComponent
+import uk.nhs.datadictionary.NhsDataDictionaryComponentFactory
 import uk.nhs.datadictionary.publish.ItemLinkScanner
 import uk.nhs.datadictionary.publish.MauroCatalogueItemPathResolver
 import uk.nhs.datadictionary.publish.PublishContext
@@ -51,6 +55,10 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
     @Inject FolderCacheableRepository folderCacheableRepository
 
     @Inject ApplicationContext applicationContext
+
+    @Inject NhsDataDictionaryComponentFactory nhsDataDictionaryComponentFactory
+
+    @Inject PathRepository pathRepository
 
     abstract String getStereotype()
 
@@ -92,12 +100,13 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
         }
 
         NhsDataDictionaryComponent component = getByCatalogueItemId(id, dataDictionary)
+        component.dataDictionary = dataDictionary
         component.updateWhereUsed()
         return component.whereUsed.entrySet()
             .findAll { !it.key.isRetired() }
             .sort { it.key.name }
             .collect { entry ->
-                [   'catalogueId': entry.key.catalogueItem.id.toString(),
+                [   'catalogueItemId': entry.key.catalogueItem.id.toString(),
                     'description': entry.value,
                     'isRetired': entry.key.isRetired(),
                     'name': entry.key.name,
@@ -115,7 +124,9 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
 
     String convertLinksInDescription(UUID branchId, String description) {
 
-
+        if(!description || description.isBlank()) {
+            return description
+        }
         MauroCatalogueItemPathResolver pathResolver = applicationContext.createBean(MauroCatalogueItemPathResolver)
         pathResolver.setVersionedFolderId(branchId)
 
@@ -127,7 +138,7 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
         publishContext.prettyPrintHtml = false
         return publishContext.replaceLinksInString(description).trim() ?: null
     }
-
+/*
     String replaceLinksInShortDescription(String input) {
         String output = input
         Matcher matcher = pattern.matcher(input)
@@ -136,6 +147,7 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
         }
         return output
     }
+*/
 
     static String getStereotypeByPath(String[] path) {
         if (path[0] == "te:${NhsDataDictionary.BUSINESS_DEFINITIONS_TERMINOLOGY_NAME}") {
@@ -280,5 +292,14 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
         }
 
     }
+
+    D initialiseComponent(D newComponent, T catalogueItem, UUID branchId) {
+        newComponent.catalogueItem = catalogueItem
+        newComponent.branchId = branchId
+        newComponent.dataDictionaryComponentService = this
+        newComponent.fromMauroItem(null, mauroPersistenceService, catalogueItem)
+        return newComponent
+    }
+
 
 }

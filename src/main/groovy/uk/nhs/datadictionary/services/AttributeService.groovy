@@ -58,7 +58,10 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
     @Override
     NhsDDAttribute show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
         DataElement attributeElement = dataElementRepository.findById(id)
-        NhsDDAttribute attribute = new NhsDDAttribute(attributeElement).fromMauroItem(null, mauroPersistenceService, attributeElement)
+        attributeElement.semanticLinks.each {
+            it.target = dataElementRepository.loadWithContent(it.targetMultiFacetAwareItemId)
+        }
+        NhsDDAttribute attribute = initialiseComponent(new NhsDDAttribute(), attributeElement, versionedFolderId)
         attribute.instantiatedByElements.addAll (getAllElementsForAttribute(null, attribute))
         //attribute.htmlDescription = convertLinksInDescription(versionedFolderId, attribute.getDescription())
         attribute.codes.each {code ->
@@ -87,7 +90,7 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
                 return dataDictionary.elementsByCatalogueId[semanticLink.multiFacetAwareItemId]
             } else {
                 DataElement dataElement = dataElementRepository.findById(semanticLink.multiFacetAwareItemId)
-                new NhsDDElement(dataElement).fromMauroItem(dataDictionary, mauroPersistenceService, dataElement)
+                return new NhsDDElement(dataElement).fromMauroItem(dataDictionary, mauroPersistenceService, dataElement)
             }
         }.findAll{
             !it.isRetired()

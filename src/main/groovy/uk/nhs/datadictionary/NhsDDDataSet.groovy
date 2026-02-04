@@ -26,6 +26,7 @@ import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.facet.Edit
 import org.maurodata.domain.facet.EditType
+import org.maurodata.domain.facet.Metadata
 import uk.nhs.datadictionary.publish.structure.DictionaryItem
 import uk.nhs.datadictionary.publish.structure.datasets.DataSetSection
 import uk.nhs.datadictionary.publish.structure.datasets.cds.LegacyCdsDataSetSection
@@ -90,7 +91,11 @@ class NhsDDDataSet extends NhsDataDictionaryComponent <DataModel> {
         path = getWebPath()
         path.removeLast()
         definitionAsXml = XmlUtil.serialize(xml.definition[0])
-        otherProperties["approvingOrganisation"] = "Data Alliance Partnership Board (DAPB)"
+        catalogueItem.metadata.add(new Metadata(
+            namespace: getMetadataNamespace(),
+            key: "approvingOrganisation",
+            value: "Data Alliance Partnership Board (DAPB)"
+        ))
     }
 
     @Override

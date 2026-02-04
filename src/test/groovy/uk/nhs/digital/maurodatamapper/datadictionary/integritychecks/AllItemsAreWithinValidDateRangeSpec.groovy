@@ -19,6 +19,7 @@ package uk.nhs.digital.maurodatamapper.datadictionary.integritychecks
 
 import io.micronaut.context.annotation.Property
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
+import org.maurodata.domain.datamodel.DataElement
 import spock.lang.Specification
 import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.integritychecks.AllItemsAreWithinValidDateRange
@@ -34,9 +35,9 @@ class AllItemsAreWithinValidDateRangeSpec extends Specification {
     def "validateDateRange returns false for valid dates"() {
         given:
         def checker = new AllItemsAreWithinValidDateRange()
-        def component = new NhsDDAttribute()
+        def component = new NhsDDAttribute(new DataElement(), UUID.randomUUID())
 
-        component.otherProperties = ["validFrom": "3030-12-31", "validTo": "3040-01-01"]
+        component.addOtherProperties(["validFrom": "3030-12-31", "validTo": "3040-01-01"])
 
         expect:
         //False means it has not been added to the errors list as it did not fail the check
@@ -46,8 +47,8 @@ class AllItemsAreWithinValidDateRangeSpec extends Specification {
     def "validateDateRange returns true for todate set before fromdate "() {
         given:
         def checker = new AllItemsAreWithinValidDateRange()
-        def component = new NhsDDAttribute()
-        component.otherProperties = ["validFrom": "2030-12-31", "validTo": "2030-12-01"]
+        def component = new NhsDDAttribute(new DataElement(), UUID.randomUUID())
+        component.addOtherProperties(["validFrom": "2030-12-31", "validTo": "2030-12-01"])
 
         expect:
         checker.validateDateRange(component, testDateNow) == true
@@ -56,8 +57,8 @@ class AllItemsAreWithinValidDateRangeSpec extends Specification {
     def "validateDateRange returns true when todate is set and fromdate is not"() {
         given:
         def checker = new AllItemsAreWithinValidDateRange()
-        def component = new NhsDDAttribute()
-        component.otherProperties = ["validTo": "2030-12-01"]
+        def component = new NhsDDAttribute(new DataElement(), UUID.randomUUID())
+        component.addOtherProperties(["validTo": "2030-12-01"])
 
         expect:
         checker.validateDateRange(component, testDateNow) == true
@@ -66,8 +67,8 @@ class AllItemsAreWithinValidDateRangeSpec extends Specification {
     def "validateDateRange returns true when todate has expired"() {
         given:
         def checker = new AllItemsAreWithinValidDateRange()
-        def component = new NhsDDAttribute()
-        component.otherProperties = ["validFrom": "2020-12-31", "validTo": "2020-01-01"]
+        def component = new NhsDDAttribute(new DataElement(), UUID.randomUUID())
+        component.addOtherProperties(["validFrom": "2020-12-31", "validTo": "2020-01-01"])
 
         expect:
         checker.validateDateRange(component, testDateNow) == true

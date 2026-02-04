@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package datadictionary.publish.structure
+package uk.nhs.digital.maurodatamapper.datadictionary.publish.structure
 
 import io.micronaut.context.annotation.Property
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
@@ -39,6 +39,10 @@ import uk.nhs.datadictionary.services.NhsDataDictionaryService
 
 
 @MicronautTest(startApplication = true, environments = ['secured'])
+@Property(name = "datasources.default.driver-class-name",
+    value = "org.testcontainers.jdbc.ContainerDatabaseDriver")
+@Property(name = "datasources.default.url",
+    value = "jdbc:tc:postgresql:16-alpine:///db")
 class NhsClassStructureSpec extends DataDictionaryComponentStructureSpec<NhsDDClass> {
 
     @Inject
@@ -103,7 +107,7 @@ to a <a href="dm:Classes and Attributes|dc:PATIENT">PATIENT</a> by one or more
             description: definition),
         branchId)
         activeItem.dataDictionary = dataDictionary
-        activeItem.otherProperties = ['aliasPlural': 'ACTIVITIES']
+        activeItem.addOtherProperties(['aliasPlural': 'ACTIVITIES'])
 
         addWhereUsed(activeItem, activeItem)    // Self reference
         addWhereUsed(
@@ -130,7 +134,7 @@ to a <a href="dm:Classes and Attributes|dc:PATIENT">PATIENT</a> by one or more
 
         NhsDDAttribute attribute1 = new NhsDDAttribute(
             new DataElement(label: "ACTIVITY IDENTIFIER"))
-        attribute1.otherProperties = ["isKey": "true"]
+        attribute1.addOtherProperties(["isKey": "true"])
         activeItem.keyAttributes.add(attribute1)
 
         activeItem.otherAttributes.add(
@@ -154,7 +158,7 @@ to a <a href="dm:Classes and Attributes|dc:PATIENT">PATIENT</a> by one or more
                 description: this.activeItem.description),
             branchId)
         retiredItem.dataDictionary = dataDictionary
-        retiredItem.otherProperties = copyMap(this.activeItem.otherProperties)
+        retiredItem.addOtherProperties(this.activeItem.otherProperties)
         retiredItem.whereUsed = copyMap(this.activeItem.whereUsed)
     }
 
@@ -167,7 +171,7 @@ to a <a href="dm:Classes and Attributes|dc:PATIENT">PATIENT</a> by one or more
                 description: this.activeItem.description),
             branchId)
         preparatoryItem.dataDictionary = dataDictionary
-        preparatoryItem.otherProperties = copyMap(this.activeItem.otherProperties)
+        preparatoryItem.addOtherProperties(this.activeItem.otherProperties)
         preparatoryItem.whereUsed = copyMap(this.activeItem.whereUsed)
     }
 
@@ -180,7 +184,7 @@ to a <a href="dm:Classes and Attributes|dc:PATIENT">PATIENT</a> by one or more
                 description: 'The previous description'),
             branchId)
         previousItemDescriptionChange.dataDictionary = dataDictionary
-        previousItemDescriptionChange.otherProperties = copyMap(this.activeItem.otherProperties)
+        previousItemDescriptionChange.addOtherProperties(this.activeItem.otherProperties)
 
         previousItemAliasesChange = new NhsDDClass(
             new DataClass(
@@ -189,10 +193,10 @@ to a <a href="dm:Classes and Attributes|dc:PATIENT">PATIENT</a> by one or more
                 description: this.activeItem.description),
             branchId)
         previousItemAliasesChange.dataDictionary = dataDictionary
-        previousItemAliasesChange.otherProperties = [
+        previousItemAliasesChange.addOtherProperties([
                 'aliasPlural': "ACTIVITY GROUP",
                 'aliasAlsoKnownAs': 'ALTERNATIVE',
-            ]
+            ])
 
         previousItemAllChange = new NhsDDClass(
             new DataClass(
@@ -201,7 +205,7 @@ to a <a href="dm:Classes and Attributes|dc:PATIENT">PATIENT</a> by one or more
                 description: previousItemDescriptionChange.description),
             branchId)
         previousItemAllChange.dataDictionary = dataDictionary
-        previousItemAllChange.otherProperties = copyMap(previousItemAliasesChange.otherProperties)
+        previousItemAllChange.addOtherProperties(previousItemAliasesChange.otherProperties)
     }
 
     void "should have the correct active item structure"() {

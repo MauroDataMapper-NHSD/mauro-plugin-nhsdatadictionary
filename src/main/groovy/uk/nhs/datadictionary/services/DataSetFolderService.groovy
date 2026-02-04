@@ -54,8 +54,7 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
                 it.label == NhsDataDictionary.DATA_SETS_FOLDER_NAME
             }
         }
-        NhsDDDataSetFolder dataSetFolder = new NhsDDDataSetFolder(folderFolder).fromMauroItem(null, mauroPersistenceService, folderFolder) as NhsDDDataSetFolder
-        // dataSetFolder.htmlDescription = convertLinksInDescription(versionedFolderId, dataSetFolder.getDescription())
+        NhsDDDataSetFolder dataSetFolder = initialiseComponent(new NhsDDDataSetFolder(), folderFolder, versionedFolderId)
         if(id) {
             List<String> folderPath = [folderFolder.label]
             Folder parentFolder = folderCacheableRepository.findById(folderFolder.getParentFolder().id)
@@ -66,12 +65,12 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
             dataSetFolder.folderPath = folderPath
         }
         folderCacheableRepository.findAllByFolderId(folderFolder.id).each {
-            NhsDDDataSetFolder childFolder = new NhsDDDataSetFolder(it).fromMauroItem(null, mauroPersistenceService, it)
+            NhsDDDataSetFolder childFolder = initialiseComponent(new NhsDDDataSetFolder(), it, versionedFolderId)
             dataSetFolder.childFolders.add(childFolder)
         }
 
         dataModelCacheableRepository.findAllByFolderId(folderFolder.id).each {
-            NhsDDDataSet childDataSet = new NhsDDDataSet(it).fromMauroItem(null, mauroPersistenceService, it)
+            NhsDDDataSet childDataSet = dataSetService.initialiseComponent(new NhsDDDataSet(), it, versionedFolderId)
             if (!childDataSet.isRetired()) {
                 dataSetFolder.dataSets.add(childDataSet)
             }

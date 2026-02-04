@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package nhsdd
+package uk.nhs.digital.maurodatamapper.datadictionary
 
 import groovy.util.logging.Slf4j
 import groovy.xml.XmlParser

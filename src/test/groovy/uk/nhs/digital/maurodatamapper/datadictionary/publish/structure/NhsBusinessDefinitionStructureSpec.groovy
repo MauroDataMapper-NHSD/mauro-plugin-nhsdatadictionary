@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package datadictionary.publish.structure
+package uk.nhs.digital.maurodatamapper.datadictionary.publish.structure
 
 import io.micronaut.context.annotation.Property
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
@@ -38,6 +38,10 @@ import uk.nhs.datadictionary.publish.structure.WhereUsedSection
 import uk.nhs.datadictionary.services.NhsDataDictionaryService
 
 @MicronautTest(startApplication = true, environments = ['secured'])
+@Property(name = "datasources.default.driver-class-name",
+    value = "org.testcontainers.jdbc.ContainerDatabaseDriver")
+@Property(name = "datasources.default.url",
+    value = "jdbc:tc:postgresql:16-alpine:///db")
 class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructureSpec<NhsDDBusinessDefinition> {
 
     @Inject
@@ -86,7 +90,7 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
                      description: definition),
                  branchId)
         activeItem.dataDictionary = dataDictionary
-        activeItem.otherProperties = ['aliasPlural': 'Baby First Feeds']
+        activeItem.addOtherProperties(['aliasPlural': 'Baby First Feeds'])
 
         addWhereUsed(
             activeItem,
@@ -126,7 +130,7 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
             description: this.activeItem.description),
             branchId)
         retiredItem.dataDictionary = dataDictionary
-        retiredItem.otherProperties = copyMap(this.activeItem.otherProperties)
+        retiredItem.addOtherProperties(this.activeItem.otherProperties)
         retiredItem.whereUsed = copyMap(this.activeItem.whereUsed)
     }
 
@@ -140,7 +144,7 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
             branchId)
 
         preparatoryItem.dataDictionary = dataDictionary
-        preparatoryItem.otherProperties = copyMap(this.activeItem.otherProperties)
+        preparatoryItem.addOtherProperties(this.activeItem.otherProperties)
         preparatoryItem.whereUsed = copyMap(this.activeItem.whereUsed)
     }
 
@@ -153,7 +157,7 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
                 description: 'The previous description'),
             branchId)
         previousItemDescriptionChange.dataDictionary = dataDictionary
-        previousItemDescriptionChange.otherProperties = copyMap(this.activeItem.otherProperties)
+        previousItemDescriptionChange.addOtherProperties(this.activeItem.otherProperties)
 
         previousItemAliasesChange = new NhsDDBusinessDefinition(
             new Term(
@@ -162,10 +166,10 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
                 description: this.activeItem.description),
             branchId)
         previousItemAliasesChange.dataDictionary = dataDictionary
-        previousItemAliasesChange.otherProperties = [
+        previousItemAliasesChange.addOtherProperties([
                 'aliasPlural': "Baby's First Feeds",
                 'aliasAlsoKnownAs': 'Baby Food',
-            ]
+            ])
 
         previousItemAllChange = new NhsDDBusinessDefinition(
             new Term(
@@ -174,7 +178,7 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
                 description: previousItemDescriptionChange.description),
             branchId)
         previousItemAllChange.dataDictionary = dataDictionary
-        previousItemAllChange.otherProperties = copyMap(previousItemAliasesChange.otherProperties)
+        previousItemAllChange.addOtherProperties(previousItemAliasesChange.otherProperties)
     }
 
     void "should have the correct active item structure"() {

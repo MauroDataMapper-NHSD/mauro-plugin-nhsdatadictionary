@@ -411,7 +411,7 @@ class NhsDataDictionary {
             } else {
                 if(introductoryWebPage && !dataSetFolder.isRetired()) {
                     log.info("Introduction page found: " + introductoryWebPage.name)
-                    dataSetFolder.otherProperties = introductoryWebPage.otherProperties
+                    dataSetFolder.addOtherProperties(introductoryWebPage.otherProperties)
                     dataSetFolder.catalogueItem.description = introductoryWebPage.catalogueItem.description
                 }
             }

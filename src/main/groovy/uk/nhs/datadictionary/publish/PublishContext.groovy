@@ -17,8 +17,10 @@
  */
 package uk.nhs.datadictionary.publish
 
+import groovy.util.logging.Slf4j
 import uk.nhs.datadictionary.publish.structure.HtmlConstants
 
+@Slf4j
 class PublishContext {
     final PublishTarget target
 
@@ -36,6 +38,7 @@ class PublishContext {
 
     String replaceLinksInString(String source) {
         if (!this.itemLinkScanner) {
+            log.error("No itemLinkScanner set for ${this}")
             return source
         }
 

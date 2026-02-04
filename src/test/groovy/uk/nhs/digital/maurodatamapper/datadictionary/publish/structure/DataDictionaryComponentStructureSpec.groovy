@@ -15,8 +15,10 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package datadictionary.publish.structure
+package uk.nhs.digital.maurodatamapper.datadictionary.publish.structure
 
+import io.micronaut.context.annotation.Property
+import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
 import spock.lang.Specification
 import uk.nhs.datadictionary.NhsDDChangeLog
@@ -67,11 +69,11 @@ abstract class DataDictionaryComponentStructureSpec<T extends NhsDataDictionaryC
         setupPreviousItems()
 
         if (retiredItem) {
-            retiredItem.otherProperties["isRetired"] = true.toString()
+            retiredItem.addOtherProperties(["isRetired": true.toString()])
         }
 
         if (preparatoryItem) {
-            preparatoryItem.otherProperties["isPreparatory"] = true.toString()
+            preparatoryItem.addOtherProperties(["isPreparatory": true.toString()])
         }
 
         setupComponentPathResolver()

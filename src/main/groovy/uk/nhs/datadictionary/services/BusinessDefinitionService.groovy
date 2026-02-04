@@ -25,6 +25,7 @@ import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
 import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.TermCacheableRepository
 import org.maurodata.persistence.terminology.dto.TermDTORepository
+import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.NhsDDBusinessDefinition
 import uk.nhs.datadictionary.NhsDataDictionary
 
@@ -49,8 +50,7 @@ class BusinessDefinitionService extends DataDictionaryComponentService<Term, Nhs
     NhsDDBusinessDefinition show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
         NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary(versionedFolderId)
         Term businessDefinitionTerm = termDTORepository.findById(id)
-        NhsDDBusinessDefinition businessDefinition = new NhsDDBusinessDefinition().fromMauroItem(dataDictionary, mauroPersistenceService, businessDefinitionTerm)
-        //businessDefinition.htmlDescription = convertLinksInDescription(versionedFolderId, businessDefinition.getDescription())
+        NhsDDBusinessDefinition businessDefinition = initialiseComponent(new NhsDDBusinessDefinition(), businessDefinitionTerm, versionedFolderId)
         businessDefinition.catalogueItem.description =
             convertLinksInDescription(versionedFolderId, businessDefinition.getDescription())
         return businessDefinition

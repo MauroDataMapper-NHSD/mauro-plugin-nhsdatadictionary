@@ -24,6 +24,8 @@ import jakarta.inject.Singleton
 import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.datamodel.DataModelType
 import org.maurodata.domain.folder.Folder
+import org.maurodata.persistence.cache.AdministeredItemCacheableRepository
+import org.maurodata.persistence.datamodel.DataElementRepository
 import org.maurodata.persistence.datamodel.DataModelRepository
 import org.maurodata.persistence.folder.FolderRepository
 import uk.nhs.datadictionary.NhsDDBusinessDefinition
@@ -47,7 +49,7 @@ class DataSetService extends DataDictionaryComponentService<DataModel, NhsDDData
     DataModelRepository dataModelRepository
 
     @Inject
-    FolderRepository folderRepository
+    AdministeredItemCacheableRepository.DataElementCacheableRepository dataElementRepository
 
     static XmlParser xmlParser = new XmlParser(false, false)
     static {
@@ -71,10 +73,13 @@ class DataSetService extends DataDictionaryComponentService<DataModel, NhsDDData
 
         DataModel dataModel = dataModelRepository.loadWithContent(id)
 
-        NhsDDDataSet dataSet = new NhsDDDataSet(dataModel)
-        dataSet.branchId = versionedFolderId
-        dataSet.fromMauroItem(null, mauroPersistenceService, dataModel)
-        // dataSet.htmlDescription = convertLinksInDescription(versionedFolderId, dataSet.getDescription())
+        dataModel.dataElements.each {dataElement ->
+            dataElement.semanticLinks.each {semanticLink ->
+                semanticLink.target = dataElementRepository.findById(semanticLink.targetMultiFacetAwareItemId)
+            }
+        }
+
+        NhsDDDataSet dataSet = initialiseComponent(new NhsDDDataSet(), dataModel, versionedFolderId)
 
         DictionaryItem structure = dataSet.getPublishStructure()
         Section specificationSection = structure.sections.find { it instanceof DataSetSection }

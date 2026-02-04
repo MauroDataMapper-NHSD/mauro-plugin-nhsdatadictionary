@@ -57,17 +57,16 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
     @Override
     NhsDDElement show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
         DataElement elementElement = dataElementRepository.loadWithContent(id)
-        NhsDDElement element = new NhsDDElement().fromMauroItem(null, mauroPersistenceService, elementElement) as NhsDDElement
+        elementElement.semanticLinks.each {
+            DataElement dataElement = dataElementRepository.findById(it.targetMultiFacetAwareItemId)
+            pathRepository.readParentItems(dataElement)
+            it.target = dataElement
 
-        element.instantiatesAttributes.addAll(getAllAttributesForElement(null, element))
-
-        // element.htmlDescription = convertLinksInDescription(versionedFolderId, element.getDescription())
-        /*
-        String attributeText = element.getAttributeTextAsHtml()
-        if (attributeText) {
-            element.previewAttributeText = convertLinksInDescription(versionedFolderId, attributeText)
         }
-        */
+        NhsDDElement element = initialiseComponent(new NhsDDElement(), elementElement, versionedFolderId)
+
+        element.instantiatesAttributes.addAll(element.getAllAttributesForElement())
+
         element.codes.each {code ->
             if(code.webPresentation) {
                 code.webPresentation = convertLinksInDescription(versionedFolderId, code.webPresentation)
@@ -93,23 +92,7 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
         }
     }
 
-    Set<NhsDDAttribute> getAllAttributesForElement(NhsDataDictionary dataDictionary, NhsDDElement nhsDDElement) {
-        nhsDDElement.catalogueItem.semanticLinks.findAll {semanticLink ->
-            semanticLink.linkType == SemanticLinkType.REFINES
-        }.collect {semanticLink ->
-            if(dataDictionary) {
-                return dataDictionary.attributesByCatalogueId[semanticLink.targetMultiFacetAwareItemId]
-            } else {
-                DataElement dataElement = dataElementRepository.findById(semanticLink.targetMultiFacetAwareItemId)
-                return new NhsDDAttribute().fromMauroItem(dataDictionary, mauroPersistenceService, dataElement)
-            }
-        }.findAll{
-            !it.isRetired()
-        }.sort {it.name} as Set<NhsDDAttribute>
-
-    }
-
-
+/*
     @Deprecated
     boolean attributeListIncludesName(AdministeredItem catalogueItem, String name) {
         List<String> linkedAttributeList = getLinkedAttributes(catalogueItem)
@@ -124,6 +107,7 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
             DataElement.get(link.targetMultiFacetAwareItemId).label
         }
     }
+*/
 
     void persistElements(NhsDataDictionary dataDictionary,
                          Folder dictionaryFolder, DataModel elementsDataModel,
@@ -224,6 +208,7 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
     NhsDDElement getByCatalogueItemId(UUID catalogueItemId, NhsDataDictionary nhsDataDictionary) {
         nhsDataDictionary.elements.values().find {
             it.catalogueItem.id == catalogueItemId
+
         }
     }
 

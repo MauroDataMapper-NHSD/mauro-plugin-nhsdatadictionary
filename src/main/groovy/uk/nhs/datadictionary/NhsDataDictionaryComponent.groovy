@@ -20,7 +20,6 @@ package uk.nhs.datadictionary
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import groovy.transform.CompileDynamic
-import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.maurodata.dita.elements.langref.base.DitaMap
 import org.maurodata.dita.elements.langref.base.Topic
@@ -45,6 +44,7 @@ import uk.nhs.datadictionary.publish.structure.DictionaryItem
 import uk.nhs.datadictionary.publish.structure.ItemLink
 import uk.nhs.datadictionary.publish.structure.WhereUsedRow
 import uk.nhs.datadictionary.publish.structure.WhereUsedSection
+import uk.nhs.datadictionary.services.DataDictionaryComponentService
 import uk.nhs.datadictionary.services.MauroPersistenceService
 import uk.nhs.datadictionary.utils.DDHelperFunctions
 
@@ -56,31 +56,32 @@ import java.util.regex.Pattern
 @CompileDynamic
 abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  implements ChangeAware {
 
+    @JsonIgnore
+    DataDictionaryComponentService dataDictionaryComponentService
+
+    @JsonIgnore
+    NhsDataDictionary dataDictionary
+
+    UUID branchId
+
+    @JsonIgnore
+    T catalogueItem
+
     abstract String getStereotype()
     abstract String getStereotypeForPreview()
     abstract String getPluralStereotypeForWebsite()
 
     abstract String getMetadataNamespace()
 
-    @JsonIgnore
-    NhsDataDictionary dataDictionary
-
-    @JsonIgnore
-    T catalogueItem
-
-    NhsDataDictionaryComponent(T catalogueItem = null, UUID branchId = null) {
+    NhsDataDictionaryComponent(T catalogueItem, UUID branchId) {
         this.catalogueItem = catalogueItem
-        if(catalogueItem) {
-            this.catalogueItemId = catalogueItem.id
-        }
         this.branchId = branchId
     }
 
+    UUID getCatalogueItemId() {
+        catalogueItem.id
+    }
 
-    UUID catalogueItemId
-
-    @JsonIgnore
-    UUID branchId
 
     @JsonIgnore
     String catalogueItemModelId
@@ -92,13 +93,22 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         catalogueItem.label
     }
 
-    @JsonIgnore
-    String definition = ""
+    String getHtmlDescription() {
+        if(!dataDictionaryComponentService) {
+            log.error("dataDictionaryComponentService is not set for: ${getStereotype()} ${getName()}")
+            return ""
+        }
+        dataDictionaryComponentService.convertLinksInDescription(branchId, getDescription())
+    }
 
-    //String htmlDescription
-
     @JsonIgnore
-    Map<String, String> otherProperties = [:]
+    Map<String, String> getOtherProperties() {
+        catalogueItem.metadata.findAll {metadata ->
+            metadata.namespace == getMetadataNamespace()
+        }.collectEntries() {
+            [it.key, it.value]
+        }
+    }
 
     @JsonIgnore
     Map<NhsDataDictionaryComponent, String> whereUsed = [:]
@@ -141,7 +151,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
     String getTitleCaseName() {
         otherProperties["titleCaseName"]
     }
-
+/*
     void setShortDescription() {
         String shortDescription = calculateShortDescription()
         if(!shortDescription) {
@@ -154,7 +164,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         shortDescription = shortDescription.replaceAll("\\\\r", " ")
         otherProperties["shortDescription"] = shortDescription
     }
-
+*/
     abstract T newCatalogueItem(String name = null)
 
     void fromXml(def xml, NhsDataDictionary dataDictionary) {
@@ -190,7 +200,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
                 xmlValue = xml."class"[entry.value][0]
             }
             if(xmlValue && xmlValue.text() != "") {
-                otherProperties[entry.key] = xmlValue.text()
+                addOtherProperties([(entry.key): xmlValue.text()])
             }
         }
     }
@@ -658,13 +668,6 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
 
 
     NhsDataDictionaryComponent<T> fromMauroItem(NhsDataDictionary dataDictionary, MauroPersistenceService mauroPersistenceService, T catalogueItem) {
-        this.catalogueItem = catalogueItem
-        this.dataDictionary = dataDictionary
-
-        catalogueItemId = catalogueItem.id
-        if(!branchId) {
-            branchId = dataDictionary?.containingVersionedFolder?.id
-        }
 
         // This is not obvious, but these parent/model IDs are required in the GSON views for the integrity checks - they are used for the direct
         // URLs to items in the Mauro UI
@@ -683,15 +686,6 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
             catalogueItemModelId = ((Term)catalogueItem).terminology?.id?.toString()
         }
 
-        List<Metadata> metadata = catalogueItem.metadata.findAll {
-            it.namespace == getMetadataNamespace() &&
-            NhsDataDictionary.getAllMetadataKeys().contains(it.key)
-        }
-
-
-        NhsDataDictionary.getAllMetadataKeys().each {key ->
-            otherProperties[key] = metadata.find {it.key == key}?.value
-        }
 
         setNhsDataDictionaryComponentChangeLog(dataDictionary)
         return this
@@ -769,5 +763,16 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
     String getDiscriminator() {
         name
     }
+
+    void addOtherProperties(Map<String, String> keyValueMap) {
+        keyValueMap.each {key, value ->
+            catalogueItem.metadata.add(new Metadata(
+                namespace: getMetadataNamespace(),
+                key: key,
+                value: value
+            ))
+        }
+    }
+
 
 }

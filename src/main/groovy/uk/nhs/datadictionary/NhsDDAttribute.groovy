@@ -323,7 +323,7 @@ class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
                 code.owningAttribute = this
             }
         }
-        parentClass = new NhsDDClass()
+        parentClass = new NhsDDClass(catalogueItem.dataClass, branchId)
         parentClass.fromMauroItem(dataDictionary, mauroPersistenceService, catalogueItem.dataClass)
         return this
     }

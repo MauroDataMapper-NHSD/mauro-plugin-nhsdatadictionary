@@ -20,7 +20,6 @@ package uk.nhs.datadictionary
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import groovy.util.logging.Slf4j
-import org.maurodata.dita.elements.langref.base.P
 import org.maurodata.dita.elements.langref.base.Topic
 import org.maurodata.dita.elements.langref.base.XRef
 import org.maurodata.dita.helpers.HtmlHelper
@@ -281,6 +280,7 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
             if (activeAttributes.size() == 1 && otherProperties["suppressFirstSentence"] != 'true') {
                 NhsDDAttribute attribute = activeAttributes[0]
                 String ret = "<a href=\"${this.getMauroPath()}\">${this.name}</a> is the same as attribute <a href=\"${attribute.getMauroPath()}\">${attribute.name}</a>. "
+                System.err.println(ret)
                 if (catalogueItem) {
                     ret += catalogueItem.description
                 }
@@ -516,5 +516,23 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
         }
         return this
     }
+
+    Set<NhsDDAttribute> getAllAttributesForElement() {
+        catalogueItem.semanticLinks.findAll {semanticLink ->
+            semanticLink.linkType == SemanticLinkType.REFINES
+            && semanticLink.target
+        }.collect {semanticLink ->
+            if(dataDictionary) {
+                return dataDictionary.attributesByCatalogueId[semanticLink.targetMultiFacetAwareItemId] as NhsDDAttribute
+            } else {
+                NhsDDAttribute attribute = new NhsDDAttribute(semanticLink.target as DataElement, branchId)
+                attribute.dataDictionaryComponentService = this.dataDictionaryComponentService
+                return attribute
+            }
+        }.findAll{
+            !it.isRetired()
+        }.sort {it.name} as Set<NhsDDAttribute>
+    }
+
 
 }

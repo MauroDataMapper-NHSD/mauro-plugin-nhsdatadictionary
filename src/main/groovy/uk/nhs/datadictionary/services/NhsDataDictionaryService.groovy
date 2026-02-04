@@ -285,7 +285,7 @@ class NhsDataDictionaryService {
         }
         dataDictionary.attributes =
             attributeElements.collectEntries {ci ->
-                 [ci.label, new NhsDDAttribute().fromMauroItem(dataDictionary, mauroPersistenceService, ci)]
+                 [ci.label, new NhsDDAttribute(ci).fromMauroItem(dataDictionary, mauroPersistenceService, ci)]
             }
         dataDictionary.attributes.values().each { ddAttribute ->
             dataDictionary.attributesByCatalogueId[ddAttribute.getCatalogueItem().id] = ddAttribute
@@ -296,7 +296,7 @@ class NhsDataDictionaryService {
         Set<DataElement> elementElements = elementsModel.dataElements
 
         dataDictionary.elements = elementElements.collectEntries {ci ->
-                [ci.label, new NhsDDElement().fromMauroItem(dataDictionary, mauroPersistenceService, ci)]
+                [ci.label, new NhsDDElement(ci).fromMauroItem(dataDictionary, mauroPersistenceService, ci)]
             }
         dataDictionary.elements.values().each { ddElement ->
             dataDictionary.elementsByCatalogueId[ddElement.getCatalogueItem().id] = ddElement
@@ -310,7 +310,7 @@ class NhsDataDictionaryService {
         classClasses.addAll(classClasses.find {it.label == "Retired"}.dataClasses)
         classClasses.removeAll {it.label == "Retired"}
         dataDictionary.classes = classClasses.collectEntries {ci ->
-            [ci.label, new NhsDDClass().fromMauroItem(dataDictionary, mauroPersistenceService, ci)]
+            [ci.label, new NhsDDClass(ci).fromMauroItem(dataDictionary, mauroPersistenceService, ci)]
         }
         dataDictionary.classes.values().each { ddClass ->
             dataDictionary.classesByCatalogueId[ddClass.getCatalogueItem().id] = ddClass
@@ -353,7 +353,7 @@ class NhsDataDictionaryService {
         Map<List<String>, Set<DataModel>> dataSetModelMap = dataSetService.getAllDataSets([], dataSetsFolder)
         dataSetModelMap.each {path, dataModels ->
             dataModels.each { dataModel ->
-                NhsDDDataSet dataSet = new NhsDDDataSet().fromMauroItem(dataDictionary, mauroPersistenceService, dataModel)
+                NhsDDDataSet dataSet = new NhsDDDataSet(dataModel).fromMauroItem(dataDictionary, mauroPersistenceService, dataModel)
                 dataSet.path.addAll(path)
                 dataDictionary.dataSets[dataModel.label] = dataSet
                 List<String> folderPath = []
@@ -370,7 +370,7 @@ class NhsDataDictionaryService {
 
         dataSetFolders.each { path, folders ->
             folders.each {folder ->
-                NhsDDDataSetFolder dataSetFolder = new NhsDDDataSetFolder().fromMauroItem(dataDictionary, mauroPersistenceService, folder)
+                NhsDDDataSetFolder dataSetFolder = new NhsDDDataSetFolder(folder).fromMauroItem(dataDictionary, mauroPersistenceService, folder)
                 dataSetFolder.setPath(path)
                 if(dataDictionary.dataSetFolders[path]) {
                     dataDictionary.dataSetFolders[path].add(dataSetFolder)
@@ -398,21 +398,21 @@ class NhsDataDictionaryService {
     void addBusDefsToDictionary(Terminology busDefsTerminology, NhsDataDictionary dataDictionary) {
         dataDictionary.businessDefinitions =
             busDefsTerminology.terms.collectEntries {ci ->
-                [ci.label, new NhsDDBusinessDefinition().fromMauroItem(dataDictionary, mauroPersistenceService, ci)]
+                [ci.label, new NhsDDBusinessDefinition(ci).fromMauroItem(dataDictionary, mauroPersistenceService, ci)]
             }
     }
 
     void addSupDefsToDictionary(Terminology supDefsTerminology, NhsDataDictionary dataDictionary) {
         dataDictionary.supportingInformation =
             supDefsTerminology.terms.collectEntries {ci ->
-                [ci.label, new NhsDDSupportingInformation().fromMauroItem(dataDictionary, mauroPersistenceService, ci)]
+                [ci.label, new NhsDDSupportingInformation(ci).fromMauroItem(dataDictionary, mauroPersistenceService, ci)]
             }
         }
 
     void addDataSetConstraintsToDictionary(Terminology dataSetConstraintsTerminology, NhsDataDictionary dataDictionary) {
         dataDictionary.dataSetConstraints =
             dataSetConstraintsTerminology.terms.collectEntries {ci ->
-                [ci.label, new NhsDDDataSetConstraint().fromMauroItem(dataDictionary, mauroPersistenceService, ci)]
+                [ci.label, new NhsDDDataSetConstraint(ci).fromMauroItem(dataDictionary, mauroPersistenceService, ci)]
             }
     }
 

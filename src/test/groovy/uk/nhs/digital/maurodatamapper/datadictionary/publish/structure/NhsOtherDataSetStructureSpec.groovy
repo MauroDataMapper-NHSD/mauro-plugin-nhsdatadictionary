@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package datadictionary.publish.structure
+package uk.nhs.digital.maurodatamapper.datadictionary.publish.structure
 
 import io.micronaut.context.annotation.Property
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
@@ -39,6 +39,10 @@ import uk.nhs.datadictionary.publish.structure.datasets.DataSetSection
 import uk.nhs.datadictionary.services.NhsDataDictionaryService
 
 @MicronautTest(startApplication = true, environments = ['secured'])
+@Property(name = "datasources.default.driver-class-name",
+    value = "org.testcontainers.jdbc.ContainerDatabaseDriver")
+@Property(name = "datasources.default.url",
+    value = "jdbc:tc:postgresql:16-alpine:///db")
 class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<NhsDDDataSet> {
     @Inject
     NhsDataDictionaryService dataDictionaryService
@@ -114,7 +118,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
                 id: UUID.fromString("8df9772d-bdb5-45a7-b77a-334e83e012af"),
                 label: "REFERRER CODE"),
             branchId)
-        elementReferrerCodeRetired.otherProperties = ['isRetired': true.toString()]
+        elementReferrerCodeRetired.addOtherProperties(['isRetired': true.toString()])
     }
 
     @Override
@@ -152,7 +156,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
                 description: definition),
             branchId)
         activeItem.dataDictionary = dataDictionary
-        activeItem.otherProperties = ['aliasPlural': 'Diagnostics Data Set']
+        activeItem.addOtherProperties(['aliasPlural': 'Diagnostics Data Set'])
 
         addWhereUsed(activeItem, activeItem)     // Self reference
 
@@ -361,7 +365,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
                 description: this.activeItem.description),
             branchId)
         retiredItem.dataDictionary = dataDictionary
-        retiredItem.otherProperties = copyMap(this.activeItem.otherProperties)
+        retiredItem.addOtherProperties(activeItem.otherProperties)
         retiredItem.whereUsed = copyMap(this.activeItem.whereUsed)
     }
 
@@ -374,7 +378,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
                 description: this.activeItem.description),
             branchId)
         preparatoryItem.dataDictionary = dataDictionary
-        preparatoryItem.otherProperties = copyMap(this.activeItem.otherProperties)
+        preparatoryItem.addOtherProperties(activeItem.otherProperties)
         preparatoryItem.whereUsed = copyMap(this.activeItem.whereUsed)
     }
 
@@ -387,7 +391,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
                 description: 'The previous description'),
             branchId)
         previousItemDescriptionChange.dataDictionary = dataDictionary
-        previousItemDescriptionChange.otherProperties = copyMap(this.activeItem.otherProperties)
+        previousItemDescriptionChange.addOtherProperties(this.activeItem.otherProperties)
 
         // Don't test data set specifications, handled in other tests
         previousItemDescriptionChange.dataSetClasses = this.activeItem.dataSetClasses
@@ -399,10 +403,10 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
                 description: this.activeItem.description),
             branchId)
         previousItemAliasesChange.dataDictionary = dataDictionary
-        previousItemAliasesChange.otherProperties = [
+        previousItemAliasesChange.addOtherProperties([
                 'aliasPlural': "Baby's First Feeds",
                 'aliasAlsoKnownAs': 'Baby Food',
-            ]
+            ])
 
         // Don't test data set specifications, handled in other tests
         previousItemAliasesChange.dataSetClasses = this.activeItem.dataSetClasses
@@ -414,7 +418,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
                 description: previousItemDescriptionChange.description),
             branchId)
         previousItemAllChange.dataDictionary = dataDictionary
-        previousItemAllChange.otherProperties = copyMap(previousItemAliasesChange.otherProperties)
+        previousItemAllChange.addOtherProperties(previousItemAliasesChange.otherProperties)
 
         // Don't test data set specifications, handled in other tests
         previousItemAllChange.dataSetClasses = this.activeItem.dataSetClasses

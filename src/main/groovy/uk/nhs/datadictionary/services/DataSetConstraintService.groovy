@@ -26,6 +26,7 @@ import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
 import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.TermCacheableRepository
 import uk.nhs.datadictionary.NhsDDBusinessDefinition
+import uk.nhs.datadictionary.NhsDDDataSetComponent
 import uk.nhs.datadictionary.NhsDDDataSetConstraint
 import uk.nhs.datadictionary.NhsDataDictionary
 
@@ -46,8 +47,7 @@ class DataSetConstraintService extends DataDictionaryComponentService<Term, NhsD
         NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary(versionedFolderId)
 
         Term dataSetConstraintTerm = termCacheableRepository.findById(id)
-        NhsDDDataSetConstraint dataSetConstraint = new NhsDDDataSetConstraint().fromMauroItem(dataDictionary, mauroPersistenceService, dataSetConstraintTerm)
-        // dataSetConstraint.htmlDescription = convertLinksInDescription(versionedFolderId, dataSetConstraint.getDescription())
+        NhsDDDataSetConstraint dataSetConstraint = initialiseComponent(new NhsDDDataSetConstraint(), dataSetConstraintTerm, versionedFolderId)
         return dataSetConstraint
     }
 

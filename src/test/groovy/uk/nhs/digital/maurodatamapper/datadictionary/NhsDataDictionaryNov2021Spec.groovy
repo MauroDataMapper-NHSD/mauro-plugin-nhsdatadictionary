@@ -15,17 +15,15 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package nhsdd
+package uk.nhs.digital.maurodatamapper.datadictionary
 
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 import io.micronaut.context.ApplicationContext
-import io.micronaut.context.BeanContext
+import io.micronaut.context.annotation.Property
 import io.micronaut.http.MediaType
-import io.micronaut.http.client.ServiceHttpClientConfiguration
 import io.micronaut.http.client.multipart.MultipartBody
-import io.micronaut.inject.qualifiers.Qualifiers
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
 import org.maurodata.api.folder.FolderApi
@@ -87,6 +85,10 @@ import static org.junit.Assert.assertTrue
  */
 @Slf4j
 @MicronautTest(startApplication = true, environments = ['secured'])
+@Property(name = "datasources.default.driver-class-name",
+    value = "org.testcontainers.jdbc.ContainerDatabaseDriver")
+@Property(name = "datasources.default.url",
+    value = "jdbc:tc:postgresql:16-alpine:///db")
 //@Property(name = "datasources.default.driver-class-name",
 //    value = "org.testcontainers.jdbc.ContainerDatabaseDriver")
 //@Property(name = "datasources.default.url",
@@ -94,8 +96,8 @@ import static org.junit.Assert.assertTrue
 //@Ignore("Ingest of older version of Data Dictionary takes too long to test. Keep just in case but skip running these tests.")
 class NhsDataDictionaryNov2021Spec extends Specification {
 
-    @Inject
-    BeanContext beanContext;
+//    @Inject
+//    BeanContext beanContext
 
     @Inject
     ApplicationContext applicationContext
@@ -166,10 +168,10 @@ class NhsDataDictionaryNov2021Spec extends Specification {
     void 'I02 : test ingest and statistics'() {
 
         when:
-        System.out.println(folderApi.getClass())
-        ServiceHttpClientConfiguration cfg =
-            beanContext.getBean(ServiceHttpClientConfiguration.class, Qualifiers.byName("mauro"))
-        System.out.println("Mauro read-timeout = " + cfg.getReadTimeout())
+//        System.out.println(folderApi.getClass())
+//        ServiceHttpClientConfiguration cfg =
+//            beanContext.getBean(ServiceHttpClientConfiguration.class, Qualifiers.byName("mauro"))
+//        System.out.println("Mauro read-timeout = " + cfg.getReadTimeout())
 
         MultipartBody importRequest = MultipartBody.builder()
         //  .addPart('folderId', folderId.toString()) // Should now be optional

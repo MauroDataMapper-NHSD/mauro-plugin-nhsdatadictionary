@@ -27,6 +27,7 @@ import org.maurodata.domain.datamodel.DataType
 import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.DataClassCacheableRepository
 import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.DataElementCacheableRepository
 import uk.nhs.datadictionary.NhsDDAttribute
+import uk.nhs.datadictionary.NhsDDBusinessDefinition
 import uk.nhs.datadictionary.NhsDDClass
 import uk.nhs.datadictionary.NhsDDClassLink
 import uk.nhs.datadictionary.NhsDDClassRelationship
@@ -55,8 +56,7 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
     @Override
     NhsDDClass show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
         DataClass dataClass = dataClassCacheableRepository.findById(id)
-        NhsDDClass nhsClass = new NhsDDClass().fromMauroItem(null, mauroPersistenceService, dataClass) as NhsDDClass
-        //nhsClass.htmlDescription = convertLinksInDescription(versionedFolderId, nhsClass.getDescription())
+        NhsDDClass nhsClass = initialiseComponent(new NhsDDClass(), dataClass, versionedFolderId)
 
         List<NhsDDAttribute> attributes = getAttributesForShow(nhsClass, null)
         // Assign the attribute by key and non-key types. The NhsDDClass.getAttributes() method will combine them

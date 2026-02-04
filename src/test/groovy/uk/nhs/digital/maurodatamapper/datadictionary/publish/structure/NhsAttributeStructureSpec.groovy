@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package datadictionary.publish.structure
+package uk.nhs.digital.maurodatamapper.datadictionary.publish.structure
 
 import io.micronaut.context.annotation.Property
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
@@ -38,6 +38,10 @@ import uk.nhs.datadictionary.publish.structure.WhereUsedSection
 import uk.nhs.datadictionary.services.NhsDataDictionaryService
 
 @MicronautTest(startApplication = true, environments = ['secured'])
+@Property(name = "datasources.default.driver-class-name",
+    value = "org.testcontainers.jdbc.ContainerDatabaseDriver")
+@Property(name = "datasources.default.url",
+    value = "jdbc:tc:postgresql:16-alpine:///db")
 class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<NhsDDAttribute> {
 
     @Inject
@@ -81,7 +85,7 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
             new DataElement(id: UUID.fromString("901c2d3d-0111-41d1-acc9-5b501c1dc397"), label: 'ACTIVITY DATE', description: definition),
             branchId)
         activeItem.dataDictionary = dataDictionary
-        activeItem.otherProperties = ['aliasPlural': 'ACTIVITY DATES']
+        activeItem.addOtherProperties(['aliasPlural': 'ACTIVITY DATES'])
 
         NhsDDElement relatedActivityDateElement = new NhsDDElement(
             new DataElement(label: 'ACTIVITY DATE (CRITICAL CARE)', id: UUID.fromString("b5170409-97aa-464e-9aad-657c8b2e00f8")),
@@ -118,7 +122,7 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
             new DataElement(id: UUID.fromString('fb096f90-3273-4c66-8023-c1e32ac5b795'), label: activeItem.name, description: activeItem.description),
             branchId)
         retiredItem.dataDictionary = dataDictionary
-        retiredItem.otherProperties = copyMap(activeItem.otherProperties)
+        retiredItem.addOtherProperties(activeItem.otherProperties)
         retiredItem.whereUsed = copyMap(activeItem.whereUsed)
     }
 
@@ -128,7 +132,7 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
             new DataElement(id: UUID.fromString('f5276a0c-5458-4fa5-9bd3-ff786aef932f'), label: activeItem.name, description: activeItem.description ),
             branchId)
         preparatoryItem.dataDictionary = dataDictionary
-        preparatoryItem.otherProperties = copyMap(activeItem.otherProperties)
+        preparatoryItem.addOtherProperties(activeItem.otherProperties)
         preparatoryItem.whereUsed = copyMap(activeItem.whereUsed)
     }
 
@@ -138,22 +142,22 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
             new DataElement(id: UUID.fromString('22710e00-7c41-4335-97da-2cafe9728804'), label: activeItem.name, description: "The previous description"),
             branchId)
         previousItemDescriptionChange.dataDictionary = dataDictionary
-        previousItemDescriptionChange.otherProperties = copyMap(this.activeItem.otherProperties)
+        previousItemDescriptionChange.addOtherProperties(activeItem.otherProperties)
 
         previousItemAliasesChange = new NhsDDAttribute(
             new DataElement(id: UUID.fromString('8049682f-761f-4eab-b533-c00781615207'), label: activeItem.name, description: activeItem.description),
             branchId)
         previousItemAliasesChange.dataDictionary = dataDictionary
-        previousItemAliasesChange.otherProperties = [
+        previousItemAliasesChange.addOtherProperties([
                 'aliasPlural': "ACTIVITIES DATE",
                 'aliasAlsoKnownAs': 'ACTIVITY DATE STAMP',
-            ]
+            ])
 
         previousItemCodesChange = new NhsDDAttribute(
             new DataElement(id: UUID.fromString('c95f7856-3d6c-4a23-b4b5-c4e5615ea2fc'), label: activeItem.name, description: 'The current description'),
             branchId)
         previousItemCodesChange.dataDictionary = dataDictionary
-        previousItemCodesChange.otherProperties = copyMap(activeItem.otherProperties)
+        previousItemCodesChange.addOtherProperties(activeItem.otherProperties)
 
         previousItemCodesChange.codes.add(new NhsDDCode(code: "S", definition: "Standard", webOrder: 1))
         previousItemCodesChange.codes.add(new NhsDDCode(code: "X", definition: "Undefined", webOrder: 0))
@@ -163,7 +167,7 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
             new DataElement(id: UUID.fromString('76a9cac0-19d2-4880-87e7-c6061c4edadd'), label: activeItem.name, description: 'The current description'),
             branchId)
         previousItemLinkedElementsChange.dataDictionary = dataDictionary
-        previousItemLinkedElementsChange.otherProperties = copyMap(activeItem.otherProperties)
+        previousItemLinkedElementsChange.addOtherProperties(activeItem.otherProperties)
 
         NhsDDElement instantiatedByElement1 = new NhsDDElement(
             new DataElement(label: 'ATTENDANCE DATE', id: UUID.fromString('faff11f5-cbfb-4faa-84d8-6d3b1eccd03b')),
@@ -179,7 +183,7 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
             new DataElement(id: UUID.fromString('eeb8929f-819a-4cfe-9209-1e9867fa2b68'), label: activeItem.name, description: previousItemDescriptionChange.description),
             branchId)
         previousItemAllChange.dataDictionary = dataDictionary
-        previousItemAllChange.otherProperties = copyMap(previousItemAliasesChange.otherProperties)
+        previousItemAllChange.addOtherProperties(previousItemAliasesChange.otherProperties)
     }
 
     void "should have the correct active item structure"() {

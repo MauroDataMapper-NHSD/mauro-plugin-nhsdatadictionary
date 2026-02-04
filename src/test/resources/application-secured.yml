@@ -36,4 +36,14 @@ logging:
 
 datasources:
     default:
+        url: jdbc:postgresql://localhost:5432/sandbox?reWriteBatchedInserts=true
+        username: sandbox
+        password: sandbox
+        dialect: POSTGRES
+        db-type: postgres
+        driver-class-name: org.postgresql.Driver
         log-sql: true   # if your Micronaut version supports this
+flyway:
+    datasources:
+        default:
+            enabled: true

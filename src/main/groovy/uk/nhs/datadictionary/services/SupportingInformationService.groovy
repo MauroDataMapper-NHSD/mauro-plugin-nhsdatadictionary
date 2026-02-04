@@ -24,6 +24,7 @@ import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
 import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.TermCacheableRepository
+import uk.nhs.datadictionary.NhsDDBusinessDefinition
 import uk.nhs.datadictionary.NhsDDSupportingInformation
 import uk.nhs.datadictionary.NhsDataDictionary
 
@@ -41,11 +42,8 @@ class SupportingInformationService extends DataDictionaryComponentService<Term, 
 
     @Override
     NhsDDSupportingInformation show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
-        NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary(versionedFolderId)
-
         Term supportingInformationTerm = termCacheableRepository.findById(id)
-        NhsDDSupportingInformation supportingInformation = new NhsDDSupportingInformation().fromMauroItem(dataDictionary, mauroPersistenceService, supportingInformationTerm)
-        // supportingInformation.htmlDescription = convertLinksInDescription(versionedFolderId, supportingInformation.getDescription())
+        NhsDDSupportingInformation supportingInformation = initialiseComponent(new NhsDDSupportingInformation(), supportingInformationTerm, versionedFolderId)
         return supportingInformation
     }
 

@@ -15,32 +15,20 @@
  *
  * SPDX-License-Identifier: Apache-2.0
  */
-package org.maurodata.plugins.nhsdd
+package uk.nhs.digital.maurodatamapper.datadictionary.publish.structure
 
-import spock.lang.Ignore
-import spock.lang.Specification
+import uk.nhs.datadictionary.publish.PathResolver
 
 
-// TODO: Re-implement this test if we turn on the interceptor again
-@Ignore
-class NhsDataDictionaryInterceptorSpec extends Specification /* implements InterceptorUnitTest<NhsDataDictionaryInterceptor> */ {
+class MockCatalogueItemPathResolver implements PathResolver<UUID> {
+    final Map<String, UUID> lookup = [:]
 
-    def setup() {
+    void add(String path, UUID value) {
+        lookup[path] = value
     }
 
-    def cleanup() {
-
+    @Override
+    UUID get(String path) {
+        lookup[path]
     }
-/*
-    void "Test nhsDataDictionary interceptor matching"() {
-        when:"A request matches the interceptor"
-        withRequest(controller:"nhsDataDictionary")
-
-        then:"The interceptor does match"
-        interceptor.doesMatch()
-    }
-
- */
-
-
 }
