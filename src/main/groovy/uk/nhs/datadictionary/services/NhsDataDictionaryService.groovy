@@ -189,7 +189,7 @@ class NhsDataDictionaryService {
 
     NhsDataDictionary buildDataDictionary(UUID versionedFolderId) {
         NhsDataDictionary dataDictionary = newDataDictionary(versionedFolderId)
-        Folder contentsFolder = (Folder) contentsService.loadWithContent(folderRepository.findById(versionedFolderId))
+        Folder contentsFolder = (Folder) folderRepository.loadWithContent(versionedFolderId)
         dataDictionary.containingVersionedFolder = contentsFolder
 
         buildWorkItemDetails(dataDictionary.containingVersionedFolder, dataDictionary)
@@ -350,7 +350,7 @@ class NhsDataDictionaryService {
 
 
     void addDataSetsToDictionary(Folder dataSetsFolder, NhsDataDictionary dataDictionary) {
-        Map<List<String>, Set<DataModel>> dataSetModelMap = dataSetService.getAllDataSets([], dataSetsFolder)
+        Map<List<String>, Set<DataModel>> dataSetModelMap = dataSetService.getAllDataSets([], dataSetsFolder, true)
         dataSetModelMap.each {path, dataModels ->
             dataModels.each { dataModel ->
                 NhsDDDataSet dataSet = new NhsDDDataSet(dataModel).fromMauroItem(dataDictionary, mauroPersistenceService, dataModel)
