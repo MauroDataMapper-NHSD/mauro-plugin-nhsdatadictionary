@@ -19,6 +19,7 @@ package uk.nhs.digital.maurodatamapper.datadictionary.integritychecks
 
 import io.micronaut.context.annotation.Property
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
+import jakarta.inject.Singleton
 import org.maurodata.domain.datamodel.DataElement
 import spock.lang.Specification
 import uk.nhs.datadictionary.NhsDDAttribute
@@ -27,7 +28,10 @@ import uk.nhs.datadictionary.integritychecks.AllItemsAreWithinValidDateRange
 import java.time.LocalDate
 
 @MicronautTest(startApplication = true, environments = ['secured'])
-@Property(name = "flyway.enabled", value = "false")
+@Property(name = "datasources.default.driver-class-name",
+    value = "org.testcontainers.jdbc.ContainerDatabaseDriver")
+@Property(name = "datasources.default.url",
+    value = "jdbc:tc:postgresql:16-alpine:///db")
 class AllItemsAreWithinValidDateRangeSpec extends Specification {
 
     LocalDate testDateNow = LocalDate.of(2024, 12, 31)

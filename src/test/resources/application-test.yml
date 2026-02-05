@@ -1,0 +1,15 @@
+micronaut:
+    http:
+        services:
+            mauro:
+                url: 'http://localhost:2345'
+        #       apikey: 1234
+        client:
+            read-timeout: 10m      # Read timeout
+            connect-timeout: 100s
+    security:
+        enabled: false
+datasources:
+    default:
+        driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+        url: jdbc:tc:postgresql:16-alpine:///db

@@ -5,8 +5,10 @@ import io.micronaut.context.ApplicationContext
 import io.micronaut.context.annotation.Property
 import io.micronaut.http.MediaType
 import io.micronaut.http.client.multipart.MultipartBody
+import io.micronaut.test.annotation.Sql
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
+import jakarta.inject.Singleton
 import org.maurodata.api.folder.FolderApi
 import org.maurodata.domain.folder.Folder
 import org.maurodata.plugin.importer.FileParameter
@@ -28,12 +30,6 @@ import uk.nhs.datadictionary.utils.StereotypedCatalogueItem
 class PreviewSpec extends Specification {
 
     @Inject
-    ApplicationContext applicationContext
-
-    @Inject
-    NhsDataDictionaryService nhsDataDictionaryService
-
-    @Inject
     @Shared
     NhsDataDictionaryImporter nhsDataDictionaryImporter
 
@@ -51,7 +47,10 @@ class PreviewSpec extends Specification {
 
     @Shared UUID branchId
 
+    @Inject ApplicationContext ctx
+
     void setup() {
+        println "Active envs = ${ctx.environment.activeNames}"
         System.err.println(Runtime.getRuntime().maxMemory())
         this.class.getClassLoader().getResourceAsStream("november2021.xml").withStream {stream ->
             xmlBytes = stream.readAllBytes()

@@ -26,6 +26,7 @@ import io.micronaut.http.MediaType
 import io.micronaut.http.client.multipart.MultipartBody
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
+import jakarta.inject.Singleton
 import org.maurodata.api.folder.FolderApi
 import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.datamodel.DataModel
@@ -58,7 +59,7 @@ import static org.junit.Assert.assertNotNull
 import static org.junit.Assert.assertTrue
 
 /**
- * To run this against a PG db you need to alter the application-secured.yml file.
+ * To run this against a PG db you need to alter the old-application-secured.yml file.
  * The block at the end inside environments needs to be altered to
  * <pre>
  *     test:

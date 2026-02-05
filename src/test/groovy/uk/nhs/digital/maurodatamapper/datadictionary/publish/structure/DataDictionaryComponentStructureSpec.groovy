@@ -17,8 +17,6 @@
  */
 package uk.nhs.digital.maurodatamapper.datadictionary.publish.structure
 
-import io.micronaut.context.annotation.Property
-import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
 import spock.lang.Specification
 import uk.nhs.datadictionary.NhsDDChangeLog

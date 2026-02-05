@@ -20,6 +20,7 @@ package uk.nhs.digital.maurodatamapper.datadictionary.publish.structure
 import io.micronaut.context.annotation.Property
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
+import jakarta.inject.Singleton
 import org.maurodata.dita.elements.langref.base.Topic
 import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.datamodel.DataElement

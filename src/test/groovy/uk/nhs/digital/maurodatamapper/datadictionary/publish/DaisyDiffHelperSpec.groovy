@@ -19,13 +19,17 @@ package uk.nhs.digital.maurodatamapper.datadictionary.publish
 
 import io.micronaut.context.annotation.Property
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
+import jakarta.inject.Singleton
 import org.eclipse.compare.rangedifferencer.RangeDifference
 import spock.lang.Specification
 import uk.nhs.datadictionary.publish.DaisyDiffHelper
 
 
 @MicronautTest(startApplication = true, environments = ['secured'])
-@Property(name = "flyway.enabled", value = "false")
+@Property(name = "datasources.default.driver-class-name",
+    value = "org.testcontainers.jdbc.ContainerDatabaseDriver")
+@Property(name = "datasources.default.url",
+    value = "jdbc:tc:postgresql:16-alpine:///db")
 class DaisyDiffHelperSpec extends Specification {
 
 
