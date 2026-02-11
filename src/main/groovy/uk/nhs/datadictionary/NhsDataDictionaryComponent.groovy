@@ -668,7 +668,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
 
 
     NhsDataDictionaryComponent<T> fromMauroItem(NhsDataDictionary dataDictionary, MauroPersistenceService mauroPersistenceService, T catalogueItem) {
-
+        this.dataDictionary = dataDictionary
         // This is not obvious, but these parent/model IDs are required in the GSON views for the integrity checks - they are used for the direct
         // URLs to items in the Mauro UI
         if(catalogueItem instanceof DataClass) {
@@ -722,9 +722,12 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
 
     @JsonIgnore
     List<Edit> getMergeEditsForChangeLog() {
-        catalogueItem.edits.findAll {
-            it.title = EditType.MERGE
+        if(catalogueItem) {
+            return catalogueItem.edits.findAll {
+                it.title = EditType.MERGE
+            }
         }
+        return []
         // Assume already loaded in from the database
         //editService.findAllByResourceAndTitle(component.catalogueItem.domainType, component.catalogueItem.id, EditTitle.MERGE)
     }

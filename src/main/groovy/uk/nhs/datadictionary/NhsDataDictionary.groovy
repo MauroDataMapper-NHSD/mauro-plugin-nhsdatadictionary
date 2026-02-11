@@ -396,9 +396,9 @@ class NhsDataDictionary {
             dataSetFolder.catalogueItem = new Folder(label: path.last())
             dataSetFolder.folderPath.addAll(path)
             if(path.contains("Retired")) {
-                dataSetFolder.otherProperties["isRetired"] = "true"
+                dataSetFolder.addOtherProperties(["isRetired": "true"])
             } else {
-                dataSetFolder.otherProperties["isRetired"] = "false"
+                dataSetFolder.addOtherProperties(["isRetired": "false"])
             }
 
             String introductionPageName = introductionPageMap[dataSetFolder.name]

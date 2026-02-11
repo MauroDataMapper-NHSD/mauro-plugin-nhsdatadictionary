@@ -23,6 +23,7 @@ import groovy.util.logging.Slf4j
 import io.micronaut.core.annotation.Nullable
 import io.micronaut.http.HttpHeaders
 import io.micronaut.http.HttpResponse
+import io.micronaut.http.HttpStatus
 import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
@@ -31,8 +32,15 @@ import io.micronaut.http.server.types.files.StreamedFile
 import io.micronaut.security.annotation.Secured
 import io.micronaut.security.rules.SecurityRule
 import jakarta.inject.Inject
+import org.maurodata.ErrorHandler
 import org.maurodata.domain.folder.Folder
+import org.maurodata.domain.model.Model
+import org.maurodata.domain.security.Role
+import org.maurodata.persistence.folder.FolderRepository
+import org.maurodata.plugin.exporter.ModelExporterPlugin
 import org.maurodata.security.AccessControlService
+import org.maurodata.service.plugin.PluginService
+import org.maurodata.util.exporter.ExporterUtils
 import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.NhsDDBusinessDefinition
 import uk.nhs.datadictionary.NhsDDClass
@@ -42,6 +50,7 @@ import uk.nhs.datadictionary.NhsDDDataSetFolder
 import uk.nhs.datadictionary.NhsDDElement
 import uk.nhs.datadictionary.NhsDDSupportingInformation
 import uk.nhs.datadictionary.NhsDataDictionary
+import uk.nhs.datadictionary.NhsDataDictionaryWebsiteExporter
 import uk.nhs.datadictionary.api.NhsDataDictionaryApi
 import uk.nhs.datadictionary.publish.changePaper.ChangePaperPreview
 import uk.nhs.datadictionary.services.AttributeService
@@ -56,6 +65,7 @@ import uk.nhs.datadictionary.services.SupportingInformationService
 import uk.nhs.datadictionary.utils.StereotypedCatalogueItem
 
 import java.sql.DriverManager
+import java.text.SimpleDateFormat
 
 @CompileStatic
 @Controller()
@@ -66,6 +76,10 @@ class NhsDataDictionaryController implements NhsDataDictionaryApi {
     @Inject ObjectMapper objectMapper
 
     @Inject NhsDataDictionaryService nhsDataDictionaryService
+
+    @Inject NhsDataDictionaryWebsiteExporter nhsDataDictionaryWebsiteExporter
+
+    @Inject FolderRepository folderRepository
 
     @Inject ElementService elementService
     @Inject AttributeService attributeService
@@ -82,11 +96,14 @@ class NhsDataDictionaryController implements NhsDataDictionaryApi {
 
     @Get('/api/nhsdd/branches')
     List<Folder> branches() {
-        nhsDataDictionaryService.branches()
+        nhsDataDictionaryService.branches().findAll {folder ->
+            accessControlService.canDoRole(Role.READER, folder)
+        }
     }
 
     @Get('/api/nhsdd/{dictionaryId}/publish/changePaper')
     HttpResponse<StreamedFile> generateChangePaper(UUID dictionaryId, @Nullable @QueryValue Boolean includeDataSets) {
+        checkAccessRights(dictionaryId)
         File f = nhsDataDictionaryService.generateChangePaper(dictionaryId, includeDataSets)
         return HttpResponse.ok(new StreamedFile(new ByteArrayInputStream(f.readBytes()), MediaType.ZIP_TYPE))
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=\"${f.name}\"")
@@ -97,11 +114,13 @@ class NhsDataDictionaryController implements NhsDataDictionaryApi {
 
     @Get('/api/nhsdd/{dictionaryId}/statistics')
     Map statistics(UUID dictionaryId) {
+        checkAccessRights(dictionaryId)
         nhsDataDictionaryService.buildDataDictionary(dictionaryId).statistics()
     }
 
     @Get('/api/nhsdd/{dictionaryId}/integrityChecks')
     List<LinkedHashMap<String, Object>> integrityChecks(UUID dictionaryId) {
+        checkAccessRights(dictionaryId)
         nhsDataDictionaryService.integrityChecks(dictionaryId).collect {integrityCheck, errors ->
             [
                 checkName: integrityCheck.name,
@@ -121,6 +140,7 @@ class NhsDataDictionaryController implements NhsDataDictionaryApi {
 
     @Get('api/nhsdd/{dictionaryId}/preview/changePaper')
     ChangePaperPreview previewChangePaper(UUID dictionaryId, @Nullable @QueryValue Boolean includeDataSets) {
+        checkAccessRights(dictionaryId)
         nhsDataDictionaryService.previewChangePaper(dictionaryId, includeDataSets)
 
     }
@@ -128,16 +148,19 @@ class NhsDataDictionaryController implements NhsDataDictionaryApi {
 
     @Get('api/nhsdd/{dictionaryId}/preview/elements')
     List<StereotypedCatalogueItem> indexElements(UUID dictionaryId, @Nullable @QueryValue Boolean includeDeleted) {
+        checkAccessRights(dictionaryId)
         elementService.index(dictionaryId, nhsDataDictionaryService, includeDeleted)
     }
 
     @Get('api/nhsdd/{dictionaryId}/preview/elements/{elementId}')
     NhsDDElement showElement(UUID dictionaryId, UUID elementId) {
+        checkAccessRights(dictionaryId)
         elementService.show(dictionaryId, elementId, nhsDataDictionaryService)
     }
 
     @Get('api/nhsdd/{dictionaryId}/preview/elements/{elementId}/whereUsed')
     List<Map<String, Object>> elementWhereUsed(UUID dictionaryId, UUID elementId) {
+        checkAccessRights(dictionaryId)
         NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(dictionaryId)
         elementService.getWhereUsed(dataDictionary, elementId)
     }
@@ -145,16 +168,19 @@ class NhsDataDictionaryController implements NhsDataDictionaryApi {
 
     @Get('api/nhsdd/{dictionaryId}/preview/attributes')
     List<StereotypedCatalogueItem> indexAttributes(UUID dictionaryId, @Nullable @QueryValue Boolean includeDeleted) {
+        checkAccessRights(dictionaryId)
         attributeService.index(dictionaryId, nhsDataDictionaryService, includeDeleted)
     }
 
     @Get('api/nhsdd/{dictionaryId}/preview/attributes/{attributeId}')
     NhsDDAttribute showAttribute(UUID dictionaryId, UUID attributeId) {
+        checkAccessRights(dictionaryId)
         attributeService.show(dictionaryId, attributeId, nhsDataDictionaryService)
     }
 
     @Get('api/nhsdd/{dictionaryId}/preview/attributes/{attributeId}/whereUsed')
     List<Map<String, Object>> attributeWhereUsed(UUID dictionaryId, UUID attributeId) {
+        checkAccessRights(dictionaryId)
         NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(dictionaryId)
         attributeService.getWhereUsed(dataDictionary, attributeId)
     }
@@ -162,16 +188,19 @@ class NhsDataDictionaryController implements NhsDataDictionaryApi {
 
     @Get('api/nhsdd/{dictionaryId}/preview/classes')
     List<StereotypedCatalogueItem> indexClasses(UUID dictionaryId, @Nullable @QueryValue Boolean includeDeleted) {
+        checkAccessRights(dictionaryId)
         classService.index(dictionaryId, nhsDataDictionaryService, includeDeleted)
     }
 
     @Get('api/nhsdd/{dictionaryId}/preview/classes/{classId}')
     NhsDDClass showClass(UUID dictionaryId, UUID classId) {
+        checkAccessRights(dictionaryId)
         classService.show(dictionaryId, classId, nhsDataDictionaryService)
     }
 
     @Get('api/nhsdd/{dictionaryId}/preview/classes/{classId}/whereUsed')
     List<Map<String, Object>> classWhereUsed(UUID dictionaryId, UUID classId) {
+        checkAccessRights(dictionaryId)
         NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(dictionaryId)
         classService.getWhereUsed(dataDictionary, classId)
     }
@@ -179,16 +208,19 @@ class NhsDataDictionaryController implements NhsDataDictionaryApi {
 
     @Get('api/nhsdd/{dictionaryId}/preview/businessDefinitions')
     List<StereotypedCatalogueItem> indexBusinessDefinitions(UUID dictionaryId, @Nullable @QueryValue Boolean includeDeleted) {
+        checkAccessRights(dictionaryId)
         businessDefinitionService.index(dictionaryId, nhsDataDictionaryService, includeDeleted)
     }
 
     @Get('api/nhsdd/{dictionaryId}/preview/businessDefinitions/{businessDefinitionId}')
     NhsDDBusinessDefinition showBusinessDefinition(UUID dictionaryId, UUID businessDefinitionId) {
+        checkAccessRights(dictionaryId)
         businessDefinitionService.show(dictionaryId, businessDefinitionId, nhsDataDictionaryService)
     }
 
     @Get('api/nhsdd/{dictionaryId}/preview/businessDefinitions/{businessDefinitionId}/whereUsed')
     List<Map<String, Object>> businessDefinitionWhereUsed(UUID dictionaryId, UUID businessDefinitionId) {
+        checkAccessRights(dictionaryId)
         NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(dictionaryId)
         businessDefinitionService.getWhereUsed(dataDictionary, businessDefinitionId)
     }
@@ -196,16 +228,19 @@ class NhsDataDictionaryController implements NhsDataDictionaryApi {
 
     @Get('api/nhsdd/{dictionaryId}/preview/supportingInformation')
     List<StereotypedCatalogueItem> indexSupportingInformation(UUID dictionaryId, @Nullable @QueryValue Boolean includeDeleted) {
+        checkAccessRights(dictionaryId)
         supportingInformationService.index(dictionaryId, nhsDataDictionaryService, includeDeleted)
     }
 
     @Get('api/nhsdd/{dictionaryId}/preview/supportingInformation/{supportingInformationId}')
     NhsDDSupportingInformation showSupportingInformation(UUID dictionaryId, UUID supportingInformationId) {
+        checkAccessRights(dictionaryId)
         supportingInformationService.show(dictionaryId, supportingInformationId, nhsDataDictionaryService)
     }
 
     @Get('api/nhsdd/{dictionaryId}/preview/supportingInformation/{supportingInformationId}/whereUsed')
     List<Map<String, Object>> supportingInformationWhereUsed(UUID dictionaryId, UUID supportingInformationId) {
+        checkAccessRights(dictionaryId)
         NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(dictionaryId)
         supportingInformationService.getWhereUsed(dataDictionary, supportingInformationId)
     }
@@ -213,48 +248,57 @@ class NhsDataDictionaryController implements NhsDataDictionaryApi {
 
     @Get('api/nhsdd/{dictionaryId}/preview/dataSetConstraints')
     List<StereotypedCatalogueItem> indexDataSetConstraints(UUID dictionaryId, @Nullable @QueryValue Boolean includeDeleted) {
+        checkAccessRights(dictionaryId)
         dataSetConstraintService.index(dictionaryId, nhsDataDictionaryService, includeDeleted)
     }
 
     @Get('api/nhsdd/{dictionaryId}/preview/dataSetConstraints/{dataSetConstraintId}')
     NhsDDDataSetConstraint showDataSetConstraint(UUID dictionaryId, UUID dataSetConstraintId) {
+        checkAccessRights(dictionaryId)
         dataSetConstraintService.show(dictionaryId, dataSetConstraintId, nhsDataDictionaryService)
     }
 
     @Get('api/nhsdd/{dictionaryId}/preview/dataSetConstraints/{dataSetConstraintId}/whereUsed')
     List<Map<String, Object>> dataSetConstraintWhereUsed(UUID dictionaryId, UUID dataSetConstraintId) {
+        checkAccessRights(dictionaryId)
         NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(dictionaryId)
         dataSetConstraintService.getWhereUsed(dataDictionary, dataSetConstraintId)
     }
 
     @Get('api/nhsdd/{dictionaryId}/preview/dataSets')
     List<StereotypedCatalogueItem> indexDataSets(UUID dictionaryId, @Nullable @QueryValue Boolean includeDeleted) {
+        checkAccessRights(dictionaryId)
         dataSetService.index(dictionaryId, nhsDataDictionaryService, includeDeleted)
     }
 
     @Get('api/nhsdd/{dictionaryId}/preview/dataSets/{dataSetId}')
     NhsDDDataSet showDataSet(UUID dictionaryId, UUID dataSetId) {
+        checkAccessRights(dictionaryId)
         dataSetService.show(dictionaryId, dataSetId, nhsDataDictionaryService)
     }
 
     @Get('api/nhsdd/{dictionaryId}/preview/dataSets/{dataSetId}/whereUsed')
     List<Map<String, Object>> dataSetWhereUsed(UUID dictionaryId, UUID dataSetId) {
+        checkAccessRights(dictionaryId)
         NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(dictionaryId)
         dataSetService.getWhereUsed(dataDictionary, dataSetId)
     }
 
     @Get('api/nhsdd/{dictionaryId}/preview/dataSetFolders/root')
     NhsDDDataSetFolder indexDataSetFolders(UUID dictionaryId) {
+        checkAccessRights(dictionaryId)
         dataSetFolderService.show(dictionaryId, null, nhsDataDictionaryService)
     }
 
     @Get('api/nhsdd/{dictionaryId}/preview/dataSetFolders/{dataSetFolderId}')
     NhsDDDataSetFolder indexDataSetFolders(UUID dictionaryId, UUID dataSetFolderId) {
+        checkAccessRights(dictionaryId)
         dataSetFolderService.show(dictionaryId, dataSetFolderId, nhsDataDictionaryService)
     }
 
     @Get('api/nhsdd/{dictionaryId}/preview/dataSetFolders/{dataSetFolderId}/whereUsed')
     List<Map<String, Object>> dataSetFolderWhereUsed(UUID dictionaryId, UUID dataSetFolderId) {
+        checkAccessRights(dictionaryId)
         NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(dictionaryId)
         dataSetFolderService.getWhereUsed(dataDictionary, dataSetFolderId)
     }
@@ -262,6 +306,7 @@ class NhsDataDictionaryController implements NhsDataDictionaryApi {
 
     @Get('api/nhsdd/{dictionaryId}/preview/allItemsIndex')
     List<StereotypedCatalogueItem> allItemsIndex(UUID dictionaryId) {
+        checkAccessRights(dictionaryId)
         nhsDataDictionaryService.allItemsIndex(dictionaryId)
     }
 
@@ -286,18 +331,46 @@ class NhsDataDictionaryController implements NhsDataDictionaryApi {
         ]
     }
 
-        /*
-            @Transactional
-            def newVersion() {
-                log.debug("Creating a new version...")
-                CatalogueUser currentUser = getCurrentUser()
-                long startTime = System.currentTimeMillis()
-                UUID versionedFolderId = UUID.fromString(params.versionedFolderId)
-                UUID newVersionedFolderId = nhsDataDictionaryService.newVersion(currentUser, versionedFolderId)
-                log.debug(Utils.timeTaken(startTime))
-                respond([newVersionedFolderId.toString()])
-            }
-        */
+    @Get('/api/nhsdd/{dictionaryId}/publish/website')
+    HttpResponse<StreamedFile> generateWebsite(UUID dictionaryId) {
+        checkAccessRights(dictionaryId)
+        Folder folder = folderRepository.loadWithContent(dictionaryId)
+        folder.setAssociations()
+        byte[] byteResponse = nhsDataDictionaryWebsiteExporter.exportModel(folder)
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy")
+        String date = simpleDateFormat.format(new Date())
+
+        String branchName = folder.branchName?:folder.modelVersionTag?:folder.modelVersion
+
+        String filename = "website-${branchName}-${date}.zip"
+
+        return HttpResponse.ok(new StreamedFile(new ByteArrayInputStream(byteResponse), MediaType.ZIP_TYPE))
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=\"${filename}\"")
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_ZIP)
+            .header("Access-Control-Expose-Headers", "Content-Disposition, Content-Length")
+    }
+
+    void checkAccessRights(UUID branchId) {
+        Folder folder = folderRepository.findById(branchId)
+        ErrorHandler.handleErrorOnNullObject(HttpStatus.NOT_FOUND, folder, "Item with id ${branchId} not found")
+        accessControlService.checkRole(Role.READER, folder)
+    }
+
+
+
+    /*
+        @Transactional
+        def newVersion() {
+            log.debug("Creating a new version...")
+            CatalogueUser currentUser = getCurrentUser()
+            long startTime = System.currentTimeMillis()
+            UUID versionedFolderId = UUID.fromString(params.versionedFolderId)
+            UUID newVersionedFolderId = nhsDataDictionaryService.newVersion(currentUser, versionedFolderId)
+            log.debug(Utils.timeTaken(startTime))
+            respond([newVersionedFolderId.toString()])
+        }
+    */
 /*
     def previewChangePaper() {
         UUID versionedFolderId = UUID.fromString(params.versionedFolderId)
@@ -319,15 +392,6 @@ class NhsDataDictionaryController implements NhsDataDictionaryApi {
 
     // Publication endpoints - generate documents
 
-    def generateWebsite() {
-        UUID versionedFolderId = UUID.fromString(params.versionedFolderId)
-
-        DataDictionaryImportParameters parameters = new DataDictionaryImportParameters()
-        //.fromParameters(params)
-        File file = nhsDataDictionaryService.generateWebsite(versionedFolderId, publishOptions)
-        header 'Access-Control-Expose-Headers', 'Content-Disposition'
-        render(file: file, fileName: file.name, contentType: "application/zip")
-    }
 
 
     def generateChangePaper() {

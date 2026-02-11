@@ -168,9 +168,12 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
         if (path[0] == "dm:${NhsDataDictionary.ELEMENTS_MODEL_NAME}") {
             return "element"
         }
-
-        if (path.length == 1 && path[0].startsWith("dm:")) {
-            return "dataSet"
+        if (path[0].startsWith("fo:")) {
+            if(path.last().startsWith("fo:")) {
+                return "dataSetFolder"
+            } else if (path.last().startsWith("dm:")) {
+                return "dataSet"
+            }
         }
         return null
     }

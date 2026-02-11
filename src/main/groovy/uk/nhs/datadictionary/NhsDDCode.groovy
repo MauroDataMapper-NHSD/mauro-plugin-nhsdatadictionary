@@ -19,6 +19,7 @@ package uk.nhs.datadictionary
 
 import org.maurodata.dita.elements.langref.base.Strow
 import org.maurodata.dita.elements.langref.base.Topic
+import org.maurodata.dita.helpers.HtmlHelper
 import org.maurodata.dita.meta.SpaceSeparatedStringList
 import org.maurodata.domain.terminology.Term
 import uk.nhs.datadictionary.publish.changePaper.ChangeAware

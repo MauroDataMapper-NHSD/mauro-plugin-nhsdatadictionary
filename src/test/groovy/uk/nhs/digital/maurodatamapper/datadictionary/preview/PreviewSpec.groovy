@@ -3,12 +3,11 @@ package uk.nhs.digital.maurodatamapper.datadictionary.preview
 import groovy.util.logging.Slf4j
 import io.micronaut.context.ApplicationContext
 import io.micronaut.context.annotation.Property
+import io.micronaut.http.HttpResponse
 import io.micronaut.http.MediaType
 import io.micronaut.http.client.multipart.MultipartBody
-import io.micronaut.test.annotation.Sql
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
-import jakarta.inject.Singleton
 import org.maurodata.api.folder.FolderApi
 import org.maurodata.domain.folder.Folder
 import org.maurodata.plugin.importer.FileParameter
@@ -17,6 +16,7 @@ import spock.lang.Shared
 import spock.lang.Specification
 import uk.nhs.datadictionary.DataDictionaryImportParameters
 import uk.nhs.datadictionary.NhsDataDictionaryImporter
+import uk.nhs.datadictionary.NhsDataDictionaryWebsiteExporter
 import uk.nhs.datadictionary.api.NhsDataDictionaryApi
 import uk.nhs.datadictionary.utils.StereotypedCatalogueItem
 
@@ -31,6 +31,10 @@ class PreviewSpec extends Specification {
     @Inject
     @Shared
     NhsDataDictionaryImporter nhsDataDictionaryImporter
+
+    @Inject
+    @Shared
+    NhsDataDictionaryWebsiteExporter nhsDataDictionaryWebsiteExporter
 
     @Inject
     FolderApi folderApi
@@ -106,6 +110,14 @@ class PreviewSpec extends Specification {
                 it.catalogueItemId
 
         }
+    }
+
+    void "Export website"() {
+        when:
+        HttpResponse<byte[]> response = folderApi.exportModel(branchId, nhsDataDictionaryWebsiteExporter.namespace, nhsDataDictionaryWebsiteExporter.name, nhsDataDictionaryWebsiteExporter.version)
+
+        then:
+        response.body()
     }
 
 }

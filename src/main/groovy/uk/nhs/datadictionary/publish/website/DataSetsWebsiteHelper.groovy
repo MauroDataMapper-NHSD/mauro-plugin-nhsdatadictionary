@@ -17,10 +17,14 @@
  */
 package uk.nhs.datadictionary.publish.website
 
+import groovy.transform.CompileStatic
 import org.apache.commons.lang3.StringUtils
 import org.maurodata.dita.DitaProject
 import org.maurodata.dita.elements.langref.base.DitaMap
 import org.maurodata.dita.elements.langref.base.Topic
+import org.maurodata.dita.elements.langref.base.TopicSet
+import org.maurodata.dita.enums.Linking
+import org.maurodata.dita.enums.Toc
 import org.maurodata.dita.helpers.HtmlHelper
 import uk.nhs.datadictionary.DataDictionaryImportParameters
 import uk.nhs.datadictionary.NhsDDDataSetFolder
@@ -31,6 +35,7 @@ import uk.nhs.datadictionary.publish.PublishContext
 import uk.nhs.datadictionary.publish.PublishTarget
 import uk.nhs.datadictionary.publish.structure.DictionaryItem
 
+@CompileStatic
 class DataSetsWebsiteHelper {
 
 
@@ -43,15 +48,14 @@ class DataSetsWebsiteHelper {
 
         dataDictionary.dataSetFolders.values().each { folders ->
             folders.each { folder ->
-                generateDitaMapForFolder(folder, dataDictionary, publishOptions, ditaProject)
-                generateOverviewTopicForFolder(folder, dataDictionary, publishOptions, ditaProject)
+                generateDitaMapForFolder(folder, dataDictionary, parameters, ditaProject)
+                generateOverviewTopicForFolder(folder, dataDictionary, parameters, ditaProject)
             }
         }
-
         DitaMap dataSetsIndexMap = DitaMap.build {
             id "data_sets"
             title "Data Sets"
-            topicSet { topicSet ->
+            topicSet { TopicSet topicSet ->
                 navTitle "Data Sets"
                 id 'data_sets_group'
                 keyRef 'data_sets_overview'
@@ -113,11 +117,19 @@ class DataSetsWebsiteHelper {
 
 
     static void generateDitaMapForFolder(NhsDDDataSetFolder folder, NhsDataDictionary dataDictionary, DataDictionaryImportParameters parameters, DitaProject ditaProject) {
+        System.err.println("Registering map for folder: ${folder.name}")
+        System.err.println("Dita folder path: ${folder.ditaFolderPath}")
+        System.err.println("Folder path: ${folder.getFolderPath()}")
 
+        String mapId = folder.getDitaKey()
+        if(folder.isRetired()) {
+            mapId += "_retired"
+        }
+        System.err.println("Map id: $mapId")
         DitaMap dataSetsIndexMap = DitaMap.build {
-            id folder.getDitaKey()
+            id mapId
             title folder.getNameWithRetired()
-            topicSet { topicSet ->
+            topicSet {TopicSet topicSet ->
                 navTitle folder.getNameWithRetired()
                 id "${folder.getDitaKey()}_group"
                 keyRef "${folder.getDitaKey()}_overview"
@@ -138,12 +150,21 @@ class DataSetsWebsiteHelper {
             }
         }
         String path = "data_sets/" + StringUtils.join(folder.getDitaFolderPath(), "/").toLowerCase()
-        ditaProject.registerMap(path, dataSetsIndexMap, folder.getNameWithoutNonAlphaNumerics().toLowerCase())
+        String customFilename = folder.getNameWithoutNonAlphaNumerics().toLowerCase()
+        if(folder.isRetired()) {
+            customFilename += "_retired"
+        }
+        ditaProject.registerMap(path, dataSetsIndexMap, customFilename)
     }
 
     static void generateOverviewTopicForFolder(NhsDDDataSetFolder folder, NhsDataDictionary dataDictionary, DataDictionaryImportParameters parameters, DitaProject ditaProject) {
+        String topicId = folder.getDitaKey()
+        if(folder.isRetired()) {
+            topicId += "_retired"
+        }
+        topicId += "_overview"
         Topic folderOverviewTopic = Topic.build {
-            id "${folder.getDitaKey()}_overview"
+            id topicId
             title folder.getNameWithRetired()
             shortdesc folder.getShortDescription()
             body {

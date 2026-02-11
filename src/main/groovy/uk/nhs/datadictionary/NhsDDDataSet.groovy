@@ -140,7 +140,9 @@ class NhsDDDataSet extends NhsDataDictionaryComponent <DataModel> {
 
 
     String getMauroPath() {
-        "dm:${name}"
+        return "fo:${NhsDataDictionary.DATA_SETS_FOLDER_NAME}|" +
+               path.collect { pathComponent -> "fo:${pathComponent}" }
+                   .join("|") + "|dm:${name}"
     }
 
     @Override

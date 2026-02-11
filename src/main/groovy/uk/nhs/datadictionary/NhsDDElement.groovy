@@ -280,7 +280,6 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
             if (activeAttributes.size() == 1 && otherProperties["suppressFirstSentence"] != 'true') {
                 NhsDDAttribute attribute = activeAttributes[0]
                 String ret = "<a href=\"${this.getMauroPath()}\">${this.name}</a> is the same as attribute <a href=\"${attribute.getMauroPath()}\">${attribute.name}</a>. "
-                System.err.println(ret)
                 if (catalogueItem) {
                     ret += catalogueItem.description
                 }

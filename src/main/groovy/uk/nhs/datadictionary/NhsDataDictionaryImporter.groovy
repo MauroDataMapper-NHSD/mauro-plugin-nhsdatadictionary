@@ -3,7 +3,6 @@ package uk.nhs.datadictionary
 import com.fasterxml.jackson.annotation.JsonIgnore
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import groovy.xml.XmlParser
 import io.micronaut.context.ApplicationContext
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
@@ -18,9 +17,6 @@ class NhsDataDictionaryImporter implements FolderImporterPlugin<DataDictionaryIm
     @Inject
     @JsonIgnore
     ApplicationContext applicationContext
-
-    @JsonIgnore
-    static final XmlParser xmlParser = new XmlParser(false, false)
 
     @Override
     List<Folder> importDomain(DataDictionaryImportParameters params) {

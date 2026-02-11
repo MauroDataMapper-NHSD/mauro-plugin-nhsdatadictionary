@@ -64,12 +64,12 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
             }
             dataSetFolder.folderPath = folderPath
         }
-        folderCacheableRepository.findAllByFolderId(folderFolder.id).each {
+        folderCacheableRepository.findAllByFolderId(folderFolder.id).sort {it.label}.each {
             NhsDDDataSetFolder childFolder = initialiseComponent(new NhsDDDataSetFolder(), it, versionedFolderId)
             dataSetFolder.childFolders.add(childFolder)
         }
 
-        dataModelCacheableRepository.findAllByFolderId(folderFolder.id).each {
+        dataModelCacheableRepository.findAllByFolderId(folderFolder.id).sort {it.label}.each {
             NhsDDDataSet childDataSet = dataSetService.initialiseComponent(new NhsDDDataSet(), it, versionedFolderId)
             if (!childDataSet.isRetired()) {
                 dataSetFolder.dataSets.add(childDataSet)

@@ -18,20 +18,20 @@
 package uk.nhs.datadictionary.publish
 
 import io.micronaut.context.annotation.Bean
-import io.micronaut.context.annotation.Prototype
 import jakarta.inject.Inject
 import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataModel
-import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.model.AdministeredItem
 import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
 import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.DataElementCacheableRepository
 import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.DataClassCacheableRepository
 import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.TermCacheableRepository
+import org.maurodata.persistence.cache.ModelCacheableRepository.FolderCacheableRepository
 import org.maurodata.persistence.cache.ModelCacheableRepository.TerminologyCacheableRepository
 import org.maurodata.persistence.cache.ModelCacheableRepository.DataModelCacheableRepository
+import org.maurodata.persistence.model.PathRepository
 import org.maurodata.persistence.terminology.TerminologyRepository
 import uk.nhs.datadictionary.NhsDataDictionary
 
@@ -45,6 +45,8 @@ class MauroCatalogueItemPathResolver implements PathResolver<UUID> {
     @Inject DataModelCacheableRepository dataModelCacheableRepository
     @Inject DataClassCacheableRepository dataClassCacheableRepository
     @Inject DataElementCacheableRepository dataElementCacheableRepository
+    @Inject FolderCacheableRepository folderCacheableRepository
+    @Inject PathRepository pathRepository
 
     MauroCatalogueItemPathResolver () {
 
@@ -65,7 +67,7 @@ class MauroCatalogueItemPathResolver implements PathResolver<UUID> {
         if (!catalogueItem) {
             return null
         }
-
+        pathRepository.readParentItems(catalogueItem)
         catalogueItem.id
     }
 
@@ -106,7 +108,8 @@ class MauroCatalogueItemPathResolver implements PathResolver<UUID> {
                 DataClass dc1 = dataClassCacheableRepository.readByDataModelAndLabelAndParentDataClassIsNull(dm, path[1].replace("dc:", ""))
                 return dc1
             }
-        } else if (path[0] == "dm:${NhsDataDictionary.ELEMENTS_MODEL_NAME}") {
+        }
+        if (path[0] == "dm:${NhsDataDictionary.ELEMENTS_MODEL_NAME}") {
             DataModel dm = dataModelCacheableRepository.findAllByFolderId(versionedFolderId).find {
                 it.label == NhsDataDictionary.ELEMENTS_MODEL_NAME
             }
@@ -120,12 +123,27 @@ class MauroCatalogueItemPathResolver implements PathResolver<UUID> {
                 return de
             }
         }
-
-        if (path.length == 1 && path[0].startsWith("dm:")) {
-            DataModel dm = dataModelCacheableRepository.findAllByFolderId(versionedFolderId).find {
-                it.label == path[0].replace("dm:", "")
+        if (path[0].startsWith("fo:${NhsDataDictionary.DATA_SETS_FOLDER_NAME}")) {
+            UUID parentId = versionedFolderId
+            int i = 0
+            AdministeredItem returnItem = null
+            while (path.length > i) {
+                if (path[i].startsWith("fo:")) {
+                    String label = path[i].replace("fo:", "")
+                    returnItem = folderCacheableRepository.findAllByFolderId(parentId).find {
+                        it.label == label
+                    }
+                    parentId = returnItem.id
+                } else if (path[i].startsWith("dm:")) {
+                    String label = path[i].replace("dm:", "")
+                    returnItem = dataModelCacheableRepository.findAllByFolderId(parentId).find {
+                        it.label == label
+                    }
+                    parentId = returnItem.id
+                }
+                i++
             }
-            return dm
+            return returnItem
         }
 
         return null

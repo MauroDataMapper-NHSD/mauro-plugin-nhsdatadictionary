@@ -18,10 +18,12 @@
 package uk.nhs.datadictionary.publish.website
 
 import groovy.util.logging.Slf4j
+import net.lingala.zip4j.ZipFile
 import org.apache.commons.io.FileUtils
 import org.maurodata.dita.DitaProject
 import org.maurodata.dita.elements.langref.base.DitaMap
 import org.maurodata.dita.elements.langref.base.Topic
+import org.maurodata.dita.elements.langref.base.TopicRef
 import org.maurodata.dita.elements.langref.base.TopicSet
 import org.maurodata.dita.enums.Linking
 import org.maurodata.dita.enums.Toc
@@ -38,7 +40,6 @@ import java.nio.file.StandardCopyOption
 import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.Instant
-import java.util.zip.ZipFile
 
 @Slf4j
 class WebsiteUtility {
@@ -57,7 +58,7 @@ class WebsiteUtility {
 
     static final String TO_BE_OVERRIDDEN_TEXT = "This text should be overridden by custom text stored in a GitHub library"
 
-    static File generateWebsite(NhsDataDictionary dataDictionary, Path outputPath, DataDictionaryImportParameters parameters) {
+    static byte[] generateWebsite(NhsDataDictionary dataDictionary, Path outputPath, DataDictionaryImportParameters parameters) {
 
         DitaProject ditaProject = new DitaProject("NHS Data Model and Dictionary", "nhs_data_dictionary")
         ditaProject.useTopicsFolder = false
@@ -82,7 +83,7 @@ class WebsiteUtility {
 //        }
 
 
-        if(parameters.publishDataSetFolders || parameters.publishDataSets) {
+        if(!parameters.omitDataSetFolders && !parameters.omitDataSets) {
             DataSetsWebsiteHelper.dataSetsIndex(dataDictionary, parameters, ditaProject)
         }
 
@@ -93,7 +94,7 @@ class WebsiteUtility {
             sort {it.name }.
             each {component ->
                 if(!(component instanceof NhsDDDataSet || component instanceof  NhsDDDataSetFolder)) {
-                    if (publishOptions.isPublishableComponent(component)) {
+                    if (parameters.isPublishableComponent(component)) {
                         String path = "${component.getPluralStereotypeForWebsite()}"
                         ditaProject.registerTopic(path, component.generateTopic(), component.getNameWithoutNonAlphaNumerics().toLowerCase())
                     }
@@ -107,9 +108,7 @@ class WebsiteUtility {
 
         log.error(ditaOutputDirectory)
 
-        if(parameters.overwriteStaticContent) {
-            overwriteGithubDir(ditaOutputDirectory)
-        }
+        overwriteGithubDir(ditaOutputDirectory)
 
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy")
@@ -122,7 +121,7 @@ class WebsiteUtility {
         zipFile.addFolder(new File(ditaOutputDirectory))
         log.info('Zip complete in {}', Duration.between(startTime, Instant.now()).toString())
 
-        return zipFile.getFile()
+        return zipFile.getFile().bytes
     }
 
     static void overwriteGithubDir(String outputPath){
@@ -172,21 +171,21 @@ class WebsiteUtility {
 
     static void generateIndexTopics(NhsDataDictionary dataDictionary, DitaProject ditaProject, DataDictionaryImportParameters parameters) {
 
-        if(!parameters.omitElements()) {
+        if(!parameters.omitElements) {
             generateIndexMap(ditaProject, "data_elements", "Elements", dataDictionary, dataDictionary.elements.values())
 
         }
-        if(!parameters.omitAttributes()) {
+        if(!parameters.omitAttributes) {
             generateIndexMap(ditaProject, "attributes", "Attributes", dataDictionary, dataDictionary.attributes.values())
         }
-        if(!parameters.omitClasses()) {
+        if(!parameters.omitClasses) {
             generateIndexMap(ditaProject, "classes", "Classes", dataDictionary, dataDictionary.classes.values())
         }
-        if(!parameters.omitBusinessDefinitions()) {
+        if(!parameters.omitBusinessDefinitions) {
             generateIndexMap(ditaProject, "nhs_business_definitions", "NHS Business Definitions", dataDictionary, dataDictionary.businessDefinitions.values())
 
         }
-        if(!parameters.omitSupportingInformation()) {
+        if(!parameters.omitSupportingInformation) {
             generateIndexMap(ditaProject, "supporting_information", "Supporting Information", dataDictionary, dataDictionary.supportingInformation.values())
         }
     }

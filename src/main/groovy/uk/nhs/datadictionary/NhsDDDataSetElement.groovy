@@ -17,12 +17,14 @@
  */
 package uk.nhs.datadictionary
 
-
 import groovy.xml.MarkupBuilder
 import org.maurodata.dita.elements.langref.base.P
 import org.maurodata.dita.elements.langref.base.Row
+import org.maurodata.dita.enums.Align
+import org.maurodata.dita.enums.Scope
 import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.facet.Metadata
+import uk.nhs.datadictionary.publish.DitaHelper
 import uk.nhs.datadictionary.publish.structure.ItemLink
 import uk.nhs.datadictionary.publish.structure.datasets.other.OtherDataSetItemLinkCell
 import uk.nhs.datadictionary.services.MauroPersistenceService
@@ -121,7 +123,7 @@ class NhsDDDataSetElement implements NhsDDDataSetComponent {
         }
 
     }
-
+/*
     Row createDita(NhsDataDictionary dataDictionary) {
         Row.build {
             entry {
@@ -134,7 +136,7 @@ class NhsDDDataSetElement implements NhsDDDataSetComponent {
             }
         }
     }
-
+*/
     // Remove one day, replaced with buildOtherDataSetItemLinkCell()
     @Deprecated
     List<P> createEntryParagraphs() {

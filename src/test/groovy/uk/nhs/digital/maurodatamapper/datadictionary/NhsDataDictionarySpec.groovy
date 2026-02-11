@@ -128,6 +128,7 @@ class NhsDataDictionarySpec extends Specification {
         NhsDataDictionary dataDictionary = new NhsDataDictionary()
 
         NhsDDDataSet dataSet = new NhsDDDataSet()
+        dataSet.path = ["Administrative Data Sets"]
         dataSet.catalogueItem = new DataModel()
         dataSet.catalogueItem.label = "Inter-Provider Transfer Administrative Minimum Data Set"
         dataSet.addOtherProperties(["ddUrl": "https://datadictionary.nhs.uk/data_sets/administrative_data_sets/inter-provider_transfer_administrative_minimum_data_set.html"])
@@ -137,7 +138,7 @@ class NhsDataDictionarySpec extends Specification {
         NhsDDDataSetFolder dataSetFolder = new NhsDDDataSetFolder()
         dataSetFolder.catalogueItem = new Folder()
         dataSetFolder.catalogueItem.label = "Inter-Provider Transfer Administrative Minimum Data Set Overview"
-        dataSetFolder.folderPath = ["Administrative Data Sets", "overviews"]
+        dataSetFolder.folderPath = ["Administrative Data Sets"]
         dataSetFolder.addOtherProperties(["ddUrl": "https://datadictionary.nhs.uk/data_sets/administrative_data_sets/overviews/inter-provider_transfer_administrative_minimum_data_set_overview.html"])
         dataSetFolder.catalogueItem.description = "<p>This <a href=\"https://datadictionary.nhs.uk/data_sets/administrative_data_sets/overviews/inter-provider_transfer_administrative_minimum_data_set_overview.html\">Inter-Provider_Transfer_Administrative_Minimum_Data_Set</a> specifies the data necessary to permit the receiving <a href=\"https://datadictionary.nhs.uk/nhs_business_definitions/health_care_provider.html\">Health_Care_Provider</a> to be able to report the <a href=\"https://datadictionary.nhs.uk/classes/patient.html\">PATIENT</a>'s progress along their <a href=\"https://datadictionary.nhs.uk/classes/patient_pathway.html\">PATIENT_PATHWAY</a> and, in particular, their <a href=\"https://datadictionary.nhs.uk/classes/referral_to_treatment_period.html\">REFERRAL_TO_TREATMENT_PERIOD</a>.</p>"
         dataDictionary.dataSetFolders[[dataSetFolder.name]] = [dataSetFolder]
@@ -153,8 +154,8 @@ class NhsDataDictionarySpec extends Specification {
         dataDictionary.processLinksFromXml()
 
         then: "the modified definitions are correct"
-        String expectedDataSetDefinition = "<p>The <a href=\"dm:Inter-Provider Transfer Administrative Minimum Data Set\">constraints</a> applied to the <a href=\"https://datadictionary.nhs.uk/data_sets/clinical_data_sets/community_services_data_set.html\">Inter-Provider Transfer Administrative Minimum Data Set</a>.</p>"
-        String expectedDataSetFolderDefinition = "<p>This <a href=\"fo:Administrative Data Sets|fo:overviews\">Inter-Provider Transfer Administrative Minimum Data Set</a> specifies the data necessary to permit the receiving <a href=\"https://datadictionary.nhs.uk/nhs_business_definitions/health_care_provider.html\">Health_Care_Provider</a> to be able to report the <a href=\"https://datadictionary.nhs.uk/classes/patient.html\">PATIENT</a>'s progress along their <a href=\"https://datadictionary.nhs.uk/classes/patient_pathway.html\">PATIENT_PATHWAY</a> and, in particular, their <a href=\"https://datadictionary.nhs.uk/classes/referral_to_treatment_period.html\">REFERRAL_TO_TREATMENT_PERIOD</a>.</p>"
+        String expectedDataSetDefinition = "<p>The <a href=\"fo:Data Sets|fo:Administrative Data Sets|dm:Inter-Provider Transfer Administrative Minimum Data Set\">constraints</a> applied to the <a href=\"https://datadictionary.nhs.uk/data_sets/clinical_data_sets/community_services_data_set.html\">Inter-Provider Transfer Administrative Minimum Data Set</a>.</p>"
+        String expectedDataSetFolderDefinition = "<p>This <a href=\"fo:Data Sets|fo:Administrative Data Sets\">Inter-Provider Transfer Administrative Minimum Data Set</a> specifies the data necessary to permit the receiving <a href=\"https://datadictionary.nhs.uk/nhs_business_definitions/health_care_provider.html\">Health_Care_Provider</a> to be able to report the <a href=\"https://datadictionary.nhs.uk/classes/patient.html\">PATIENT</a>'s progress along their <a href=\"https://datadictionary.nhs.uk/classes/patient_pathway.html\">PATIENT_PATHWAY</a> and, in particular, their <a href=\"https://datadictionary.nhs.uk/classes/referral_to_treatment_period.html\">REFERRAL_TO_TREATMENT_PERIOD</a>.</p>"
         String expectedDataElementDefinition = "<a href=\"dm:Data Elements|dc:A|de:ABBREVIATED MENTAL TEST SCORE\">ABBREVIATED MENTAL TEST SCORE</a> is the <a href=\"https://datadictionary.nhs.uk/attributes/person_score.html\">PERSON_SCORE</a> where the <a href=\"https://datadictionary.nhs.uk/classes/assessment_tool.html\">ASSESSMENT_TOOL</a> is <em>'<a href=\"https://datadictionary.nhs.uk/nhs_business_definitions/abbreviated_mental_test_score.html\">Abbreviated_Mental_Test_Score</a>'</em>.<p>The score is in the range 0 to 10.</p>"
         verifyAll {
             dataSet.description == expectedDataSetDefinition

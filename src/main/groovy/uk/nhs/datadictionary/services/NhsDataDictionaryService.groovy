@@ -572,13 +572,14 @@ class NhsDataDictionaryService {
         ModelVersionedRefDTO modelVersionedRefDTO = versionedFolderController.latestFinalisedModel(versionedFolderId)
         NhsDataDictionary previousDataDictionary = buildDataDictionary(modelVersionedRefDTO.id)
 
-        Path outputPath = Paths.get(getTestOutputPath())
+        Path outputPath = getTestOutputPath()
         if(!isTest) {
             outputPath = Files.createTempDirectory('changePaper')
         }
         return ChangePaperPdfUtility.generateChangePaper(thisDataDictionary, previousDataDictionary, outputPath, includeDataSets)
     }
 
+/*
     File generateWebsite(UUID versionedFolderId, DataDictionaryImportParameters parameters) {
         Folder thisDictionary = versionedFolderService.get(versionedFolderId)
         NhsDataDictionary thisDataDictionary = buildDataDictionary(thisDictionary.id)
@@ -586,11 +587,12 @@ class NhsDataDictionaryService {
 
         //Path outputPath = Files.createTempDirectory('website')
 
-        Path outputPath = Paths.get(getTestOutputPath())
+        Path outputPath = getTestOutputPath()
 
         return WebsiteUtility.generateWebsite(thisDataDictionary, outputPath, parameters)
     }
-
+*/
+/*
     def shortDescriptions(UUID versionedFolderId) {
         Folder thisDictionary = versionedFolderService.get(versionedFolderId)
         NhsDataDictionary thisDataDictionary = buildDataDictionary(thisDictionary.id)
@@ -602,6 +604,7 @@ class NhsDataDictionaryService {
         }
         return response
     }
+*/
 
     NhsDataDictionary newDataDictionary(UUID versionedFolderId) {
         NhsDataDictionary nhsDataDictionary = new NhsDataDictionary()
@@ -706,7 +709,7 @@ class NhsDataDictionaryService {
                          value: '1.0.0')
         ]
     }
-
+/*
     void validateAndSaveModel(DataModel dataModel) {
         long startTime = System.currentTimeMillis()
         log.debug('Validating [{}] model', dataModel.label)
@@ -722,12 +725,13 @@ class NhsDataDictionaryService {
         endTime = System.currentTimeMillis()
         log.info('Saved [{}] model complete in {}', dataModel.label, Utils.getTimeString(endTime - startTime))
     }
+*/
 
     /**
      * Prepare and get a test directory name under $TEMP - replaces the use of
      * the user desktop which might not be present on a server.
      */
-    static String getTestOutputPath() {
+    static Path getTestOutputPath() {
         File ditaTestDir = new File(System.getProperty("java.io.tmpdir"), "ditaTest")
 
         if (ditaTestDir.exists()) {
@@ -735,6 +739,6 @@ class NhsDataDictionaryService {
         }
         ditaTestDir.mkdirs()
 
-        ditaTestDir.absolutePath
+        return ditaTestDir.toPath()
     }
 }

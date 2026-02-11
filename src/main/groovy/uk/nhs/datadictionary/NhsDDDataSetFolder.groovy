@@ -118,9 +118,9 @@ class NhsDDDataSetFolder extends NhsDataDictionaryComponent <Folder> {
     }
 
     String getMauroPath() {
-        folderPath
-            .collect { pathComponent -> "fo:${pathComponent}" }
-            .join("|")
+        return "fo:${NhsDataDictionary.DATA_SETS_FOLDER_NAME}|" +
+               folderPath.collect { pathComponent -> "fo:${pathComponent}" }
+                .join("|")
     }
 
     Map<String, String> getUrlReplacements() {

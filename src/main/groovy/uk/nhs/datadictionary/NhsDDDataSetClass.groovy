@@ -24,8 +24,10 @@ import org.maurodata.dita.elements.langref.base.P
 import org.maurodata.dita.elements.langref.base.Row
 import org.maurodata.dita.elements.langref.base.Table
 import org.maurodata.dita.elements.langref.base.XRef
+import org.maurodata.dita.enums.Align
 import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.facet.Metadata
+import uk.nhs.datadictionary.publish.DitaHelper
 import uk.nhs.datadictionary.publish.structure.ExternalLink
 import uk.nhs.datadictionary.publish.structure.ItemLink
 import uk.nhs.datadictionary.publish.structure.datasets.other.OtherDataSetAddressCell
