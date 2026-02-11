@@ -1,6 +1,12 @@
 micronaut:
     server:
         port: -1
+        max-request-size: 200mb
+        multipart:
+            max-file-size: 200mb
+        netty:
+            idle-timeout: 30m
+
     http:
         services:
             mauro:
@@ -9,6 +15,7 @@ micronaut:
         client:
             read-timeout: 10m      # Read timeout
             connect-timeout: 100s
+            max-content-length: 20000000
     security:
         enabled: false
 datasources:

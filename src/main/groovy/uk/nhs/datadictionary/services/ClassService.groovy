@@ -27,7 +27,6 @@ import org.maurodata.domain.datamodel.DataType
 import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.DataClassCacheableRepository
 import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.DataElementCacheableRepository
 import uk.nhs.datadictionary.NhsDDAttribute
-import uk.nhs.datadictionary.NhsDDBusinessDefinition
 import uk.nhs.datadictionary.NhsDDClass
 import uk.nhs.datadictionary.NhsDDClassLink
 import uk.nhs.datadictionary.NhsDDClassRelationship
@@ -92,7 +91,9 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
         // Get a cut-down version of the NhsDDAttribute list, we don't need national codes for previewing an NhsDDClass
         attributeDataElements
             .collect {dataElement ->
-                new NhsDDAttribute().fromMauroItem(dataDictionary, mauroPersistenceService, dataElement)
+                NhsDDAttribute attribute = new NhsDDAttribute().fromMauroItem(dataDictionary, mauroPersistenceService, dataElement)
+                attribute.catalogueItem = dataElement
+                return attribute
             }
         .findAll { nhsAttribute ->
             // Do not include retired attributes in the list
@@ -111,7 +112,8 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
 
         relationshipDataElements.collect { dataElement ->
             DataClass referencedClass = dataClassCacheableRepository.findById(dataElement.dataType.referenceClass.id)
-            NhsDDClass referencedNhsClass = new NhsDDClass().fromMauroItem(dataDictionary, mauroPersistenceService, referencedClass)
+            NhsDDClass referencedNhsClass = new NhsDDClass().fromMauroItem(dataDictionary, mauroPersistenceService, referencedClass) as NhsDDClass
+            referencedNhsClass.catalogueItem = referencedClass
             NhsDDClassRelationship relationship = new NhsDDClassRelationship(dataElement, referencedNhsClass)
             relationship
         }
