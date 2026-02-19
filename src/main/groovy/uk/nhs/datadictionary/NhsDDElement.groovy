@@ -212,14 +212,14 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
         }
 
         if(!isRetired()) {
-            if (description.find(regex)) {
-                catalogueItem.description = description.replaceFirst(regex, "").trim()
-                otherProperties["suppressFirstSentence"] = 'false'
+            if (catalogueItem.description.find(regex)) {
+                catalogueItem.description = catalogueItem.description.replaceFirst(regex, "").trim()
+                addOtherProperties(["suppressFirstSentence": 'false'])
             } else {
                 //Node definitionXml = HtmlHelper.tidyAndConvertToNode("<p>" + definition + "<p>")
                 //Node firstParagraph = definitionXml.children().find{it instanceof Node && it.name() == 'p'}
                 //firstParagraph.parent().remove(firstParagraph)
-                otherProperties["suppressFirstSentence"] = 'true'
+                addOtherProperties(["suppressFirstSentence": 'true'])
                 //otherProperties["attributeText"] = XmlUtil.serialize(firstParagraph).replaceFirst("<\\?xml version=\"1.0\".*\\?>", "")
                 //definition = XmlUtil.serialize(definitionXml).replaceFirst("<\\?xml version=\"1.0\".*\\?>", "")
 
@@ -228,6 +228,7 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
 
     }
 
+    @JsonIgnore
     final String regex = "<a[^>]*>[^<]*</a>\\W+is\\s+the\\s+same\\s+as\\s+attribute\\W+<a[^>]*>[^<]*</a>\\s*\\."
 
     String getMauroPath() {
@@ -284,8 +285,9 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
                     ret += catalogueItem.description
                 }
                 return ret
+            } else {
+                return catalogueItem.description
             }
-            return catalogueItem.description
         }
     }
 
@@ -294,18 +296,6 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
         Topic.build (id: getDitaKey() + "_description") {
             title "Description"
             body {
-                if (isActivePage() && otherProperties["suppressFirstSentence"] != 'true') {
-                    List<NhsDDAttribute> activeAttributes = instantiatesAttributes.findAll {!it.isRetired() }
-                    if (activeAttributes.size() == 1) {
-                        p {
-                            xRef this.calculateXRef()
-                            text " is the same as attribute "
-                            xRef activeAttributes[0].calculateXRef()
-                            text "."
-                        }
-                    }
-                }
-
                 if (description) {
                     div HtmlHelper.replaceHtmlWithDita(description.replace('<table', '<table class=\"table-striped\"'))
                 }
@@ -506,7 +496,6 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
                 codes = dataDictionary.elementCodeSetCodes[catalogueItem.dataType.modelResourceId]
             } else {
                 Set<Term> terms = mauroPersistenceService.termCacheableRepository.findAllByCodeSetsIdIn([catalogueItem.dataType.modelResourceId])
-                System.err.println("Terms size: ${terms.size()}")
                 codes = terms.collect {new NhsDDCode(it)}
             }
             codes.each {code ->

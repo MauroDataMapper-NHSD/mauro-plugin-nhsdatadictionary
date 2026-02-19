@@ -58,7 +58,7 @@ class NhsDataDictionarySpec extends Specification {
         eventDateAttribute.catalogueItem.label = "EVENT DATE"
         eventDateAttribute.addOtherProperties(["ddUrl": "https://datadictionary.nhs.uk/attributes/event_date.html"])
         eventDateAttribute.catalogueItem.description = "<p>The date, month, year and century, or any combination of these elements, of an <a href=\"https://datadictionary.nhs.uk/classes/event_date_time.html\">EVENT DATE TIME</a>.</p>"
-        eventDateAttribute.parentClass = eventDateTimeClass // Required to produce the correct path
+        eventDateAttribute.catalogueItem.dataClass = eventDateTimeClass.catalogueItem // Required to produce the correct path
         dataDictionary.attributes[eventDateAttribute.name] = eventDateAttribute
 
         NhsDDAttribute eventTimeAttribute = new NhsDDAttribute()
@@ -66,7 +66,7 @@ class NhsDataDictionarySpec extends Specification {
         eventTimeAttribute.catalogueItem.label = "EVENT TIME"
         eventTimeAttribute.addOtherProperties(["ddUrl": "https://datadictionary.nhs.uk/attributes/event_time.html"])
         eventTimeAttribute.catalogueItem.description = "<p>The time (using a 24 hour clock) at which an <a href=\"https://datadictionary.nhs.uk/classes/event_date_time.html\">EVENT DATE TIME</a>, or the action in an <a href=\"https://datadictionary.nhs.uk/classes/event_date_time.html\">EVENT DATE TIME</a>, takes place.</p><p>This may include representation of a time zone.</p>"
-        eventTimeAttribute.parentClass = eventDateTimeClass // Required to produce the correct path
+        eventTimeAttribute.catalogueItem.dataClass = eventDateTimeClass.catalogueItem // Required to produce the correct path
         dataDictionary.attributes[eventTimeAttribute.name] = eventTimeAttribute
 
         when: "links in definitions are replaced"

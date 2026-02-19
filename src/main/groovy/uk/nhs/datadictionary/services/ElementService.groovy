@@ -74,6 +74,7 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
         }
         // ensure no recursion
         element.instantiatesAttributes.each {
+            pathRepository.readParentItems(it.catalogueItem)
             it.codes = []
         }
         element.codes.each {code ->
@@ -86,7 +87,6 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
     @Override
     Set<DataElement> getAll(UUID versionedFolderId, NhsDataDictionaryService nhsDataDictionaryService, Boolean includeRetired = false) {
         DataModel coreModel = nhsDataDictionaryService.getElementsModel(versionedFolderId)
-        System.err.println("Got elements model")
         return coreModel.dataElements.findAll {dataElement ->
             includeRetired || !catalogueItemIsRetired(dataElement)
         }
@@ -172,7 +172,7 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
             }
             DataElement elementDataElement = new DataElement(
                 label: name,
-                description: element.description,
+                description: element.catalogueItem.description,
                 dataType: dataType,
                 order: idx++)
 

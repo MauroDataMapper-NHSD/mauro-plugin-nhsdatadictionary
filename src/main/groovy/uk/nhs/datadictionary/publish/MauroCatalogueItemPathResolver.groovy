@@ -103,10 +103,20 @@ class MauroCatalogueItemPathResolver implements PathResolver<UUID> {
             if (path[1] == "dc:Retired") {
                 DataClass dc1 = dataClassCacheableRepository.readByDataModelAndLabelAndParentDataClassIsNull(dm, "Retired")
                 DataClass dc2 = dataClassCacheableRepository.readByParentDataClassAndLabel(dc1, path[2].replace("dc:", ""))
-                return dc2
+                if(path.length > 3) {
+                    DataElement de = dataElementCacheableRepository.readByDataClassAndLabel(dc2, path[3].replace("de:", ""))
+                    return de
+                } else {
+                    return dc2
+                }
             } else {
                 DataClass dc1 = dataClassCacheableRepository.readByDataModelAndLabelAndParentDataClassIsNull(dm, path[1].replace("dc:", ""))
-                return dc1
+                if(path.length > 2) {
+                    DataElement de = dataElementCacheableRepository.readByDataClassAndLabel(dc1, path[2].replace("de:", ""))
+                    return de
+                } else {
+                    return dc1
+                }
             }
         }
         if (path[0] == "dm:${NhsDataDictionary.ELEMENTS_MODEL_NAME}") {

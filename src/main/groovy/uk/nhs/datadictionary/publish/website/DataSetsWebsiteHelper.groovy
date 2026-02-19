@@ -117,9 +117,9 @@ class DataSetsWebsiteHelper {
 
 
     static void generateDitaMapForFolder(NhsDDDataSetFolder folder, NhsDataDictionary dataDictionary, DataDictionaryImportParameters parameters, DitaProject ditaProject) {
-        System.err.println("Registering map for folder: ${folder.name}")
-        System.err.println("Dita folder path: ${folder.ditaFolderPath}")
-        System.err.println("Folder path: ${folder.getFolderPath()}")
+        //System.err.println("Registering map for folder: ${folder.name}")
+        //System.err.println("Dita folder path: ${folder.ditaFolderPath}")
+        //System.err.println("Folder path: ${folder.getFolderPath()}")
 
         String mapId = folder.getDitaKey()
         if(folder.isRetired()) {

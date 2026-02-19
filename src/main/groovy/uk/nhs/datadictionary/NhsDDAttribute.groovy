@@ -166,7 +166,7 @@ class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
         if (isRetired()) {
             "dm:${NhsDataDictionary.CLASSES_MODEL_NAME}|dc:Retired|de:${name}"
         } else {
-            String parentClassName = parentClass ? "dc:${parentClass.name}|" : ""
+            String parentClassName = catalogueItem.dataClass ? "dc:${catalogueItem.dataClass.label}|" : ""
             return "dm:${NhsDataDictionary.CLASSES_MODEL_NAME}|${parentClassName}de:${name}"
         }
     }
