@@ -46,7 +46,7 @@ class ChangePaperPdfUtility {
         Path outputPath,
         boolean includeDataSets = false) {
 
-        DitaProject ditaProject = new DitaProject("NHS Data Model and Dictionary", "nhs_data_dictionary")
+        DitaProject ditaProject = new DitaProject(thisDataDictionary.workItemDetails['subject'] ?: "NHS Data Model and Dictionary","nhs_data_dictionary")
         ditaProject.useTopicsFolder = false
 
         NhsDataDictionaryComponentPathResolver pathResolver = new NhsDataDictionaryComponentPathResolver()

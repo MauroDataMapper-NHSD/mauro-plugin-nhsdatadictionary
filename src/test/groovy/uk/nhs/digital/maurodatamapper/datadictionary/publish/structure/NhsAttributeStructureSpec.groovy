@@ -948,6 +948,19 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
       </simpletable>
     </div>
     <div>
+      <p>This Attribute is also known by these names:</p>
+      <simpletable relcolwidth='1* 2*'>
+        <sthead>
+          <stentry>Context</stentry>
+          <stentry>Alias</stentry>
+        </sthead>
+        <strow>
+          <stentry>Plural</stentry>
+          <stentry>ACTIVITY DATES</stentry>
+        </strow>
+      </simpletable>
+    </div>
+    <div>
       <p>
         <b>Data Elements</b>
       </p>
@@ -993,6 +1006,14 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
   </title>
   <shortdesc>Change to Attribute: National Codes, Aliases, Changed elements</shortdesc>
   <body>
+    <div>
+      <div>
+        <p>The date, month, year and century, or any combination of these elements, that is of relevance to an 
+
+          <xref outputclass='class' keyref='class_activity' scope='local'>ACTIVITY</xref>.
+        </p>
+      </div>
+    </div>
     <div>
       <p>
         <b>National Codes</b>
@@ -1274,6 +1295,27 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
         </tbody>
       </table>
     </div>
+    <p>This Attribute is also known by these names:</p>
+    <div>
+      <table>
+        <colgroup>
+          <col style="width: 34%" />
+          <col style="width: 66%" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Context</th>
+            <th>Alias</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Plural</td>
+            <td>ACTIVITY DATES</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <div>
       <p>
         <b>Data Elements</b>
@@ -1315,6 +1357,10 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
   <h3>ACTIVITY DATE</h3>
   <h4>Change to Attribute: National Codes, Aliases, Changed elements</h4>
   <div>
+    <div>
+      <p><p>The date, month, year and century, or any combination of these elements, that is of relevance to an 
+<a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/79ab1e21-4407-4aae-b777-7b7920fa1963">ACTIVITY</a>.</p></p>
+    </div>
     <p>
       <b>National Codes</b>
     </p>
@@ -1529,6 +1575,10 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
   <shortdesc>Change to Attribute: National Codes, Changed elements</shortdesc>
   <body>
     <div>
+      <div>The current description
+</div>
+    </div>
+    <div>
       <p>
         <b>National Codes</b>
       </p>
@@ -1561,6 +1611,19 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
         <strow>
           <stentry outputclass='deleted'>U</stentry>
           <stentry outputclass='deleted'>Universal Time (UTC)</stentry>
+        </strow>
+      </simpletable>
+    </div>
+    <div>
+      <p>This Attribute is also known by these names:</p>
+      <simpletable relcolwidth='1* 2*'>
+        <sthead>
+          <stentry>Context</stentry>
+          <stentry>Alias</stentry>
+        </sthead>
+        <strow>
+          <stentry>Plural</stentry>
+          <stentry>ACTIVITY DATES</stentry>
         </strow>
       </simpletable>
     </div>
@@ -1606,6 +1669,9 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
   <h3>ACTIVITY DATE</h3>
   <h4>Change to Attribute: National Codes, Changed elements</h4>
   <div>
+    <div>
+      <p>The current description</p>
+    </div>
     <p>
       <b>National Codes</b>
     </p>
@@ -1641,6 +1707,27 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
           <tr>
             <td class="deleted">U</td>
             <td class="deleted">Universal Time (UTC)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>This Attribute is also known by these names:</p>
+    <div>
+      <table>
+        <colgroup>
+          <col style="width: 34%" />
+          <col style="width: 66%" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Context</th>
+            <th>Alias</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Plural</td>
+            <td>ACTIVITY DATES</td>
           </tr>
         </tbody>
       </table>
@@ -1693,6 +1780,10 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
   <shortdesc>Change to Attribute: National Codes, Changed elements</shortdesc>
   <body>
     <div>
+      <div>The current description
+</div>
+    </div>
+    <div>
       <p>
         <b>National Codes</b>
       </p>
@@ -1717,6 +1808,19 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
               <xref href='https://time.com' format='html' scope='external'>link</xref>
             </div>
           </stentry>
+        </strow>
+      </simpletable>
+    </div>
+    <div>
+      <p>This Attribute is also known by these names:</p>
+      <simpletable relcolwidth='1* 2*'>
+        <sthead>
+          <stentry>Context</stentry>
+          <stentry>Alias</stentry>
+        </sthead>
+        <strow>
+          <stentry>Plural</stentry>
+          <stentry>ACTIVITY DATES</stentry>
         </strow>
       </simpletable>
     </div>
@@ -1765,6 +1869,9 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
   <h3>ACTIVITY DATE</h3>
   <h4>Change to Attribute: National Codes, Changed elements</h4>
   <div>
+    <div>
+      <p>The current description</p>
+    </div>
     <p>
       <b>National Codes</b>
     </p>
@@ -1792,6 +1899,27 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
           <tr>
             <td class="new">B</td>
             <td class="new">British Summer Time - see <a href="https://time.com">link</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>This Attribute is also known by these names:</p>
+    <div>
+      <table>
+        <colgroup>
+          <col style="width: 34%" />
+          <col style="width: 66%" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Context</th>
+            <th>Alias</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Plural</td>
+            <td>ACTIVITY DATES</td>
           </tr>
         </tbody>
       </table>

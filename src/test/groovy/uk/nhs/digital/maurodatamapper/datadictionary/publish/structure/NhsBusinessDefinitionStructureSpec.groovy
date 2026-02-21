@@ -722,6 +722,19 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
 
       </div>
     </div>
+    <div>
+      <p>This NHS Business Definition is also known by these names:</p>
+      <simpletable relcolwidth='1* 2*'>
+        <sthead>
+          <stentry>Context</stentry>
+          <stentry>Alias</stentry>
+        </sthead>
+        <strow>
+          <stentry>Plural</stentry>
+          <stentry>Baby First Feeds</stentry>
+        </strow>
+      </simpletable>
+    </div>
   </body>
 </topic>"""
         }
@@ -761,6 +774,19 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
       <div>The current description include a 
 </div>
     </div>
+    <div>
+      <p>This NHS Business Definition is also known by these names:</p>
+      <simpletable relcolwidth='1* 2*'>
+        <sthead>
+          <stentry>Context</stentry>
+          <stentry>Alias</stentry>
+        </sthead>
+        <strow>
+          <stentry>Plural</stentry>
+          <stentry>Baby First Feeds</stentry>
+        </strow>
+      </simpletable>
+    </div>
   </body>
 </topic>"""
         }
@@ -794,6 +820,20 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
   </title>
   <shortdesc>Change to NHS Business Definition: Aliases</shortdesc>
   <body>
+    <div>
+      <div>
+        <p>A 
+
+          <xref outputclass='businessDefinition' keyref='nhs_business_definition_baby_first_feed' scope='local'>Baby First Feed</xref> is a 
+
+          <xref outputclass='class' keyref='class_person_property' scope='local'>PERSON PROPERTY</xref> .
+        </p>
+        <p>A 
+
+          <xref outputclass='businessDefinition' keyref='nhs_business_definition_baby_first_feed' scope='local'>Baby First Feed</xref> is the first feed given to a baby.
+        </p>
+      </div>
+    </div>
     <div>
       <p>This NHS Business Definition is also known by these names:</p>
       <simpletable relcolwidth='1* 2*'>
@@ -1019,6 +1059,27 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
     <div>
       <p>The <span class="diff-html-removed" id="removed-diff-0" previous="first-diff" changeId="removed-diff-0" next="added-diff-0">previous </span><span class="diff-html-added" id="added-diff-0" previous="removed-diff-0" changeId="added-diff-0" next="last-diff">current </span>description</p>
     </div>
+    <p>This NHS Business Definition is also known by these names:</p>
+    <div>
+      <table>
+        <colgroup>
+          <col style="width: 34%" />
+          <col style="width: 66%" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Context</th>
+            <th>Alias</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Plural</td>
+            <td>Baby First Feeds</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>"""
         }
@@ -1053,6 +1114,27 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
       <p class="info-message">Unable to show the changes between the Change Request and the NHS Data Model and Dictionary. These are the changes made in the Change Request.</p>
       <p>The current description including a <table class="table-striped" class="table-striped"></table></p>
     </div>
+    <p>This NHS Business Definition is also known by these names:</p>
+    <div>
+      <table>
+        <colgroup>
+          <col style="width: 34%" />
+          <col style="width: 66%" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Context</th>
+            <th>Alias</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Plural</td>
+            <td>Baby First Feeds</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>"""
         }
@@ -1081,6 +1163,15 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
   <h3>Baby First Feed</h3>
   <h4>Change to NHS Business Definition: Aliases</h4>
   <div>
+    <div>
+      <p><p>
+    A <a class="businessDefinition" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/901c2d3d-0111-41d1-acc9-5b501c1dc397">Baby First Feed</a>
+    is a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/a57843dd-c1a7-4d37-996c-fcb67e496cb9">PERSON PROPERTY</a>
+    . </p>
+<p>
+    A <a class="businessDefinition" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/901c2d3d-0111-41d1-acc9-5b501c1dc397">Baby First Feed</a>
+    is the first feed given to a baby. </p></p>
+    </div>
     <p>This NHS Business Definition is also known by these names:</p>
     <div>
       <table>

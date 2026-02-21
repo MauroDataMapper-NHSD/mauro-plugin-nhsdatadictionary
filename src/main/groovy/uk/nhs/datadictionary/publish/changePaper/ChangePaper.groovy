@@ -263,20 +263,13 @@ class ChangePaper {
         NhsDataDictionary thisDataDictionary,
         NhsDataDictionary previousDataDictionary,
         boolean includeDataSets = false) {
+
         List<StereotypedChange> changedItems = []
-        changedItems += new StereotypedChange(
-            stereotypeName: "NHS Business Definition",
-            changedItems: compareMaps(thisDataDictionary.businessDefinitions, previousDataDictionary?.businessDefinitions))
+        List<ChangedItem> dataSetChanges = compareMaps(thisDataDictionary.dataSets, previousDataDictionary?.dataSets)
 
         changedItems += new StereotypedChange(
-            stereotypeName: "Supporting Information",
-            changedItems: compareMaps(thisDataDictionary.supportingInformation, previousDataDictionary?.supportingInformation))
-
-        StereotypedChange attributeChange = new StereotypedChange(
-            stereotypeName: "Attribute",
-            changedItems: compareMaps(thisDataDictionary.attributes, previousDataDictionary?.attributes))
-
-        changedItems += attributeChange
+            stereotypeName: "Data Set",
+            changedItems: dataSetChanges)
 
         StereotypedChange elementChange = new StereotypedChange(
             stereotypeName: "Data Element",
@@ -284,15 +277,23 @@ class ChangePaper {
 
         changedItems += elementChange
 
+        StereotypedChange attributeChange = new StereotypedChange(
+            stereotypeName: "Attribute",
+            changedItems: compareMaps(thisDataDictionary.attributes, previousDataDictionary?.attributes))
+
+        changedItems += attributeChange
+
         changedItems += new StereotypedChange(
             stereotypeName: "Class",
             changedItems: compareMaps(thisDataDictionary.classes, previousDataDictionary?.classes))
 
-        List<ChangedItem> dataSetChanges = compareMaps(thisDataDictionary.dataSets, previousDataDictionary?.dataSets)
+        changedItems += new StereotypedChange(
+            stereotypeName: "NHS Business Definition",
+            changedItems: compareMaps(thisDataDictionary.businessDefinitions, previousDataDictionary?.businessDefinitions))
 
         changedItems += new StereotypedChange(
-            stereotypeName: "Data Set",
-            changedItems: dataSetChanges)
+            stereotypeName: "Supporting Information",
+            changedItems: compareMaps(thisDataDictionary.supportingInformation, previousDataDictionary?.supportingInformation))
 
         changedItems += new StereotypedChange(
             stereotypeName: "Data Set Constraint",

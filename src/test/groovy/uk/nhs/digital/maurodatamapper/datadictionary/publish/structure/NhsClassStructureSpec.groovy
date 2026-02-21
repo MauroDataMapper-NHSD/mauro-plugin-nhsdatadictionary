@@ -970,6 +970,19 @@ to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class
         </strow>
       </simpletable>
     </div>
+    <div>
+      <p>This Class is also known by these names:</p>
+      <simpletable relcolwidth='1* 2*'>
+        <sthead>
+          <stentry>Context</stentry>
+          <stentry>Alias</stentry>
+        </sthead>
+        <strow>
+          <stentry>Plural</stentry>
+          <stentry>ACTIVITIES</stentry>
+        </strow>
+      </simpletable>
+    </div>
   </body>
 </topic>"""
         }
@@ -1003,6 +1016,18 @@ to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class
   </title>
   <shortdesc>Change to Class: Changed attributes, Changed relationships, Aliases</shortdesc>
   <body>
+    <div>
+      <div>
+        <p>A provision of 
+
+          <xref outputclass='class' keyref='class_service' scope='local'>SERVICES</xref> to a 
+
+          <xref outputclass='class' keyref='class_patient' scope='local'>PATIENT</xref> by one or more 
+
+          <xref outputclass='class' keyref='class_care_professional' scope='local'>CARE PROFESSIONALS</xref>.
+        </p>
+      </div>
+    </div>
     <div>
       <p>Attributes of this Class are:</p>
       <simpletable relcolwidth='1* 9*'>
@@ -1462,6 +1487,27 @@ to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class
         </tbody>
       </table>
     </div>
+    <p>This Class is also known by these names:</p>
+    <div>
+      <table>
+        <colgroup>
+          <col style="width: 34%" />
+          <col style="width: 66%" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Context</th>
+            <th>Alias</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Plural</td>
+            <td>ACTIVITIES</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>"""
         }
@@ -1490,6 +1536,11 @@ to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class
   <h3>ACTIVITY</h3>
   <h4>Change to Class: Changed attributes, Changed relationships, Aliases</h4>
   <div>
+    <div>
+      <p><p>A provision of <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/79ab1e21-4407-4aae-b777-7b7920fa1963">SERVICES</a> 
+to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6">PATIENT</a> by one or more 
+<a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/9ac6a0b2-b4bf-48af-ad4d-0ecfe268df57">CARE PROFESSIONALS</a>.</p></p>
+    </div>
     <p>Attributes of this Class are:</p>
     <div>
       <table>

@@ -2125,6 +2125,19 @@ PATIENTS holding data</p>
 
       </div>
     </div>
+    <div>
+      <p>This Data Set is also known by these names:</p>
+      <simpletable relcolwidth='1* 2*'>
+        <sthead>
+          <stentry>Context</stentry>
+          <stentry>Alias</stentry>
+        </sthead>
+        <strow>
+          <stentry>Plural</stentry>
+          <stentry>Diagnostics Data Set</stentry>
+        </strow>
+      </simpletable>
+    </div>
   </body>
 </topic>"""
         }
@@ -2571,6 +2584,27 @@ PATIENTS holding data</p>
     <div>
       <p>The <span class="diff-html-removed" id="removed-diff-0" previous="first-diff" changeId="removed-diff-0" next="added-diff-0">previous </span><span class="diff-html-added" id="added-diff-0" previous="removed-diff-0" changeId="added-diff-0" next="last-diff">current </span>description</p>
     </div>
+    <p>This Data Set is also known by these names:</p>
+    <div>
+      <table>
+        <colgroup>
+          <col style="width: 34%" />
+          <col style="width: 66%" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Context</th>
+            <th>Alias</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Plural</td>
+            <td>Diagnostics Data Set</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>"""
         }
@@ -2604,6 +2638,10 @@ PATIENTS holding data</p>
   </title>
   <shortdesc>Change to Data Set: Specification</shortdesc>
   <body>
+    <div>
+      <div>The definition
+</div>
+    </div>
     <div>
       <div>
         <table>
@@ -2706,6 +2744,9 @@ PATIENTS holding data</p>
   <h3>Cells Change Data Set</h3>
   <h4>Change to Data Set: Specification</h4>
   <div>
+    <div>
+      <p>The definition</p>
+    </div>
     <div>
       <table>
         <colgroup>
@@ -2810,6 +2851,10 @@ PATIENTS holding data</p>
   </title>
   <shortdesc>Change to Data Set: Specification</shortdesc>
   <body>
+    <div>
+      <div>The definition
+</div>
+    </div>
     <div>
       <div>
         <table>
@@ -2929,6 +2974,9 @@ PATIENTS holding data</p>
   <h3>Rows Change Data Set</h3>
   <h4>Change to Data Set: Specification</h4>
   <div>
+    <div>
+      <p>The definition</p>
+    </div>
     <div>
       <table>
         <colgroup>
@@ -3050,6 +3098,10 @@ PATIENTS holding data</p>
   </title>
   <shortdesc>Change to Data Set: Specification</shortdesc>
   <body>
+    <div>
+      <div>The definition
+</div>
+    </div>
     <div>
       <div>
         <table>
@@ -3182,6 +3234,9 @@ PATIENTS holding data</p>
   <h4>Change to Data Set: Specification</h4>
   <div>
     <div>
+      <p>The definition</p>
+    </div>
+    <div>
       <table>
         <colgroup>
           <col style="width: 20%" />
@@ -3300,6 +3355,10 @@ PATIENTS holding data</p>
   </title>
   <shortdesc>Change to Data Set: Specification</shortdesc>
   <body>
+    <div>
+      <div>The definition
+</div>
+    </div>
     <div>
       <div>
         <table>
@@ -3447,6 +3506,9 @@ PATIENTS holding data</p>
   <h3>Tables Change Data Set</h3>
   <h4>Change to Data Set: Specification</h4>
   <div>
+    <div>
+      <p>The definition</p>
+    </div>
     <div>
       <table>
         <colgroup>

@@ -51,6 +51,15 @@ class CodesSection extends Section {
         new CodesSection(parent, DEFAULT_CODES_TYPE, "Default Codes", rows)
     }
 
+    Section  addDefaultCodeSection(){
+        if(this.table == null){
+            return null
+        }
+        new CodesSection(parent, DEFAULT_CODES_TYPE, "Default Codes", this.table)
+
+    }
+
+
     @Override
     Section produceDiff(Section previous) {
         CodesSection previousSection = previous as CodesSection

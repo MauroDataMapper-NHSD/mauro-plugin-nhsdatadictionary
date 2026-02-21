@@ -962,6 +962,12 @@ during a Liver Cancer Care Spell.</p></p>
   <shortdesc>Change to Data Element: Updated description, National Codes, Default Codes, Changed attributes</shortdesc>
   <body>
     <div>
+      <p>
+        <b>Format / Length</b>
+      </p>
+      <p>an1</p>
+    </div>
+    <div>
       <div>The 
 
         <ph id='removed-diff-0' outputclass='diff-html-removed'>previous</ph>
@@ -1004,6 +1010,19 @@ during a Liver Cancer Care Spell.</p></p>
         <strow>
           <stentry outputclass='new'>9</stentry>
           <stentry outputclass='new'>Not Known</stentry>
+        </strow>
+      </simpletable>
+    </div>
+    <div>
+      <p>This Data Element is also known by these names:</p>
+      <simpletable relcolwidth='1* 2*'>
+        <sthead>
+          <stentry>Context</stentry>
+          <stentry>Alias</stentry>
+        </sthead>
+        <strow>
+          <stentry>Plural</stentry>
+          <stentry>ABLATIVE THERAPY TYPES</stentry>
         </strow>
       </simpletable>
     </div>
@@ -1057,6 +1076,10 @@ during a Liver Cancer Care Spell.</p></p>
         <b>Format / Length</b>
       </p>
       <p outputclass='new'>an1</p>
+    </div>
+    <div>
+      <div>The previous description
+</div>
     </div>
     <div>
       <p>
@@ -1447,6 +1470,12 @@ during a Liver Cancer Care Spell.</p></p>
   <h4>Change to Data Element: Updated description, National Codes, Default Codes, Changed attributes</h4>
   <div>
     <div>
+      <p>
+        <b>Format / Length</b>
+      </p>
+      <p>an1</p>
+    </div>
+    <div>
       <p>The <span class="diff-html-removed" id="removed-diff-0" previous="first-diff" changeId="removed-diff-0" next="added-diff-0">previous </span><span class="diff-html-added" id="added-diff-0" previous="removed-diff-0" changeId="added-diff-0" next="last-diff">current </span>description</p>
     </div>
     <p>
@@ -1499,6 +1528,27 @@ during a Liver Cancer Care Spell.</p></p>
         </tbody>
       </table>
     </div>
+    <p>This Data Element is also known by these names:</p>
+    <div>
+      <table>
+        <colgroup>
+          <col style="width: 34%" />
+          <col style="width: 66%" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Context</th>
+            <th>Alias</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Plural</td>
+            <td>ABLATIVE THERAPY TYPES</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <div>
       <p>
         <b>Attribute</b>
@@ -1546,6 +1596,9 @@ during a Liver Cancer Care Spell.</p></p>
         <b>Format / Length</b>
       </p>
       <p class="new">an1</p>
+    </div>
+    <div>
+      <p>The previous description</p>
     </div>
     <p>
       <b>National Codes</b>
@@ -1803,6 +1856,16 @@ during a Liver Cancer Care Spell.</p></p>
   <body>
     <div>
       <p>
+        <b>Format / Length</b>
+      </p>
+      <p>an1</p>
+    </div>
+    <div>
+      <div>The current description
+</div>
+    </div>
+    <div>
+      <p>
         <b>National Codes</b>
       </p>
       <simpletable relcolwidth='1* 4*'>
@@ -1848,6 +1911,19 @@ during a Liver Cancer Care Spell.</p></p>
       </simpletable>
     </div>
     <div>
+      <p>This Data Element is also known by these names:</p>
+      <simpletable relcolwidth='1* 2*'>
+        <sthead>
+          <stentry>Context</stentry>
+          <stentry>Alias</stentry>
+        </sthead>
+        <strow>
+          <stentry>Plural</stentry>
+          <stentry>ABLATIVE THERAPY TYPES</stentry>
+        </strow>
+      </simpletable>
+    </div>
+    <div>
       <p>
         <b>Attribute</b>
       </p>
@@ -1887,6 +1963,15 @@ during a Liver Cancer Care Spell.</p></p>
   <h3>ABLATIVE THERAPY TYPE</h3>
   <h4>Change to Data Element: National Codes, Default Codes, Changed attributes</h4>
   <div>
+    <div>
+      <p>
+        <b>Format / Length</b>
+      </p>
+      <p>an1</p>
+    </div>
+    <div>
+      <p>The current description</p>
+    </div>
     <p>
       <b>National Codes</b>
     </p>
@@ -1945,6 +2030,27 @@ during a Liver Cancer Care Spell.</p></p>
         </tbody>
       </table>
     </div>
+    <p>This Data Element is also known by these names:</p>
+    <div>
+      <table>
+        <colgroup>
+          <col style="width: 34%" />
+          <col style="width: 66%" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Context</th>
+            <th>Alias</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Plural</td>
+            <td>ABLATIVE THERAPY TYPES</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <div>
       <p>
         <b>Attribute</b>
@@ -1992,6 +2098,16 @@ during a Liver Cancer Care Spell.</p></p>
   <body>
     <div>
       <p>
+        <b>Format / Length</b>
+      </p>
+      <p>an1</p>
+    </div>
+    <div>
+      <div>The current description
+</div>
+    </div>
+    <div>
+      <p>
         <b>National Codes</b>
       </p>
       <simpletable relcolwidth='1* 4*'>
@@ -2025,6 +2141,19 @@ during a Liver Cancer Care Spell.</p></p>
         <strow>
           <stentry outputclass='new'>9</stentry>
           <stentry outputclass='new'>Not Known</stentry>
+        </strow>
+      </simpletable>
+    </div>
+    <div>
+      <p>This Data Element is also known by these names:</p>
+      <simpletable relcolwidth='1* 2*'>
+        <sthead>
+          <stentry>Context</stentry>
+          <stentry>Alias</stentry>
+        </sthead>
+        <strow>
+          <stentry>Plural</stentry>
+          <stentry>ABLATIVE THERAPY TYPES</stentry>
         </strow>
       </simpletable>
     </div>
@@ -2072,6 +2201,15 @@ during a Liver Cancer Care Spell.</p></p>
   <h3>ABLATIVE THERAPY TYPE</h3>
   <h4>Change to Data Element: National Codes, Default Codes, Changed attributes</h4>
   <div>
+    <div>
+      <p>
+        <b>Format / Length</b>
+      </p>
+      <p>an1</p>
+    </div>
+    <div>
+      <p>The current description</p>
+    </div>
     <p>
       <b>National Codes</b>
     </p>
@@ -2118,6 +2256,27 @@ during a Liver Cancer Care Spell.</p></p>
           <tr>
             <td class="new">9</td>
             <td class="new">Not Known</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>This Data Element is also known by these names:</p>
+    <div>
+      <table>
+        <colgroup>
+          <col style="width: 34%" />
+          <col style="width: 66%" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Context</th>
+            <th>Alias</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Plural</td>
+            <td>ABLATIVE THERAPY TYPES</td>
           </tr>
         </tbody>
       </table>
@@ -2179,6 +2338,10 @@ during a Liver Cancer Care Spell.</p></p>
       <p outputclass='deleted'>an10 CCYY-MM-DD</p>
     </div>
     <div>
+      <div>The current description
+</div>
+    </div>
+    <div>
       <p>
         <b>National Codes</b>
       </p>
@@ -2213,6 +2376,19 @@ during a Liver Cancer Care Spell.</p></p>
         <strow>
           <stentry outputclass='new'>9</stentry>
           <stentry outputclass='new'>Not Known</stentry>
+        </strow>
+      </simpletable>
+    </div>
+    <div>
+      <p>This Data Element is also known by these names:</p>
+      <simpletable relcolwidth='1* 2*'>
+        <sthead>
+          <stentry>Context</stentry>
+          <stentry>Alias</stentry>
+        </sthead>
+        <strow>
+          <stentry>Plural</stentry>
+          <stentry>ABLATIVE THERAPY TYPES</stentry>
         </strow>
       </simpletable>
     </div>
@@ -2264,6 +2440,9 @@ during a Liver Cancer Care Spell.</p></p>
       <p class="new">an1</p>
       <p class="deleted">an10 CCYY-MM-DD</p>
     </div>
+    <div>
+      <p>The current description</p>
+    </div>
     <p>
       <b>National Codes</b>
     </p>
@@ -2310,6 +2489,27 @@ during a Liver Cancer Care Spell.</p></p>
           <tr>
             <td class="new">9</td>
             <td class="new">Not Known</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>This Data Element is also known by these names:</p>
+    <div>
+      <table>
+        <colgroup>
+          <col style="width: 34%" />
+          <col style="width: 66%" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Context</th>
+            <th>Alias</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Plural</td>
+            <td>ABLATIVE THERAPY TYPES</td>
           </tr>
         </tbody>
       </table>

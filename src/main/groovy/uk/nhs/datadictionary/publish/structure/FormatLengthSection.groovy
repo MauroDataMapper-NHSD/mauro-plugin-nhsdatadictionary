@@ -40,6 +40,21 @@ class FormatLengthSection extends Section {
         this.comparisonValue = comparisonValue
     }
 
+    Section addFormatLengthSection(Section previous){
+        FormatLengthSection previousSection = previous as FormatLengthSection
+
+        NhsDDFormatLength currentValue = this.value
+        NhsDDFormatLength previousValue = previousSection?.value ?: NhsDDFormatLength.EMPTY
+
+        if (currentValue.empty()) {
+            return null
+        }
+
+        new FormatLengthSection(this.parent, currentValue, previousValue)
+
+    }
+
+
     @Override
     Section produceDiff(Section previous) {
         FormatLengthSection previousSection = previous as FormatLengthSection

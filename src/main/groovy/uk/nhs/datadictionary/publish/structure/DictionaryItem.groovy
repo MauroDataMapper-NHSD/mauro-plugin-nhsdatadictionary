@@ -17,6 +17,7 @@
  */
 package uk.nhs.datadictionary.publish.structure
 
+import groovy.util.logging.Slf4j
 import groovy.xml.MarkupBuilder
 import org.maurodata.dita.elements.langref.base.Div
 import org.maurodata.dita.elements.langref.base.Topic
@@ -25,8 +26,9 @@ import uk.nhs.datadictionary.publish.PublishContext
 import uk.nhs.datadictionary.publish.PublishHelper
 import uk.nhs.datadictionary.publish.PublishTarget
 import uk.nhs.datadictionary.publish.changePaper.Change
+import uk.nhs.datadictionary.publish.structure.datasets.DataSetSection
 
-
+@Slf4j
 class DictionaryItem implements DitaAware<Topic>, HtmlAware, DiffAware<DictionaryItem, DictionaryItem> {
 
     final NhsDataDictionaryComponent component
@@ -85,38 +87,38 @@ class DictionaryItem implements DitaAware<Topic>, HtmlAware, DiffAware<Dictionar
     }
 
     @Override
-    DictionaryItem produceDiff(DictionaryItem previous) {
+    DictionaryItem produceDiff(DictionaryItem previous, boolean includeDataSetDefinitions = false) {
         List<Section> diffSections = []
+        List<Section> allSections = []
         this.sections.each {currentSection ->
             Section previousSection = previous ? previous.sections.find { it.type == currentSection.type } : null
             Section diffSection = currentSection.produceDiff(previousSection)
             if (diffSection) {
                 diffSections.add(diffSection)
+                allSections.add(diffSection)
+            } else {
+                if(currentSection.class != WhereUsedSection && currentSection.class != ChangeLogSection &&
+                   (currentSection.class != DataSetSection || includeDataSetDefinitions)) {
+                    allSections.add(currentSection)
+                }
             }
+
         }
 
         if (diffSections.empty) {
             return null
         }
 
-/*        DictionaryItem diff = new DictionaryItem(
-            this.id,
-            this.branchId,
-            this.stereotype,
-            this.name,
-            this.state,
-            this.outputClass,
-            getSummaryOfSectionTitlesForDiff(diffSections))
-*/
 
-        DictionaryItem diff = new DictionaryItem(this, this.branchId, getSummaryOfSectionTitlesForDiff(diffSections))
+        DictionaryItem diff = new DictionaryItem(this, this.branchId,
+                                                 getSummaryOfSectionTitlesForDiff(diffSections))
 
+        diff.sections.addAll(allSections)
+//        diffSections.each {diffSection ->
+//            diff.addSection(diffSection)
+//        }
 
-        diffSections.each {diffSection ->
-            diff.addSection(diffSection)
-        }
-
-        diff
+        return diff
     }
 
     @Override

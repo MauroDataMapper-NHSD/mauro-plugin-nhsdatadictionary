@@ -51,6 +51,11 @@ class DescriptionSection extends Section {
         this.includesComparison = includesComparison
     }
 
+    Section addDescriptionSection(){
+        return new DescriptionSection(this.parent, this.text)
+    }
+
+
     @Override
     Section produceDiff(Section previous) {
         DescriptionSection previousSection = previous as DescriptionSection
