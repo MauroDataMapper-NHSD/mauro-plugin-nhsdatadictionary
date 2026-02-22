@@ -102,9 +102,9 @@ class NhsDataDictionaryController implements NhsDataDictionaryApi {
     }
 
     @Get('/api/nhsdd/{dictionaryId}/publish/changePaper')
-    HttpResponse<StreamedFile> generateChangePaper(UUID dictionaryId, @Nullable @QueryValue Boolean includeDataSets) {
+    HttpResponse<StreamedFile> generateChangePaper(UUID dictionaryId, @Nullable @QueryValue Boolean dataSets) {
         checkAccessRights(dictionaryId)
-        File f = nhsDataDictionaryService.generateChangePaper(dictionaryId, includeDataSets)
+        File f = nhsDataDictionaryService.generateChangePaper(dictionaryId, dataSets)
         return HttpResponse.ok(new StreamedFile(new ByteArrayInputStream(f.readBytes()), MediaType.ZIP_TYPE))
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=\"${f.name}\"")
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_ZIP)
