@@ -82,8 +82,8 @@ class NhsDataDictionaryService {
     static final Map<String, String> KNOWN_KEYS = [
         (API_PROPERTY_RETIRED_TEMPLATE): '<p>This item has been retired from the NHS Data Model and Dictionary.</p>' +
                             '<p>The last version of this item is available in the ?????? release of the NHS Data Model and Dictionary.</p>' +
-                           '<p>Access to the last live version of this item can be obtained by emailing <a href=\"mailto:information.standards@nhs' +
-                           '.net\">information.standards@nhs.net</a> with "NHS Data Model and Dictionary - Archive Request" in the email subject ' +
+                           '<p>Access to the last live version of this item can be obtained by emailing <a href=\"mailto:support.digitalservices@nhs' +
+                           '.net\">support.digitalservices@nhs.net</a> with "NHS Data Model and Dictionary - Archive Request" in the email subject ' +
                             'line.</p>',
         (API_PROPERTY_PREPARATORY_TEMPLATE): '<p><b>This item is being used for development purposes and has not yet been approved.</b></p>',
         (API_PROPERTY_CHANGE_LOG_CHANGE_REQUEST_URL): "https://mauro.dataproducts.nhs.uk/changerequest/$NhsDataDictionary.CHANGE_REQUEST_NUMBER_TOKEN",

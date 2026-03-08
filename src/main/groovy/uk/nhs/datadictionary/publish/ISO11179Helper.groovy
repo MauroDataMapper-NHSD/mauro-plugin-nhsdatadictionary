@@ -373,7 +373,7 @@ class ISO11179Helper {
                 organisationName = 'NHS Data Model and Dictionary Service'
                 city = 'Leeds'
             }
-            emailAddress.add('information.standards@nhs.net')
+            emailAddress.add('support.digitalservices@nhs.net')
             phoneNumber.add('012345678901234')
             uri = 'https://digital.nhs.uk/services/nhs-data-model-and-dictionary-service'
         }

@@ -206,7 +206,7 @@ class ChangePaper {
 
 */
 
-    private static final String DEFAULT_CONTACT_DETAILS = '<p>For enquiries about this Change Request, please email <a href="mailto:information.standards@nhs.net">information.standards@nhs.net</a>.</p>'
+    private static final String DEFAULT_CONTACT_DETAILS = '<p>For enquiries about this Change Request, please email <a href="mailto:support.digitalservices@nhs.net">support.digitalservices@nhs.net</a>.</p>'
 
     List<StereotypedChange> stereotypedChanges = []
 

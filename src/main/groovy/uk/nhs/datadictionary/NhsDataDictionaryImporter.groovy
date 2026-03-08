@@ -14,6 +14,10 @@ import org.maurodata.plugin.importer.FolderImporterPlugin
 @CompileStatic
 class NhsDataDictionaryImporter implements FolderImporterPlugin<DataDictionaryImportParameters> {
 
+    static Map<String, String> stringReplacements = [
+        "information.standards@nhs.net": "support.digitalservices@nhs.net"
+    ]
+
     @Inject
     @JsonIgnore
     ApplicationContext applicationContext

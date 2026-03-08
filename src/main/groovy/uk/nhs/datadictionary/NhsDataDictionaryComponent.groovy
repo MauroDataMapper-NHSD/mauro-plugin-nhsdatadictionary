@@ -193,6 +193,9 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         definition = definition.replaceAll("\\s+", " ")
 */
         catalogueItem.description = (DDHelperFunctions.parseHtml(xml.definition[0])).replace("\u00a0", " ")
+        NhsDataDictionaryImporter.stringReplacements.each {key, value ->
+            catalogueItem.description = catalogueItem.description.replace(key, value)
+        }
 
         NhsDataDictionary.METADATA_FIELD_MAPPING.entrySet().each {entry ->
             Node xmlValue = xml[entry.value][0]

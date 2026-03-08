@@ -419,7 +419,7 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
         <p>The last version of this item is available in the ?????? release of the NHS Data Model and Dictionary.</p>
         <p>Access to the last live version of this item can be obtained by emailing 
 
-          <xref href='mailto:information.standards@nhs.net' format='html' scope='external'>information.standards@nhs.net</xref> with "NHS Data Model and Dictionary - Archive Request" in the email subject line.
+          <xref href='mailto:support.digitalservices@nhs.net' format='html' scope='external'>support.digitalservices@nhs.net</xref> with "NHS Data Model and Dictionary - Archive Request" in the email subject line.
         </p>
       </div>
     </body>
@@ -1224,8 +1224,8 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
         </p>
         <p>
           <ph outputclass='diff-html-added'>Access to the last live version of this item can be obtained by emailing</ph>
-          <xref href='mailto:information.standards@nhs.net' format='html' scope='external'>
-            <ph outputclass='diff-html-added'>information.standards@nhs.net</ph>
+          <xref href='mailto:support.digitalservices@nhs.net' format='html' scope='external'>
+            <ph outputclass='diff-html-added'>support.digitalservices@nhs.net</ph>
           </xref>
           <ph outputclass='diff-html-added'>with "NHS Data Model and Dictionary - Archive Request" in the email subject line.</ph>
         </p>

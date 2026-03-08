@@ -100,7 +100,7 @@
           "minMultiplicity": 1,
           "maxMultiplicity": 1,
           "dataType": "text",
-          "defaultValue": "<p>For enquiries about this Change Request, please email <a href=\"mailto:information.standards@nhs.net\">information.standards@nhs.net</a>.</p>"
+          "defaultValue": "<p>For enquiries about this Change Request, please email <a href=\"mailto:support.digitalservices@nhs.net\">support.digitalservices@nhs.net</a>.</p>"
         }
       ]
     }
