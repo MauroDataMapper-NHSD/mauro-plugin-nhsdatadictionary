@@ -189,7 +189,7 @@ class ChangePaperPdfUtility {
                             }
                         }
                         stentry {
-                            p changedItem.publishStructure.description
+                            p changedItem.publishStructure.changeType
                         }
                     }
                 }

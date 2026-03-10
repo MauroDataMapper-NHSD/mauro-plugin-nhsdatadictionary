@@ -97,7 +97,7 @@ class ChangePaperHtmlUtility {
 
             new ChangePaperPreviewItem(
                 name: changedItem.publishStructure.name,
-                summary: changedItem.publishStructure.description,
+                summary: changedItem.publishStructure.changeType,
                 htmlOutput: htmlOutput)
         }
     }
