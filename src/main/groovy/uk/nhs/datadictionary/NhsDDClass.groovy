@@ -119,6 +119,7 @@ class NhsDDClass extends NhsDataDictionaryComponent <DataClass> {
                 // Must track in the DD attribute that this is the owner class, required by the
                 // attribute to understand hierarchical information in Mauro
                 attribute.parentClass = this
+                attribute.catalogueItem.dataClass = this.catalogueItem
             } else {
                 log.debug("Cannot find attributeElement with Uin: " + attributeUin)
             }
