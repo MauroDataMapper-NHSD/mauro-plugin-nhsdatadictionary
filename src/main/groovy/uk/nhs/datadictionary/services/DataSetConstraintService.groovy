@@ -47,7 +47,7 @@ class DataSetConstraintService extends DataDictionaryComponentService<Term, NhsD
         NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary(versionedFolderId)
 
         Term dataSetConstraintTerm = termCacheableRepository.findById(id)
-        NhsDDDataSetConstraint dataSetConstraint = initialiseComponent(new NhsDDDataSetConstraint(), dataSetConstraintTerm, versionedFolderId)
+        NhsDDDataSetConstraint dataSetConstraint = initialiseComponent(new NhsDDDataSetConstraint(), dataSetConstraintTerm, versionedFolderId, nhsDataDictionaryService)
         return dataSetConstraint
     }
 

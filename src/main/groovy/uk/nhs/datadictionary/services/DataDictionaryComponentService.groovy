@@ -296,11 +296,13 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
 
     }
 
-    D initialiseComponent(D newComponent, T catalogueItem, UUID branchId) {
+    D initialiseComponent(D newComponent, T catalogueItem, UUID branchId, NhsDataDictionaryService nhsDataDictionaryService) {
         newComponent.catalogueItem = catalogueItem
         newComponent.branchId = branchId
         newComponent.dataDictionaryComponentService = this
-        newComponent.fromMauroItem(null, mauroPersistenceService, catalogueItem)
+        NhsDataDictionary nhsDataDictionary = new NhsDataDictionary()
+        nhsDataDictionaryService.setApiProperties(nhsDataDictionary)
+        newComponent.fromMauroItem(nhsDataDictionary, mauroPersistenceService, catalogueItem)
         return newComponent
     }
 

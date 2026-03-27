@@ -61,7 +61,7 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
         attributeElement.semanticLinks.each {
             it.target = dataElementRepository.loadWithContent(it.targetMultiFacetAwareItemId)
         }
-        NhsDDAttribute attribute = initialiseComponent(new NhsDDAttribute(), attributeElement, versionedFolderId)
+        NhsDDAttribute attribute = initialiseComponent(new NhsDDAttribute(), attributeElement, versionedFolderId, nhsDataDictionaryService)
         attribute.instantiatedByElements.addAll (getAllElementsForAttribute(null, attribute))
         //attribute.htmlDescription = convertLinksInDescription(versionedFolderId, attribute.getDescription())
         attribute.codes.each {code ->

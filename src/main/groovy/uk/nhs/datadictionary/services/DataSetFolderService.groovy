@@ -54,7 +54,7 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
                 it.label == NhsDataDictionary.DATA_SETS_FOLDER_NAME
             }
         }
-        NhsDDDataSetFolder dataSetFolder = initialiseComponent(new NhsDDDataSetFolder(), folderFolder, versionedFolderId)
+        NhsDDDataSetFolder dataSetFolder = initialiseComponent(new NhsDDDataSetFolder(), folderFolder, versionedFolderId, nhsDataDictionaryService)
         if(id) {
             List<String> folderPath = [folderFolder.label]
             Folder parentFolder = folderCacheableRepository.findById(folderFolder.getParentFolder().id)
@@ -65,12 +65,12 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
             dataSetFolder.folderPath = folderPath
         }
         folderCacheableRepository.findAllByFolderId(folderFolder.id).sort {it.label}.each {
-            NhsDDDataSetFolder childFolder = initialiseComponent(new NhsDDDataSetFolder(), it, versionedFolderId)
+            NhsDDDataSetFolder childFolder = initialiseComponent(new NhsDDDataSetFolder(), it, versionedFolderId, nhsDataDictionaryService)
             dataSetFolder.childFolders.add(childFolder)
         }
 
         dataModelCacheableRepository.findAllByFolderId(folderFolder.id).sort {it.label}.each {
-            NhsDDDataSet childDataSet = dataSetService.initialiseComponent(new NhsDDDataSet(), it, versionedFolderId)
+            NhsDDDataSet childDataSet = dataSetService.initialiseComponent(new NhsDDDataSet(), it, versionedFolderId, nhsDataDictionaryService)
             if (!childDataSet.isRetired()) {
                 dataSetFolder.dataSets.add(childDataSet)
             }

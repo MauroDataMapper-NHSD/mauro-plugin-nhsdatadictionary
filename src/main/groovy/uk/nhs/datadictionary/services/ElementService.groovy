@@ -63,7 +63,7 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
             it.target = dataElement
 
         }
-        NhsDDElement element = initialiseComponent(new NhsDDElement(), elementElement, versionedFolderId)
+        NhsDDElement element = initialiseComponent(new NhsDDElement(), elementElement, versionedFolderId, nhsDataDictionaryService)
 
         element.instantiatesAttributes.addAll(element.getAllAttributesForElement())
 

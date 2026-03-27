@@ -43,7 +43,7 @@ class SupportingInformationService extends DataDictionaryComponentService<Term, 
     @Override
     NhsDDSupportingInformation show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
         Term supportingInformationTerm = termCacheableRepository.findById(id)
-        NhsDDSupportingInformation supportingInformation = initialiseComponent(new NhsDDSupportingInformation(), supportingInformationTerm, versionedFolderId)
+        NhsDDSupportingInformation supportingInformation = initialiseComponent(new NhsDDSupportingInformation(), supportingInformationTerm, versionedFolderId, nhsDataDictionaryService)
         return supportingInformation
     }
 

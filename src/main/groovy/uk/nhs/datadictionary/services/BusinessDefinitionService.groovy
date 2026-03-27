@@ -50,7 +50,7 @@ class BusinessDefinitionService extends DataDictionaryComponentService<Term, Nhs
     NhsDDBusinessDefinition show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
         NhsDataDictionary dataDictionary = nhsDataDictionaryService.newDataDictionary(versionedFolderId)
         Term businessDefinitionTerm = termDTORepository.findById(id)
-        NhsDDBusinessDefinition businessDefinition = initialiseComponent(new NhsDDBusinessDefinition(), businessDefinitionTerm, versionedFolderId)
+        NhsDDBusinessDefinition businessDefinition = initialiseComponent(new NhsDDBusinessDefinition(), businessDefinitionTerm, versionedFolderId, nhsDataDictionaryService)
 //        businessDefinition.catalogueItem.description =
 //            convertLinksInDescription(versionedFolderId, businessDefinition.getDescription())
         return businessDefinition

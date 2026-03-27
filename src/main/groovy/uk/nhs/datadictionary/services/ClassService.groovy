@@ -55,8 +55,9 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
     @Override
     NhsDDClass show(UUID versionedFolderId, UUID id, NhsDataDictionaryService nhsDataDictionaryService) {
         DataClass dataClass = dataClassCacheableRepository.findById(id)
-        NhsDDClass nhsClass = initialiseComponent(new NhsDDClass(), dataClass, versionedFolderId)
-
+        NhsDDClass nhsClass = initialiseComponent(new NhsDDClass(), dataClass, versionedFolderId, nhsDataDictionaryService)
+        NhsDataDictionary dataDictionary = new NhsDataDictionary()
+        nhsDataDictionaryService.setApiProperties(dataDictionary)
         List<NhsDDAttribute> attributes = getAttributesForShow(nhsClass, null)
         // Assign the attribute by key and non-key types. The NhsDDClass.getAttributes() method will combine them
         nhsClass.keyAttributes = attributes.findAll { it.key }.sort { it.name }

@@ -79,7 +79,7 @@ class DataSetService extends DataDictionaryComponentService<DataModel, NhsDDData
             }
         }
 
-        NhsDDDataSet dataSet = initialiseComponent(new NhsDDDataSet(), dataModel, versionedFolderId)
+        NhsDDDataSet dataSet = initialiseComponent(new NhsDDDataSet(), dataModel, versionedFolderId, nhsDataDictionaryService)
 
         DictionaryItem structure = dataSet.getPublishStructure()
         Section specificationSection = structure.sections.find { it instanceof DataSetSection }
