@@ -187,7 +187,9 @@ class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
         addDescriptionSection(dictionaryItem)
 
         if (itemState == DictionaryItem.DictionaryItemState.ACTIVE) {
-            addNationalCodesSection(dictionaryItem)
+            if(nationalCodes && nationalCodes?.size() > 0) {
+                addNationalCodesSection(dictionaryItem)
+            }
             addAliasesSection(dictionaryItem)
             addWhereUsedSection(dictionaryItem)
             addLinkedElementsSection(dictionaryItem)

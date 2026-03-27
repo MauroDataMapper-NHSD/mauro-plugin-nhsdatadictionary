@@ -89,6 +89,12 @@ class DescriptionSection extends Section {
         }
         else {
             diffHtml = DaisyDiffHelper.diff(previousSection.text, this.text)
+
+            if (!diffHtml) {
+                log.warn("HTML in ${parent.stereotype} '${parent.name}' failed DaisyDiff comparison, showing Change Request text only")
+                canDiffContent = false
+                diffHtml = this.text
+            }
         }
 
         String changeType = this.parent.state == DictionaryItem.DictionaryItemState.RETIRED && previousSection.parent.state != DictionaryItem.DictionaryItemState.RETIRED

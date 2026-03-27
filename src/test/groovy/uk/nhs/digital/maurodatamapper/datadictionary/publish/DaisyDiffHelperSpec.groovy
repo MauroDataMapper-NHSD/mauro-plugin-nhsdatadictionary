@@ -19,8 +19,7 @@ package uk.nhs.digital.maurodatamapper.datadictionary.publish
 
 import io.micronaut.context.annotation.Property
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
-import jakarta.inject.Singleton
-import org.eclipse.compare.rangedifferencer.RangeDifference
+import org.outerj.daisy.diff.eclipse.compare.rangedifferencer.RangeDifference
 import spock.lang.Specification
 import uk.nhs.datadictionary.publish.DaisyDiffHelper
 
@@ -119,5 +118,17 @@ class DaisyDiffHelperSpec extends Specification {
     String resolveFile(String filename) {
         File file = new File(this.class.getClassLoader().getResource("html/" + filename).toURI())
         return new String(file.readBytes())
+    }
+
+    void "should diff SNOMED clinical finding html without assertion failure"() {
+        when:
+        String leftHtml = "<a href=\"dm:Data Elements|dc:C|de:CODED FINDING (CODED CLINICAL ENTRY)\">CODED FINDING (CODED CLINICAL ENTRY)</a> is the same as attribute   <a href=\"dm:Classes and Attributes|de:CLINICAL CLASSIFICATION CODE\">CLINICAL CLASSIFICATION CODE</a> or   <a href=\"dm:Classes and Attributes|de:CLINICAL TERMINOLOGY CODE\">CLINICAL TERMINOLOGY CODE</a>.  <p>    <a href=\"dm:Data Elements|dc:C|de:CODED FINDING (CODED CLINICAL ENTRY)\">CODED FINDING (CODED CLINICAL ENTRY)</a> is the     <a href=\"dm:Classes and Attributes|dc:CODED CLINICAL ENTRY\">CODED CLINICAL ENTRY</a> which is used to identify a     <a href=\"te:NHS Business Definitions|tm:Clinical Finding\">Finding</a>.  </p>  <p>For further information on     <a href=\"te:NHS Business Definitions|tm:Clinical Finding\">Findings</a>, see the:  </p>  <ul>    <li>      <div>        <a href=\"te:Supporting Information|tm:SNOMED CT\">SNOMED CT</a>® Glossary at:         <a href=\"https://confluence.ihtsdotools.org/display/DOCEG/Clinical+Finding+and+Disorder\" target=\"_blank\">Clinical Finding and Disorder</a>      </div>    </li>    <li>      <div>        <a href=\"https://nhsengland.kahootz.com/t_c_home/view?objectId=30206597\" target=\"_blank\">SNOMED CT Fact Sheet: Structure of SNOMED CT</a>.      </div>    </li>  </ul>"
+        String rightHtml = "<a href=\"dm:Data Elements|dc:C|de:CODED FINDING (CODED CLINICAL ENTRY)\">CODED FINDING (CODED CLINICAL ENTRY)</a> is the same as attribute   <a href=\"dm:Classes and Attributes|de:CLINICAL CLASSIFICATION CODE\">CLINICAL CLASSIFICATION CODE</a> or   <a href=\"dm:Classes and Attributes|de:CLINICAL TERMINOLOGY CODE\">CLINICAL TERMINOLOGY CODE</a>.  <p>    <a href=\"dm:Data Elements|dc:C|de:CODED FINDING (CODED CLINICAL ENTRY)\">CODED FINDING (CODED CLINICAL ENTRY)</a> is the     <a href=\"dm:Classes and Attributes|dc:CODED CLINICAL ENTRY\">CODED CLINICAL ENTRY</a> which is used to identify a     <a href=\"te:NHS Business Definitions|tm:Clinical Finding\">Finding</a>.  </p>  <p>For further information on     <a href=\"te:NHS Business Definitions|tm:Clinical Finding\">Findings</a>, see the:  </p>  <ul>    <li>      <div>        <a href=\"te:Supporting Information|tm:SNOMED CT\">SNOMED CT</a>® Document Library at:         <a href=\"https://docs.snomed.org/implementation-guides/context-representation-implementation-guide/4-snomed-ct-and-context/4.1-clinical-findings-with-explicit-context\" target=\"_blank\">Clinical Findings with Explicit Context</a>      </div>    </li>    <li>      <div>        <a href=\"https://nhsengland.kahootz.com/t_c_home/view?objectId=30206597\" target=\"_blank\">SNOMED CT Fact Sheet: Structure of SNOMED CT</a>.      </div>    </li>  </ul>"
+
+        String diff = DaisyDiffHelper.diff(leftHtml, rightHtml)
+
+        then:
+        diff != ""
+
     }
 }
