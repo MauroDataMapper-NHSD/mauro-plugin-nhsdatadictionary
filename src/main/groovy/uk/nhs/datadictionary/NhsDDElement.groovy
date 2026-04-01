@@ -492,7 +492,7 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
             }
         }
         if(catalogueItem.dataType.dataTypeKind == DataType.DataTypeKind.MODEL_TYPE) {
-            if (dataDictionary) {
+            if (dataDictionary && dataDictionary.elementCodeSetCodes.size() > 0) {
                 codes = dataDictionary.elementCodeSetCodes[catalogueItem.dataType.modelResourceId]
             } else {
                 Set<Term> terms = mauroPersistenceService.termCacheableRepository.findAllByCodeSetsIdIn([catalogueItem.dataType.modelResourceId])
@@ -510,7 +510,7 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
             semanticLink.linkType == SemanticLinkType.REFINES
             && semanticLink.target
         }.collect {semanticLink ->
-            if(dataDictionary) {
+            if(dataDictionary && dataDictionary.attributesByCatalogueId.size() > 0) {
                 return dataDictionary.attributesByCatalogueId[semanticLink.targetMultiFacetAwareItemId] as NhsDDAttribute
             } else {
                 NhsDDAttribute attribute = new NhsDDAttribute(semanticLink.target as DataElement, branchId)

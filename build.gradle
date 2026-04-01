@@ -69,9 +69,11 @@ dependencies {
     }
 
     // Daisy Diff and transitive dependencies.  Used in the generation of change requests
-    implementation group: 'org.outerj.daisy', name: 'daisydiff', version: '1.3.3-atlassian-hosted'
+    implementation 'ch.sbb.html5diff:html5diff:1.4.5'
+
+    //implementation group: 'org.outerj.daisy', name: 'daisydiff', version: '1.3.3-atlassian-hosted'
     // Source: https://mvnrepository.com/artifact/org.eclipse.compare.core/source
-    //implementation 'org.eclipse.platform:org.eclipse.compare.core:3.8.800'
+    implementation 'org.eclipse.platform:org.eclipse.compare.core:3.8.800'
 
 
     implementation 'net.sourceforge.nekohtml:nekohtml:1.9.22'

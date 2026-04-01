@@ -315,7 +315,7 @@ class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
             catalogueItem.dataClass = mauroPersistenceService.dataClassCacheableRepository.findById(catalogueItem.dataClass.id)
         }
         if(catalogueItem.dataType.dataTypeKind == DataType.DataTypeKind.MODEL_TYPE) {
-            if (dataDictionary) {
+            if (dataDictionary && dataDictionary.attributeTerminologyCodes.size > 0) {
                 codes = dataDictionary.attributeTerminologyCodes[catalogueItem.dataType.modelResourceId]
             } else {
                 List<Term> terms = mauroPersistenceService.termCacheableRepository.findAllByTerminology(new Terminology(id: catalogueItem.dataType.modelResourceId))

@@ -18,19 +18,18 @@
 package uk.nhs.datadictionary.publish
 
 import groovy.util.logging.Slf4j
-import org.apache.xalan.processor.TransformerFactoryImpl
-import org.outerj.daisy.diff.eclipse.compare.internal.LCSSettings
-import org.outerj.daisy.diff.eclipse.compare.rangedifferencer.RangeDifference
-import org.outerj.daisy.diff.eclipse.compare.rangedifferencer.RangeDifferencer
+import org.eclipse.compare.internal.LCSSettings
+import org.eclipse.compare.rangedifferencer.RangeDifference
+import org.eclipse.compare.rangedifferencer.RangeDifferencer
 import org.outerj.daisy.diff.helper.NekoHtmlParser
 import org.outerj.daisy.diff.html.HTMLDiffer
 import org.outerj.daisy.diff.html.HtmlSaxDiffOutput
 import org.outerj.daisy.diff.html.TextNodeComparator
 import org.outerj.daisy.diff.html.dom.DomTreeBuilder
-import org.xml.sax.ContentHandler
 import org.xml.sax.InputSource
 
 import javax.xml.transform.OutputKeys
+import javax.xml.transform.TransformerFactory
 import javax.xml.transform.sax.SAXTransformerFactory
 import javax.xml.transform.sax.TransformerHandler
 import javax.xml.transform.stream.StreamResult
@@ -74,45 +73,42 @@ class DaisyDiffHelper {
 
     private static String tryDiff(String leftHtml, String rightHtml) {
         try {
-        StringWriter finalResult = new StringWriter()
-        SAXTransformerFactory tf = new TransformerFactoryImpl()
-        TransformerHandler result = tf.newTransformerHandler()
-        result.getTransformer().setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes")
-        result.getTransformer().setOutputProperty(OutputKeys.INDENT, "yes")
-        result.getTransformer().setOutputProperty(OutputKeys.METHOD, "html")
-        result.getTransformer().setOutputProperty(OutputKeys.ENCODING, "UTF-8")
-        //result.getTransformer().setOutputProperty(OutputKeys.ENCODING, TestHelper.ENCODING);
-        result.setResult(new StreamResult(finalResult))
+            StringWriter finalResult = new StringWriter()
+            SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory.newInstance()
+            TransformerHandler result = tf.newTransformerHandler()
+            result.getTransformer().setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes")
+            result.getTransformer().setOutputProperty(OutputKeys.INDENT, "yes")
+            result.getTransformer().setOutputProperty(OutputKeys.METHOD, "html")
+            result.getTransformer().setOutputProperty(OutputKeys.ENCODING, "UTF-8")
+            //result.getTransformer().setOutputProperty(OutputKeys.ENCODING, TestHelper.ENCODING);
+            result.setResult(new StreamResult(finalResult))
 
-        ContentHandler postProcess = result
+            Locale locale = Locale.getDefault()
 
-        Locale locale = Locale.getDefault()
-        String prefix = "diff"
+            NekoHtmlParser cleaner = new NekoHtmlParser()
 
-        NekoHtmlParser cleaner = new NekoHtmlParser()
+            InputSource oldSource = new InputSource(new StringReader(leftHtml))
+            InputSource newSource = new InputSource(new StringReader(rightHtml))
 
-        InputSource oldSource = new InputSource(new StringReader(leftHtml))
-        InputSource newSource = new InputSource(new StringReader(rightHtml))
+            DomTreeBuilder oldHandler = new DomTreeBuilder()
+            cleaner.parse(oldSource, oldHandler)
+            TextNodeComparator leftComparator = new TextNodeComparator(oldHandler, locale)
 
-        DomTreeBuilder oldHandler = new DomTreeBuilder()
-        cleaner.parse(oldSource, oldHandler)
-        TextNodeComparator leftComparator = new TextNodeComparator(oldHandler, locale)
+            DomTreeBuilder newHandler = new DomTreeBuilder()
+            cleaner.parse(newSource, newHandler)
+            TextNodeComparator rightComparator = new TextNodeComparator(newHandler, locale)
 
-        DomTreeBuilder newHandler = new DomTreeBuilder()
-        cleaner.parse(newSource, newHandler)
-        TextNodeComparator rightComparator = new TextNodeComparator(newHandler, locale)
+            HtmlSaxDiffOutput output = new HtmlSaxDiffOutput(result, "diff")
 
-        HtmlSaxDiffOutput output = new HtmlSaxDiffOutput(postProcess, prefix)
-
-        HTMLDiffer differ = new HTMLDiffer(output)
+            HTMLDiffer differ = new HTMLDiffer(output)
             differ.diff(leftComparator, rightComparator)
 
             return finalResult.toString().replaceAll(" changes=\"[^\"]*\"", "")
         } catch(Throwable e) {
             log.warn("Failed DaisyDiff comparison", e)
-            log.debug("Left HTML: {}", leftHtml)
-            log.debug("Right HTML: {}", rightHtml)
-            return null
+            log.warn("Left HTML: {}", leftHtml)
+            log.warn("Right HTML: {}", rightHtml)
+            return ""
         }
     }
 
