@@ -130,7 +130,12 @@ class NhsDDClass extends NhsDataDictionaryComponent <DataClass> {
 
 
     List<NhsDDAttribute> getAttributes() {
-        keyAttributes + otherAttributes
+        if(isRetired()) {
+            return []
+        }
+        return (keyAttributes + otherAttributes).findAll {
+            !it.isRetired()
+        }
     }
 
     List<NhsDDClassRelationship> allRelationships() {

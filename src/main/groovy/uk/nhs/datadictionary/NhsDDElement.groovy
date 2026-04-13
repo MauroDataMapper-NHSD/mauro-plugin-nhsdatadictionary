@@ -248,11 +248,11 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
     }
 
     boolean hasNationalCodes() {
-        this.codes.find { !it.isDefault}
+        return !isRetired() && this.codes.find { !it.isDefault}
     }
 
     boolean hasDefaultCodes() {
-        this.codes.find { it.isDefault }
+        return !isRetired() && this.codes.find { it.isDefault }
     }
 
     @Override
@@ -411,11 +411,17 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
     }
 
     List<NhsDDCode> getNationalCodes() {
-        NhsDDCode.sortCodes(codes.findAll { !it.isDefault })
+        if(isRetired()) {
+            return []
+        }
+        return NhsDDCode.sortCodes(codes.findAll { !it.isDefault })
     }
 
     List<NhsDDCode> getDefaultCodes() {
-        NhsDDCode.sortCodes(codes.findAll { it.isDefault })
+        if(isRetired()) {
+            return []
+        }
+        return NhsDDCode.sortCodes(codes.findAll { it.isDefault })
     }
 
     @JsonIgnore

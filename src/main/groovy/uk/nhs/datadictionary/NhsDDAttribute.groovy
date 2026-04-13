@@ -262,7 +262,10 @@ class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
     }
 
     List<NhsDDCode> getNationalCodes() {
-        NhsDDCode.sortCodes(codes.findAll { !it.isDefault })
+        if(isRetired()) {
+            return []
+        }
+        return NhsDDCode.sortCodes(codes.findAll { !it.isDefault })
     }
 
     @JsonIgnore
