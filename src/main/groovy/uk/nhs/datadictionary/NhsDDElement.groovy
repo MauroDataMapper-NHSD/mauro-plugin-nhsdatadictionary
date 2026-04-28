@@ -159,17 +159,26 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
             if(!linkedAttribute) {
                 log.error("No suitable linked attribute found for element ${name}")
             } else {
-                xml."value-set".Bundle.entry.expansion.parameter.Bundle.entry.resource.CodeSystem.concept.each {concept ->
-                    if (concept.property.find {Node property ->
-                        property.code[0].attribute('value') == "Data Element" &&
-                        property.valueString[0].attribute('value') == capitalizedCodeSetName
-                    }) {
-                        NhsDDCode code = linkedAttribute.codes.find {it -> it.code == concept.code[0].attribute('value')}
-                        codes.add(code)
+                if(xml."value-set".Bundle.entry.expansion) {
+                    xml."value-set".Bundle.entry.expansion.parameter.Bundle[0].entry.resource.CodeSystem.concept.each {concept ->
+                        System.err.println("${concept.code[0].attribute("value")}")
+                        if (concept.property.find {Node property ->
+                            property.code[0].attribute('value') == "Data Element" &&
+                            property.valueString[0].attribute('value') == capitalizedCodeSetName
+                        }) {
+                            NhsDDCode code = linkedAttribute.codes.find {it.code == concept.code[0].attribute('value')}
+                            if(!code) {
+                                System.err.println("Cannot find code: ${concept.code[0].attribute('value')}")
+                            }
+                            System.err.println("Found code: ${code.code}")
+                            codes.add(code)
+                        }
                     }
                 }
+                else if(xml."value-set".Bundle.entry.resource) {
+                    codes.addAll(linkedAttribute.codes)
+                }
             }
-
         }
         if(xml.DefaultCode.size() > 0 && !isRetired()) {
             NhsDDAttribute linkedAttribute = instantiatesAttributes.find { !it.isRetired()}
