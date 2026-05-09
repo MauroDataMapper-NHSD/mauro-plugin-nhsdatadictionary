@@ -157,8 +157,7 @@ class NhsDataDictionary {
     Map<UUID, List<NhsDDCode>> attributeTerminologyCodes = [:]
     Map<UUID, List<NhsDDCode>> elementCodeSetCodes = [:]
 
-    Map<UUID, List<Metadata>> elementsMetadata = [:]
-    Map<UUID, List<Metadata>> dataSetsMetadata = [:]
+    Map<String, NhsDataDictionaryComponent> pathLookup = [:]
 
     String folderName = FOLDER_NAME
 
@@ -211,7 +210,7 @@ class NhsDataDictionary {
                 (includeRetired || !component.isRetired()) &&
                 ((alphIndex == '0-9' && Character.isDigit(component.name.charAt(0))) ||
                  component.name.toLowerCase().startsWith(alphIndex))
-            }.sort {it.name}
+            }.sort {it.name.toLowerCase()}
 
             if(componentsByIndex.size() > 0) {
                 indexMap[alphIndex.toUpperCase()] = componentsByIndex
@@ -539,35 +538,6 @@ class NhsDataDictionary {
         }
     }
 
-    static String replaceLinksInStringAndUpdateWhereUsed(
-        String source,
-        Map<String, NhsDataDictionaryComponent> pathLookup,
-        NhsDataDictionaryComponent sourceComponent) {
-        if (!source) {
-            return source
-        }
-
-        Matcher matcher = DataDictionaryComponentService.pattern.matcher(source)
-        while (matcher.find()) {
-            NhsDataDictionaryComponent component = pathLookup[matcher.group(1)]
-
-            if (component) {
-                String text = matcher.group(2).replaceAll("_"," ")
-                String replacement = "<a class='${component.getOutputClass()}' href=\"${component.getDitaKey()}\">${text}</a>"
-                source = source.replace(matcher.group(0), replacement)
-                if (sourceComponent && sourceComponent != component) {
-                    // In the description, use the source component name in it to match the current live published dictionary content
-                    component.whereUsed[sourceComponent] = "references in description ${component.name}".toString()
-
-                }
-            }
-            else {
-                log.info("Cannot match component: ${matcher.group(1)}")
-            }
-        }
-
-        return source
-    }
 
     Map<String, Map<String, Number>> statistics() {
         ['Attributes': [

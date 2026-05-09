@@ -142,9 +142,11 @@ class NhsDDDataSetFolder extends NhsDataDictionaryComponent <Folder> {
 
 
     List<String> getDitaFolderPath() {
-        folderPath.collect {
-            it.replaceAll("[^A-Za-z0-9- ]", "").replace(" ", "_")
-        }
+        folderPath.findAll {it != "Commissioning Data Sets"}
+            .collect {
+                it.replaceAll("[^A-Za-z0-9- ]", "").replace(" ", "_")
+            }
+
     }
 
 

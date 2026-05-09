@@ -206,7 +206,12 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
     }
 
     static OtherDataSetRow buildOtherDataSetRow(NhsDDDataSetComponent dataSetComponent) {
-        new OtherDataSetRow(dataSetComponent.mandation, buildOtherDataSetCell(dataSetComponent))
+        String mandation = ""
+        if(dataSetComponent.mandation) {
+            mandation = dataSetComponent.mandation.substring(0,1)
+        }
+
+        new OtherDataSetRow(mandation, buildOtherDataSetCell(dataSetComponent))
     }
 
     static OtherDataSetCell buildOtherDataSetCell(NhsDDDataSetComponent dataSetComponent) {
@@ -336,7 +341,10 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
     }
 
     static Row addChildRow(def classOrElement) {
-        String mro = classOrElement.mandation
+        String mro = ""
+        if(classOrElement.mandation) {
+            mro = classOrElement.mandation.substring(0,1)
+        }
         Row.build {
             entry {
                 p mro
@@ -460,7 +468,11 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
                     headerTable.tgroups[0].tBody {
                         row {
                             entry(align: Align.CENTER) {
-                                p mandation
+                                if(mandation) {
+                                    p mandation?.substring(0, 1)
+                                } else {
+                                    p ""
+                                }
                             }
                             entry(align: Align.CENTER) {
                                 p groupRepeats
@@ -522,11 +534,15 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
                         entry(namest: "col1", nameend: "col1", align: Align.CENTER) {
                             p "Group Status"
                             if(includeMRO) {
-                                p mandation
+                                if(mandation) {
+                                    p mandation?.substring(0, 1)
+                                } else {
+                                    p ""
+                                }
                             }
                         }
                         entry(namest: "col2", nameend: "col2", align: Align.CENTER) {
-                            p NhsDataDictionary.DATASET_TABLE_KEY_GROUP_REPEATS
+                            p "Group Repeats"
                             if(includeMRO) {
                                 p groupRepeats
                             }
@@ -570,7 +586,7 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
                 sortedChildren.each { NhsDDDataSetClass childComponent ->
                     if (childComponent instanceof NhsDDDataSetClass && childComponent.name.startsWith("And") && childComponent.isAnd) {
                         childComponent.sortedChildren.each { NhsDDDataSetClass subChild ->
-                            rows.addAll(subChild.addCDSSubClass(dataDictionary, totalDepth, currentDepth + 1))
+                            rows.addAll(subChild.addCDSSubClass(dataDictionary, totalDepth, currentDepth))
                         }
                     } else {
                         int newCurrentDepth = currentDepth + 1
@@ -726,7 +742,11 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
         int moreRows = calculateClassRows()
         return Row.build(outputClass: "thead-light table-primary") {
             entry(align: Align.CENTER, morerows: moreRows) {
-                p mandation
+                if(mandation) {
+                    p mandation?.substring(0, 1)
+                } else {
+                    p ""
+                }
             }
             entry(align: Align.CENTER, morerows: moreRows) {
                 p groupRepeats

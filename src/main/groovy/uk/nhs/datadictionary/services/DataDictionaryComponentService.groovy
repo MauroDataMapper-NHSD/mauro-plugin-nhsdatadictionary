@@ -90,19 +90,13 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
 
         // Do a full check of every "where used" link type, same as the DITA generation. Only way to be sure that
         // every possible link is captured
-        Map<String, NhsDataDictionaryComponent> pathLookup = [:]
         dataDictionary.allComponents.each { component ->
-            pathLookup[component.getMauroPath()] = component
-        }
-
-        dataDictionary.allComponents.each { component ->
-            component.replaceLinksInDefinition(pathLookup)
+            component.dataDictionary = dataDictionary
+            dataDictionary.pathLookup[component.getMauroPath()] = component
         }
 
         NhsDataDictionaryComponent component = getByCatalogueItemId(id, dataDictionary)
-        component.dataDictionary = dataDictionary
-        component.updateWhereUsed()
-        return component.whereUsed.entrySet()
+        return component.getWhereUsed().entrySet()
             .findAll { !it.key.isRetired() }
             .sort { it.key.name }
             .collect { entry ->
@@ -157,7 +151,7 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
             return "supportingInformation"
         }
         if (path[0] == "te:${NhsDataDictionary.DATA_SET_CONSTRAINTS_TERMINOLOGY_NAME}") {
-            return "dataSetConstraint"
+            return "xmlSchemaConstraint"
         }
         if (path[0] == "dm:${NhsDataDictionary.CLASSES_MODEL_NAME}") {
             if(path[path.size() -1].startsWith("de:")) {

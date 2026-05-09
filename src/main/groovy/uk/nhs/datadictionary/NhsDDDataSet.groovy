@@ -195,7 +195,7 @@ class NhsDDDataSet extends NhsDataDictionaryComponent <DataModel> {
             }
         }
 
-        topics.add(changeLogTopic())
+//        topics.add(changeLogTopic())
         return topics
     }
 

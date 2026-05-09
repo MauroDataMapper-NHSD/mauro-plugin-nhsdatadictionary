@@ -50,6 +50,7 @@ import uk.nhs.datadictionary.utils.DDHelperFunctions
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 @Slf4j
@@ -265,7 +266,11 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
 
     String getDescription() {
         if(dataDictionary && isRetired()) {
-            return dataDictionary.retiredItemText
+            if(catalogueItem.description?.contains("This item has been retired")) { // Legacy - retired before Mauro
+                return catalogueItem.description
+            } else {
+                return dataDictionary.retiredItemText
+            }
         } else if(dataDictionary && isPreparatory()) {
             return dataDictionary.preparatoryItemText
         } else {
@@ -373,8 +378,8 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
     }
 
     void addChangeLogSection(DictionaryItem dictionaryItem) {
-        List<ChangeLogRow> changeLogRows = changeLog.collect {entry -> new ChangeLogRow(entry) }
-        dictionaryItem.addSection(new ChangeLogSection(dictionaryItem, changeLogHeaderText, changeLogFooterText, changeLogRows))
+        //List<ChangeLogRow> changeLogRows = changeLog.collect {entry -> new ChangeLogRow(entry) }
+        //dictionaryItem.addSection(new ChangeLogSection(dictionaryItem, changeLogHeaderText, changeLogFooterText, changeLogRows))
     }
 
     @JsonIgnore
@@ -389,7 +394,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
                 topics.add(whereUsedTopic())
             }
         }
-        topics.add(changeLogTopic())
+        //topics.add(changeLogTopic())
         return topics
     }
 
@@ -409,11 +414,12 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
     }
 
     Topic descriptionTopic() {
+        String desc = getDescription()
         Topic.build (id: getDitaKey() + "_description") {
             title "Description"
             body {
-                if(catalogueItem.description) {
-                    div HtmlHelper.replaceHtmlWithDita(catalogueItem.description.replace('<table', '<table class=\"table-striped\"'))
+                if(desc) {
+                    div HtmlHelper.replaceHtmlWithDita(replaceLinksInString(desc).replace('<table', '<table class=\"table-striped\"'))
                 }
             }
         }
@@ -429,7 +435,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
                         stentry "Link"
                         stentry "How used"
                     }
-                    whereUsed
+                    getWhereUsed()
                         .findAll { !it.key.isRetired() }
                         .sort { it.key.name }
                         .each {component, text ->
@@ -471,6 +477,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         Topic.build(id: getDitaKey() + "_changeLog") {
             title "Change Log"
             body {
+                /*
                 if (changeLog && !changeLog.empty && changeLogHeaderText) {
                     div HtmlHelper.replaceHtmlWithDita(changeLogHeaderText)
                 }
@@ -497,6 +504,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
                         }
                     }
                 }
+                 */
                 if (changeLogFooterText) {
                     div HtmlHelper.replaceHtmlWithDita(changeLogFooterText)
                 }
@@ -535,15 +543,42 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         return outputClass
     }
 
-    void replaceLinksInDefinition(Map<String, NhsDataDictionaryComponent> pathLookup) {
-        if(catalogueItem.description) {
-            catalogueItem.description = replaceLinksInString(catalogueItem.description, pathLookup)
+    void calculateWhereUsed() {
+        if(description) {
+            Matcher matcher = DataDictionaryComponentService.pattern.matcher(description)
+            while (matcher.find()) {
+                NhsDataDictionaryComponent component = dataDictionary.pathLookup[matcher.group(1)]
+
+                if (component && component != this) {
+                    component.whereUsed[this] = "references in description ${component.name}".toString()
+                }
+            }
         }
     }
 
-    String replaceLinksInString(String source, Map<String, NhsDataDictionaryComponent> pathLookup) {
-        NhsDataDictionary.replaceLinksInStringAndUpdateWhereUsed(source, pathLookup, this)
+
+
+    String replaceLinksInString(String source) {
+        if (!source) {
+            return source
+        }
+        Matcher matcher = DataDictionaryComponentService.pattern.matcher(source)
+        while (matcher.find()) {
+            NhsDataDictionaryComponent component = dataDictionary.pathLookup[matcher.group(1)]
+
+            if (component) {
+                String text = matcher.group(2).replaceAll("_"," ")
+                String replacement = "<a class='${component.getOutputClass()}' href=\"${component.getDitaKey()}\">${text}</a>"
+                source = source.replace(matcher.group(0), replacement)
+            }
+            else {
+                log.trace("Cannot match component: ${matcher.group(1)}")
+            }
+        }
+
+        return source
     }
+
 
     static List<String> calculateSentences(String html) {
         Node xml = HtmlHelper.tidyAndConvertToNode(html)
@@ -586,7 +621,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
                     case 'span':
                     case 'strong':
                     default:
-                        response.addAll(childNode.text().split("\\."))
+                        response.addAll(getFullText(childNode).split("\\."))
                         break
 
 
@@ -596,14 +631,23 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         return response
     }
 
+    static String getFullText(node) {
+        node.value().collect { child ->
+            if (child instanceof String) {
+                child
+            } else {
+                getFullText(child)
+            }
+        }.join(' ')
+    }
 
     @JsonIgnore
-    String getFirstSentence(String html = this.getDescription()) {
+    String getFirstSentence(String html = getDescription()) {
         getSentence(html, 0)
     }
 
     @JsonIgnore
-    String getSentence(String html = this.getDescription(), int i) {
+    String getSentence(String html = getDescription(), int i) {
         if(!html) {
             return null
         }
@@ -663,10 +707,6 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
     @JsonIgnore
     String getCatalogueItemDomainTypeAsString() {
         return catalogueItem.domainType.toString()
-    }
-
-    void updateWhereUsed() {
-
     }
 
 

@@ -59,22 +59,24 @@ class WebsiteUtility {
     static final String TO_BE_OVERRIDDEN_TEXT = "This text should be overridden by custom text stored in a GitHub library"
 
     static byte[] generateWebsite(NhsDataDictionary dataDictionary, Path outputPath, DataDictionaryImportParameters parameters) {
-
         DitaProject ditaProject = new DitaProject("NHS Data Model and Dictionary", "nhs_data_dictionary")
         ditaProject.useTopicsFolder = false
 
 
-
-        Map<String, NhsDataDictionaryComponent> pathLookup = [:]
+        dataDictionary.getAllComponents().each { component ->
+            component.dataDictionary = dataDictionary
+            ditaProject.addExternalKey(component.getDitaKey(), component.otherProperties["ddUrl"])
+            dataDictionary.pathLookup[component.getMauroPath()] = component
+        }
 
         dataDictionary.getAllComponents().each { component ->
-            ditaProject.addExternalKey(component.getDitaKey(), component.otherProperties["ddUrl"])
-            pathLookup[component.getMauroPath()] = component
+            component.calculateWhereUsed()
         }
-        dataDictionary.allComponents.each {component ->
-            component.replaceLinksInDefinition(pathLookup)
-            component.updateWhereUsed()
-        }
+
+//        dataDictionary.allComponents.each {component ->
+//            component.replaceLinksInDefinition(pathLookup)
+//            component.updateWhereUsed()
+//        }
 
 
 //        allStereotypes.each {name, stereotype ->
@@ -106,7 +108,7 @@ class WebsiteUtility {
         String ditaOutputDirectory = outputPath.toString() + File.separator + "dita"
         ditaProject.writeToDirectory(Paths.get(ditaOutputDirectory))
 
-        log.error(ditaOutputDirectory)
+        //log.error(ditaOutputDirectory)
 
         overwriteGithubDir(ditaOutputDirectory)
 
@@ -268,19 +270,20 @@ class WebsiteUtility {
         ditaProject.registerTopic("", indexOverview, "${lowercaseStereotype}_overview")
 
 
-        TopicSet topicSet = TopicSet.build(id: "${lowercaseStereotype}-index-topicset",
-                                           keyRef: "${lowercaseStereotype}-index-overview",
+        TopicRef topicSet = TopicRef.build(keys: ["${lowercaseStereotype}-index-page"],
+                                           href: "../${lowercaseStereotype}_overview.dita",
+                                           copyTo: "${lowercaseStereotype}-index.dita",
                                            chunk: ["to-content"],
                                            linking: Linking.NORMAL,
                                            navTitle: stereotype)
-        indexMap.topicSet(topicSet)
+        indexMap.topicRef(topicSet)
 
         Map<String, Topic> indexTopics = getFlatIndexTopics(dataDictionary.componentsByIndex(components, false),
                                                             lowercaseStereotype)
 
         indexTopics.each {prefix, topic ->
             ditaProject.registerTopic(lowercaseStereotype, topic, prefix.toLowerCase())
-            topicSet.topicRef(keyRef:topic.id, linking: Linking.NORMAL)
+            topicSet.topicRef(keyRef: topic.id, linking: Linking.NORMAL, toc: Toc.YES)
         }
         ditaProject.registerMap("", indexMap)
         ditaProject.mainMap.mapRef {

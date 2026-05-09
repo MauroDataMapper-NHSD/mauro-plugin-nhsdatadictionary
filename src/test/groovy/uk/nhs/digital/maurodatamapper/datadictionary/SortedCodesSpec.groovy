@@ -16,6 +16,14 @@ class SortedCodesSpec extends Specification {
         NhsDDCode.sortCodes(codes)*.code == ['00', '01', '02', '03']
 
         when:
+        codes = ['01', '02', '98', '03'].collect {
+            new NhsDDCode(code: it, definition: it)
+        }
+
+        then:
+        NhsDDCode.sortCodes(codes)*.code == ['01', '02', '03', '98']
+
+        when:
         codes = ['A', 'B', 'Y', 'N'].collect {
             new NhsDDCode(code: it, definition: it)
         }

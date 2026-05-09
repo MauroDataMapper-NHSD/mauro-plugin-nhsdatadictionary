@@ -217,7 +217,7 @@ class NhsDDClass extends NhsDataDictionaryComponent <DataClass> {
                 topics.add(aliasesTopic())
             }
         }
-        topics.add(changeLogTopic())
+//        topics.add(changeLogTopic())
         return topics
     }
 

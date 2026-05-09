@@ -35,6 +35,8 @@ class NhsDataDictionaryWebsiteExporter implements FolderExporterPlugin {
     byte[] exportModel(Folder model) {
         NhsDataDictionaryService nhsDataDictionaryService = applicationContext.getBean(NhsDataDictionaryService)
         NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(model.id)
+        nhsDataDictionaryService.setApiProperties(dataDictionary)
+        nhsDataDictionaryService.loadBranchInformation(dataDictionary)
         return WebsiteUtility.generateWebsite(dataDictionary, NhsDataDictionaryService.getTestOutputPath(), new DataDictionaryImportParameters())
     }
 

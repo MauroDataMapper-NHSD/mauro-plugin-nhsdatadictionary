@@ -61,7 +61,7 @@ class DataSetsWebsiteHelper {
                 keyRef 'data_sets_overview'
                 toc Toc.YES
                 linking Linking.NORMAL
-                dataDictionary.dataSetFolders.values().each { folders ->
+                dataDictionary.dataSetFolders.values().sort { it.name }.each { folders ->
                     folders.sort { it.name }.each { folder ->
                         if (folder.ditaFolderPath.size() == 1 && !folder.isRetired()) {
                             topicSet.mapRef {
@@ -125,14 +125,16 @@ class DataSetsWebsiteHelper {
         if(folder.isRetired()) {
             mapId += "_retired"
         }
-        System.err.println("Map id: $mapId")
+        //System.err.println("Map id: $mapId")
         DitaMap dataSetsIndexMap = DitaMap.build {
             id mapId
             title folder.getNameWithRetired()
             topicSet {TopicSet topicSet ->
                 navTitle folder.getNameWithRetired()
                 id "${folder.getDitaKey()}_group"
-                keyRef "${folder.getDitaKey()}_overview"
+                if(!folder.isRetired()) {
+                    keyRef "${folder.getDitaKey()}_overview"
+                }
                 toc Toc.YES
                 linking Linking.NORMAL
                 folder.childFolders.sort { it.name }.each { childFolder ->
@@ -159,9 +161,9 @@ class DataSetsWebsiteHelper {
 
     static void generateOverviewTopicForFolder(NhsDDDataSetFolder folder, NhsDataDictionary dataDictionary, DataDictionaryImportParameters parameters, DitaProject ditaProject) {
         String topicId = folder.getDitaKey()
-        if(folder.isRetired()) {
-            topicId += "_retired"
-        }
+        //if(folder.isRetired()) {
+        //    topicId += "_retired"
+        //}
         topicId += "_overview"
         Topic folderOverviewTopic = Topic.build {
             id topicId
@@ -169,7 +171,7 @@ class DataSetsWebsiteHelper {
             shortdesc folder.getShortDescription()
             body {
                 if (folder.description) {
-                    div HtmlHelper.replaceHtmlWithDita(folder.description)
+                    div HtmlHelper.replaceHtmlWithDita(folder.replaceLinksInString(folder.getDescription()))
                 }
             }
         }

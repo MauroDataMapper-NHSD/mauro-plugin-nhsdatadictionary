@@ -48,6 +48,7 @@ import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.NhsDataDictionaryImporter
 import uk.nhs.datadictionary.controllers.NhsDataDictionaryController
 import uk.nhs.datadictionary.integritychecks.IntegrityCheck
+import uk.nhs.datadictionary.publish.website.WebsiteUtility
 import uk.nhs.datadictionary.services.NhsDataDictionaryService
 import uk.nhs.datadictionary.services.TestingService
 
@@ -146,6 +147,7 @@ class NhsDataDictionaryNov2021Spec extends Specification {
         when:
         NhsDataDictionary nhsDataDictionary = applicationContext.getBean(NhsDataDictionary)
         nhsDataDictionary.buildFromXml(dataDictionaryImportParameters)
+        nhsDataDictionaryService.setApiProperties(nhsDataDictionary)
 
         then:
         assertEquals nhsDataDictionary.attributes.size(), 2526
@@ -155,6 +157,8 @@ class NhsDataDictionaryNov2021Spec extends Specification {
         assertEquals nhsDataDictionary.businessDefinitions.size(), 1230
         assertEquals nhsDataDictionary.supportingInformation.size(), 152
         assertEquals nhsDataDictionary.dataSetConstraints.size(), 33
+
+        WebsiteUtility.generateWebsite(nhsDataDictionary, nhsDataDictionaryService.getTestOutputPath(), dataDictionaryImportParameters)
     }
 
     void 'I01 : test xml ingest and save of November 2021'() {

@@ -21,6 +21,7 @@ import org.maurodata.dita.elements.langref.base.Strow
 import org.maurodata.dita.elements.langref.base.Topic
 import org.maurodata.dita.helpers.HtmlHelper
 import org.maurodata.dita.meta.SpaceSeparatedStringList
+import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.terminology.Term
 import uk.nhs.datadictionary.publish.changePaper.ChangeAware
 
@@ -64,7 +65,13 @@ class NhsDDCode implements ChangeAware {
         code = term.code
         definition = term.definition
         publishDate = term.metadata.find {it.multiFacetAwareItemId == term.id && it.key == 'publishDate'}?.value
-        webOrder = Integer.parseInt(term.metadata.find {it.multiFacetAwareItemId == term.id && it.key == 'webOrder'}?.value ?: "0")
+        Metadata webOrderMetadata = term.metadata.find {it.multiFacetAwareItemId == term.id && it.key == 'webOrder'}
+        if(webOrderMetadata) {
+            webOrder = Integer.parseInt(webOrderMetadata.value)
+        } else {
+            webOrder = null
+        }
+        //webOrder = Integer.parseInt(term.metadata.find {it.multiFacetAwareItemId == term.id && it.key == 'webOrder'}?.value ?: "0")
         webPresentation = term.metadata.find {it.multiFacetAwareItemId == term.id && it.key == 'webPresentation'}?.value
         isDefault = Boolean.valueOf(term.metadata.find {it.multiFacetAwareItemId == term.id && it.key == 'isDefault'}?.value ?: "false")
         isRetired = Boolean.valueOf(term.metadata.find {it.multiFacetAwareItemId == term.id && it.key == 'isRetired'}?.value ?: "false")
@@ -81,10 +88,10 @@ class NhsDDCode implements ChangeAware {
     }
 
     String getDescription() {
-        String description = webPresentation ?: definition
+        String desc = webPresentation ?: definition
 
         // Some of the ingested branches seem to already contain the "(Retired [date])" text in the definition, don't duplicate it
-        if (isRetired && !description.contains("Retired")) {
+        if (isRetired && !desc.contains("Retired")) {
             String retiredDateString = ""
             if (retiredDate) {
                 // The profile field to store the retired date is just a "string" type, so just have to assume
@@ -95,23 +102,35 @@ class NhsDDCode implements ChangeAware {
             String retiredText = "(Retired$retiredDateString)"
 
             if (webPresentation) {
-                description += "<span>" + retiredText + "</span>"
+                desc += "<span>" + retiredText + "</span>"
             }
             else {
-                description += " " + retiredText
+                desc += " " + retiredText
             }
         }
 
-        description
+        return desc
     }
 
     Strow toDitaTableRow() {
         Strow.build(outputClass: isRetired ? "retired" : "") {
             stentry code
             stentry {
-                if(webPresentation) {
-                    div HtmlHelper.replaceHtmlWithDita(getDescription())
+                if(webPresentation && owningAttribute) {
+                    System.err.println(owningAttribute.name)
+                    System.err.println(getDescription())
+                    System.err.println(owningAttribute.replaceLinksInString(getDescription()))
+                    div HtmlHelper.replaceHtmlWithDita(owningAttribute.replaceLinksInString(getDescription()))
+                } else if(webPresentation && usedByElements.size() > 0) {
+                    div HtmlHelper.replaceHtmlWithDita(usedByElements.get(0).replaceLinksInString(getDescription()))
                 } else {
+                    if(getDescription().contains("Stage A:")) {
+                        System.err.println("Stage A:")
+                        System.err.println(getDescription())
+                        System.err.println(webPresentation)
+                        System.err.println(owningAttribute)
+                        System.err.println(usedByElements?.size())
+                    }
                     txt getDescription()
                 }
             }
@@ -145,11 +164,16 @@ class NhsDDCode implements ChangeAware {
     static List<NhsDDCode> sortCodes(List<NhsDDCode> codes) {
         // First return those with web order set (including if set to 0.
         // Then return those without web order set, in alphabetical order
-
-        return (
+        System.err.println("Sorting codes...")
+        System.err.println(codes.findAll { it.webOrder != null }.sort {it.webOrder}.code)
+        System.err.println(codes.findAll { it.webOrder != null }.sort {it.webOrder}.webOrder)
+        System.err.println(codes.findAll { it.webOrder == null }.sort {it.code}.code)
+        List<NhsDDCode> sortedCodes =  (
             codes.findAll { it.webOrder != null }.sort {it.webOrder}
             +
             codes.findAll { it.webOrder == null}.sort {it.code}
         )
+        System.err.println(sortedCodes.code)
+        return sortedCodes
     }
 }

@@ -38,7 +38,7 @@ class DataSetConstraintService extends DataDictionaryComponentService<Term, NhsD
     TermCacheableRepository termCacheableRepository
 
     String getStereotype() {
-        "dataSetConstraint"
+        "xmlSchemaConstraint"
     }
 
 
