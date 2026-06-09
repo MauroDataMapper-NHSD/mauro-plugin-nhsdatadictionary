@@ -219,8 +219,8 @@ class NhsDDDataSet extends NhsDataDictionaryComponent <DataModel> {
     }
 
     List<String> getDitaFolderPath() {
-        webPath.collect {
-            it.replaceAll("[^A-Za-z0-9 ]", "").replace(" ", "_")
+        webPath.findAll {it != "Commissioning Data Sets"}.collect {
+            it.replaceAll("[^A-Za-z0-9- ]", "").replace(" ", "_")
         }
     }
 
