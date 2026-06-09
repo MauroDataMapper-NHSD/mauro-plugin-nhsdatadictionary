@@ -35,7 +35,7 @@
         },
         {
           "fieldName": "Multiplicity",
-          "metadataPropertyName": "multiplicity",
+          "metadataPropertyName": "groupRepeats",
           "description": "Any multiplicity set on this Data Element for this use in a Data Set",
           "minMultiplicity": 0,
           "maxMultiplicity": 1,
