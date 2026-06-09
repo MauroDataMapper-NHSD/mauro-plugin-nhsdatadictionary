@@ -352,7 +352,9 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
     }
 
     void addDescriptionSection(DictionaryItem dictionaryItem) {
-        dictionaryItem.addSection(new DescriptionSection(dictionaryItem, description))
+        String text = this.description?.replace('<table', '<table class=\"table table-sm table-striped table-bordered\"')
+        text = dataDictionary.replaceLinksInString(text)
+        dictionaryItem.addSection(new DescriptionSection(dictionaryItem, text))
     }
 
     void addAliasesSection(DictionaryItem dictionaryItem) {
@@ -420,7 +422,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
             title "Description"
             body {
                 if(desc) {
-                    div HtmlHelper.replaceHtmlWithDita(replaceLinksInString(desc).replace('<table', '<table class=\"table-striped\"'))
+                    div HtmlHelper.replaceHtmlWithDita(replaceLinksInString(desc))
                 }
             }
         }
@@ -563,21 +565,12 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         if (!source) {
             return source
         }
-        Matcher matcher = DataDictionaryComponentService.pattern.matcher(source)
-        while (matcher.find()) {
-            NhsDataDictionaryComponent component = dataDictionary.pathLookup[matcher.group(1)]
-
-            if (component) {
-                String text = matcher.group(2).replaceAll("_"," ")
-                String replacement = "<a class='${component.getOutputClass()}' href=\"${component.getDitaKey()}\">${text}</a>"
-                source = source.replace(matcher.group(0), replacement)
-            }
-            else {
-                log.trace("Cannot match component: ${matcher.group(1)}")
-            }
+        String ret = dataDictionary.replaceLinksInString(source)
+        if(this instanceof NhsDDDataSet) {
+            System.err.println(source)
+            System.err.println(ret)
         }
-
-        return source
+        return ret
     }
 
 
@@ -589,9 +582,9 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
             return xml.text().split("\\.")
         }
 
-        List<String> response = this.getNodeSentences(xml)
+        List<String> response = getNodeSentences(xml)
 
-        response.removeAll {it.trim() == ""}
+        response.removeAll {it.trim() == "" || it.trim() == "Introduction"}
         return response
     }
 
@@ -665,6 +658,8 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         }
         String response = sentence.replace("_", " ")
         response = response.replaceAll("\\s+", " ")
+        response = response.replace(" )", ")")
+        response = response.replace("( ", "(")
         return response
     }
 

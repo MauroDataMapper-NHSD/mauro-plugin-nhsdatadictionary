@@ -56,7 +56,7 @@ class DictionaryItem implements DitaAware<Topic>, HtmlAware, DiffAware<Dictionar
 
     String getOutputClass() { component.outputClass}
     String getDescription() { component.description }
-    String getShortDescription() {component.calculateShortDescription()}
+    String getShortDescription() {component.getShortDescription()}
     final List<Section> sections = []
 
     DictionaryItem(NhsDataDictionaryComponent component, UUID branchId, String changeType = null) {
