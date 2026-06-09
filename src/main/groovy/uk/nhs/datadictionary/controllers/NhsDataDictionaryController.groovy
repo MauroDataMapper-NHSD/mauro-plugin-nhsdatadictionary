@@ -28,6 +28,7 @@ import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.QueryValue
+import io.micronaut.http.exceptions.HttpStatusException
 import io.micronaut.http.server.types.files.StreamedFile
 import io.micronaut.security.annotation.Secured
 import io.micronaut.security.rules.SecurityRule
@@ -36,7 +37,9 @@ import org.maurodata.ErrorHandler
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.model.Model
 import org.maurodata.domain.security.Role
+import org.maurodata.persistence.cache.AdministeredItemCacheableRepository
 import org.maurodata.persistence.folder.FolderRepository
+import org.maurodata.persistence.service.RepositoryService
 import org.maurodata.plugin.exporter.ModelExporterPlugin
 import org.maurodata.security.AccessControlService
 import org.maurodata.service.plugin.PluginService
@@ -89,6 +92,9 @@ class NhsDataDictionaryController implements NhsDataDictionaryApi {
     @Inject DataSetService dataSetService
     @Inject DataSetFolderService dataSetFolderService
     @Inject DataSetConstraintService dataSetConstraintService
+
+    @Inject
+    RepositoryService repositoryService
 
     @Inject
     AccessControlService accessControlService
@@ -367,6 +373,28 @@ class NhsDataDictionaryController implements NhsDataDictionaryApi {
         accessControlService.checkRole(Role.READER, folder)
     }
 
+    @Get('/api/nhsdd/{dictionaryId}/applyEdits')
+    HttpResponse<Boolean> applyEdits(UUID dictionaryId) {
+        checkAccessRights(dictionaryId)
+        NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(dictionaryId)
+
+        dataDictionary.allComponents.each {
+            if(it.catalogueItem.description && it.catalogueItem.description.contains('<a href="https://datadictionary.nhs.uk/data_sets/supporting_data_sets/overviews/hodf_data_set_overview/healthcare_operational_data_flows__acute__data_set_introduction.html">')) {
+                System.err.println("${it.stereotype} - ${it.name}")
+                it.catalogueItem.description =
+                    it.catalogueItem.description.replace('<a href="https://datadictionary.nhs.uk/data_sets/supporting_data_sets/overviews/hodf_data_set_overview/healthcare_operational_data_flows__acute__data_set_introduction.html">',
+                                                         '<a href="fo:Data Sets|fo:Supporting Data Sets|fo:HODF Data Set">')
+                    repositoryService.getAdministeredItemRepository(it.catalogueItem.domainType).update(it.catalogueItem)
+            }
+        }
+        return HttpResponse.ok(Boolean.TRUE)
+    }
+
+    AdministeredItemCacheableRepository getAdministeredItemRepository(String domainType) {
+        AdministeredItemCacheableRepository administeredItemRepository = repositoryService.getAdministeredItemRepository(domainType)
+        if (!administeredItemRepository) throw new HttpStatusException(HttpStatus.NOT_FOUND, "Domain type [$domainType] not found")
+        administeredItemRepository
+    }
 
 
     /*
