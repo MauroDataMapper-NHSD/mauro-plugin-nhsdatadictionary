@@ -154,7 +154,7 @@ class NhsDDDataSet extends NhsDataDictionaryComponent <DataModel> {
         if (itemState == DictionaryItem.DictionaryItemState.ACTIVE) {
             addDataSetSection(dictionaryItem)
             addAliasesSection(dictionaryItem)
-            addWhereUsedSection(dictionaryItem)
+            //addWhereUsedSection(dictionaryItem)
         }
 
         addChangeLogSection(dictionaryItem)
@@ -190,9 +190,11 @@ class NhsDDDataSet extends NhsDataDictionaryComponent <DataModel> {
             if (getAliases()) {
                 topics.add(aliasesTopic())
             }
+/* Removed as per request 12/5
             if (whereUsed) {
                 topics.add(whereUsedTopic())
             }
+*/
         }
 
 //        topics.add(changeLogTopic())
