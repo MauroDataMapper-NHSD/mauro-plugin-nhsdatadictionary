@@ -433,6 +433,7 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
     Topic getNationalCodesTopic() {
         List<NhsDDCode> orderedCodes = getNationalCodes()
         String topicTitle = "National Codes"
+        // TODO: Potentially some non-determinism here.  See OFFER STATUS (DATING ULTRASOUND SCAN)
         if(instantiatesAttributes) {
             if(orderedCodes.size() < instantiatesAttributes[0].codes.findAll { !it.isDefault }.size()) {
                 topicTitle = "Permitted National Codes"
