@@ -419,9 +419,6 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
         if(isRetired()) {
             return []
         }
-        System.err.println("Sorting codes for $name")
-        System.err.println("${codes.code}")
-        System.err.println("${NhsDDCode.sortCodes(codes.findAll { !it.isDefault }).code}")
         return NhsDDCode.sortCodes(codes.findAll { !it.isDefault })
     }
 
@@ -440,9 +437,6 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
             if(orderedCodes.size() < instantiatesAttributes[0].codes.findAll { !it.isDefault }.size()) {
                 topicTitle = "Permitted National Codes"
             }
-        }
-        if(name == "DIAGNOSTIC IMAGING ACTIVITY CATEGORY") {
-            System.err.println("Element National Codes... ${this.name}")
         }
         NhsDDCode.getCodesTopic(getDitaKey() + "_nationalCodes", topicTitle, orderedCodes)
     }

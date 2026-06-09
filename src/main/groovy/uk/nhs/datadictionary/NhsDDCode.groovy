@@ -117,20 +117,10 @@ class NhsDDCode implements ChangeAware {
             stentry code
             stentry {
                 if(webPresentation && owningAttribute) {
-                    System.err.println(owningAttribute.name)
-                    System.err.println(getDescription())
-                    System.err.println(owningAttribute.replaceLinksInString(getDescription()))
                     div HtmlHelper.replaceHtmlWithDita(owningAttribute.replaceLinksInString(getDescription()))
                 } else if(webPresentation && usedByElements.size() > 0) {
                     div HtmlHelper.replaceHtmlWithDita(usedByElements.get(0).replaceLinksInString(getDescription()))
                 } else {
-                    if(getDescription().contains("Stage A:")) {
-                        System.err.println("Stage A:")
-                        System.err.println(getDescription())
-                        System.err.println(webPresentation)
-                        System.err.println(owningAttribute)
-                        System.err.println(usedByElements?.size())
-                    }
                     txt getDescription()
                 }
             }
@@ -164,16 +154,11 @@ class NhsDDCode implements ChangeAware {
     static List<NhsDDCode> sortCodes(List<NhsDDCode> codes) {
         // First return those with web order set (including if set to 0.
         // Then return those without web order set, in alphabetical order
-        System.err.println("Sorting codes...")
-        System.err.println(codes.findAll { it.webOrder != null }.sort {it.webOrder}.code)
-        System.err.println(codes.findAll { it.webOrder != null }.sort {it.webOrder}.webOrder)
-        System.err.println(codes.findAll { it.webOrder == null }.sort {it.code}.code)
         List<NhsDDCode> sortedCodes =  (
             codes.findAll { it.webOrder != null }.sort {it.webOrder}
             +
             codes.findAll { it.webOrder == null}.sort {it.code}
         )
-        System.err.println(sortedCodes.code)
         return sortedCodes
     }
 }
