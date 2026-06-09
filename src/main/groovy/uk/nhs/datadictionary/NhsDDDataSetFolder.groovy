@@ -46,7 +46,7 @@ class NhsDDDataSetFolder extends NhsDataDictionaryComponent <Folder> {
 
     @Override
     String getStereotypeForPreview() {
-        "dataSetFolder"
+        "dataSet"
     }
 
 
