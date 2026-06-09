@@ -44,7 +44,7 @@ class DescriptionSection extends Section {
         super(parent, "description", title)
 
         this.text = text
-            ? text.replace('<table', '<table class=\"table-striped\"')
+            ? text.replace('<table', '<table class=\"table table-sm table-striped table-bordered\"')
             : ""
 
         this.diffStatus = diffStatus

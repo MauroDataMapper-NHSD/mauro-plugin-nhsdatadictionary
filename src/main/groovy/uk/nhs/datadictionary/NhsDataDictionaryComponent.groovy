@@ -415,6 +415,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
 
     Topic descriptionTopic() {
         String desc = getDescription()
+        desc = desc.replace('<table', '<table class=\"table table-sm table-striped table-bordered\"')
         Topic.build (id: getDitaKey() + "_description") {
             title "Description"
             body {
