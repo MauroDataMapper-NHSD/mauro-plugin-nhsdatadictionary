@@ -579,7 +579,31 @@ class NhsDataDictionary {
 
     }
 
+    String replaceLinksInString(String source) {
+        if(!source || source.isEmpty()) {
+            return source
+        }
+        Matcher matcher = DataDictionaryComponentService.pattern.matcher(source)
+        while (matcher.find()) {
+            NhsDataDictionaryComponent component = pathLookup[matcher.group(1)]
 
+            if (component) {
+                String ditaKey = component.ditaKey
+                if(component instanceof NhsDDDataSetFolder) {
+                    ditaKey = ditaKey + "_group_index"
+                }
+                String text = matcher.group(2).replaceAll("_"," ")
+                String replacement = "<a class='${component.getOutputClass()}' href=\"${ditaKey}\">${text}</a>"
+                source = source.replace(matcher.group(0), replacement)
+            }
+            else {
+                log.trace("Cannot match component: ${matcher.group(1)}")
+            }
+        }
+
+        return source
+
+    }
 
     static Set<String> getAllMetadataKeys() {
         Set<String> allKeys = []
