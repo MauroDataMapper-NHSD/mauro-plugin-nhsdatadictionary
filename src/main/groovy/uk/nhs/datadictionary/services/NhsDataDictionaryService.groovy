@@ -566,7 +566,7 @@ class NhsDataDictionaryService {
         preview
     }
 
-    File generateChangePaper(UUID versionedFolderId, boolean includeDataSets = false, boolean isTest = false) {
+    byte[] generateChangePaper(UUID versionedFolderId, boolean includeDataSets = false, boolean isTest = false) {
 
         NhsDataDictionary thisDataDictionary = buildDataDictionary(versionedFolderId)
         ModelVersionedRefDTO modelVersionedRefDTO = versionedFolderController.latestFinalisedModel(versionedFolderId)

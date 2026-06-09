@@ -80,7 +80,6 @@ dependencies {
     implementation 'xerces:xercesImpl:2.12.2'
     implementation "xml-apis:xml-apis:1.4.01"
     implementation "net.sf.jtidy:jtidy:r938"
-    implementation 'net.lingala.zip4j:zip4j:2.9.1'
 
     // Required for Daisy Diff (NPE when using Saxon)
     implementation group: 'xalan', name: 'xalan', version: '2.7.3'

@@ -104,9 +104,19 @@ class NhsDataDictionaryController implements NhsDataDictionaryApi {
     @Get('/api/nhsdd/{dictionaryId}/publish/changePaper')
     HttpResponse<StreamedFile> generateChangePaper(UUID dictionaryId, @Nullable @QueryValue Boolean dataSets) {
         checkAccessRights(dictionaryId)
-        File f = nhsDataDictionaryService.generateChangePaper(dictionaryId, dataSets)
-        return HttpResponse.ok(new StreamedFile(new ByteArrayInputStream(f.readBytes()), MediaType.ZIP_TYPE))
-            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=\"${f.name}\"")
+        Folder folder = folderRepository.findById(dictionaryId)
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy")
+        String date = simpleDateFormat.format(new Date())
+        String changePaperType = dataSets ? "datasets" : "basic"
+
+        String branchName = folder.branchName ?: 'CRXXXX'
+
+
+        String filename = "change-paper-${branchName}-${changePaperType}-${date}.zip"
+
+        byte[] zipContents = nhsDataDictionaryService.generateChangePaper(dictionaryId, dataSets)
+        return HttpResponse.ok(new StreamedFile(new ByteArrayInputStream(zipContents), MediaType.ZIP_TYPE))
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=\"${filename}\"")
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_ZIP)
             .header("Access-Control-Expose-Headers", "Content-Disposition, Content-Length")
     }

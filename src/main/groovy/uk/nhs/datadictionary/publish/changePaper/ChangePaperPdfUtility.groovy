@@ -18,7 +18,6 @@
 package uk.nhs.datadictionary.publish.changePaper
 
 import groovy.util.logging.Slf4j
-import net.lingala.zip4j.ZipFile
 import org.maurodata.dita.DitaProject
 import org.maurodata.dita.elements.langref.base.Section
 import org.maurodata.dita.elements.langref.base.Topic
@@ -106,19 +105,10 @@ class ChangePaperPdfUtility {
         }
 
 
-        String ditaOutputDirectory = outputPath.toString() + File.separator + "dita"
-        ditaProject.writeToDirectory(Paths.get(ditaOutputDirectory))
+        ByteArrayOutputStream zipContents = ditaProject.writeToZip()
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy")
-        String date = simpleDateFormat.format(new Date())
-        String changePaperType = includeDataSets ? "datasets" : "basic"
 
-        String filename = "change-paper-${changePaper.reference}-${changePaperType}-${date}.zip"
-
-        ZipFile zipFile = new ZipFile(outputPath.toString() + File.separator + filename)
-        zipFile.addFolder(new File(ditaOutputDirectory))
-
-        return zipFile.getFile()
+        return zipContents.toByteArray()
     }
 
     static Topic createSummaryOfChangesTopic(ChangePaper changePaper) {

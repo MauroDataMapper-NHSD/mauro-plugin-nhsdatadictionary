@@ -18,8 +18,6 @@
 package uk.nhs.datadictionary.publish.website
 
 import groovy.util.logging.Slf4j
-import net.lingala.zip4j.ZipFile
-import org.apache.commons.io.FileUtils
 import org.maurodata.dita.DitaProject
 import org.maurodata.dita.elements.langref.base.DitaMap
 import org.maurodata.dita.elements.langref.base.Topic
@@ -33,13 +31,7 @@ import uk.nhs.datadictionary.NhsDDDataSetFolder
 import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.NhsDataDictionaryComponent
 
-import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
-import java.text.SimpleDateFormat
-import java.time.Duration
-import java.time.Instant
 
 @Slf4j
 class WebsiteUtility {
@@ -53,8 +45,6 @@ class WebsiteUtility {
             'Elements': 'element',
             'Supporting Information': 'supportingInformation'
     ]
-
-    static final String GITHUB_BRANCH_URL = "https://github.com/NHSDigital/DataDictionaryPublication/archive/refs/heads/feature/move-to-mauro.zip"
 
     static final String TO_BE_OVERRIDDEN_TEXT = "This text should be overridden by custom text stored in a GitHub library"
 
@@ -103,50 +93,14 @@ class WebsiteUtility {
                 }
             }
 
+        Map<String, ByteArrayOutputStream> staticContentMap = GitHubStaticContentHelperService.getGithubDirAsMap()
+        ByteArrayOutputStream zipContents = ditaProject.writeToZip(staticContentMap)
 
 
-        String ditaOutputDirectory = outputPath.toString() + File.separator + "dita"
-        ditaProject.writeToDirectory(Paths.get(ditaOutputDirectory))
-
-        //log.error(ditaOutputDirectory)
-
-        overwriteGithubDir(ditaOutputDirectory)
-
-
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy")
-        String date = simpleDateFormat.format(new Date())
-
-        String filename = "website-${dataDictionary.branchName}-${date}.zip"
-
-        Instant startTime = Instant.now()
-        ZipFile zipFile = new ZipFile(outputPath.toString() + File.separator + filename)
-        zipFile.addFolder(new File(ditaOutputDirectory))
-        log.info('Zip complete in {}', Duration.between(startTime, Instant.now()).toString())
-
-        return zipFile.getFile().bytes
+        return zipContents.toByteArray()
     }
 
-    static void overwriteGithubDir(String outputPath){
 
-        // Create a temporary directory for the downloaded zip
-        Path tempPath = Files.createTempDirectory("ditaGeneration")
-        String sourceFile = tempPath.toString() + "/github_download.zip"
-
-        // Get the zip file and save it into the directory
-        InputStream inputStream = new URL(GITHUB_BRANCH_URL).openStream()
-        Files.copy(inputStream, Paths.get(sourceFile), StandardCopyOption.REPLACE_EXISTING)
-
-
-        // Extract the necessary contents and copy them to the right place
-        ZipFile zipFile = new ZipFile(sourceFile)
-        zipFile.extractFile("DataDictionaryPublication-feature-move-to-mauro/Website/", outputPath)
-        FileUtils.copyDirectory(new File(outputPath + "/DataDictionaryPublication-feature-move-to-mauro/Website/"), new File(outputPath))
-
-        // tidy up
-        Files.delete(new File(sourceFile).toPath())
-        FileUtils.deleteDirectory(new File(outputPath + "/DataDictionaryPublication-feature-move-to-mauro/"))
-
-    }
 
     static Map<String, Topic> getFlatIndexTopics(Map<String, List<NhsDataDictionaryComponent>> componentMap, String indexPrefix) {
 
