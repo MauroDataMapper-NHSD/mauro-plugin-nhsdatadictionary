@@ -164,7 +164,7 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
         }
         if (path[0].startsWith("fo:")) {
             if(path.last().startsWith("fo:")) {
-                return "dataSetFolder"
+                return "dataSet"
             } else if (path.last().startsWith("dm:")) {
                 return "dataSet"
             }

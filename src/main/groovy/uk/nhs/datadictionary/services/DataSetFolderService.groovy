@@ -40,7 +40,7 @@ class DataSetFolderService extends DataDictionaryComponentService<Folder, NhsDDD
     @Inject ModelCacheableRepository.DataModelCacheableRepository dataModelCacheableRepository
 
     String getStereotype() {
-        "dataSetFolder"
+        "dataSet"
     }
 
 
