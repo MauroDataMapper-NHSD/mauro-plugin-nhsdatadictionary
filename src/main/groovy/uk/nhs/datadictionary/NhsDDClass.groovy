@@ -142,7 +142,9 @@ class NhsDDClass extends NhsDataDictionaryComponent <DataClass> {
         classRelationships
             .findAll { it.targetClass.itemState != DictionaryItem.DictionaryItemState.RETIRED }
             .sort { a, b ->
-                b.key <=> a.key ?: a.targetClass.name.toLowerCase() <=> b.targetClass.name.toLowerCase()
+                b.key <=> a.key ?:
+                a.targetClass.name.toLowerCase() <=> b.targetClass.name.toLowerCase() ?:
+                a.relationshipDescription.toLowerCase() <=> b.relationshipDescription.toLowerCase()
             }
     }
 

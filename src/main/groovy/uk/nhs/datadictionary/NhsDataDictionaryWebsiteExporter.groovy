@@ -29,7 +29,7 @@ class NhsDataDictionaryWebsiteExporter implements FolderExporterPlugin {
         "1.0.0"
     }
 
-    String displayName = 'NHS Data Dictionary XML Website Exporter'
+    String displayName = 'NHS Data Dictionary DITA Website Exporter'
 
     @Override
     byte[] exportModel(Folder model) {
@@ -37,7 +37,7 @@ class NhsDataDictionaryWebsiteExporter implements FolderExporterPlugin {
         NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(model.id)
         nhsDataDictionaryService.setApiProperties(dataDictionary)
         nhsDataDictionaryService.loadBranchInformation(dataDictionary)
-        return WebsiteUtility.generateWebsite(dataDictionary, NhsDataDictionaryService.getTestOutputPath(), new DataDictionaryImportParameters())
+        return WebsiteUtility.generateWebsite(dataDictionary, new DataDictionaryImportParameters())
     }
 
     @Override

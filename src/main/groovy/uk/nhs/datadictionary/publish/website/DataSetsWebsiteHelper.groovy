@@ -141,7 +141,7 @@ class DataSetsWebsiteHelper {
                 keys "${folder.getDitaKey()}_group_index"
                 id "${folder.getDitaKey()}_group"
                 if(!folder.isRetired()) {
-                    keyRef "${folder.getDitaKey()}_overview"
+                    keyRef folder.getDitaKey()
                 }
                 toc Toc.YES
                 linking Linking.NORMAL
@@ -177,7 +177,6 @@ class DataSetsWebsiteHelper {
         //if(folder.isRetired()) {
         //    topicId += "_retired"
         //}
-        topicId += "_overview"
         Topic folderOverviewTopic = Topic.build {
             id topicId
             title folder.getNameWithRetired()

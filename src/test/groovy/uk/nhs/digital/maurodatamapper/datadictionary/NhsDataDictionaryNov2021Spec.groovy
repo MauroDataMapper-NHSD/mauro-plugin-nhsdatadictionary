@@ -26,7 +26,6 @@ import io.micronaut.http.MediaType
 import io.micronaut.http.client.multipart.MultipartBody
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
-import jakarta.inject.Singleton
 import org.maurodata.api.folder.FolderApi
 import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.datamodel.DataModel
@@ -158,7 +157,7 @@ class NhsDataDictionaryNov2021Spec extends Specification {
         assertEquals nhsDataDictionary.supportingInformation.size(), 152
         assertEquals nhsDataDictionary.dataSetConstraints.size(), 33
 
-        WebsiteUtility.generateWebsite(nhsDataDictionary, nhsDataDictionaryService.getTestOutputPath(), dataDictionaryImportParameters)
+        WebsiteUtility.generateWebsite(nhsDataDictionary, dataDictionaryImportParameters)
     }
 
     void 'I01 : test xml ingest and save of November 2021'() {

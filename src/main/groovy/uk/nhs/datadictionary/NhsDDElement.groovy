@@ -268,7 +268,7 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
 
     String getDescription() {
         if(dataDictionary && isRetired()) {
-            if(catalogueItem.description?.contains("This item has been retired")) { // Legacy - retired before Mauro
+            if(catalogueItem.description?.contains("has been retired")) { // Legacy - retired before Mauro
                 return catalogueItem.description
             } else {
                 return dataDictionary.retiredItemText

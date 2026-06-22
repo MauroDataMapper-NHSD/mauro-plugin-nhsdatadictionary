@@ -17,6 +17,7 @@
  */
 package uk.nhs.datadictionary
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import groovy.util.logging.Slf4j
 import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.facet.Metadata
@@ -140,6 +141,25 @@ class NhsDDDataSetFolder extends NhsDataDictionaryComponent <Folder> {
         ]
     }
 
+    String getDescription() {
+        if(isRetired()) {
+            return catalogueItem.description ?: ""
+        } else if(dataDictionary && isPreparatory()) {
+            return dataDictionary.preparatoryItemText
+        } else {
+            return catalogueItem.description
+        }
+    }
+
+    @Override
+    @JsonIgnore
+    String getDitaKey() {
+        String key = getStereotype().replace(" ", "_") + "_" + getNameWithoutNonAlphaNumerics() + "_overview"
+        if(isRetired()) {
+            key += "_retired"
+        }
+        key.toLowerCase()
+    }
 
     List<String> getDitaFolderPath() {
         folderPath.findAll {it != "Commissioning Data Sets"}

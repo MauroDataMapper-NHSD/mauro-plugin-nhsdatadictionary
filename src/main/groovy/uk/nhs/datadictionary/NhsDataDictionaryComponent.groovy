@@ -83,6 +83,9 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         catalogueItem.id
     }
 
+    boolean isCommissioningDataSetFolder() {
+        return (this instanceof NhsDDDataSetFolder && this.name == "Commissioning Data Sets")
+    }
 
     @JsonIgnore
     String catalogueItemModelId
@@ -266,7 +269,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
 
     String getDescription() {
         if(dataDictionary && isRetired()) {
-            if(catalogueItem.description?.contains("This item has been retired")) { // Legacy - retired before Mauro
+            if(catalogueItem.description?.contains("has been retired")) { // Legacy - retired before Mauro
                 return catalogueItem.description
             } else {
                 return dataDictionary.retiredItemText
@@ -369,13 +372,14 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
     void addWhereUsedSection(DictionaryItem dictionaryItem) {
         if (whereUsed) {
             List<WhereUsedRow> whereUsedRows = whereUsed
-                .findAll { it.key.itemState != DictionaryItem.DictionaryItemState.RETIRED }
+                .findAll { it.key.itemState != DictionaryItem.DictionaryItemState.RETIRED && !it.key.isCommissioningDataSetFolder()}
                 .sort { it.key.name }
                 .collect { component, text ->
                     new WhereUsedRow(component.stereotype, ItemLink.create(component), text)
                 }
-
-            dictionaryItem.addSection(new WhereUsedSection(dictionaryItem, whereUsedRows))
+            if(whereUsedRows) {
+                dictionaryItem.addSection(new WhereUsedSection(dictionaryItem, whereUsedRows))
+            }
         }
     }
 

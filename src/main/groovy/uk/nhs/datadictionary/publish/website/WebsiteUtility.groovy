@@ -36,31 +36,25 @@ import java.nio.file.Path
 @Slf4j
 class WebsiteUtility {
 
-    static final Map<String, String> allStereotypes = [
-            'Attributes': 'attribute',
-            'Business Definitions': 'businessDefinition',
-            'Classes': 'class',
-            'Data Sets': 'dataSet',
-            'Data Set Constraints': 'dataSetConstraint',
-            'Elements': 'element',
-            'Supporting Information': 'supportingInformation'
-    ]
-
     static final String TO_BE_OVERRIDDEN_TEXT = "This text should be overridden by custom text stored in a GitHub library"
 
-    static byte[] generateWebsite(NhsDataDictionary dataDictionary, Path outputPath, DataDictionaryImportParameters parameters) {
+    static byte[] generateWebsite(NhsDataDictionary dataDictionary, DataDictionaryImportParameters parameters) {
         DitaProject ditaProject = new DitaProject("NHS Data Model and Dictionary", "nhs_data_dictionary")
         ditaProject.useTopicsFolder = false
 
 
-        dataDictionary.getAllComponents().each { component ->
+        dataDictionary.getAllComponents().
+            sort { it.ditaKey }.
+            each { component ->
             component.dataDictionary = dataDictionary
             ditaProject.addExternalKey(component.getDitaKey(), component.otherProperties["ddUrl"])
             dataDictionary.pathLookup[component.getMauroPath()] = component
         }
 
         dataDictionary.getAllComponents().each { component ->
-            component.calculateWhereUsed()
+            if(!component.isCommissioningDataSetFolder()) {
+                component.calculateWhereUsed()
+            }
         }
 
 //        dataDictionary.allComponents.each {component ->
@@ -150,7 +144,9 @@ class WebsiteUtility {
 
         TopicSet indexTopicSet = TopicSet.build(id: "allItems-index-topicset", keyRef: "allItems-index-overview", navTitle: "All Items Index")
 
-        dataDictionary.allComponentsByIndex(true).each {alphaIndex, components ->
+        dataDictionary.allComponentsByIndex(true).
+            findAll {!it instanceof NhsDDDataSetFolder }.
+            each {alphaIndex, components ->
             String indexId = "all_items__${alphaIndex.substring(0,1).toLowerCase()}"
             Topic indexPage = Topic.build (id: indexId) {
                 title "All Items: ${alphaIndex}"
