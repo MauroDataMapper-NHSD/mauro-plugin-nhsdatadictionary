@@ -43,9 +43,13 @@ class DescriptionSection extends Section {
     DescriptionSection(DictionaryItem parent, String title, String text, DiffStatus diffStatus, boolean includesComparison) {
         super(parent, "description", title)
 
-        this.text = text
-            ? text.replace('<table', '<table class=\"table table-sm table-striped table-bordered\"')
-            : ""
+        if(text && text.contains('<table') && !text.contains('<table class=')) {
+            this.text = text
+                ? text.replace('<table', '<table class=\"table table-sm table-striped table-bordered\"')
+                : ""
+        } else {
+            this.text = text ?: ""
+        }
 
         this.diffStatus = diffStatus
         this.includesComparison = includesComparison

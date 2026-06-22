@@ -20,7 +20,6 @@ package uk.nhs.digital.maurodatamapper.datadictionary.publish.structure
 import io.micronaut.context.annotation.Property
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
-import jakarta.inject.Singleton
 import org.maurodata.dita.elements.langref.base.Topic
 import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.datamodel.DataElement
@@ -32,10 +31,8 @@ import uk.nhs.datadictionary.NhsDDDataSetClass
 import uk.nhs.datadictionary.NhsDDDataSetElement
 import uk.nhs.datadictionary.NhsDDElement
 import uk.nhs.datadictionary.publish.structure.AliasesSection
-import uk.nhs.datadictionary.publish.structure.ChangeLogSection
 import uk.nhs.datadictionary.publish.structure.DescriptionSection
 import uk.nhs.datadictionary.publish.structure.DictionaryItem
-import uk.nhs.datadictionary.publish.structure.WhereUsedSection
 import uk.nhs.datadictionary.publish.structure.datasets.DataSetSection
 import uk.nhs.datadictionary.services.NhsDataDictionaryService
 
@@ -776,12 +773,10 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
         verifyAll {
             structure.state == DictionaryItem.DictionaryItemState.ACTIVE
             structure.name == activeItem.name
-            structure.sections.size() == 5
+            structure.sections.size() == 3
             structure.sections[0] instanceof DescriptionSection
             structure.sections[1] instanceof DataSetSection
             structure.sections[2] instanceof AliasesSection
-            structure.sections[3] instanceof WhereUsedSection
-            structure.sections[4] instanceof ChangeLogSection
         }
     }
 
@@ -793,9 +788,8 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
         verifyAll {
             structure.state == DictionaryItem.DictionaryItemState.RETIRED
             structure.name == retiredItem.name
-            structure.sections.size() == 2
+            structure.sections.size() == 1
             structure.sections[0] instanceof DescriptionSection
-            structure.sections[1] instanceof ChangeLogSection
         }
     }
 
@@ -807,9 +801,8 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
         verifyAll {
             structure.state == DictionaryItem.DictionaryItemState.PREPARATORY
             structure.name == preparatoryItem.name
-            structure.sections.size() == 2
+            structure.sections.size() == 1
             structure.sections[0] instanceof DescriptionSection
-            structure.sections[1] instanceof ChangeLogSection
         }
     }
 
@@ -834,7 +827,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
     <text>Diagnostic Data Set</text>
   </title>
   <shortdesc>The Diagnostic Data Set contains 
-PATIENTS holding data</shortdesc>
+ PATIENTS  holding data</shortdesc>
   <topic id='data_set_diagnostic_data_set_description'>
     <title>Description</title>
     <body>
@@ -863,10 +856,10 @@ PATIENTS holding data</shortdesc>
                 </entry>
               </row>
               <row>
-                <entry>
+                <entry align='center'>
                   <p>Mandation</p>
                 </entry>
-                <entry>
+                <entry align='center'>
                   <p>Data Elements</p>
                 </entry>
               </row>
@@ -1089,10 +1082,10 @@ PATIENTS holding data</shortdesc>
                 </entry>
               </row>
               <row>
-                <entry>
+                <entry align='center'>
                   <p>Mandation</p>
                 </entry>
-                <entry>
+                <entry align='center'>
                   <p>Data Elements</p>
                 </entry>
               </row>
@@ -1196,60 +1189,6 @@ PATIENTS holding data</shortdesc>
       </simpletable>
     </body>
   </topic>
-  <topic id='data_set_diagnostic_data_set_whereUsed'>
-    <title>Where Used</title>
-    <body>
-      <simpletable outputclass='table table-sm table-striped' relcolwidth='1* 3* 2*'>
-        <sthead outputclass='thead-light'>
-          <stentry>Type</stentry>
-          <stentry>Link</stentry>
-          <stentry>How used</stentry>
-        </sthead>
-        <strow>
-          <stentry>Data Set</stentry>
-          <stentry>
-            <xref outputclass='dataSet' keyref='data_set_diagnostic_data_set' format='html'>Diagnostic Data Set</xref>
-          </stentry>
-          <stentry>references in description Diagnostic Data Set</stentry>
-        </strow>
-      </simpletable>
-    </body>
-  </topic>
-  <topic id='data_set_diagnostic_data_set_changeLog'>
-    <title>Change Log</title>
-    <body>
-      <div>
-        <p>Click on the links below to view the change requests this item is part of:</p>
-      </div>
-      <simpletable outputclass='table table-sm table-striped' relcolwidth='2* 5* 3*'>
-        <sthead outputclass='thead-light'>
-          <stentry>Change Request</stentry>
-          <stentry>Change Request Description</stentry>
-          <stentry>Implementation Date</stentry>
-        </sthead>
-        <strow>
-          <stentry>
-            <xref href='https://test.nhs.uk/change/cr1000' format='html' scope='external'>CR1000</xref>
-          </stentry>
-          <stentry>Change 1000</stentry>
-          <stentry>01 April 2024</stentry>
-        </strow>
-        <strow>
-          <stentry>
-            <xref href='https://test.nhs.uk/change/cr2000' format='html' scope='external'>CR2000</xref>
-          </stentry>
-          <stentry>Change 2000</stentry>
-          <stentry>01 September 2024</stentry>
-        </strow>
-      </simpletable>
-      <div>
-        <p>Click 
-
-          <xref outputclass='- topic/xref xref' href='https://www.datadictionary.nhs.uk/archive' format='html' scope='external'>here</xref> to see the Change Log Information for changes before January 2025.
-        </p>
-      </div>
-    </body>
-  </topic>
 </topic>"""
         }
     }
@@ -1288,10 +1227,6 @@ PATIENTS holding data</shortdesc>
       </div>
     </body>
   </topic>
-  <topic id='data_set_diagnostic_data_set_retired_changeLog'>
-    <title>Change Log</title>
-    <body />
-  </topic>
 </topic>"""
         }
     }
@@ -1325,10 +1260,6 @@ PATIENTS holding data</shortdesc>
       </div>
     </body>
   </topic>
-  <topic id='data_set_diagnostic_data_set_changeLog'>
-    <title>Change Log</title>
-    <body />
-  </topic>
 </topic>"""
         }
     }
@@ -1349,7 +1280,7 @@ PATIENTS holding data</shortdesc>
             titleHtml == """<h1 class="title topictitle1 dataSet">Diagnostic Data Set</h1>
 <div class="- topic/body body">
   <p class="- topic/shortdesc shortdesc">The Diagnostic Data Set contains 
-PATIENTS holding data</p>
+ PATIENTS  holding data</p>
 </div>"""
         }
 
@@ -1754,10 +1685,10 @@ PATIENTS holding data</p>
                 </entry>
               </row>
               <row>
-                <entry>
+                <entry align='center'>
                   <p>Mandation</p>
                 </entry>
-                <entry>
+                <entry align='center'>
                   <p>Data Elements</p>
                 </entry>
               </row>
@@ -1980,10 +1911,10 @@ PATIENTS holding data</p>
                 </entry>
               </row>
               <row>
-                <entry>
+                <entry align='center'>
                   <p>Mandation</p>
                 </entry>
-                <entry>
+                <entry align='center'>
                   <p>Data Elements</p>
                 </entry>
               </row>
@@ -2657,10 +2588,10 @@ PATIENTS holding data</p>
                 </entry>
               </row>
               <row>
-                <entry>
+                <entry align='center'>
                   <p>Mandation</p>
                 </entry>
-                <entry>
+                <entry align='center'>
                   <p>Data Elements</p>
                 </entry>
               </row>
@@ -2870,10 +2801,10 @@ PATIENTS holding data</p>
                 </entry>
               </row>
               <row>
-                <entry>
+                <entry align='center'>
                   <p>Mandation</p>
                 </entry>
-                <entry>
+                <entry align='center'>
                   <p>Data Elements</p>
                 </entry>
               </row>
@@ -3380,10 +3311,10 @@ PATIENTS holding data</p>
                 </entry>
               </row>
               <row>
-                <entry>
+                <entry align='center'>
                   <p>Mandation</p>
                 </entry>
-                <entry>
+                <entry align='center'>
                   <p>Data Elements</p>
                 </entry>
               </row>
@@ -3417,10 +3348,10 @@ PATIENTS holding data</p>
                 </entry>
               </row>
               <row>
-                <entry>
+                <entry align='center'>
                   <p>Mandation</p>
                 </entry>
-                <entry>
+                <entry align='center'>
                   <p>Data Elements</p>
                 </entry>
               </row>
@@ -3454,10 +3385,10 @@ PATIENTS holding data</p>
                 </entry>
               </row>
               <row>
-                <entry>
+                <entry align='center'>
                   <p>Mandation</p>
                 </entry>
-                <entry>
+                <entry align='center'>
                   <p>Data Elements</p>
                 </entry>
               </row>

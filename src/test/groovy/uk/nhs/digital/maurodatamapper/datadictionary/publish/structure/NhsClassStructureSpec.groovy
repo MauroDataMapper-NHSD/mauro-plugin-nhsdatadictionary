@@ -217,13 +217,12 @@ to a <a href="dm:Classes and Attributes|dc:PATIENT">PATIENT</a> by one or more
         verifyAll {
             structure.state == DictionaryItem.DictionaryItemState.ACTIVE
             structure.name == activeItem.name
-            structure.sections.size() == 6
+            structure.sections.size() == 5
             structure.sections[0] instanceof DescriptionSection
             structure.sections[1] instanceof ClassAttributeSection
             structure.sections[2] instanceof ClassRelationshipSection
             structure.sections[3] instanceof WhereUsedSection
             structure.sections[4] instanceof AliasesSection
-            structure.sections[5] instanceof ChangeLogSection
         }
     }
 
@@ -235,9 +234,8 @@ to a <a href="dm:Classes and Attributes|dc:PATIENT">PATIENT</a> by one or more
         verifyAll {
             structure.state == DictionaryItem.DictionaryItemState.RETIRED
             structure.name == retiredItem.name
-            structure.sections.size() == 2
+            structure.sections.size() == 1
             structure.sections[0] instanceof DescriptionSection
-            structure.sections[1] instanceof ChangeLogSection
         }
     }
 
@@ -249,9 +247,8 @@ to a <a href="dm:Classes and Attributes|dc:PATIENT">PATIENT</a> by one or more
         verifyAll {
             structure.state == DictionaryItem.DictionaryItemState.PREPARATORY
             structure.name == preparatoryItem.name
-            structure.sections.size() == 2
+            structure.sections.size() == 1
             structure.sections[0] instanceof DescriptionSection
-            structure.sections[1] instanceof ChangeLogSection
         }
     }
 
@@ -396,41 +393,6 @@ to a <a href="dm:Classes and Attributes|dc:PATIENT">PATIENT</a> by one or more
       </simpletable>
     </body>
   </topic>
-  <topic id='class_activity_changeLog'>
-    <title>Change Log</title>
-    <body>
-      <div>
-        <p>Click on the links below to view the change requests this item is part of:</p>
-      </div>
-      <simpletable outputclass='table table-sm table-striped' relcolwidth='2* 5* 3*'>
-        <sthead outputclass='thead-light'>
-          <stentry>Change Request</stentry>
-          <stentry>Change Request Description</stentry>
-          <stentry>Implementation Date</stentry>
-        </sthead>
-        <strow>
-          <stentry>
-            <xref href='https://test.nhs.uk/change/cr1000' format='html' scope='external'>CR1000</xref>
-          </stentry>
-          <stentry>Change 1000</stentry>
-          <stentry>01 April 2024</stentry>
-        </strow>
-        <strow>
-          <stentry>
-            <xref href='https://test.nhs.uk/change/cr2000' format='html' scope='external'>CR2000</xref>
-          </stentry>
-          <stentry>Change 2000</stentry>
-          <stentry>01 September 2024</stentry>
-        </strow>
-      </simpletable>
-      <div>
-        <p>Click 
-
-          <xref outputclass='- topic/xref xref' href='https://www.datadictionary.nhs.uk/archive' format='html' scope='external'>here</xref> to see the Change Log Information for changes before January 2025.
-        </p>
-      </div>
-    </body>
-  </topic>
 </topic>"""
         }
     }
@@ -469,10 +431,6 @@ to a <a href="dm:Classes and Attributes|dc:PATIENT">PATIENT</a> by one or more
       </div>
     </body>
   </topic>
-  <topic id='class_activity_retired_changeLog'>
-    <title>Change Log</title>
-    <body />
-  </topic>
 </topic>"""
         }
     }
@@ -505,10 +463,6 @@ to a <a href="dm:Classes and Attributes|dc:PATIENT">PATIENT</a> by one or more
         <p>This item is being used for development purposes and has not yet been approved.</p>
       </div>
     </body>
-  </topic>
-  <topic id='class_activity_changeLog'>
-    <title>Change Log</title>
-    <body />
   </topic>
 </topic>"""
         }
@@ -715,49 +669,6 @@ to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class
 </div>"""
         }
 
-        when: "the change log is converted to html"
-        String changeLogHtml = structure.sections.find { it instanceof ChangeLogSection }.generateHtml(websiteHtmlPublishContext)
-
-        then: "the change log is published"
-        verifyAll {
-            changeLogHtml
-            changeLogHtml == """<div class="- topic/body body">
-  <div class="- topic/body body"><p>Click on the links below to view the change requests this item is part of:</p></div>
-  <div class="simpletable-container">
-    <table class="- topic/simpletable simpletable table table-sm table-striped">
-      <colgroup>
-        <col style="width: 20%" />
-        <col style="width: 55%" />
-        <col style="width: 25%" />
-      </colgroup>
-      <thead>
-        <tr class="- topic/sthead sthead thead-light">
-          <th class="- topic/stentry stentry">Change Request</th>
-          <th class="- topic/stentry stentry">Change Request Description</th>
-          <th class="- topic/stentry stentry">Implementation Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="- topic/strow strow">
-          <td class="- topic/stentry stentry">
-            <a href="https://test.nhs.uk/change/cr1000">CR1000</a>
-          </td>
-          <td class="- topic/stentry stentry">Change 1000</td>
-          <td class="- topic/stentry stentry">01 April 2024</td>
-        </tr>
-        <tr class="- topic/strow strow">
-          <td class="- topic/stentry stentry">
-            <a href="https://test.nhs.uk/change/cr2000">CR2000</a>
-          </td>
-          <td class="- topic/stentry stentry">Change 2000</td>
-          <td class="- topic/stentry stentry">01 September 2024</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="- topic/body body"><p>Click <a class="- topic/xref xref" href="https://www.datadictionary.nhs.uk/archive" target="_blank" rel="external noopener">here</a> to see the Change Log Information for changes before January 2025.</p></div>
-</div>"""
-        }
     }
 
     void "should produce no diff when items are the same"() {
