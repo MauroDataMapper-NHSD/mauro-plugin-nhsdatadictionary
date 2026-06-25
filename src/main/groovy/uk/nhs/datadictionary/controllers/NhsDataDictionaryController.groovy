@@ -44,6 +44,8 @@ import org.maurodata.plugin.exporter.ModelExporterPlugin
 import org.maurodata.security.AccessControlService
 import org.maurodata.service.plugin.PluginService
 import org.maurodata.util.exporter.ExporterUtils
+import org.maurodata.web.ListResponse
+import org.maurodata.web.PaginationParams
 import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.NhsDDBusinessDefinition
 import uk.nhs.datadictionary.NhsDDClass
@@ -105,6 +107,12 @@ class NhsDataDictionaryController implements NhsDataDictionaryApi {
         nhsDataDictionaryService.branches().findAll {folder ->
             accessControlService.canDoRole(Role.READER, folder)
         }
+    }
+
+    @Get('/api/nhsdd/{dictionaryId}/allItems{?params}')
+    ListResponse<StereotypedCatalogueItem> allItems(UUID dictionaryId, @Nullable @QueryValue String prefix, @Nullable @QueryValue PaginationParams params = new PaginationParams()) {
+        checkAccessRights(dictionaryId)
+        nhsDataDictionaryService.allItems(dictionaryId, prefix, params)
     }
 
     @Get('/api/nhsdd/{dictionaryId}/publish/changePaper')

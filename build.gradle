@@ -51,10 +51,10 @@ dependencies {
     compileOnly("io.micronaut:micronaut-http-server")
     compileOnly("io.micronaut.cache:micronaut-cache-core")
 
-    compileOnly('org.maurodata:mauro-domain:0.0.3-SNAPSHOT')
-    compileOnly('org.maurodata:mauro-persistence:0.0.3-SNAPSHOT')
-    compileOnly('org.maurodata:mauro-client:0.0.3-SNAPSHOT')
-    compileOnly('org.maurodata:mauro-api:0.0.3-SNAPSHOT')
+    compileOnly('org.maurodata:mauro-domain:0.0.4-SNAPSHOT')
+    compileOnly('org.maurodata:mauro-persistence:0.0.4-SNAPSHOT')
+    compileOnly('org.maurodata:mauro-client:0.0.4-SNAPSHOT')
+    compileOnly('org.maurodata:mauro-api:0.0.4-SNAPSHOT')
 
     compileOnly("io.micronaut.sql:micronaut-jdbc-hikari")
     compileOnly('com.fasterxml.uuid:java-uuid-generator:5.1.0')
@@ -125,10 +125,10 @@ dependencies {
     testImplementation("io.micronaut:micronaut-http-server")
     testImplementation("io.micronaut.cache:micronaut-cache-core")
 
-    testImplementation('org.maurodata:mauro-domain:0.0.3-SNAPSHOT')
-    testImplementation('org.maurodata:mauro-persistence:0.0.3-SNAPSHOT')
-    testImplementation('org.maurodata:mauro-client:0.0.3-SNAPSHOT')
-    testImplementation('org.maurodata:mauro-api:0.0.3-SNAPSHOT')
+    testImplementation('org.maurodata:mauro-domain:0.0.4-SNAPSHOT')
+    testImplementation('org.maurodata:mauro-persistence:0.0.4-SNAPSHOT')
+    testImplementation('org.maurodata:mauro-client:0.0.4-SNAPSHOT')
+    testImplementation('org.maurodata:mauro-api:0.0.4-SNAPSHOT')
     testImplementation('com.fasterxml.uuid:java-uuid-generator:5.1.0')
 
     testImplementation("io.micronaut.sql:micronaut-jdbc-hikari")

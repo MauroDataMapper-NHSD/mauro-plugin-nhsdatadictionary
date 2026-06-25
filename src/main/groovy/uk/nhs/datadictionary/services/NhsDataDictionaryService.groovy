@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import io.micronaut.context.ApplicationContext
 import org.maurodata.api.model.ModelVersionedRefDTO
 import org.maurodata.controller.folder.VersionedFolderController
+import org.maurodata.domain.terminology.Term
 import org.maurodata.iso11179.domain.MetadataBundle
 
 import groovy.util.logging.Slf4j
@@ -37,10 +38,14 @@ import org.maurodata.domain.terminology.Terminology
 import org.maurodata.persistence.ContentsService
 import org.maurodata.persistence.cache.AdministeredItemCacheableRepository
 import org.maurodata.persistence.cache.ItemCacheableRepository
+import org.maurodata.persistence.datamodel.DataClassRepository
 import org.maurodata.persistence.datamodel.DataElementRepository
 import org.maurodata.persistence.datamodel.DataModelRepository
+import org.maurodata.persistence.facet.MetadataRepository
 import org.maurodata.persistence.folder.FolderRepository
 import org.maurodata.persistence.terminology.TerminologyRepository
+import org.maurodata.web.ListResponse
+import org.maurodata.web.PaginationParams
 import uk.nhs.datadictionary.DataDictionaryImportParameters
 import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.NhsDDBranch
@@ -65,6 +70,7 @@ import uk.nhs.datadictionary.publish.changePaper.ChangePaperPreview
 import uk.nhs.datadictionary.services.profiles.DDWorkItemProfileProviderService
 import uk.nhs.datadictionary.utils.StereotypedCatalogueItem
 
+import java.lang.reflect.Parameter
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -117,6 +123,13 @@ class NhsDataDictionaryService {
     DataElementRepository dataElementRepository
 
     @Inject
+    DataClassRepository dataClassRepository
+
+    @Inject
+    MetadataRepository metadataRepository
+
+
+    @Inject
     DataModelRepository dataModelRepository
 
     @Inject
@@ -157,6 +170,7 @@ class NhsDataDictionaryService {
     @Inject ChangePaperHtmlUtility changePaperHtmlUtility
 
 
+
     List<Folder> branches(/*UserSecurityPolicyManager userSecurityPolicyManager */) {
         folderRepository.readAll().findAll {
             it.label.startsWith("NHS Data Dictionary")
@@ -176,6 +190,118 @@ class NhsDataDictionaryService {
         return versionTreeModelList
 */
     }
+    ListResponse<StereotypedCatalogueItem> allItems(UUID versionedFolderId, String prefix = "", PaginationParams paginationParams = new PaginationParams()){
+        // Going to need to build this list quicker than building the whole contents
+        List<StereotypedCatalogueItem> response = []
+        Folder versionedFolder = folderRepository.readById(versionedFolderId)
+        long timestamp = System.currentTimeMillis()
+        List<Terminology> terminologies = terminologyRepository.readAllByFolderIdIn([versionedFolderId])
+        System.err.println("1: ${System.currentTimeMillis() - timestamp}")
+        timestamp = System.currentTimeMillis()
+        Terminology supportingInformationTerminology = terminologies
+            .find {it.label == NhsDataDictionary.SUPPORTING_DEFINITIONS_TERMINOLOGY_NAME}
+        List<Term> terms = termCacheableRepository.readAllByTerminologyIdIn([supportingInformationTerminology.id])
+        System.err.println("2: ${System.currentTimeMillis() - timestamp}")
+        timestamp = System.currentTimeMillis()
+        response.addAll(terms.collect {new StereotypedCatalogueItem(it, supportingInformationService.stereotype)})
+
+        Terminology businessDefinitionTerminology = terminologies
+            .find {it.label == NhsDataDictionary.BUSINESS_DEFINITIONS_TERMINOLOGY_NAME}
+        terms = termCacheableRepository.readAllByTerminologyIdIn([businessDefinitionTerminology.id])
+        System.err.println("3: ${System.currentTimeMillis() - timestamp}")
+        timestamp = System.currentTimeMillis()
+
+        response.addAll(terms.collect {new StereotypedCatalogueItem(it, businessDefinitionService.stereotype)})
+
+        Terminology xmlSchemaConstraintTerminology = terminologies
+            .find {it.label == NhsDataDictionary.DATA_SET_CONSTRAINTS_TERMINOLOGY_NAME}
+        terms = termCacheableRepository.readAllByTerminologyIdIn([xmlSchemaConstraintTerminology.id])
+        System.err.println("4: ${System.currentTimeMillis() - timestamp}")
+        timestamp = System.currentTimeMillis()
+
+        response.addAll(terms.collect {new StereotypedCatalogueItem(it, dataSetConstraintService.stereotype)})
+
+        List<DataModel> dataModels = dataModelRepository.findAllByFolderId(versionedFolderId)
+        System.err.println("5: ${System.currentTimeMillis() - timestamp}")
+        timestamp = System.currentTimeMillis()
+        DataModel elementsDataModel = dataModels.find {it.label == NhsDataDictionary.ELEMENTS_MODEL_NAME}
+        List<DataElement> elementDataElements = dataElementRepository.readAllByDataClassDataModelIdIn([elementsDataModel.id])
+        System.err.println("6: ${System.currentTimeMillis() - timestamp}")
+        timestamp = System.currentTimeMillis()
+
+        response.addAll(elementDataElements.collect {new StereotypedCatalogueItem(it, elementService.stereotype)})
+
+        DataModel classesDataModel = dataModels.find {it.label == NhsDataDictionary.CLASSES_MODEL_NAME}
+        List<DataElement> attributeDataElements = dataElementRepository.readAllByDataClassDataModelIdIn ([classesDataModel.id])
+        System.err.println("7: ${System.currentTimeMillis() - timestamp}")
+        timestamp = System.currentTimeMillis()
+
+        response.addAll(attributeDataElements.findAll {
+            !(it.dataType.dataTypeKind == DataType.DataTypeKind.REFERENCE_TYPE)
+        }.collect {new StereotypedCatalogueItem(it, attributeService.stereotype)})
+
+        List<DataClass> classDataClasses = dataClassRepository.readAllByDataModel (classesDataModel)
+        System.err.println("8: ${System.currentTimeMillis() - timestamp}")
+        timestamp = System.currentTimeMillis()
+
+        response.addAll(classDataClasses.collect {new StereotypedCatalogueItem(it, classService.stereotype)})
+
+        List<Folder> allDataSetFolders = []
+        List<Folder> nextFolders = []
+        do {
+            if(nextFolders.isEmpty()) {
+                nextFolders = folderRepository.readAllByFolderIdIn([versionedFolderId])
+            } else {
+                nextFolders = folderRepository.readAllByFolderIdIn(nextFolders.id)
+            }
+            allDataSetFolders.addAll(nextFolders)
+        } while(!nextFolders.isEmpty())
+        response.addAll(nextFolders.collect {new StereotypedCatalogueItem(it, dataSetFolderService.stereotype)})
+
+        System.err.println("10: ${System.currentTimeMillis() - timestamp}")
+        timestamp = System.currentTimeMillis()
+
+        List<DataModel> dataSets = dataModelRepository.readAllByFolderIdIn(allDataSetFolders.id)
+        response.addAll(dataSets.collect {new StereotypedCatalogueItem(it, dataSetService.stereotype)})
+
+        System.err.println("11: ${System.currentTimeMillis() - timestamp}")
+        timestamp = System.currentTimeMillis()
+
+
+        paginationParams.max = paginationParams.max ?: 100
+
+        ListResponse<StereotypedCatalogueItem> listResponse = ListResponse.from(
+            response
+            .findAll {!prefix || it.name.toLowerCase().contains(prefix.toLowerCase())}
+            .sort {it.name.toLowerCase()}, paginationParams) as ListResponse<StereotypedCatalogueItem>
+
+        // speed up the response time
+        listResponse.items.each {it.description = null}
+
+        System.err.println("12: ${System.currentTimeMillis() - timestamp}")
+        timestamp = System.currentTimeMillis()
+
+        Map<UUID, StereotypedCatalogueItem> itemResponseMap = listResponse.items.collectEntries {[(it.catalogueItemId): it]}
+
+        Set<Metadata> metadata = metadataRepository.readAllByMultiFacetAwareItemIdIn(listResponse.items.catalogueItemId)
+
+        System.err.println("13: ${System.currentTimeMillis() - timestamp}")
+        timestamp = System.currentTimeMillis()
+
+        metadata.each {md ->
+            if(md.key == 'isRetired' && md.value == 'true') {
+                itemResponseMap[md.multiFacetAwareItemId].retired = true
+            }
+        }
+
+        System.err.println("14: ${System.currentTimeMillis() - timestamp}")
+        timestamp = System.currentTimeMillis()
+
+        return listResponse
+
+    }
+
+
 
     Map<IntegrityCheck, List<IntegrityCheckError>> integrityChecks(UUID versionedFolderId) {
         NhsDataDictionary dataDictionary = buildDataDictionary(versionedFolderId)
