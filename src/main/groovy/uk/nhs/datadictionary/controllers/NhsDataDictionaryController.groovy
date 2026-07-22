@@ -33,6 +33,7 @@ import io.micronaut.http.server.types.files.StreamedFile
 import io.micronaut.security.annotation.Secured
 import io.micronaut.security.rules.SecurityRule
 import jakarta.inject.Inject
+import org.apache.commons.lang3.StringUtils
 import org.maurodata.ErrorHandler
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.model.Model
@@ -379,16 +380,69 @@ class NhsDataDictionaryController implements NhsDataDictionaryApi {
         NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(dictionaryId)
 
         dataDictionary.allComponents.each {
-            if(it.catalogueItem.description && it.catalogueItem.description.contains('<a href="https://datadictionary.nhs.uk/data_sets/supporting_data_sets/overviews/hodf_data_set_overview/healthcare_operational_data_flows__acute__data_set_introduction.html">')) {
+            if(it.catalogueItem.description && it.catalogueItem.description.contains('<a href="https://datadictionary.nhs.view/healthcare_operational_data_flows__acute__data_set_introduction.html">')) {
                 System.err.println("${it.stereotype} - ${it.name}")
                 it.catalogueItem.description =
-                    it.catalogueItem.description.replace('<a href="https://datadictionary.nhs.uk/data_sets/supporting_data_sets/overviews/hodf_data_set_overview/healthcare_operational_data_flows__acute__data_set_introduction.html">',
+                    it.catalogueItem.description.replace('<a href="https://datadictionary.nhs.' +
+                                                         'uk/data_sets/supporting_data_sets/overviews/hodf_data_set_overview/healthcare_operational_data_flows__acute__data_set_introduction.html">',
                                                          '<a href="fo:Data Sets|fo:Supporting Data Sets|fo:HODF Data Set">')
                     repositoryService.getAdministeredItemRepository(it.catalogueItem.domainType).update(it.catalogueItem)
             }
         }
         return HttpResponse.ok(Boolean.TRUE)
     }
+
+    @Get('/api/nhsdd/{dictionaryId}/forwardingConfig/datasets')
+    HttpResponse<String> forwardingConfigDataSets(UUID dictionaryId) {
+        checkAccessRights(dictionaryId)
+        NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(dictionaryId)
+
+        StringBuffer response = new StringBuffer("")
+
+        dataDictionary.dataSets.values().each {dataSet ->
+            String path = "data_sets/" + StringUtils.join(dataSet.getDitaFolderPath(), "/").toLowerCase()
+            String oldLocation = path + "/" + dataSet.getDitaKey() + ".html"
+            String newLocation = path +  "/" + dataSet.getNameWithoutNonAlphaNumerics().toLowerCase() + ".html"
+            response.append("location = $oldLocation {\n" +
+                            "  return 301 $newLocation;\n" +
+                            "}\n\n")
+        }
+
+        return HttpResponse.ok(response.toString())
+    }
+
+    @Get('/api/nhsdd/{dictionaryId}/forwardingConfig/characters')
+    HttpResponse<String> forwardingConfigCharacters(UUID dictionaryId) {
+        checkAccessRights(dictionaryId)
+        NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(dictionaryId)
+
+        StringBuffer response = new StringBuffer("")
+
+        dataDictionary.allComponents.each {component ->
+            String oldFileName = component.name.toLowerCase()
+            [" ", "'", "/", "(", ")", ",", "+", ":", "%20", "%2515", "%2506", "%2507", "%2508", "%e2", "%80", "%93", "%15", "&apos;"].each {
+                oldFileName = oldFileName.replace(it, "_")
+            }
+            oldFileName += ".html"
+            if(oldFileName.contains("__")) {
+                oldFileName = oldFileName.replace("__", "_")
+                if(oldFileName.contains("_.html")) {
+                    oldFileName = oldFileName.replace("_.html", ".html")
+                }
+            }
+            if(oldFileName.contains("dm_d")) {
+                oldFileName = oldFileName.replace("dm_d", "dmd")
+            }
+
+            String newFileName = component.getNameWithoutNonAlphaNumerics().toLowerCase() + ".html"
+            if(newFileName != oldFileName) {
+                response.append("${component.stereotype} : ${component.name} (${component.isRetired()?"Retired":"Active"})\n")
+            }
+        }
+
+        return HttpResponse.ok(response.toString())
+    }
+
 
     AdministeredItemCacheableRepository getAdministeredItemRepository(String domainType) {
         AdministeredItemCacheableRepository administeredItemRepository = repositoryService.getAdministeredItemRepository(domainType)
