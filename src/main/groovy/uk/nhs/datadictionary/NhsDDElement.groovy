@@ -22,7 +22,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import groovy.util.logging.Slf4j
 import org.maurodata.dita.elements.langref.base.Topic
 import org.maurodata.dita.elements.langref.base.XRef
-import org.maurodata.dita.helpers.HtmlHelper
 import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataType
 import org.maurodata.domain.facet.SemanticLinkType
@@ -35,6 +34,7 @@ import uk.nhs.datadictionary.publish.structure.ItemLink
 import uk.nhs.datadictionary.publish.structure.ItemLinkListSection
 import uk.nhs.datadictionary.services.DataDictionaryComponentService
 import uk.nhs.datadictionary.services.MauroPersistenceService
+import uk.nhs.datadictionary.services.NhsDataDictionaryService
 
 import java.util.regex.Matcher
 
@@ -268,10 +268,10 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
 
     String getDescription() {
         if(dataDictionary && isRetired()) {
-            if(catalogueItem.description?.contains("has been retired")) { // Legacy - retired before Mauro
+            if(catalogueItem.description?.contains("has been retired") && !catalogueItem.description?.contains("???")) { // Legacy - retired before Mauro
                 return catalogueItem.description
             } else {
-                return dataDictionary.retiredItemText
+                return dataDictionary.nhsDataDictionaryService.getRetiredItemText(this)
             }
         } else if(dataDictionary && isPreparatory()) {
             return dataDictionary.preparatoryItemText

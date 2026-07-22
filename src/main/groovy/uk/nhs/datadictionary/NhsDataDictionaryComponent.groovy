@@ -269,10 +269,10 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
 
     String getDescription() {
         if(dataDictionary && isRetired()) {
-            if(catalogueItem.description?.contains("has been retired")) { // Legacy - retired before Mauro
+            if(catalogueItem.description?.contains("has been retired") && !catalogueItem.description?.contains("???")) { // Legacy - retired before Mauro
                 return catalogueItem.description
             } else {
-                return dataDictionary.retiredItemText
+                return dataDictionary.nhsDataDictionaryService.getRetiredItemText(this)
             }
         } else if(dataDictionary && isPreparatory()) {
             return dataDictionary.preparatoryItemText

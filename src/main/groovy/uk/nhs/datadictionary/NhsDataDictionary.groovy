@@ -117,6 +117,8 @@ class NhsDataDictionary {
 
     static final String CHANGE_REQUEST_NUMBER_TOKEN = "{cr_number}"
 
+    List<Folder> previousVersions = []
+
     /**
      * This is the HTML link pattern to use when reading the XML ingest files
      */
