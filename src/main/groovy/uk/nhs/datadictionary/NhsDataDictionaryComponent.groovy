@@ -344,8 +344,9 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
 
         addDescriptionSection(dictionaryItem)
 
+        addAliasesSection(dictionaryItem)
+
         if (itemState == DictionaryItem.DictionaryItemState.ACTIVE) {
-            addAliasesSection(dictionaryItem)
             addWhereUsedSection(dictionaryItem)
         }
 

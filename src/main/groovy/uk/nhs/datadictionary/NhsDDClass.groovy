@@ -165,10 +165,11 @@ class NhsDDClass extends NhsDataDictionaryComponent <DataClass> {
         if (itemState == DictionaryItem.DictionaryItemState.ACTIVE) {
             addClassAttributeSection(dictionaryItem)
             addClassRelationshipSection(dictionaryItem)
-            addWhereUsedSection(dictionaryItem)
-            addAliasesSection(dictionaryItem)
         }
-
+        addAliasesSection(dictionaryItem)
+        if (itemState == DictionaryItem.DictionaryItemState.ACTIVE) {
+            addWhereUsedSection(dictionaryItem)
+        }
         addChangeLogSection(dictionaryItem)
 
         dictionaryItem

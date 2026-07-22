@@ -310,7 +310,9 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
                 List<CodesRow> defaultCodes = createCodesSectionRows(getDefaultCodes())
                 dictionaryItem.addSection(CodesSection.createDefaultCodes(dictionaryItem, defaultCodes))
             }
+        }
             addAliasesSection(dictionaryItem)
+        if (itemState == DictionaryItem.DictionaryItemState.ACTIVE) {
             addWhereUsedSection(dictionaryItem)
             addLinkedAttributesSection(dictionaryItem)
         }

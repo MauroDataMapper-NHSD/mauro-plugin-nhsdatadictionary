@@ -153,9 +153,9 @@ class NhsDDDataSet extends NhsDataDictionaryComponent <DataModel> {
 
         if (itemState == DictionaryItem.DictionaryItemState.ACTIVE) {
             addDataSetSection(dictionaryItem)
-            addAliasesSection(dictionaryItem)
             //addWhereUsedSection(dictionaryItem)
         }
+        addAliasesSection(dictionaryItem)
 
         addChangeLogSection(dictionaryItem)
 
@@ -219,7 +219,7 @@ class NhsDDDataSet extends NhsDataDictionaryComponent <DataModel> {
     }
 
     List<String> getDitaFolderPath() {
-        webPath.findAll {it != "Commissioning Data Sets"}.collect {
+        webPath.findAll {it != "Commissioning Data Sets" && it != "Retired"}.collect {
             it.replaceAll("[^A-Za-z0-9- ]", "").replace(" ", "_")
         }
     }
