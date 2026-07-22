@@ -160,6 +160,9 @@ class NhsDataDictionaryService {
 
     @Inject ChangePaperHtmlUtility changePaperHtmlUtility
 
+    @Inject PathService pathService
+
+    @Inject MetadataCacheableRepository metadataCacheableRepository
 
     List<Folder> branches(/*UserSecurityPolicyManager userSecurityPolicyManager */) {
         folderRepository.readAll().findAll {
