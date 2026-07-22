@@ -145,9 +145,8 @@ class WebsiteUtility {
         TopicSet indexTopicSet = TopicSet.build(id: "allItems-index-topicset", keyRef: "allItems-index-overview", navTitle: "All Items Index")
 
         dataDictionary.allComponentsByIndex(true).
-            findAll {!it instanceof NhsDDDataSetFolder }.
             each {alphaIndex, components ->
-            String indexId = "all_items__${alphaIndex.substring(0,1).toLowerCase()}"
+            String indexId = "all_items_${alphaIndex.substring(0,1).toLowerCase()}"
             Topic indexPage = Topic.build (id: indexId) {
                 title "All Items: ${alphaIndex}"
                 body {
@@ -157,18 +156,20 @@ class WebsiteUtility {
                             stentry "Item Type"
                         }
                         components.each {component ->
-                            strow {
-                                stentry {
-                                    xRef component.calculateXRef()
+                            if(!(component instanceof NhsDDDataSetFolder && component.isRetired())) {
+                                strow {
+                                    stentry {
+                                        xRef component.calculateXRef()
+                                    }
+                                    stentry component.stereotype
                                 }
-                                stentry component.stereotype
                             }
                         }
                     }
                 }
             }
             indexTopicSet.topicRef(TopicRef.build(keyRef: indexId))
-            ditaProject.registerTopic("all_items_index__a-z_", indexPage)
+            ditaProject.registerTopic("all_items_index_a-z", indexPage)
         }
 
 

@@ -49,7 +49,7 @@ class DataSetsWebsiteHelper {
         publishContext.setItemLinkScanner(ItemLinkScanner.createForDitaOutput(pathResolver))
 
         dataDictionary.dataSetFolders.values().each { folders ->
-            folders.each { folder ->
+            folders.findAll {!it.isRetired()}.each { folder ->
                 generateDitaMapForFolder(folder, dataDictionary, parameters, ditaProject)
                 generateOverviewTopicForFolder(folder, dataDictionary, parameters, ditaProject)
             }
@@ -74,7 +74,7 @@ class DataSetsWebsiteHelper {
                 topLevelFolders.sort{it.name.toLowerCase()}.each { folder ->
                     topicSet.mapRef {
                         toc Toc.YES
-                        keyRef folder.getDitaKey()
+                        keyRef folder.getDitaKey().replace('_overview', '')
                     }
                 }
             }
@@ -93,7 +93,7 @@ class DataSetsWebsiteHelper {
             // TODO: Only for Data Sets at the moment to fix gh-147. In the future, have every component type generate from publish model
             DictionaryItem structure = dataSet.getPublishStructure()
             Topic topic = structure.generateDita(publishContext)
-            ditaProject.registerTopic(path, topic)
+            ditaProject.registerTopic(path, topic, dataSet.getNameWithoutNonAlphaNumerics().toLowerCase())
 
             //DitaMap dataSetMap = dataSet.generateMap()
             //ditaProject.registerMap(path, dataSetMap)
@@ -127,10 +127,7 @@ class DataSetsWebsiteHelper {
         //System.err.println("Dita folder path: ${folder.ditaFolderPath}")
         //System.err.println("Folder path: ${folder.getFolderPath()}")
 
-        String mapId = folder.getDitaKey()
-        if(folder.isRetired()) {
-            mapId += "_retired"
-        }
+        String mapId = folder.getDitaKey().replace('_overview',  '')
         //System.err.println("Map id: $mapId")
         String path = "data_sets/" + StringUtils.join(folder.getDitaFolderPath(), "/").toLowerCase()
         DitaMap dataSetsIndexMap = DitaMap.build {
@@ -153,7 +150,7 @@ class DataSetsWebsiteHelper {
                      if(childComponent instanceof NhsDDDataSetFolder) {
                         topicRef.mapRef {
                             toc Toc.YES
-                            keyRef childComponent.getDitaKey()
+                            keyRef childComponent.getDitaKey().replace('_overview', '')
                         }
                     } else { // DataSet
                         topicRef.topicRef {
@@ -165,10 +162,7 @@ class DataSetsWebsiteHelper {
             }
         }
 
-        String customFilename = folder.getNameWithoutNonAlphaNumerics().toLowerCase()
-        if(folder.isRetired()) {
-            customFilename += "_retired"
-        }
+        String customFilename = folder.getDitaKey().replace('_overview', '').toLowerCase()
         ditaProject.registerMap(path, dataSetsIndexMap, customFilename)
     }
 
@@ -188,7 +182,7 @@ class DataSetsWebsiteHelper {
             }
         }
         String path = "data_sets/" + StringUtils.join(folder.getDitaFolderPath(), "/").toLowerCase()
-        ditaProject.registerTopic(path, folderOverviewTopic)
+        ditaProject.registerTopic(path, folderOverviewTopic, folder.getNameWithoutNonAlphaNumerics().toLowerCase())
 
     }
 }
