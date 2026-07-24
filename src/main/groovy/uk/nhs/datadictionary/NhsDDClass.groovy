@@ -142,7 +142,9 @@ class NhsDDClass extends NhsDataDictionaryComponent <DataClass> {
         classRelationships
             .findAll { it.targetClass.itemState != DictionaryItem.DictionaryItemState.RETIRED }
             .sort { a, b ->
-                b.key <=> a.key ?: a.targetClass.name.toLowerCase() <=> b.targetClass.name.toLowerCase()
+                b.key <=> a.key ?:
+                a.targetClass.name.toLowerCase() <=> b.targetClass.name.toLowerCase() ?:
+                a.relationshipDescription.toLowerCase() <=> b.relationshipDescription.toLowerCase()
             }
     }
 
@@ -163,10 +165,11 @@ class NhsDDClass extends NhsDataDictionaryComponent <DataClass> {
         if (itemState == DictionaryItem.DictionaryItemState.ACTIVE) {
             addClassAttributeSection(dictionaryItem)
             addClassRelationshipSection(dictionaryItem)
-            addWhereUsedSection(dictionaryItem)
-            addAliasesSection(dictionaryItem)
         }
-
+        addAliasesSection(dictionaryItem)
+        if (itemState == DictionaryItem.DictionaryItemState.ACTIVE) {
+            addWhereUsedSection(dictionaryItem)
+        }
         addChangeLogSection(dictionaryItem)
 
         dictionaryItem
@@ -217,7 +220,7 @@ class NhsDDClass extends NhsDataDictionaryComponent <DataClass> {
                 topics.add(aliasesTopic())
             }
         }
-        topics.add(changeLogTopic())
+//        topics.add(changeLogTopic())
         return topics
     }
 

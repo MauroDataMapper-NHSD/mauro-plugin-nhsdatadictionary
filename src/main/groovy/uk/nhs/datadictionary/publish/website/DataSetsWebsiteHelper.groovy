@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils
 import org.maurodata.dita.DitaProject
 import org.maurodata.dita.elements.langref.base.DitaMap
 import org.maurodata.dita.elements.langref.base.Topic
+import org.maurodata.dita.elements.langref.base.TopicRef
 import org.maurodata.dita.elements.langref.base.TopicSet
 import org.maurodata.dita.enums.Linking
 import org.maurodata.dita.enums.Toc
@@ -29,6 +30,7 @@ import org.maurodata.dita.helpers.HtmlHelper
 import uk.nhs.datadictionary.DataDictionaryImportParameters
 import uk.nhs.datadictionary.NhsDDDataSetFolder
 import uk.nhs.datadictionary.NhsDataDictionary
+import uk.nhs.datadictionary.NhsDataDictionaryComponent
 import uk.nhs.datadictionary.publish.ItemLinkScanner
 import uk.nhs.datadictionary.publish.NhsDataDictionaryComponentPathResolver
 import uk.nhs.datadictionary.publish.PublishContext
@@ -47,7 +49,7 @@ class DataSetsWebsiteHelper {
         publishContext.setItemLinkScanner(ItemLinkScanner.createForDitaOutput(pathResolver))
 
         dataDictionary.dataSetFolders.values().each { folders ->
-            folders.each { folder ->
+            folders.findAll {!it.isRetired()}.each { folder ->
                 generateDitaMapForFolder(folder, dataDictionary, parameters, ditaProject)
                 generateOverviewTopicForFolder(folder, dataDictionary, parameters, ditaProject)
             }
@@ -61,14 +63,18 @@ class DataSetsWebsiteHelper {
                 keyRef 'data_sets_overview'
                 toc Toc.YES
                 linking Linking.NORMAL
+                List<NhsDDDataSetFolder> topLevelFolders = []
                 dataDictionary.dataSetFolders.values().each { folders ->
-                    folders.sort { it.name }.each { folder ->
+                    folders.each { folder ->
                         if (folder.ditaFolderPath.size() == 1 && !folder.isRetired()) {
-                            topicSet.mapRef {
-                                toc Toc.YES
-                                keyRef folder.getDitaKey()
-                            }
+                            topLevelFolders.add(folder)
                         }
+                    }
+                }
+                topLevelFolders.sort{it.name.toLowerCase()}.each { folder ->
+                    topicSet.mapRef {
+                        toc Toc.YES
+                        keyRef folder.getDitaKey().replace('_overview', '')
                     }
                 }
             }
@@ -84,20 +90,20 @@ class DataSetsWebsiteHelper {
 
         dataDictionary.dataSets.values().each { dataSet ->
             String path = "data_sets/" + StringUtils.join(dataSet.getDitaFolderPath(), "/").toLowerCase()
-            DitaMap dataSetMap = dataSet.generateMap()
-            ditaProject.registerMap(path, dataSetMap)
-
             // TODO: Only for Data Sets at the moment to fix gh-147. In the future, have every component type generate from publish model
             DictionaryItem structure = dataSet.getPublishStructure()
             Topic topic = structure.generateDita(publishContext)
+            ditaProject.registerTopic(path, topic, dataSet.getNameWithoutNonAlphaNumerics().toLowerCase())
 
-            ditaProject.registerTopic(path, topic)
-            dataSetMap.topicRef {
-                toc Toc.NO
-                keyRef dataSet.getDitaKey()
-            }
+            //DitaMap dataSetMap = dataSet.generateMap()
+            //ditaProject.registerMap(path, dataSetMap)
+            // dataSetMap.topicRef {
+            //    toc Toc.NO
+            //    keyRef dataSet.getDitaKey()
+            //}
+
+
         }
-
 
     }
 
@@ -121,60 +127,62 @@ class DataSetsWebsiteHelper {
         //System.err.println("Dita folder path: ${folder.ditaFolderPath}")
         //System.err.println("Folder path: ${folder.getFolderPath()}")
 
-        String mapId = folder.getDitaKey()
-        if(folder.isRetired()) {
-            mapId += "_retired"
-        }
-        System.err.println("Map id: $mapId")
+        String mapId = folder.getDitaKey().replace('_overview',  '')
+        //System.err.println("Map id: $mapId")
+        String path = "data_sets/" + StringUtils.join(folder.getDitaFolderPath(), "/").toLowerCase()
         DitaMap dataSetsIndexMap = DitaMap.build {
             id mapId
             title folder.getNameWithRetired()
-            topicSet {TopicSet topicSet ->
+            topicRef {TopicRef topicRef ->
                 navTitle folder.getNameWithRetired()
+                keys "${folder.getDitaKey()}_group_index"
                 id "${folder.getDitaKey()}_group"
-                keyRef "${folder.getDitaKey()}_overview"
+                if(!folder.isRetired()) {
+                    keyRef folder.getDitaKey()
+                }
                 toc Toc.YES
                 linking Linking.NORMAL
-                folder.childFolders.sort { it.name }.each { childFolder ->
-                    topicSet.mapRef {
-                        toc Toc.YES
-                        keyRef childFolder.getDitaKey()
-                    }
-                }
-                folder.dataSets.sort {it.name }.each { dataSet ->
-                    topicSet.topicRef {
-                        toc Toc.YES
-                        keyRef dataSet.getDitaKey()
-                    }
+                List<NhsDataDictionaryComponent> datasetsAndFolders = []
+
+                datasetsAndFolders.addAll(folder.childFolders)
+                datasetsAndFolders.addAll(folder.dataSets)
+                datasetsAndFolders.sort {it.name}.each {childComponent ->
+                     if(childComponent instanceof NhsDDDataSetFolder) {
+                        topicRef.mapRef {
+                            toc Toc.YES
+                            keyRef childComponent.getDitaKey().replace('_overview', '')
+                        }
+                    } else { // DataSet
+                        topicRef.topicRef {
+                            toc Toc.YES
+                            keyRef childComponent.getDitaKey()
+                        }
+                     }
                 }
             }
         }
-        String path = "data_sets/" + StringUtils.join(folder.getDitaFolderPath(), "/").toLowerCase()
-        String customFilename = folder.getNameWithoutNonAlphaNumerics().toLowerCase()
-        if(folder.isRetired()) {
-            customFilename += "_retired"
-        }
+
+        String customFilename = folder.getDitaKey().replace('_overview', '').toLowerCase()
         ditaProject.registerMap(path, dataSetsIndexMap, customFilename)
     }
 
     static void generateOverviewTopicForFolder(NhsDDDataSetFolder folder, NhsDataDictionary dataDictionary, DataDictionaryImportParameters parameters, DitaProject ditaProject) {
         String topicId = folder.getDitaKey()
-        if(folder.isRetired()) {
-            topicId += "_retired"
-        }
-        topicId += "_overview"
+        //if(folder.isRetired()) {
+        //    topicId += "_retired"
+        //}
         Topic folderOverviewTopic = Topic.build {
             id topicId
             title folder.getNameWithRetired()
             shortdesc folder.getShortDescription()
             body {
                 if (folder.description) {
-                    div HtmlHelper.replaceHtmlWithDita(folder.description)
+                    div HtmlHelper.replaceHtmlWithDita(folder.replaceLinksInString(folder.getDescription()))
                 }
             }
         }
         String path = "data_sets/" + StringUtils.join(folder.getDitaFolderPath(), "/").toLowerCase()
-        ditaProject.registerTopic(path, folderOverviewTopic)
+        ditaProject.registerTopic(path, folderOverviewTopic, folder.getNameWithoutNonAlphaNumerics().toLowerCase())
 
     }
 }

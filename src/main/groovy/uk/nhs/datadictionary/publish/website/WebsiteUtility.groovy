@@ -18,8 +18,6 @@
 package uk.nhs.datadictionary.publish.website
 
 import groovy.util.logging.Slf4j
-import net.lingala.zip4j.ZipFile
-import org.apache.commons.io.FileUtils
 import org.maurodata.dita.DitaProject
 import org.maurodata.dita.elements.langref.base.DitaMap
 import org.maurodata.dita.elements.langref.base.Topic
@@ -33,48 +31,36 @@ import uk.nhs.datadictionary.NhsDDDataSetFolder
 import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.NhsDataDictionaryComponent
 
-import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
-import java.text.SimpleDateFormat
-import java.time.Duration
-import java.time.Instant
 
 @Slf4j
 class WebsiteUtility {
 
-    static final Map<String, String> allStereotypes = [
-            'Attributes': 'attribute',
-            'Business Definitions': 'businessDefinition',
-            'Classes': 'class',
-            'Data Sets': 'dataSet',
-            'Data Set Constraints': 'dataSetConstraint',
-            'Elements': 'element',
-            'Supporting Information': 'supportingInformation'
-    ]
-
-    static final String GITHUB_BRANCH_URL = "https://github.com/NHSDigital/DataDictionaryPublication/archive/refs/heads/feature/move-to-mauro.zip"
-
     static final String TO_BE_OVERRIDDEN_TEXT = "This text should be overridden by custom text stored in a GitHub library"
 
-    static byte[] generateWebsite(NhsDataDictionary dataDictionary, Path outputPath, DataDictionaryImportParameters parameters) {
-
+    static byte[] generateWebsite(NhsDataDictionary dataDictionary, DataDictionaryImportParameters parameters) {
         DitaProject ditaProject = new DitaProject("NHS Data Model and Dictionary", "nhs_data_dictionary")
         ditaProject.useTopicsFolder = false
 
 
-
-        Map<String, NhsDataDictionaryComponent> pathLookup = [:]
+        dataDictionary.getAllComponents().
+            sort { it.ditaKey }.
+            each { component ->
+            component.dataDictionary = dataDictionary
+            ditaProject.addExternalKey(component.getDitaKey(), component.otherProperties["ddUrl"])
+            dataDictionary.pathLookup[component.getMauroPath()] = component
+        }
 
         dataDictionary.getAllComponents().each { component ->
-            ditaProject.addExternalKey(component.getDitaKey(), component.otherProperties["ddUrl"])
-            pathLookup[component.getMauroPath()] = component
+            if(!component.isCommissioningDataSetFolder()) {
+                component.calculateWhereUsed()
+            }
         }
-        dataDictionary.allComponents.each {component ->
-            component.replaceLinksInDefinition(pathLookup)
-            component.updateWhereUsed()
-        }
+
+//        dataDictionary.allComponents.each {component ->
+//            component.replaceLinksInDefinition(pathLookup)
+//            component.updateWhereUsed()
+//        }
 
 
 //        allStereotypes.each {name, stereotype ->
@@ -101,50 +87,14 @@ class WebsiteUtility {
                 }
             }
 
+        Map<String, ByteArrayOutputStream> staticContentMap = GitHubStaticContentHelperService.getGithubDirAsMap()
+        ByteArrayOutputStream zipContents = ditaProject.writeToZip(staticContentMap)
 
 
-        String ditaOutputDirectory = outputPath.toString() + File.separator + "dita"
-        ditaProject.writeToDirectory(Paths.get(ditaOutputDirectory))
-
-        log.error(ditaOutputDirectory)
-
-        overwriteGithubDir(ditaOutputDirectory)
-
-
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy")
-        String date = simpleDateFormat.format(new Date())
-
-        String filename = "website-${dataDictionary.branchName}-${date}.zip"
-
-        Instant startTime = Instant.now()
-        ZipFile zipFile = new ZipFile(outputPath.toString() + File.separator + filename)
-        zipFile.addFolder(new File(ditaOutputDirectory))
-        log.info('Zip complete in {}', Duration.between(startTime, Instant.now()).toString())
-
-        return zipFile.getFile().bytes
+        return zipContents.toByteArray()
     }
 
-    static void overwriteGithubDir(String outputPath){
 
-        // Create a temporary directory for the downloaded zip
-        Path tempPath = Files.createTempDirectory("ditaGeneration")
-        String sourceFile = tempPath.toString() + "/github_download.zip"
-
-        // Get the zip file and save it into the directory
-        InputStream inputStream = new URL(GITHUB_BRANCH_URL).openStream()
-        Files.copy(inputStream, Paths.get(sourceFile), StandardCopyOption.REPLACE_EXISTING)
-
-
-        // Extract the necessary contents and copy them to the right place
-        ZipFile zipFile = new ZipFile(sourceFile)
-        zipFile.extractFile("DataDictionaryPublication-feature-move-to-mauro/Website/", outputPath)
-        FileUtils.copyDirectory(new File(outputPath + "/DataDictionaryPublication-feature-move-to-mauro/Website/"), new File(outputPath))
-
-        // tidy up
-        Files.delete(new File(sourceFile).toPath())
-        FileUtils.deleteDirectory(new File(outputPath + "/DataDictionaryPublication-feature-move-to-mauro/"))
-
-    }
 
     static Map<String, Topic> getFlatIndexTopics(Map<String, List<NhsDataDictionaryComponent>> componentMap, String indexPrefix) {
 
@@ -194,8 +144,9 @@ class WebsiteUtility {
 
         TopicSet indexTopicSet = TopicSet.build(id: "allItems-index-topicset", keyRef: "allItems-index-overview", navTitle: "All Items Index")
 
-        dataDictionary.allComponentsByIndex(true).each {alphaIndex, components ->
-            String indexId = "all_items__${alphaIndex.substring(0,1).toLowerCase()}"
+        dataDictionary.allComponentsByIndex(true).
+            each {alphaIndex, components ->
+            String indexId = "all_items_${alphaIndex.substring(0,1).toLowerCase()}"
             Topic indexPage = Topic.build (id: indexId) {
                 title "All Items: ${alphaIndex}"
                 body {
@@ -205,18 +156,20 @@ class WebsiteUtility {
                             stentry "Item Type"
                         }
                         components.each {component ->
-                            strow {
-                                stentry {
-                                    xRef component.calculateXRef()
+                            if(!(component instanceof NhsDDDataSetFolder && component.isRetired())) {
+                                strow {
+                                    stentry {
+                                        xRef component.calculateXRef()
+                                    }
+                                    stentry component.stereotype
                                 }
-                                stentry component.stereotype
                             }
                         }
                     }
                 }
             }
             indexTopicSet.topicRef(TopicRef.build(keyRef: indexId))
-            ditaProject.registerTopic("all_items_index__a-z_", indexPage)
+            ditaProject.registerTopic("all_items_index_a-z", indexPage)
         }
 
 
@@ -268,19 +221,20 @@ class WebsiteUtility {
         ditaProject.registerTopic("", indexOverview, "${lowercaseStereotype}_overview")
 
 
-        TopicSet topicSet = TopicSet.build(id: "${lowercaseStereotype}-index-topicset",
-                                           keyRef: "${lowercaseStereotype}-index-overview",
+        TopicRef topicSet = TopicRef.build(keys: ["${lowercaseStereotype}-index-page"],
+                                           href: "../${lowercaseStereotype}_overview.dita",
+                                           copyTo: "${lowercaseStereotype}-index.dita",
                                            chunk: ["to-content"],
                                            linking: Linking.NORMAL,
                                            navTitle: stereotype)
-        indexMap.topicSet(topicSet)
+        indexMap.topicRef(topicSet)
 
         Map<String, Topic> indexTopics = getFlatIndexTopics(dataDictionary.componentsByIndex(components, false),
                                                             lowercaseStereotype)
 
         indexTopics.each {prefix, topic ->
             ditaProject.registerTopic(lowercaseStereotype, topic, prefix.toLowerCase())
-            topicSet.topicRef(keyRef:topic.id, linking: Linking.NORMAL)
+            topicSet.topicRef(keyRef: topic.id, linking: Linking.NORMAL, toc: Toc.YES)
         }
         ditaProject.registerMap("", indexMap)
         ditaProject.mainMap.mapRef {

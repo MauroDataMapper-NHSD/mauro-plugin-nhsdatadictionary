@@ -28,15 +28,19 @@ import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.QueryValue
+import io.micronaut.http.exceptions.HttpStatusException
 import io.micronaut.http.server.types.files.StreamedFile
 import io.micronaut.security.annotation.Secured
 import io.micronaut.security.rules.SecurityRule
 import jakarta.inject.Inject
+import org.apache.commons.lang3.StringUtils
 import org.maurodata.ErrorHandler
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.model.Model
 import org.maurodata.domain.security.Role
+import org.maurodata.persistence.cache.AdministeredItemCacheableRepository
 import org.maurodata.persistence.folder.FolderRepository
+import org.maurodata.persistence.service.RepositoryService
 import org.maurodata.plugin.exporter.ModelExporterPlugin
 import org.maurodata.security.AccessControlService
 import org.maurodata.service.plugin.PluginService
@@ -91,6 +95,9 @@ class NhsDataDictionaryController implements NhsDataDictionaryApi {
     @Inject DataSetConstraintService dataSetConstraintService
 
     @Inject
+    RepositoryService repositoryService
+
+    @Inject
     AccessControlService accessControlService
 
 
@@ -104,9 +111,19 @@ class NhsDataDictionaryController implements NhsDataDictionaryApi {
     @Get('/api/nhsdd/{dictionaryId}/publish/changePaper')
     HttpResponse<StreamedFile> generateChangePaper(UUID dictionaryId, @Nullable @QueryValue Boolean dataSets) {
         checkAccessRights(dictionaryId)
-        File f = nhsDataDictionaryService.generateChangePaper(dictionaryId, dataSets)
-        return HttpResponse.ok(new StreamedFile(new ByteArrayInputStream(f.readBytes()), MediaType.ZIP_TYPE))
-            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=\"${f.name}\"")
+        Folder folder = folderRepository.findById(dictionaryId)
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy")
+        String date = simpleDateFormat.format(new Date())
+        String changePaperType = dataSets ? "datasets" : "basic"
+
+        String branchName = folder.branchName ?: 'CRXXXX'
+
+
+        String filename = "change-paper-${branchName}-${changePaperType}-${date}.zip"
+
+        byte[] zipContents = nhsDataDictionaryService.generateChangePaper(dictionaryId, dataSets)
+        return HttpResponse.ok(new StreamedFile(new ByteArrayInputStream(zipContents), MediaType.ZIP_TYPE))
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=\"${filename}\"")
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_ZIP)
             .header("Access-Control-Expose-Headers", "Content-Disposition, Content-Length")
     }
@@ -357,6 +374,81 @@ class NhsDataDictionaryController implements NhsDataDictionaryApi {
         accessControlService.checkRole(Role.READER, folder)
     }
 
+    @Get('/api/nhsdd/{dictionaryId}/applyEdits')
+    HttpResponse<Boolean> applyEdits(UUID dictionaryId) {
+        checkAccessRights(dictionaryId)
+        NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(dictionaryId)
+
+        dataDictionary.allComponents.each {
+            if(it.catalogueItem.description && it.catalogueItem.description.contains('<a href="https://datadictionary.nhs.view/healthcare_operational_data_flows__acute__data_set_introduction.html">')) {
+                System.err.println("${it.stereotype} - ${it.name}")
+                it.catalogueItem.description =
+                    it.catalogueItem.description.replace('<a href="https://datadictionary.nhs.' +
+                                                         'uk/data_sets/supporting_data_sets/overviews/hodf_data_set_overview/healthcare_operational_data_flows__acute__data_set_introduction.html">',
+                                                         '<a href="fo:Data Sets|fo:Supporting Data Sets|fo:HODF Data Set">')
+                    repositoryService.getAdministeredItemRepository(it.catalogueItem.domainType).update(it.catalogueItem)
+            }
+        }
+        return HttpResponse.ok(Boolean.TRUE)
+    }
+
+    @Get('/api/nhsdd/{dictionaryId}/forwardingConfig/datasets')
+    HttpResponse<String> forwardingConfigDataSets(UUID dictionaryId) {
+        checkAccessRights(dictionaryId)
+        NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(dictionaryId)
+
+        StringBuffer response = new StringBuffer("")
+
+        dataDictionary.dataSets.values().each {dataSet ->
+            String path = "data_sets/" + StringUtils.join(dataSet.getDitaFolderPath(), "/").toLowerCase()
+            String oldLocation = path + "/" + dataSet.getDitaKey() + ".html"
+            String newLocation = path +  "/" + dataSet.getNameWithoutNonAlphaNumerics().toLowerCase() + ".html"
+            response.append("location = $oldLocation {\n" +
+                            "  return 301 $newLocation;\n" +
+                            "}\n\n")
+        }
+
+        return HttpResponse.ok(response.toString())
+    }
+
+    @Get('/api/nhsdd/{dictionaryId}/forwardingConfig/characters')
+    HttpResponse<String> forwardingConfigCharacters(UUID dictionaryId) {
+        checkAccessRights(dictionaryId)
+        NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(dictionaryId)
+
+        StringBuffer response = new StringBuffer("")
+
+        dataDictionary.allComponents.each {component ->
+            String oldFileName = component.name.toLowerCase()
+            [" ", "'", "/", "(", ")", ",", "+", ":", "%20", "%2515", "%2506", "%2507", "%2508", "%e2", "%80", "%93", "%15", "&apos;"].each {
+                oldFileName = oldFileName.replace(it, "_")
+            }
+            oldFileName += ".html"
+            if(oldFileName.contains("__")) {
+                oldFileName = oldFileName.replace("__", "_")
+                if(oldFileName.contains("_.html")) {
+                    oldFileName = oldFileName.replace("_.html", ".html")
+                }
+            }
+            if(oldFileName.contains("dm_d")) {
+                oldFileName = oldFileName.replace("dm_d", "dmd")
+            }
+
+            String newFileName = component.getNameWithoutNonAlphaNumerics().toLowerCase() + ".html"
+            if(newFileName != oldFileName) {
+                response.append("${component.stereotype} : ${component.name} (${component.isRetired()?"Retired":"Active"})\n")
+            }
+        }
+
+        return HttpResponse.ok(response.toString())
+    }
+
+
+    AdministeredItemCacheableRepository getAdministeredItemRepository(String domainType) {
+        AdministeredItemCacheableRepository administeredItemRepository = repositoryService.getAdministeredItemRepository(domainType)
+        if (!administeredItemRepository) throw new HttpStatusException(HttpStatus.NOT_FOUND, "Domain type [$domainType] not found")
+        administeredItemRepository
+    }
 
 
     /*

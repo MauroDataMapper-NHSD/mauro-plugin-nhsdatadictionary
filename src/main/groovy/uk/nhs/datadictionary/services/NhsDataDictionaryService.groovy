@@ -21,6 +21,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import io.micronaut.context.ApplicationContext
 import org.maurodata.api.model.ModelVersionedRefDTO
 import org.maurodata.controller.folder.VersionedFolderController
+import org.maurodata.domain.facet.VersionLink
+import org.maurodata.domain.model.AdministeredItem
 import org.maurodata.iso11179.domain.MetadataBundle
 
 import groovy.util.logging.Slf4j
@@ -36,11 +38,13 @@ import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.terminology.Terminology
 import org.maurodata.persistence.ContentsService
 import org.maurodata.persistence.cache.AdministeredItemCacheableRepository
+import org.maurodata.persistence.cache.FacetCacheableRepository.MetadataCacheableRepository
 import org.maurodata.persistence.cache.ItemCacheableRepository
 import org.maurodata.persistence.datamodel.DataElementRepository
 import org.maurodata.persistence.datamodel.DataModelRepository
 import org.maurodata.persistence.folder.FolderRepository
 import org.maurodata.persistence.terminology.TerminologyRepository
+import org.maurodata.service.path.PathService
 import uk.nhs.datadictionary.DataDictionaryImportParameters
 import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.NhsDDBranch
@@ -80,7 +84,7 @@ class NhsDataDictionaryService {
     List<IntegrityCheck> integrityChecks
 
     static final Map<String, String> KNOWN_KEYS = [
-        (API_PROPERTY_RETIRED_TEMPLATE): '<p>This item has been retired from the NHS Data Model and Dictionary.</p>' +
+        (API_PROPERTY_RETIRED_TEMPLATE): '<p><strong>This item has been retired from the NHS Data Model and Dictionary.</strong></p>' +
                             '<p>The last version of this item is available in the ?????? release of the NHS Data Model and Dictionary.</p>' +
                            '<p>Access to the last live version of this item can be obtained by emailing <a href=\"mailto:support.digitalservices@nhs' +
                            '.net\">support.digitalservices@nhs.net</a> with "NHS Data Model and Dictionary - Archive Request" in the email subject ' +
@@ -156,6 +160,9 @@ class NhsDataDictionaryService {
 
     @Inject ChangePaperHtmlUtility changePaperHtmlUtility
 
+    @Inject PathService pathService
+
+    @Inject MetadataCacheableRepository metadataCacheableRepository
 
     List<Folder> branches(/*UserSecurityPolicyManager userSecurityPolicyManager */) {
         folderRepository.readAll().findAll {
@@ -186,11 +193,60 @@ class NhsDataDictionaryService {
             }
     }
 
+    void getPreviousReleases(NhsDataDictionary nhsDataDictionary) {
+        nhsDataDictionary.previousVersions = []
+        Folder originalFolder = nhsDataDictionary.containingVersionedFolder
+        while(originalFolder) {
+            VersionLink previousVersionLink = originalFolder.versionLinks.find
+                {it.versionLinkType == VersionLink.NEW_MODEL_VERSION_OF && it.multiFacetAwareItemId == originalFolder.id}
+            if(previousVersionLink) {
+                originalFolder = folderRepository.findById(previousVersionLink.targetModelId)
+                nhsDataDictionary.previousVersions.add(originalFolder)
+            } else {
+                originalFolder = null
+            }
+        }
+
+    }
+
+
+    String getRetiredItemText(NhsDataDictionaryComponent component) {
+        System.err.println("Retired item: ${component.name}, ${component.stereotype}")
+        String path = component.getMauroPath()
+        System.err.println("Path: ${path}")
+        component.dataDictionary.previousVersions.each {
+            System.err.println(it.modelVersionTag)
+        }
+        Folder lastActivePreviousVersion = component.dataDictionary.previousVersions.find { previousVersionFolder ->
+            AdministeredItem item
+            try {
+                item = pathService.getResourceByPathFromResource('Folder', previousVersionFolder.id, path)
+            } catch(Exception e) {
+                return false
+            }
+            item.metadata = metadataCacheableRepository.readAllByMultiFacetAwareItemIdIn([item.id]) as List
+            System.err.println("Item: ${item}")
+            System.err.println("Item id: ${item.id}")
+            System.err.println("Item Metadata: ${item.metadata.key} ${item.metadata.value}")
+            return !item || !item.metadata.find {
+                it.namespace.startsWith(NhsDataDictionary.METADATA_NAMESPACE) && it.key == 'isRetired' && it.value == 'true'
+            }
+        }
+        String lastActivePreviousVersionText = lastActivePreviousVersion?.modelVersionTag ?: "November 2025"
+        component.dataDictionary.retiredItemText.replace(
+            "??????", lastActivePreviousVersionText
+        )
+    }
+
+
+
 
     NhsDataDictionary buildDataDictionary(UUID versionedFolderId) {
         NhsDataDictionary dataDictionary = newDataDictionary(versionedFolderId)
+        dataDictionary.nhsDataDictionaryService = this
         Folder contentsFolder = (Folder) folderRepository.loadWithContent(versionedFolderId)
         dataDictionary.containingVersionedFolder = contentsFolder
+        getPreviousReleases(dataDictionary)
 
         buildWorkItemDetails(dataDictionary.containingVersionedFolder, dataDictionary)
 
@@ -566,7 +622,7 @@ class NhsDataDictionaryService {
         preview
     }
 
-    File generateChangePaper(UUID versionedFolderId, boolean includeDataSets = false, boolean isTest = false) {
+    byte[] generateChangePaper(UUID versionedFolderId, boolean includeDataSets = false, boolean isTest = false) {
 
         NhsDataDictionary thisDataDictionary = buildDataDictionary(versionedFolderId)
         ModelVersionedRefDTO modelVersionedRefDTO = versionedFolderController.latestFinalisedModel(versionedFolderId)

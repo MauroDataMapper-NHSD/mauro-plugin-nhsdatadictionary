@@ -139,7 +139,7 @@ abstract class DataDictionaryComponentStructureSpec<T extends NhsDataDictionaryC
 
     protected void addChangeLog(T currentItem, NhsDDChangeLog... entries) {
         currentItem.changeLogHeaderText = "<p>Click on the links below to view the change requests this item is part of:</p>"
-        currentItem.changeLogFooterText = """<p>Click <a class="- topic/xref xref" href="https://www.datadictionary.nhs.uk/archive" target="_blank" rel="external noopener">here</a> to see the Change Log Information for changes before January 2025.</p>"""
+        currentItem.changeLogFooterText = """<p>Click <a class="- topic/xref xref" href="https://www.datadictionary.nhs.uk/archive" target="_blank" rel="external noopener">here</a> to see the Change Log Information for changes before May 2026.</p>"""
 
         entries.each { currentItem.changeLog.add(it) }
     }

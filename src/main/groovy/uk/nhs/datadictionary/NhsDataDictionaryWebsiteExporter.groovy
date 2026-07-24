@@ -29,13 +29,15 @@ class NhsDataDictionaryWebsiteExporter implements FolderExporterPlugin {
         "1.0.0"
     }
 
-    String displayName = 'NHS Data Dictionary XML Website Exporter'
+    String displayName = 'NHS Data Dictionary DITA Website Exporter'
 
     @Override
     byte[] exportModel(Folder model) {
         NhsDataDictionaryService nhsDataDictionaryService = applicationContext.getBean(NhsDataDictionaryService)
         NhsDataDictionary dataDictionary = nhsDataDictionaryService.buildDataDictionary(model.id)
-        return WebsiteUtility.generateWebsite(dataDictionary, NhsDataDictionaryService.getTestOutputPath(), new DataDictionaryImportParameters())
+        nhsDataDictionaryService.setApiProperties(dataDictionary)
+        nhsDataDictionaryService.loadBranchInformation(dataDictionary)
+        return WebsiteUtility.generateWebsite(dataDictionary, new DataDictionaryImportParameters())
     }
 
     @Override

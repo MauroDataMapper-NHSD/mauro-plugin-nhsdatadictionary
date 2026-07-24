@@ -52,7 +52,9 @@ jobs:
         cache-disabled: true
 
     - name: Test with Gradle
-      run: ./gradlew test
+      env:
+        GRADLE_OPTS: '-Xmx4g -XX:MaxMetaspaceSize=512m'
+      run: ./gradlew --no-daemon test
 
     - name: Test Report
       uses: dorny/test-reporter@v1

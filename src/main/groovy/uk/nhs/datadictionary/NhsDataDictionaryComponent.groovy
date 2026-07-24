@@ -50,6 +50,7 @@ import uk.nhs.datadictionary.utils.DDHelperFunctions
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 @Slf4j
@@ -82,6 +83,9 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         catalogueItem.id
     }
 
+    boolean isCommissioningDataSetFolder() {
+        return (this instanceof NhsDDDataSetFolder && this.name == "Commissioning Data Sets")
+    }
 
     @JsonIgnore
     String catalogueItemModelId
@@ -265,7 +269,11 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
 
     String getDescription() {
         if(dataDictionary && isRetired()) {
-            return dataDictionary.retiredItemText
+            if(catalogueItem.description?.contains("has been retired") && !catalogueItem.description?.contains("???")) { // Legacy - retired before Mauro
+                return catalogueItem.description
+            } else {
+                return dataDictionary.nhsDataDictionaryService.getRetiredItemText(this)
+            }
         } else if(dataDictionary && isPreparatory()) {
             return dataDictionary.preparatoryItemText
         } else {
@@ -336,8 +344,9 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
 
         addDescriptionSection(dictionaryItem)
 
+        addAliasesSection(dictionaryItem)
+
         if (itemState == DictionaryItem.DictionaryItemState.ACTIVE) {
-            addAliasesSection(dictionaryItem)
             addWhereUsedSection(dictionaryItem)
         }
 
@@ -347,7 +356,9 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
     }
 
     void addDescriptionSection(DictionaryItem dictionaryItem) {
-        dictionaryItem.addSection(new DescriptionSection(dictionaryItem, description))
+        String text = this.description?.replace('<table', '<table class=\"table table-sm table-striped table-bordered\"')
+        text = dataDictionary.replaceLinksInString(text)
+        dictionaryItem.addSection(new DescriptionSection(dictionaryItem, text))
     }
 
     void addAliasesSection(DictionaryItem dictionaryItem) {
@@ -362,19 +373,20 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
     void addWhereUsedSection(DictionaryItem dictionaryItem) {
         if (whereUsed) {
             List<WhereUsedRow> whereUsedRows = whereUsed
-                .findAll { it.key.itemState != DictionaryItem.DictionaryItemState.RETIRED }
+                .findAll { it.key.itemState != DictionaryItem.DictionaryItemState.RETIRED && !it.key.isCommissioningDataSetFolder()}
                 .sort { it.key.name }
                 .collect { component, text ->
                     new WhereUsedRow(component.stereotype, ItemLink.create(component), text)
                 }
-
-            dictionaryItem.addSection(new WhereUsedSection(dictionaryItem, whereUsedRows))
+            if(whereUsedRows) {
+                dictionaryItem.addSection(new WhereUsedSection(dictionaryItem, whereUsedRows))
+            }
         }
     }
 
     void addChangeLogSection(DictionaryItem dictionaryItem) {
-        List<ChangeLogRow> changeLogRows = changeLog.collect {entry -> new ChangeLogRow(entry) }
-        dictionaryItem.addSection(new ChangeLogSection(dictionaryItem, changeLogHeaderText, changeLogFooterText, changeLogRows))
+        //List<ChangeLogRow> changeLogRows = changeLog.collect {entry -> new ChangeLogRow(entry) }
+        //dictionaryItem.addSection(new ChangeLogSection(dictionaryItem, changeLogHeaderText, changeLogFooterText, changeLogRows))
     }
 
     @JsonIgnore
@@ -389,7 +401,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
                 topics.add(whereUsedTopic())
             }
         }
-        topics.add(changeLogTopic())
+        //topics.add(changeLogTopic())
         return topics
     }
 
@@ -409,11 +421,13 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
     }
 
     Topic descriptionTopic() {
+        String desc = getDescription()
+        desc = desc.replace('<table', '<table class=\"table table-sm table-striped table-bordered\"')
         Topic.build (id: getDitaKey() + "_description") {
             title "Description"
             body {
-                if(catalogueItem.description) {
-                    div HtmlHelper.replaceHtmlWithDita(catalogueItem.description.replace('<table', '<table class=\"table-striped\"'))
+                if(desc) {
+                    div HtmlHelper.replaceHtmlWithDita(replaceLinksInString(desc))
                 }
             }
         }
@@ -429,7 +443,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
                         stentry "Link"
                         stentry "How used"
                     }
-                    whereUsed
+                    getWhereUsed()
                         .findAll { !it.key.isRetired() }
                         .sort { it.key.name }
                         .each {component, text ->
@@ -471,6 +485,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         Topic.build(id: getDitaKey() + "_changeLog") {
             title "Change Log"
             body {
+                /*
                 if (changeLog && !changeLog.empty && changeLogHeaderText) {
                     div HtmlHelper.replaceHtmlWithDita(changeLogHeaderText)
                 }
@@ -497,6 +512,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
                         }
                     }
                 }
+                 */
                 if (changeLogFooterText) {
                     div HtmlHelper.replaceHtmlWithDita(changeLogFooterText)
                 }
@@ -535,15 +551,33 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         return outputClass
     }
 
-    void replaceLinksInDefinition(Map<String, NhsDataDictionaryComponent> pathLookup) {
-        if(catalogueItem.description) {
-            catalogueItem.description = replaceLinksInString(catalogueItem.description, pathLookup)
+    void calculateWhereUsed() {
+        if(description) {
+            Matcher matcher = DataDictionaryComponentService.pattern.matcher(description)
+            while (matcher.find()) {
+                NhsDataDictionaryComponent component = dataDictionary.pathLookup[matcher.group(1)]
+
+                if (component && component != this) {
+                    component.whereUsed[this] = "references in description ${component.name}".toString()
+                }
+            }
         }
     }
 
-    String replaceLinksInString(String source, Map<String, NhsDataDictionaryComponent> pathLookup) {
-        NhsDataDictionary.replaceLinksInStringAndUpdateWhereUsed(source, pathLookup, this)
+
+
+    String replaceLinksInString(String source) {
+        if (!source) {
+            return source
+        }
+        String ret = dataDictionary.replaceLinksInString(source)
+        if(this instanceof NhsDDDataSet) {
+            System.err.println(source)
+            System.err.println(ret)
+        }
+        return ret
     }
+
 
     static List<String> calculateSentences(String html) {
         Node xml = HtmlHelper.tidyAndConvertToNode(html)
@@ -553,9 +587,9 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
             return xml.text().split("\\.")
         }
 
-        List<String> response = this.getNodeSentences(xml)
+        List<String> response = getNodeSentences(xml)
 
-        response.removeAll {it.trim() == ""}
+        response.removeAll {it.trim() == "" || it.trim() == "Introduction"}
         return response
     }
 
@@ -586,7 +620,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
                     case 'span':
                     case 'strong':
                     default:
-                        response.addAll(childNode.text().split("\\."))
+                        response.addAll(getFullText(childNode).split("\\."))
                         break
 
 
@@ -596,14 +630,23 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         return response
     }
 
+    static String getFullText(node) {
+        node.value().collect { child ->
+            if (child instanceof String) {
+                child
+            } else {
+                getFullText(child)
+            }
+        }.join(' ')
+    }
 
     @JsonIgnore
-    String getFirstSentence(String html = this.getDescription()) {
+    String getFirstSentence(String html = getDescription()) {
         getSentence(html, 0)
     }
 
     @JsonIgnore
-    String getSentence(String html = this.getDescription(), int i) {
+    String getSentence(String html = getDescription(), int i) {
         if(!html) {
             return null
         }
@@ -620,6 +663,8 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         }
         String response = sentence.replace("_", " ")
         response = response.replaceAll("\\s+", " ")
+        response = response.replace(" )", ")")
+        response = response.replace("( ", "(")
         return response
     }
 
@@ -663,10 +708,6 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
     @JsonIgnore
     String getCatalogueItemDomainTypeAsString() {
         return catalogueItem.domainType.toString()
-    }
-
-    void updateWhereUsed() {
-
     }
 
 

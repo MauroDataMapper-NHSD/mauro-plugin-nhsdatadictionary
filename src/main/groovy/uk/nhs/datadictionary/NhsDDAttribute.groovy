@@ -30,7 +30,10 @@ import uk.nhs.datadictionary.publish.structure.CodesSection
 import uk.nhs.datadictionary.publish.structure.DictionaryItem
 import uk.nhs.datadictionary.publish.structure.ItemLink
 import uk.nhs.datadictionary.publish.structure.ItemLinkListSection
+import uk.nhs.datadictionary.services.DataDictionaryComponentService
 import uk.nhs.datadictionary.services.MauroPersistenceService
+
+import java.util.regex.Matcher
 
 @Slf4j
 class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
@@ -172,14 +175,6 @@ class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
     }
 
     @Override
-    void replaceLinksInDefinition(Map<String, NhsDataDictionaryComponent> pathLookup) {
-        super.replaceLinksInDefinition(pathLookup)
-        codes.each { code ->
-            code.webPresentation = replaceLinksInString(code.webPresentation, pathLookup)
-        }
-    }
-
-    @Override
     @JsonIgnore
     DictionaryItem getPublishStructure() {
         DictionaryItem dictionaryItem = new DictionaryItem(this, this.branchId)
@@ -187,10 +182,12 @@ class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
         addDescriptionSection(dictionaryItem)
 
         if (itemState == DictionaryItem.DictionaryItemState.ACTIVE) {
-            if(nationalCodes && nationalCodes?.size() > 0) {
+            if (nationalCodes && nationalCodes?.size() > 0) {
                 addNationalCodesSection(dictionaryItem)
             }
-            addAliasesSection(dictionaryItem)
+        }
+        addAliasesSection(dictionaryItem)
+        if (itemState == DictionaryItem.DictionaryItemState.ACTIVE) {
             addWhereUsedSection(dictionaryItem)
             addLinkedElementsSection(dictionaryItem)
         }
@@ -235,7 +232,7 @@ class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
         List<Topic> topics = []
         topics.add(descriptionTopic())
         if (isActivePage()) {
-            if (this.codes) {
+            if (this.getNationalCodes()) {
                 topics.add(getNationalCodesTopic())
             }
             if (getAliases()) {
@@ -251,7 +248,7 @@ class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
                 }
             }
         }
-        topics.add(changeLogTopic())
+//        topics.add(changeLogTopic())
         return topics
     }
 
@@ -292,17 +289,38 @@ class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
         }
     }
 
-    @Override
-    void updateWhereUsed() {
-        instantiatedByElements.each { NhsDDElement element ->
-            whereUsed[element] = "is the data element of $name".toString()
+    void calculateWhereUsed() {
+        super.calculateWhereUsed()
+
+        if(codes) {
+            codes.each { code ->
+                if(code.webPresentation) {
+                    Matcher matcher = DataDictionaryComponentService.pattern.matcher(code.webPresentation)
+                    while (matcher.find()) {
+                        NhsDataDictionaryComponent component = dataDictionary.pathLookup[matcher.group(1)]
+
+                        if (component && component != this) {
+                            component.whereUsed[this] = "references in description ${component.name}".toString()
+                        }
+                    }
+                }
+            }
+
         }
 
-        whereUsed[this.parentClass] = "has an attribute $name of type $name".toString()
-//        dataDictionary.classes.values().each {clazz ->
-//            if(clazz.allAttributes().contains(this)) {
-//            }
-//        }
+        instantiatedByElements.each { NhsDDElement element ->
+            this.whereUsed[element] = "is the data element of $name".toString()
+        }
+        if(!isRetired() && parentClass.name != "Retired") {
+            this.whereUsed[parentClass] = "has an attribute $name of type $name".toString()
+        }
+    }
+
+
+    @Override
+    Map<NhsDataDictionaryComponent, String> getWhereUsed() {
+        Map<NhsDataDictionaryComponent, String> wu = super.getWhereUsed()
+        return wu
     }
 
     @Override
@@ -322,7 +340,11 @@ class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
                 codes = dataDictionary.attributeTerminologyCodes[catalogueItem.dataType.modelResourceId]
             } else {
                 List<Term> terms = mauroPersistenceService.termCacheableRepository.findAllByTerminology(new Terminology(id: catalogueItem.dataType.modelResourceId))
-                codes = terms.collect {new NhsDDCode(it)}
+                codes = terms.collect {term ->
+                    NhsDDCode c = new NhsDDCode(term)
+                    c.owningAttribute = this
+                    return c
+                }
             }
             codes.each {code ->
                 code.owningAttribute = this

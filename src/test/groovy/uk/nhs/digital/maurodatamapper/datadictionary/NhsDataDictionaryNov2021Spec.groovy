@@ -26,7 +26,6 @@ import io.micronaut.http.MediaType
 import io.micronaut.http.client.multipart.MultipartBody
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
-import jakarta.inject.Singleton
 import org.maurodata.api.folder.FolderApi
 import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.datamodel.DataModel
@@ -48,6 +47,7 @@ import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.NhsDataDictionaryImporter
 import uk.nhs.datadictionary.controllers.NhsDataDictionaryController
 import uk.nhs.datadictionary.integritychecks.IntegrityCheck
+import uk.nhs.datadictionary.publish.website.WebsiteUtility
 import uk.nhs.datadictionary.services.NhsDataDictionaryService
 import uk.nhs.datadictionary.services.TestingService
 
@@ -146,6 +146,7 @@ class NhsDataDictionaryNov2021Spec extends Specification {
         when:
         NhsDataDictionary nhsDataDictionary = applicationContext.getBean(NhsDataDictionary)
         nhsDataDictionary.buildFromXml(dataDictionaryImportParameters)
+        nhsDataDictionaryService.setApiProperties(nhsDataDictionary)
 
         then:
         assertEquals nhsDataDictionary.attributes.size(), 2526
@@ -155,6 +156,8 @@ class NhsDataDictionaryNov2021Spec extends Specification {
         assertEquals nhsDataDictionary.businessDefinitions.size(), 1230
         assertEquals nhsDataDictionary.supportingInformation.size(), 152
         assertEquals nhsDataDictionary.dataSetConstraints.size(), 33
+
+        WebsiteUtility.generateWebsite(nhsDataDictionary, dataDictionaryImportParameters)
     }
 
     void 'I01 : test xml ingest and save of November 2021'() {

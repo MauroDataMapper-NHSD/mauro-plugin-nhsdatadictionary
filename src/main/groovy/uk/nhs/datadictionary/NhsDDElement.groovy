@@ -22,7 +22,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import groovy.util.logging.Slf4j
 import org.maurodata.dita.elements.langref.base.Topic
 import org.maurodata.dita.elements.langref.base.XRef
-import org.maurodata.dita.helpers.HtmlHelper
 import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataType
 import org.maurodata.domain.facet.SemanticLinkType
@@ -33,7 +32,11 @@ import uk.nhs.datadictionary.publish.structure.DictionaryItem
 import uk.nhs.datadictionary.publish.structure.FormatLengthSection
 import uk.nhs.datadictionary.publish.structure.ItemLink
 import uk.nhs.datadictionary.publish.structure.ItemLinkListSection
+import uk.nhs.datadictionary.services.DataDictionaryComponentService
 import uk.nhs.datadictionary.services.MauroPersistenceService
+import uk.nhs.datadictionary.services.NhsDataDictionaryService
+
+import java.util.regex.Matcher
 
 @Slf4j
 class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
@@ -161,7 +164,6 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
             } else {
                 if(xml."value-set".Bundle.entry.expansion) {
                     xml."value-set".Bundle.entry.expansion.parameter.Bundle[0].entry.resource.CodeSystem.concept.each {concept ->
-                        System.err.println("${concept.code[0].attribute("value")}")
                         if (concept.property.find {Node property ->
                             property.code[0].attribute('value') == "Data Element" &&
                             property.valueString[0].attribute('value') == capitalizedCodeSetName
@@ -170,7 +172,6 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
                             if(!code) {
                                 System.err.println("Cannot find code: ${concept.code[0].attribute('value')}")
                             }
-                            System.err.println("Found code: ${code.code}")
                             codes.add(code)
                         }
                     }
@@ -264,25 +265,14 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
         return !isRetired() && this.codes.find { it.isDefault }
     }
 
-    @Override
-    void replaceLinksInDefinition(Map<String, NhsDataDictionaryComponent> pathLookup) {
-        super.replaceLinksInDefinition(pathLookup)
-        codes.each { code ->
-            code.webPresentation = replaceLinksInString(code.webPresentation, pathLookup)
-        }
-        if(otherProperties["formatLink"] && pathLookup[otherProperties["formatLink"]]) {
-            formatLinkXref = pathLookup[otherProperties["formatLink"]].calculateXRef()
-        }
-        /*
-        if(otherProperties["attributeText"] && otherProperties["attributeText"] != "") {
-            otherProperties["attributeText"] = replaceLinksInString(otherProperties["attributeText"], pathLookup)
-        }
-        */
-    }
 
     String getDescription() {
         if(dataDictionary && isRetired()) {
-            return dataDictionary.retiredItemText
+            if(catalogueItem.description?.contains("has been retired") && !catalogueItem.description?.contains("???")) { // Legacy - retired before Mauro
+                return catalogueItem.description
+            } else {
+                return dataDictionary.nhsDataDictionaryService.getRetiredItemText(this)
+            }
         } else if(dataDictionary && isPreparatory()) {
             return dataDictionary.preparatoryItemText
         } else {
@@ -300,17 +290,6 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
         }
     }
 
-    @Override
-    Topic descriptionTopic() {
-        Topic.build (id: getDitaKey() + "_description") {
-            title "Description"
-            body {
-                if (description) {
-                    div HtmlHelper.replaceHtmlWithDita(description.replace('<table', '<table class=\"table-striped\"'))
-                }
-            }
-        }
-    }
 
     @Override
     DictionaryItem getPublishStructure() {
@@ -331,7 +310,9 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
                 List<CodesRow> defaultCodes = createCodesSectionRows(getDefaultCodes())
                 dictionaryItem.addSection(CodesSection.createDefaultCodes(dictionaryItem, defaultCodes))
             }
+        }
             addAliasesSection(dictionaryItem)
+        if (itemState == DictionaryItem.DictionaryItemState.ACTIVE) {
             addWhereUsedSection(dictionaryItem)
             addLinkedAttributesSection(dictionaryItem)
         }
@@ -398,19 +379,36 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
                 }
             }
         }
-        topics.add(changeLogTopic())
+//        topics.add(changeLogTopic())
         return topics
     }
+
+    Map<String, String> formatLinks = [
+        "https://datadictionary.nhs.uk/data_elements/dm_d_code.html":"dm:Data Elements|dc:D|de:DM+D CODE",
+        "https://datadictionary.nhs.uk/data_elements/icd-10_code.html":"dm:Data Elements|dc:I|de:ICD-10 CODE",
+        "https://datadictionary.nhs.uk/data_elements/opcs-4_code.html":"dm:Data Elements|dc:O|de:OPCS-4 CODE",
+        "https://datadictionary.nhs.uk/data_elements/read_code.html":"dm:Data Elements|dc:R|de:READ CODE",
+        "https://datadictionary.nhs.uk/data_elements/snomed_ct_code.html":"dm:Data Elements|dc:S|de:SNOMED CT CODE",
+        "https://datadictionary.nhs.uk/data_elements/snomed_ct_expression.html":"dm:Data Elements|dc:S|de:SNOMED CT EXPRESSION"
+    ]
 
     @JsonIgnore
     Topic getFormatLengthTopic() {
         Topic.build (id: getDitaKey() + "_formatLength") {
             title "Format / Length"
             body {
-                if(formatLinkXref) {
-                    p {
-                        txt "See "
-                        xRef formatLinkXref
+                if(otherProperties["formatLink"]) {
+                    NhsDataDictionaryComponent component = dataDictionary.pathLookup[otherProperties["formatLink"]]
+                    if(!component) {
+                        component = dataDictionary.pathLookup[formatLinks[otherProperties["formatLink"]]]
+                    }
+                    if(!component) {
+                        System.err.println("Cannot find component link: ${otherProperties["formatLink"]}")
+                    } else {
+                        p {
+                            txt "See "
+                            xRef component.calculateXRef()
+                        }
                     }
                 } else {
                     p otherProperties["formatLength"]
@@ -437,12 +435,12 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
     Topic getNationalCodesTopic() {
         List<NhsDDCode> orderedCodes = getNationalCodes()
         String topicTitle = "National Codes"
+        // TODO: Potentially some non-determinism here.  See OFFER STATUS (DATING ULTRASOUND SCAN)
         if(instantiatesAttributes) {
             if(orderedCodes.size() < instantiatesAttributes[0].codes.findAll { !it.isDefault }.size()) {
                 topicTitle = "Permitted National Codes"
             }
         }
-
         NhsDDCode.getCodesTopic(getDitaKey() + "_nationalCodes", topicTitle, orderedCodes)
     }
 
@@ -477,10 +475,29 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
         }
     }
 
-    void updateWhereUsed() {
+    void calculateWhereUsed() {
+        super.calculateWhereUsed()
+
+        if(codes) {
+            codes.each { code ->
+                if(code.webPresentation) {
+                    Matcher matcher = DataDictionaryComponentService.pattern.matcher(code.webPresentation)
+                    while (matcher.find()) {
+                        NhsDataDictionaryComponent component = dataDictionary.pathLookup[matcher.group(1)]
+
+                        if (component && component != this) {
+                            component.whereUsed[this] = "references in description ${component.name}".toString()
+                        }
+                    }
+                }
+            }
+
+        }
+
+
         dataDictionary.dataSets.values().each {dataSet ->
             if(dataSet.allElements.reuseElement.contains(this)) {
-                whereUsed[dataSet] = "references in description $name".toString()
+                this.whereUsed[dataSet] = "references in description $name".toString()
             }
         }
     }
@@ -509,12 +526,14 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
         if(catalogueItem.dataType.dataTypeKind == DataType.DataTypeKind.MODEL_TYPE) {
             if (dataDictionary && dataDictionary.elementCodeSetCodes.size() > 0) {
                 codes = dataDictionary.elementCodeSetCodes[catalogueItem.dataType.modelResourceId]
+                codes.each {it.usedByElements.add(this)}
             } else {
                 Set<Term> terms = mauroPersistenceService.termCacheableRepository.findAllByCodeSetsIdIn([catalogueItem.dataType.modelResourceId])
-                codes = terms.collect {new NhsDDCode(it)}
-            }
-            codes.each {code ->
-                code.usedByElements.add(this)
+                codes = terms.collect {term ->
+                    NhsDDCode c = new NhsDDCode(term)
+                    c.usedByElements.add(this)
+                    return c
+                }
             }
         }
         return this

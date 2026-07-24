@@ -158,7 +158,7 @@ class OtherDataSetTable implements DataSetTable {
                     if (hasSingleGroup()) {
                         row {
                             columnList.each { column ->
-                                entry {
+                                entry(align: Align.CENTER) {
                                     p column.name
                                 }
                             }

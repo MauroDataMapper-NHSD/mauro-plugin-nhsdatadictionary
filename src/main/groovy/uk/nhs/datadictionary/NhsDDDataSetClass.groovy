@@ -25,6 +25,7 @@ import org.maurodata.dita.elements.langref.base.Row
 import org.maurodata.dita.elements.langref.base.Table
 import org.maurodata.dita.elements.langref.base.XRef
 import org.maurodata.dita.enums.Align
+import org.maurodata.dita.helpers.HtmlHelper
 import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.facet.Metadata
 import uk.nhs.datadictionary.publish.DitaHelper
@@ -70,12 +71,16 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
 
     NhsDataDictionary dataDictionary
 
+    static String trimTrailingDigitsAndSpaces(String input) {
+        return input.replaceFirst(/[\d\s]+$/, "")
+    }
+
     // For testing only
     NhsDDDataSetClass() {
     }
 
     NhsDDDataSetClass(DataClass dataClass) {
-        this.name = dataClass.label
+        this.name = trimTrailingDigitsAndSpaces(dataClass.label)
         this.description = dataClass.description
 
     }
@@ -206,7 +211,12 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
     }
 
     static OtherDataSetRow buildOtherDataSetRow(NhsDDDataSetComponent dataSetComponent) {
-        new OtherDataSetRow(dataSetComponent.mandation, buildOtherDataSetCell(dataSetComponent))
+        String mandation = ""
+        if(dataSetComponent.mandation) {
+            mandation = dataSetComponent.mandation.substring(0,1)
+        }
+
+        new OtherDataSetRow(mandation, buildOtherDataSetCell(dataSetComponent))
     }
 
     static OtherDataSetCell buildOtherDataSetCell(NhsDDDataSetComponent dataSetComponent) {
@@ -231,29 +241,41 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
             new ExternalLink("ADDRESS UNSTRUCTURED", this.address2, "class"))
     }
 
-    OtherDataSetCell buildOtherDataSetChoiceCell() {
-        String operator = ""
+    String getOperator() {
         if (isChoice && name.startsWith("Choice")) {
-            operator = OtherDataSetChoiceCell.OR_OPERATOR
+            return OtherDataSetChoiceCell.OR_OPERATOR
+        } else if (isAnd && (name.startsWith("Choice") || name.startsWith("And"))) {
+            return OtherDataSetChoiceCell.AND_OPERATOR
+        } else if (isInclusiveOr && name.startsWith("Choice")) {
+            return OtherDataSetChoiceCell.AND_OR_OPERATOR
         }
-        else if (isAnd && (name.startsWith("Choice") || name.startsWith("And"))) {
-            operator = OtherDataSetChoiceCell.AND_OPERATOR
-        }
-        else if (isInclusiveOr && name.startsWith("Choice")) {
-            operator = OtherDataSetChoiceCell.AND_OR_OPERATOR
-        }
+        return ""
+    }
 
+    OtherDataSetCell buildOtherDataSetChoiceCell() {
+
+        List<String> operators = []
         List<OtherDataSetItemLinkCell> itemLinkCells = []
 
         List<NhsDDDataSetComponent> children = this.getSortedChildren()
-        children.each { childItem ->
+        String currentOperator = getOperator()
+        children.eachWithIndex {childItem, index ->
             if (childItem instanceof NhsDDDataSetElement) {
                 NhsDDDataSetElement dataSetElement = childItem as NhsDDDataSetElement
                 itemLinkCells.add(dataSetElement.buildOtherDataSetItemLinkCell())
+            } else if (childItem instanceof NhsDDDataSetClass) {
+                NhsDDDataSetClass dataSetClass = childItem as NhsDDDataSetClass
+                if (dataSetClass.isAnd || dataSetClass.isChoice) {
+                    OtherDataSetChoiceCell otherDataSetChoiceCell = dataSetClass.buildOtherDataSetChoiceCell()
+                    itemLinkCells.addAll(otherDataSetChoiceCell.cells)
+                    operators.addAll(otherDataSetChoiceCell.operators)
+                }
+            }
+            if(index != children.size() - 1) {
+                operators.add(currentOperator)
             }
         }
-
-        new OtherDataSetChoiceCell(operator, itemLinkCells)
+        new OtherDataSetChoiceCell(operators, itemLinkCells)
     }
 
     // Remove this one day, "Other" data set render replaced with buildOtherDataSetTable()
@@ -278,7 +300,7 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
                                 entry(namest: "col1", nameend: "col2") {
                                     b name
                                     if (description) {
-                                        p description
+                                        div HtmlHelper.replaceHtmlWithDita(dataDictionary.replaceLinksInString(description))
                                     }
                                 }
                             }
@@ -287,7 +309,8 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
                                     entry {
                                         p "Mandation"
                                     }
-                                    entry {
+                                    entry(align: Align.CENTER) {
+                                        align Align.CENTER
                                         p "Data Elements"
                                     }
                                 }
@@ -336,7 +359,10 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
     }
 
     static Row addChildRow(def classOrElement) {
-        String mro = classOrElement.mandation
+        String mro = ""
+        if(classOrElement.mandation) {
+            mro = classOrElement.mandation.substring(0,1)
+        }
         Row.build {
             entry {
                 p mro
@@ -413,10 +439,10 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
                         b "Mandation"
                     }
                 }
-                entry(namest: "col2", nameend: "col2") {
+                entry(namest: "col2", nameend: "col2", align: Align.CENTER) {
                     b name
                     if(description) {
-                        p description
+                        div HtmlHelper.replaceHtmlWithDita(dataDictionary.replaceLinksInString(description))
                     }
                 }
             })
@@ -460,7 +486,11 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
                     headerTable.tgroups[0].tBody {
                         row {
                             entry(align: Align.CENTER) {
-                                p mandation
+                                if(mandation) {
+                                    p mandation?.substring(0, 1)
+                                } else {
+                                    p ""
+                                }
                             }
                             entry(align: Align.CENTER) {
                                 p groupRepeats
@@ -470,7 +500,8 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
                                     b "Data Group:"
                                     xRef DitaHelper.getXRef(linkedDataSet)
                                 }
-                                p multiplicityText
+
+                                div HtmlHelper.replaceHtmlWithDita(dataDictionary.replaceLinksInString((multiplicityText)))
                             }
                         }
                     }
@@ -522,11 +553,15 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
                         entry(namest: "col1", nameend: "col1", align: Align.CENTER) {
                             p "Group Status"
                             if(includeMRO) {
-                                p mandation
+                                if(mandation) {
+                                    p mandation?.substring(0, 1)
+                                } else {
+                                    p ""
+                                }
                             }
                         }
                         entry(namest: "col2", nameend: "col2", align: Align.CENTER) {
-                            p NhsDataDictionary.DATASET_TABLE_KEY_GROUP_REPEATS
+                            p "Group Repeats"
                             if(includeMRO) {
                                 p groupRepeats
                             }
@@ -534,7 +569,7 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
                         entry(namest: "col3", nameend: "col${totalDepth*2+4}") {
                             p {
                                 b "Function: "
-                                text description
+                                div HtmlHelper.replaceHtmlWithDita(dataDictionary.replaceLinksInString(description))
                             }
                         }
                     }
@@ -620,14 +655,14 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
                                 mandationEntry.p "Or"
                                 groupRepeatsEntry.p "Or"
                                 if (!rulesSet) {
-                                    rulesEntry.p "&nbsp;"
+                                    rulesEntry.p ""
                                 }
                             } else if (isAnd) {
                                 xRefsEntry.p "And"
                                 mandationEntry.p "And"
                                 groupRepeatsEntry.p "And"
                                 if (!rulesSet) {
-                                    rulesEntry.p "&nbsp;"
+                                    rulesEntry.p ""
                                 }
 
                             }
@@ -664,7 +699,7 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
                                 mandationEntry.p "OR"
                                 groupRepeatsEntry.p "OR"
                                 if (!rulesSet) {
-                                    rulesEntry.p "&nbsp;"
+                                    rulesEntry.p ""
                                 }
                             }
 
@@ -673,7 +708,7 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
                                 mandationEntry.p "AND"
                                 groupRepeatsEntry.p "AND"
                                 if (!rulesSet) {
-                                    rulesEntry.p "&nbsp;"
+                                    rulesEntry.p ""
                                 }
                             }
                             if(childDataElement.mandation) {
@@ -726,7 +761,11 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
         int moreRows = calculateClassRows()
         return Row.build(outputClass: "thead-light table-primary") {
             entry(align: Align.CENTER, morerows: moreRows) {
-                p mandation
+                if(mandation) {
+                    p mandation?.substring(0, 1)
+                } else {
+                    p ""
+                }
             }
             entry(align: Align.CENTER, morerows: moreRows) {
                 p groupRepeats
@@ -736,7 +775,7 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
                     b name.replace([" 1": "", " 2":"", " 3":""])
                 }
                 if(description) {
-                    p description
+                    div HtmlHelper.replaceHtmlWithDita(dataDictionary.replaceLinksInString(description))
                 }
             }
             entry(align: Align.CENTER) {

@@ -57,6 +57,7 @@ dependencies {
     compileOnly('org.maurodata:mauro-api:0.0.3-SNAPSHOT')
 
     compileOnly("io.micronaut.sql:micronaut-jdbc-hikari")
+    compileOnly('com.fasterxml.uuid:java-uuid-generator:5.1.0')
 
     // To include in the jar
     implementation('commons-io:commons-io:2.20.0')
@@ -80,7 +81,6 @@ dependencies {
     implementation 'xerces:xercesImpl:2.12.2'
     implementation "xml-apis:xml-apis:1.4.01"
     implementation "net.sf.jtidy:jtidy:r938"
-    implementation 'net.lingala.zip4j:zip4j:2.9.1'
 
     // Required for Daisy Diff (NPE when using Saxon)
     implementation group: 'xalan', name: 'xalan', version: '2.7.3'
@@ -129,6 +129,7 @@ dependencies {
     testImplementation('org.maurodata:mauro-persistence:0.0.3-SNAPSHOT')
     testImplementation('org.maurodata:mauro-client:0.0.3-SNAPSHOT')
     testImplementation('org.maurodata:mauro-api:0.0.3-SNAPSHOT')
+    testImplementation('com.fasterxml.uuid:java-uuid-generator:5.1.0')
 
     testImplementation("io.micronaut.sql:micronaut-jdbc-hikari")
 }

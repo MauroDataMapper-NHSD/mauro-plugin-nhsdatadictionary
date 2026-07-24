@@ -93,6 +93,7 @@ class OtherDataSetItemLinkCell extends OtherDataSetCell {
     }
 }
 
+/*
 class OtherDataSetChoiceCell extends OtherDataSetCell {
     static final String AND_OPERATOR = "And"
     static final String OR_OPERATOR = "Or"
@@ -141,6 +142,62 @@ class OtherDataSetChoiceCell extends OtherDataSetCell {
         }
     }
 }
+*/
+
+class OtherDataSetChoiceCell extends OtherDataSetCell {
+
+    static final String AND_OPERATOR = "And"
+    static final String OR_OPERATOR = "Or"
+    static final String AND_OR_OPERATOR = "And/Or"
+
+
+    final List<String> operators
+    final List<OtherDataSetItemLinkCell> cells
+
+    OtherDataSetChoiceCell(List<String> operators, List<OtherDataSetItemLinkCell> cells) {
+        this.operators = operators
+        this.cells = cells
+    }
+
+    @Override
+    String getDiscriminator() {
+        String disc = ""
+        for(int i=0;i<cells.size();i++) {
+            disc += cells[i].discriminator
+            if(i!=cells.size()-1) {
+                disc += "_" + operators[i] + "_"
+            }
+        }
+        return disc
+    }
+
+    @Override
+    List<P> generateDita(PublishContext context) {
+        List<P> paragraphs = []
+
+        cells.eachWithIndex { OtherDataSetItemLinkCell cell, int index ->
+            paragraphs.addAll(cell.generateDita(context))
+            if (index != cells.size()-1) {
+                paragraphs.add(P.build() {
+                    txt this.operators[index]
+                })
+            }
+        }
+        paragraphs
+    }
+
+    @Override
+    void buildHtml(PublishContext context, MarkupBuilder builder) {
+        cells.eachWithIndex { OtherDataSetItemLinkCell cell, int index ->
+            cell.buildHtml(context, builder)
+            if (index != cells.size()-1) {
+                PublishHelper.buildHtmlParagraph(context, builder, operators[index])
+            }
+
+        }
+    }
+}
+
 
 class OtherDataSetAddressCell extends OtherDataSetCell {
     final ItemLink element
@@ -198,3 +255,4 @@ class OtherDataSetAddressCell extends OtherDataSetCell {
         }
     }
 }
+
