@@ -41,6 +41,7 @@ import org.maurodata.persistence.cache.ItemCacheableRepository
 import org.maurodata.persistence.datamodel.DataClassRepository
 import org.maurodata.persistence.datamodel.DataElementRepository
 import org.maurodata.persistence.datamodel.DataModelRepository
+import org.maurodata.persistence.datamodel.DataTypeRepository
 import org.maurodata.persistence.facet.MetadataRepository
 import org.maurodata.persistence.folder.FolderRepository
 import org.maurodata.persistence.terminology.TerminologyRepository
@@ -121,6 +122,9 @@ class NhsDataDictionaryService {
 
     @Inject
     DataElementRepository dataElementRepository
+
+    @Inject
+    DataTypeRepository dataTypeRepository
 
     @Inject
     DataClassRepository dataClassRepository
@@ -225,19 +229,22 @@ class NhsDataDictionaryService {
         System.err.println("5: ${System.currentTimeMillis() - timestamp}")
         timestamp = System.currentTimeMillis()
         DataModel elementsDataModel = dataModels.find {it.label == NhsDataDictionary.ELEMENTS_MODEL_NAME}
-        List<DataElement> elementDataElements = dataElementRepository.readAllByDataClassDataModelIdIn([elementsDataModel.id])
+        List<DataElement> elementDataElements = dataElementRepository.readAllByDataClassDataModelIdInAndLabelContains([elementsDataModel.id], prefix?:"")
         System.err.println("6: ${System.currentTimeMillis() - timestamp}")
         timestamp = System.currentTimeMillis()
 
         response.addAll(elementDataElements.collect {new StereotypedCatalogueItem(it, elementService.stereotype)})
 
         DataModel classesDataModel = dataModels.find {it.label == NhsDataDictionary.CLASSES_MODEL_NAME}
-        List<DataElement> attributeDataElements = dataElementRepository.readAllByDataClassDataModelIdIn ([classesDataModel.id])
+        List<DataElement> attributeDataElements = dataElementRepository.readAllByDataClassDataModelIdInAndLabelContains ([classesDataModel.id], prefix?:"")
         System.err.println("7: ${System.currentTimeMillis() - timestamp}")
         timestamp = System.currentTimeMillis()
 
-        response.addAll(attributeDataElements.findAll {
-            !(it.dataType.dataTypeKind == DataType.DataTypeKind.REFERENCE_TYPE)
+        List<DataType> dataTypes = dataTypeRepository.readAllByDataModel(classesDataModel)
+        Map<UUID, DataType> dataTypeMap  = dataTypes.collectEntries {[(it.id): it]}
+
+        response.addAll(attributeDataElements.findAll {dataElement ->
+            dataTypeMap[dataElement.dataType.id].dataTypeKind != DataType.DataTypeKind.REFERENCE_TYPE
         }.collect {new StereotypedCatalogueItem(it, attributeService.stereotype)})
 
         List<DataClass> classDataClasses = dataClassRepository.readAllByDataModel (classesDataModel)
