@@ -154,11 +154,20 @@ class NhsDDCode implements ChangeAware {
     static List<NhsDDCode> sortCodes(List<NhsDDCode> codes) {
         // First return those with web order set (including if set to 0.
         // Then return those without web order set, in alphabetical order
-        List<NhsDDCode> sortedCodes =  (
-            codes.findAll { it.webOrder != null }.sort {it.webOrder}
-            +
-            codes.findAll { it.webOrder == null}.sort {it.code}
-        )
+        List<NhsDDCode> sortedCodes = codes.sort {a, b ->
+            def ao = a.webOrder
+            def bo = b.webOrder
+
+            if (ao != null && bo != null) {
+                (ao <=> bo) ?: (a.code <=> b.code)
+            } else if (ao != null) {
+                -1
+            } else if (bo != null) {
+                1
+            } else {
+                a.code <=> b.code
+            }
+        }
         return sortedCodes
     }
 }
