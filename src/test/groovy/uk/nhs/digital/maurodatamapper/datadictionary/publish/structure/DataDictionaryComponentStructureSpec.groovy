@@ -56,6 +56,7 @@ abstract class DataDictionaryComponentStructureSpec<T extends NhsDataDictionaryC
         branchId = UUID.fromString("782602d4-e153-45d8-a271-eb42396804da")
 
         dataDictionary = createDataDictionary(branchId)
+        dataDictionary.nhsDataDictionaryService = nhsDataDictionaryService
 
 
         definition = getDefinition()

@@ -205,8 +205,9 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
         verifyAll {
             structure.state == DictionaryItem.DictionaryItemState.RETIRED
             structure.name == retiredItem.name
-            structure.sections.size() == 1
+            structure.sections.size() == 2
             structure.sections[0] instanceof DescriptionSection
+            structure.sections[1] instanceof AliasesSection
         }
     }
 
@@ -218,8 +219,9 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
         verifyAll {
             structure.state == DictionaryItem.DictionaryItemState.PREPARATORY
             structure.name == preparatoryItem.name
-            structure.sections.size() == 1
+            structure.sections.size() == 2
             structure.sections[0] instanceof DescriptionSection
+            structure.sections[1] instanceof AliasesSection
         }
     }
 
@@ -346,13 +348,31 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
     <title>Description</title>
     <body>
       <div>
-        <p>This item has been retired from the NHS Data Model and Dictionary.</p>
-        <p>The last version of this item is available in the ?????? release of the NHS Data Model and Dictionary.</p>
+        <p>
+          <b>This item has been retired from the NHS Data Model and Dictionary.</b>
+        </p>
+        <p>The last version of this item is available in the November 2025 release of the NHS Data Model and Dictionary.</p>
         <p>Access to the last live version of this item can be obtained by emailing 
 
           <xref href='mailto:support.digitalservices@nhs.net' format='html' scope='external'>support.digitalservices@nhs.net</xref> with "NHS Data Model and Dictionary - Archive Request" in the email subject line.
         </p>
       </div>
+    </body>
+  </topic>
+  <topic id='nhs_business_definition_baby_first_feed_retired_aliases'>
+    <title>Also Known As</title>
+    <body>
+      <p>This NHS Business Definition is also known by these names:</p>
+      <simpletable outputclass='table table-sm table-striped' relcolwidth='1* 2*'>
+        <sthead outputclass='thead-light'>
+          <stentry>Context</stentry>
+          <stentry>Alias</stentry>
+        </sthead>
+        <strow>
+          <stentry>Plural</stentry>
+          <stentry>Baby First Feeds</stentry>
+        </strow>
+      </simpletable>
     </body>
   </topic>
 </topic>"""
@@ -386,6 +406,22 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
       <div>
         <p>This item is being used for development purposes and has not yet been approved.</p>
       </div>
+    </body>
+  </topic>
+  <topic id='nhs_business_definition_baby_first_feed_aliases'>
+    <title>Also Known As</title>
+    <body>
+      <p>This NHS Business Definition is also known by these names:</p>
+      <simpletable outputclass='table table-sm table-striped' relcolwidth='1* 2*'>
+        <sthead outputclass='thead-light'>
+          <stentry>Context</stentry>
+          <stentry>Alias</stentry>
+        </sthead>
+        <strow>
+          <stentry>Plural</stentry>
+          <stentry>Baby First Feeds</stentry>
+        </strow>
+      </simpletable>
     </body>
   </topic>
 </topic>"""
@@ -865,10 +901,12 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
       <div>
         <ph id='removed-diff-0' outputclass='diff-html-removed'>The previous description</ph>
         <p>
-          <ph id='added-diff-0' outputclass='diff-html-added'>This item has been retired from the NHS Data Model and Dictionary.</ph>
+          <b>
+            <ph id='added-diff-0' outputclass='diff-html-added'>This item has been retired from the NHS Data Model and Dictionary.</ph>
+          </b>
         </p>
         <p>
-          <ph outputclass='diff-html-added'>The last version of this item is available in the ?????? release of the NHS Data Model and Dictionary.</ph>
+          <ph outputclass='diff-html-added'>The last version of this item is available in the November 2025 release of the NHS Data Model and Dictionary.</ph>
         </p>
         <p>
           <ph outputclass='diff-html-added'>Access to the last live version of this item can be obtained by emailing</ph>
@@ -878,6 +916,27 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
           <ph outputclass='diff-html-added'>with "NHS Data Model and Dictionary - Archive Request" in the email subject line.</ph>
         </p>
       </div>
+    </div>
+    <div>
+      <p>This NHS Business Definition is also known by these names:</p>
+      <simpletable relcolwidth='1* 2*'>
+        <sthead>
+          <stentry>Context</stentry>
+          <stentry>Alias</stentry>
+        </sthead>
+        <strow>
+          <stentry outputclass='new'>Plural</stentry>
+          <stentry outputclass='new'>Baby First Feeds</stentry>
+        </strow>
+        <strow>
+          <stentry outputclass='deleted'>Also known as</stentry>
+          <stentry outputclass='deleted'>Baby Food</stentry>
+        </strow>
+        <strow>
+          <stentry outputclass='deleted'>Plural</stentry>
+          <stentry outputclass='deleted'>Baby's First Feeds</stentry>
+        </strow>
+      </simpletable>
     </div>
   </body>
 </topic>"""
