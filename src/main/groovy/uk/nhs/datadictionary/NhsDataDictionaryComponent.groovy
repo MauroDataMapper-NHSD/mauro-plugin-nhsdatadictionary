@@ -46,6 +46,7 @@ import uk.nhs.datadictionary.publish.structure.WhereUsedRow
 import uk.nhs.datadictionary.publish.structure.WhereUsedSection
 import uk.nhs.datadictionary.services.DataDictionaryComponentService
 import uk.nhs.datadictionary.services.MauroPersistenceService
+import uk.nhs.datadictionary.services.NhsDataDictionaryService
 import uk.nhs.datadictionary.utils.DDHelperFunctions
 
 import java.time.LocalDate
@@ -413,7 +414,26 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
             title (outputClass: titleOutputClass)  {
                 text getNameWithRetired()
             }
+            titlealts {
+                searchtitle getNameWithRetired()
+            }
             shortdesc getShortDescription()
+            prolog {
+                metadata {
+                    keywords {
+                        keyword (name.toLowerCase())
+                        name.split(" ").each { nameSplit ->
+                            keyword nameSplit.toLowerCase()
+                        }
+                        aliases.values().each {alias ->
+                            alias.split(" ").each { aliasSplit ->
+                                keyword aliasSplit.toLowerCase()
+                            }
+
+                        }
+                    }
+                }
+            }
             getWebsiteTopics().each {
                 topic it
             }
