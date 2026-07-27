@@ -49,9 +49,11 @@ class DataSetsWebsiteHelper {
         publishContext.setItemLinkScanner(ItemLinkScanner.createForDitaOutput(pathResolver))
 
         dataDictionary.dataSetFolders.values().each { folders ->
-            folders.findAll {!it.isRetired()}.each { folder ->
-                generateDitaMapForFolder(folder, dataDictionary, parameters, ditaProject)
-                generateOverviewTopicForFolder(folder, dataDictionary, parameters, ditaProject)
+            folders.findAll {!it.isRetired()}.
+                sort {it.name}.
+                each { folder ->
+                    generateDitaMapForFolder(folder, dataDictionary, parameters, ditaProject)
+                    generateOverviewTopicForFolder(folder, dataDictionary, parameters, ditaProject)
             }
         }
         DitaMap dataSetsIndexMap = DitaMap.build {
@@ -88,22 +90,22 @@ class DataSetsWebsiteHelper {
         createOverviewPage(ditaProject)
 
 
-        dataDictionary.dataSets.values().each { dataSet ->
-            String path = "data_sets/" + StringUtils.join(dataSet.getDitaFolderPath(), "/").toLowerCase()
-            // TODO: Only for Data Sets at the moment to fix gh-147. In the future, have every component type generate from publish model
-            DictionaryItem structure = dataSet.getPublishStructure()
-            Topic topic = structure.generateDita(publishContext)
-            ditaProject.registerTopic(path, topic, dataSet.getNameWithoutNonAlphaNumerics().toLowerCase())
+        dataDictionary.dataSets.values().
+            sort {it.name}.
+            each { dataSet ->
+                String path = "data_sets/" + StringUtils.join(dataSet.getDitaFolderPath(), "/").toLowerCase()
+                // TODO: Only for Data Sets at the moment to fix gh-147. In the future, have every component type generate from publish model
+                DictionaryItem structure = dataSet.getPublishStructure()
+                Topic topic = structure.generateDita(publishContext)
+                ditaProject.registerTopic(path, topic, dataSet.getNameWithoutNonAlphaNumerics().toLowerCase())
 
-            //DitaMap dataSetMap = dataSet.generateMap()
-            //ditaProject.registerMap(path, dataSetMap)
-            // dataSetMap.topicRef {
-            //    toc Toc.NO
-            //    keyRef dataSet.getDitaKey()
-            //}
-
-
-        }
+                //DitaMap dataSetMap = dataSet.generateMap()
+                //ditaProject.registerMap(path, dataSetMap)
+                // dataSetMap.topicRef {
+                //    toc Toc.NO
+                //    keyRef dataSet.getDitaKey()
+                //}
+            }
 
     }
 
