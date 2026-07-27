@@ -436,8 +436,12 @@ class NhsDDElement extends NhsDataDictionaryComponent <DataElement> {
         List<NhsDDCode> orderedCodes = getNationalCodes()
         String topicTitle = "National Codes"
         // TODO: Potentially some non-determinism here.  See OFFER STATUS (DATING ULTRASOUND SCAN)
+        // If the number of national codes is less than the number of non-default codes in the first attribute, then this is a subset of the national codes and we
+        // should change the title to "Permitted National Codes"
+        // We should determine the requirements to decide how to choose.  For now, removed non-determinism by sorting the attributes by name and taking the first one.
+        // This will be consistent across runs.
         if(instantiatesAttributes) {
-            if(orderedCodes.size() < instantiatesAttributes[0].codes.findAll { !it.isDefault }.size()) {
+            if(orderedCodes.size() < instantiatesAttributes.sort {it.name}[0].codes.findAll { !it.isDefault }.size()) {
                 topicTitle = "Permitted National Codes"
             }
         }
