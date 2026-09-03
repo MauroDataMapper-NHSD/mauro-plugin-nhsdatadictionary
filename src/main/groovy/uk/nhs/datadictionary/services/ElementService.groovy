@@ -25,6 +25,7 @@ import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.datamodel.DataType
+import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.facet.SemanticLink
 import org.maurodata.domain.facet.SemanticLinkType
 import org.maurodata.domain.folder.Folder
@@ -33,6 +34,8 @@ import org.maurodata.domain.terminology.CodeSet
 import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
 import org.maurodata.persistence.cache.AdministeredItemCacheableRepository
+import org.maurodata.persistence.cache.FacetCacheableRepository
+import org.maurodata.persistence.facet.MetadataRepository
 import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.NhsDDElement
 import uk.nhs.datadictionary.NhsDataDictionary
@@ -86,10 +89,20 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
 
     @Override
     Set<DataElement> getAll(UUID versionedFolderId, NhsDataDictionaryService nhsDataDictionaryService, Boolean includeRetired = false) {
-        DataModel coreModel = nhsDataDictionaryService.getElementsModel(versionedFolderId)
-        return coreModel.dataElements.findAll {dataElement ->
-            includeRetired || !catalogueItemIsRetired(dataElement)
+
+        DataModel elementsModel = nhsDataDictionaryService.getElementsModel(versionedFolderId)
+        List<DataElement> dataElements = dataElementRepository.readAllByDataClassDataModelIdIn([elementsModel.id])
+        Map<UUID, DataElement> elementsMap = dataElements.collectEntries {
+            [it.id, it]
         }
+        List<Metadata> metadata = metadataCacheableRepository.findByMultiFacetAwareItemIdInAndNamespaceAndKey(dataElements.id, new NhsDDElement().getMetadataNamespace(), "isRetired")
+
+        metadata.each {md ->
+            elementsMap[md.multiFacetAwareItemId].metadata.add(md)
+        }
+        return elementsMap.values().findAll {dataElement ->
+            includeRetired || !catalogueItemIsRetired(dataElement)
+        } as Set<DataElement>
     }
 
 /*

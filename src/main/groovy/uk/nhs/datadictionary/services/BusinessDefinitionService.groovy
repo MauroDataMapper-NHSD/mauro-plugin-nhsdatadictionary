@@ -20,6 +20,7 @@ package uk.nhs.datadictionary.services
 import groovy.util.logging.Slf4j
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
+import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
@@ -27,6 +28,7 @@ import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.TermC
 import org.maurodata.persistence.terminology.dto.TermDTORepository
 import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.NhsDDBusinessDefinition
+import uk.nhs.datadictionary.NhsDDSupportingInformation
 import uk.nhs.datadictionary.NhsDataDictionary
 
 @Slf4j
@@ -59,9 +61,18 @@ class BusinessDefinitionService extends DataDictionaryComponentService<Term, Nhs
     @Override
     Set<Term> getAll(UUID versionedFolderId, NhsDataDictionaryService nhsDataDictionaryService, Boolean includeRetired = false) {
         Terminology busDefTerminology = nhsDataDictionaryService.getBusinessDefinitionTerminology(versionedFolderId)
-        busDefTerminology.terms.findAll {term ->
-            includeRetired || !catalogueItemIsRetired(term)
+        List<Term> terms = termCacheableRepository.readAllByTerminologyIdIn([busDefTerminology.id])
+        Map<UUID, Term> termsMap = terms.collectEntries {
+            [it.id, it]
         }
+        List<Metadata> metadata = metadataCacheableRepository.findByMultiFacetAwareItemIdInAndNamespaceAndKey(terms.id, new NhsDDBusinessDefinition().getMetadataNamespace(), "isRetired")
+
+        metadata.each {md ->
+            termsMap[md.multiFacetAwareItemId].metadata.add(md)
+        }
+        return termsMap.values().findAll {term ->
+            includeRetired || !catalogueItemIsRetired(term)
+        } as Set<Term>
     }
 
     void persistBusinessDefinitions(NhsDataDictionary dataDictionary, Folder dictionaryFolder) {

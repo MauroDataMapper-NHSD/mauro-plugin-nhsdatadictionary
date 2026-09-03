@@ -24,6 +24,7 @@ import org.maurodata.domain.datamodel.DataClass
 import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.datamodel.DataModel
 import org.maurodata.domain.datamodel.DataType
+import org.maurodata.domain.facet.Metadata
 import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.DataClassCacheableRepository
 import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.DataElementCacheableRepository
 import uk.nhs.datadictionary.NhsDDAttribute
@@ -123,10 +124,18 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
     @Override
     Set<DataClass> getAll(UUID versionedFolderId, NhsDataDictionaryService nhsDataDictionaryService, Boolean includeRetired = false) {
         DataModel classesModel = nhsDataDictionaryService.getClassesModel(versionedFolderId)
-        classesModel.allDataClasses.findAll {dataClass ->
-            dataClass.label != "Retired" && (
-                includeRetired || !catalogueItemIsRetired(dataClass))
+        List<DataClass> dataClasses = dataClassCacheableRepository.readAllByDataModel(classesModel)
+        Map<UUID, DataClass> classMap = dataClasses.collectEntries {
+            [it.id, it]
         }
+        List<Metadata> metadata = metadataCacheableRepository.findByMultiFacetAwareItemIdInAndNamespaceAndKey(dataClasses.id, new NhsDDClass().getMetadataNamespace(), "isRetired")
+
+        metadata.each {md ->
+            classMap[md.multiFacetAwareItemId].metadata.add(md)
+        }
+        return classMap.values().findAll {dataClass ->
+            dataClass.label != "Retired" && (includeRetired || !catalogueItemIsRetired(dataClass))
+        } as Set<DataClass>
     }
 
 

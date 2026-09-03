@@ -22,14 +22,11 @@ import groovy.util.logging.Slf4j
 import io.micronaut.context.ApplicationContext
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
-import org.maurodata.domain.datamodel.DataElement
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.model.AdministeredItem
-import org.maurodata.domain.model.Item
 import org.maurodata.persistence.cache.FacetCacheableRepository.MetadataCacheableRepository
 import org.maurodata.persistence.cache.ModelCacheableRepository.FolderCacheableRepository
 import org.maurodata.persistence.model.PathRepository
-import uk.nhs.datadictionary.NhsDDElement
 import uk.nhs.datadictionary.NhsDataDictionary
 import uk.nhs.datadictionary.NhsDataDictionaryComponent
 import uk.nhs.datadictionary.NhsDataDictionaryComponentFactory
@@ -47,8 +44,7 @@ import java.util.regex.Pattern
 @CompileStatic
 abstract class DataDictionaryComponentService<T extends AdministeredItem, D extends NhsDataDictionaryComponent> {
 
-    @Inject
-    MetadataCacheableRepository metadataCacheableRepository
+    @Inject MetadataCacheableRepository metadataCacheableRepository
 
     @Inject MauroPersistenceService mauroPersistenceService
 

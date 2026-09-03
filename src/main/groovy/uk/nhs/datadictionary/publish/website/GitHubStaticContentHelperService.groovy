@@ -5,8 +5,8 @@ import java.util.zip.ZipInputStream
 
 class GitHubStaticContentHelperService {
 
-    static final String GITHUB_BRANCH_URL = "https://github.com/NHSDigital/DataDictionaryPublication/archive/refs/heads/feature/move-to-mauro.zip"
-    static final String GIHUB_DITA_FOLDER = "DataDictionaryPublication-feature-move-to-mauro/Website/"
+    static final String GITHUB_BRANCH_URL = "https://github.com/NHSDigital/DataDictionaryPublication/archive/refs/heads/develop.zip"
+    static final String GIHUB_DITA_FOLDER = "DataDictionaryPublication-develop/Website/"
 
 
     static Map<String, ByteArrayOutputStream> getGithubDirAsMap(){

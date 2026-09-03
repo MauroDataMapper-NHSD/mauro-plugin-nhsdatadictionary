@@ -150,12 +150,12 @@ class NhsDataDictionaryController implements NhsDataDictionaryApi {
                 checkName: integrityCheck.name,
                 description: integrityCheck.description,
                 errors: errors.collect {error -> [
-                    type: error.component.getStereotype(),
-                    label: error.component.name,
-                    id: error.component.catalogueItem.id.toString(),
-                    domainType: error.component.catalogueItem.domainType.toString(),
-                    parentId: error.component.catalogueItem.parent.id,
-                    modelId: error.component.catalogueItemParentId,
+                    name: error.component.name,
+                    stereotype: error.component.stereotype,
+                    retired: error.component.retired,
+                    key: error.component.key,
+                    catalogueItemId: error.component.catalogueItemId.toString(),
+                    description: error.component.description,
                     details: error.details
                 ]}
             ]

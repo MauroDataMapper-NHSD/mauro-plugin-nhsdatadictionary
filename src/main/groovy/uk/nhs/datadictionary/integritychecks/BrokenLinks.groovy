@@ -38,7 +38,7 @@ class BrokenLinks implements IntegrityCheck {
     @Override
     List<IntegrityCheckError> runCheck(NhsDataDictionary dataDictionary) {
         Map<String, List<NhsDataDictionaryComponent>> linkComponentMap = [:]
-        List<NhsDataDictionaryComponent> errorComponents = Collections.synchronizedList(new ArrayList<NhsDataDictionaryComponent>())
+        Map<NhsDataDictionaryComponent, List<String>> errorComponents = Collections.synchronizedMap(new HashMap<NhsDataDictionaryComponent, List<String>>())
         dataDictionary.allComponents.
             findAll {!it.isRetired() && it.description }.
             each {component ->
@@ -56,18 +56,22 @@ class BrokenLinks implements IntegrityCheck {
 
         linkComponentMap.each {link, componentList ->
             threads.add(Thread.start {
-                if (isValidLink(link)) {
-                    errorComponents.addAll(componentList)
+                if (!isValidLink(link)) {
+                    componentList.each {
+                        errorComponents.put(it, errorComponents.getOrDefault(it, []) + [link])
+                    }
                 }
             })
         }
         threads.each { it.join() }
-        List<NhsDataDictionaryComponent> components = (errorComponents.toSet()).toList()
 
-        components.collect { component -> new IntegrityCheckError(component) }
+        errorComponents.collect {component, links ->
+            new IntegrityCheckError(component, links)
+        }
     }
 
     static boolean isValidLink(String link) {
+        int responseCode = 0
         try {
             def conn = URI.create(link).toURL().openConnection() as HttpURLConnection
             conn.requestMethod = 'HEAD'
@@ -75,8 +79,19 @@ class BrokenLinks implements IntegrityCheck {
             conn.readTimeout = 5000
             conn.instanceFollowRedirects = true
             conn.connect()
-            return conn.responseCode in 200..399
+            responseCode = conn.responseCode
+            if(responseCode == 403) { // Some sites - e.g. the NHS Data Dictionary (!) forbid head requests, so we could try a 'GET' instead
+                def conn2 = URI.create(link).toURL().openConnection() as HttpURLConnection
+                conn2.requestMethod = 'GET'
+                conn2.connectTimeout = 5000
+                conn2.readTimeout = 5000
+                conn2.instanceFollowRedirects = true
+                conn2.connect()
+                responseCode = conn.responseCode
+            }
+            return responseCode in 200..399
         } catch (Exception ignored) {
+            log.debug("Url: '$link' returned a response code of $responseCode")
             return false
         }
     }

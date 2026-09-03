@@ -174,7 +174,6 @@ class NhsDataDictionaryService {
     @Inject ChangePaperHtmlUtility changePaperHtmlUtility
 
 
-
     List<Folder> branches(/*UserSecurityPolicyManager userSecurityPolicyManager */) {
         folderRepository.readAll().findAll {
             it.label.startsWith("NHS Data Dictionary")
@@ -379,32 +378,27 @@ class NhsDataDictionaryService {
 
     Terminology getBusinessDefinitionTerminology(UUID versionedFolderId) {
         List<Terminology> terminologies = terminologyRepository.findAllByFolderId(versionedFolderId)
-        Terminology busDefTerminology = terminologies.find {it.label == NhsDataDictionary.BUSINESS_DEFINITIONS_TERMINOLOGY_NAME}
-        (Terminology) contentsService.loadWithContent(busDefTerminology)
+        terminologies.find {it.label == NhsDataDictionary.BUSINESS_DEFINITIONS_TERMINOLOGY_NAME}
     }
 
     Terminology getSupportingInformationTerminology(UUID versionedFolderId) {
         List<Terminology> terminologies = terminologyRepository.findAllByFolderId(versionedFolderId)
-        Terminology supDefTerminology = terminologies.find {it.label == NhsDataDictionary.SUPPORTING_DEFINITIONS_TERMINOLOGY_NAME}
-        (Terminology) contentsService.loadWithContent(supDefTerminology)
+        terminologies.find {it.label == NhsDataDictionary.SUPPORTING_DEFINITIONS_TERMINOLOGY_NAME}
     }
 
     Terminology getDataSetConstraintTerminology(UUID versionedFolderId) {
         List<Terminology> terminologies = terminologyRepository.findAllByFolderId(versionedFolderId)
-        Terminology dataSetConstraintTerminology = terminologies.find {it.label == NhsDataDictionary.DATA_SET_CONSTRAINTS_TERMINOLOGY_NAME}
-        (Terminology) contentsService.loadWithContent(dataSetConstraintTerminology)
+        terminologies.find {it.label == NhsDataDictionary.DATA_SET_CONSTRAINTS_TERMINOLOGY_NAME}
     }
 
     DataModel getElementsModel(UUID versionedFolderId) {
         List<DataModel> dataModels = dataModelRepository.findAllByFolderId(versionedFolderId)
-        DataModel elementsModel = dataModels.find {it.label == NhsDataDictionary.ELEMENTS_MODEL_NAME}
-        (DataModel) contentsService.loadWithContent(elementsModel)
+        dataModels.find {it.label == NhsDataDictionary.ELEMENTS_MODEL_NAME}
     }
 
     DataModel getClassesModel(UUID versionedFolderId) {
         List<DataModel> dataModels = dataModelRepository.findAllByFolderId(versionedFolderId)
-        DataModel classesDataModel = dataModels.find {it.label == NhsDataDictionary.CLASSES_MODEL_NAME}
-        (DataModel) contentsService.loadWithContent(classesDataModel)
+        dataModels.find {it.label == NhsDataDictionary.CLASSES_MODEL_NAME}
     }
 
     Folder getDataSetsFolder(UUID versionedFolderId) {
@@ -585,18 +579,12 @@ class NhsDataDictionaryService {
 */
 
     List<StereotypedCatalogueItem> allItemsIndex(UUID versionedFolderId) {
-        NhsDataDictionary dataDictionary = buildDataDictionary(versionedFolderId)
-
-        List<NhsDataDictionaryComponent> allItems = []
-
-        allItems.addAll(dataDictionary.dataSets.values())
-        allItems.addAll(dataDictionary.classes.values())
-        allItems.addAll(dataDictionary.elements.values())
-        allItems.addAll(dataDictionary.attributes.values())
-        allItems.addAll(dataDictionary.businessDefinitions.values())
-        allItems.addAll(dataDictionary.supportingInformation.values())
-        allItems.addAll(dataDictionary.dataSetConstraints.values())
-        return allItems.collect {new StereotypedCatalogueItem(it)}.sort {it.name.toLowerCase()}
+        List<StereotypedCatalogueItem> allItems = []
+        [elementService, dataSetService, classService, attributeService, businessDefinitionService, supportingInformationService, dataSetConstraintService]
+            .each {service ->
+                allItems.addAll(service.index(versionedFolderId, this, true))
+        }
+        return allItems.sort {it.name.toLowerCase()}
     }
 
     private static void zipFile(File fileToZip, String fileName, ZipOutputStream zipOut) throws IOException {

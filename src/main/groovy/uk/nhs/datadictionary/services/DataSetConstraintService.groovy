@@ -21,6 +21,7 @@ package uk.nhs.datadictionary.services
 import groovy.util.logging.Slf4j
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
+import org.maurodata.domain.facet.Metadata
 import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
@@ -57,10 +58,17 @@ class DataSetConstraintService extends DataDictionaryComponentService<Term, NhsD
         Terminology dataSetConstraintTerminology = nhsDataDictionaryService.getDataSetConstraintTerminology(versionedFolderId)
 
         List<Term> terms = termCacheableRepository.readAllByTerminologyIdIn([dataSetConstraintTerminology.id])
-
-        terms.findAll {term ->
-            includeRetired || !catalogueItemIsRetired(term)
+        Map<UUID, Term> termsMap = terms.collectEntries {
+            [it.id, it]
         }
+        List<Metadata> metadata = metadataCacheableRepository.findByMultiFacetAwareItemIdInAndNamespaceAndKey(terms.id, new NhsDDDataSetConstraint().getMetadataNamespace(), "isRetired")
+
+        metadata.each {md ->
+            termsMap[md.multiFacetAwareItemId].metadata.add(md)
+        }
+        return termsMap.values().findAll {term ->
+            includeRetired || !catalogueItemIsRetired(term)
+        } as Set<Term>
 
     }
 

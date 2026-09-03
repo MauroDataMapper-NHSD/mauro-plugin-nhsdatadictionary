@@ -32,8 +32,10 @@ import org.maurodata.domain.folder.Folder
 import org.maurodata.domain.terminology.Term
 import org.maurodata.domain.terminology.Terminology
 import org.maurodata.persistence.cache.AdministeredItemCacheableRepository
+import org.maurodata.persistence.cache.AdministeredItemCacheableRepository.DataTypeCacheableRepository
 import org.maurodata.persistence.cache.FacetCacheableRepository.SemanticLinkCacheableRepository
 import org.maurodata.persistence.datamodel.DataElementRepository
+import org.maurodata.persistence.facet.MetadataRepository
 import uk.nhs.datadictionary.NhsDDAttribute
 import uk.nhs.datadictionary.NhsDDElement
 import uk.nhs.datadictionary.NhsDataDictionary
@@ -50,6 +52,11 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
     @Inject AdministeredItemCacheableRepository.DataElementCacheableRepository dataElementRepository
 
     @Inject SemanticLinkCacheableRepository semanticLinkCacheableRepository
+
+    @Inject DataTypeCacheableRepository dataTypeCacheableRepository
+
+    @Inject MetadataRepository metadataRepository
+
 
     String getStereotype() {
         return 'attribute'
@@ -101,10 +108,24 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
     @Override
     Set<DataElement> getAll(UUID versionedFolderId, NhsDataDictionaryService nhsDataDictionaryService, Boolean includeRetired = false) {
         DataModel classesModel = nhsDataDictionaryService.getClassesModel(versionedFolderId)
-        return classesModel.dataElements.findAll { dataElement ->
-            !(dataElement.dataType.dataTypeKind == DataType.DataTypeKind.REFERENCE_TYPE) &&
-            (includeRetired || !catalogueItemIsRetired(dataElement))
-        } as Set
+        List<DataElement> dataElements = dataElementRepository.readAllByDataClassDataModelIdIn([classesModel.id])
+        List<DataType> dataTypes = dataTypeCacheableRepository.readAllByDataModelIdIn([classesModel.id])
+        Map<UUID, DataType> dataTypeMap = dataTypes
+            .findAll {it.dataTypeKind != DataType.DataTypeKind.REFERENCE_TYPE}
+            .collectEntries({[it.id, it]})
+        System.err.println("Removing reference types : ${dataElements.size()}")
+        dataElements.removeAll {!dataTypeMap[it.dataType.id]}
+        System.err.println("${dataElements.size()}")
+        Map<UUID, DataElement> elementsMap = dataElements
+            .collectEntries {[it.id, it] }
+        List<Metadata> metadata = metadataCacheableRepository.findByMultiFacetAwareItemIdInAndNamespaceAndKey(dataElements.id, new NhsDDAttribute().getMetadataNamespace(), "isRetired")
+
+        metadata.each {md ->
+            elementsMap[md.multiFacetAwareItemId].metadata.add(md)
+        }
+        return elementsMap.values().findAll {dataElement ->
+            includeRetired || !catalogueItemIsRetired(dataElement)
+        } as Set<DataElement>
     }
 
 

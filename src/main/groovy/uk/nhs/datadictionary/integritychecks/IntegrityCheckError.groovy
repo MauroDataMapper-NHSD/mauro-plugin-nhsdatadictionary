@@ -18,17 +18,27 @@
 package uk.nhs.datadictionary.integritychecks
 
 import uk.nhs.datadictionary.NhsDataDictionaryComponent
+import uk.nhs.datadictionary.utils.StereotypedCatalogueItem
 
 class IntegrityCheckError {
-    final NhsDataDictionaryComponent component
+    final StereotypedCatalogueItem component
     final List<String> details
 
-    IntegrityCheckError(NhsDataDictionaryComponent component) {
+    IntegrityCheckError(StereotypedCatalogueItem component) {
         this(component, [])
     }
 
-    IntegrityCheckError(NhsDataDictionaryComponent component, List<String> details) {
+    IntegrityCheckError(NhsDataDictionaryComponent component) {
+        this(new StereotypedCatalogueItem(component), [])
+    }
+
+    IntegrityCheckError(StereotypedCatalogueItem component, List<String> details) {
         this.component = component
         this.details = details
     }
+
+    IntegrityCheckError(NhsDataDictionaryComponent component, List<String> details) {
+        this(new StereotypedCatalogueItem(component), details)
+    }
+
 }
