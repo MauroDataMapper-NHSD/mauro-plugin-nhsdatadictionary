@@ -295,6 +295,7 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
         newComponent.branchId = branchId
         newComponent.dataDictionaryComponentService = this
         NhsDataDictionary nhsDataDictionary = new NhsDataDictionary()
+        nhsDataDictionary.nhsDataDictionaryService = nhsDataDictionaryService
         nhsDataDictionaryService.setApiProperties(nhsDataDictionary)
         newComponent.fromMauroItem(nhsDataDictionary, mauroPersistenceService, catalogueItem)
         return newComponent
