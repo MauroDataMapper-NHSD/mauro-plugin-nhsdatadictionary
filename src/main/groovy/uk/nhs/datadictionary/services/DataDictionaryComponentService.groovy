@@ -151,7 +151,7 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
             return "supportingInformation"
         }
         if (path[0] == "te:${NhsDataDictionary.DATA_SET_CONSTRAINTS_TERMINOLOGY_NAME}") {
-            return "xmlSchemaConstraint"
+            return "dataSetConstraint"
         }
         if (path[0] == "dm:${NhsDataDictionary.CLASSES_MODEL_NAME}") {
             if(path[path.size() -1].startsWith("de:")) {
