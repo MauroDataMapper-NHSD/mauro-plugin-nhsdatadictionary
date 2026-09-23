@@ -83,6 +83,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         catalogueItem.id
     }
 
+    @JsonIgnore
     boolean isCommissioningDataSetFolder() {
         return (this instanceof NhsDDDataSetFolder && this.name == "Commissioning Data Sets")
     }
@@ -97,6 +98,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         catalogueItem.label
     }
 
+    @JsonIgnore
     String getHtmlDescription() {
         if(!dataDictionaryComponentService) {
             log.error("dataDictionaryComponentService is not set for: ${getStereotype()} ${getName()}")

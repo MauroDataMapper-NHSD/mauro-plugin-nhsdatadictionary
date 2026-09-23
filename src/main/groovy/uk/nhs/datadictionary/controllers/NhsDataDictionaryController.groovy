@@ -109,6 +109,13 @@ class NhsDataDictionaryController implements NhsDataDictionaryApi {
         }
     }
 
+    @Get('/api/nhsdd/{dictionaryId}/previewPath{?path}')
+    Map<String, String> previewPath(UUID dictionaryId, @Nullable @QueryValue String path) {
+        checkAccessRights(dictionaryId)
+        nhsDataDictionaryService.previewPath(dictionaryId, path)
+    }
+
+
     @Get('/api/nhsdd/{dictionaryId}/allItems{?params}')
     ListResponse<StereotypedCatalogueItem> allItems(UUID dictionaryId, @Nullable @QueryValue String prefix, @Nullable @QueryValue PaginationParams params = new PaginationParams()) {
         checkAccessRights(dictionaryId)

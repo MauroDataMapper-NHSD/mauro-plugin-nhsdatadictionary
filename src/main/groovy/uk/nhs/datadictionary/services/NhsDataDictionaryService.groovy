@@ -17,10 +17,10 @@
  */
 package uk.nhs.datadictionary.services
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import io.micronaut.context.ApplicationContext
 import org.maurodata.api.model.ModelVersionedRefDTO
 import org.maurodata.controller.folder.VersionedFolderController
+import org.maurodata.domain.model.AdministeredItem
 import org.maurodata.domain.terminology.Term
 import org.maurodata.iso11179.domain.MetadataBundle
 
@@ -44,6 +44,7 @@ import org.maurodata.persistence.datamodel.DataModelRepository
 import org.maurodata.persistence.datamodel.DataTypeRepository
 import org.maurodata.persistence.facet.MetadataRepository
 import org.maurodata.persistence.folder.FolderRepository
+import org.maurodata.persistence.model.PathRepository
 import org.maurodata.persistence.terminology.TerminologyRepository
 import org.maurodata.web.ListResponse
 import org.maurodata.web.PaginationParams
@@ -104,6 +105,9 @@ class NhsDataDictionaryService {
     static final String API_PROPERTY_CHANGE_LOG_CHANGE_REQUEST_URL = 'changelog.url.changerequest'
     static final String API_PROPERTY_CHANGE_LOG_HEADER_TEXT = 'changelog.headertext'
     static final String API_PROPERTY_CHANGE_LOG_FOOTER_TEXT = 'changelog.footertext'
+
+    @Inject
+    PathRepository pathRepository
 
     @Inject
     MauroPersistenceService mauroPersistenceService
@@ -302,6 +306,12 @@ class NhsDataDictionaryService {
 
         System.err.println("14: ${System.currentTimeMillis() - timestamp}")
         timestamp = System.currentTimeMillis()
+
+        listResponse.items.each {stereotypedItem ->
+            List<AdministeredItem> parentItems = pathRepository.readParentItems(stereotypedItem.catalogueItem)
+            stereotypedItem.catalogueItem.updatePath()
+            stereotypedItem.mauroPath = stereotypedItem.catalogueItem.getLocalPath().toString()
+        }
 
         return listResponse
 
@@ -861,5 +871,47 @@ class NhsDataDictionaryService {
         ditaTestDir.mkdirs()
 
         return ditaTestDir.toPath()
+    }
+
+    Map<String, String> previewPath(UUID dictionaryId, String pathParam) {
+        // Implementation for previewing a path
+        Folder f = folderRepository.findById(dictionaryId)
+        String completePath = "vf:" + f.label + "|" + pathParam
+        org.maurodata.domain.model.Path path = new org.maurodata.domain.model.Path(completePath)
+        String stereotype = getStereotypeFromPathParam(pathParam)
+        AdministeredItem retrievedItem = pathRepository.findResourcesByPathFromRootResource(new Folder(id: dictionaryId), path)
+
+        return [
+            'path': "/preview/${dictionaryId.toString()}/${stereotype}/${retrievedItem.id.toString()}".toString(),
+            'stereotype': stereotype
+        ]
+    }
+
+
+    // TODO: Maybe find a better implementation of this
+    static String getStereotypeFromPathParam(String path) {
+        if (path.startsWith("te:" + NhsDataDictionary.BUSINESS_DEFINITIONS_TERMINOLOGY_NAME)) {
+            return new NhsDDBusinessDefinition().getStereotypeForPreview()
+        }
+        if (path.startsWith("te:" + NhsDataDictionary.SUPPORTING_DEFINITIONS_TERMINOLOGY_NAME)) {
+            return new NhsDDSupportingInformation().getStereotypeForPreview()
+        }
+        if (path.startsWith("te:" + NhsDataDictionary.DATA_SET_CONSTRAINTS_TERMINOLOGY_NAME)) {
+            return new NhsDDDataSetConstraint().getStereotypeForPreview()
+        }
+        if (path.startsWith("dm:" + NhsDataDictionary.CLASSES_MODEL_NAME)) {
+            if (path.contains("|de:")) {
+                return new NhsDDAttribute().getStereotypeForPreview()
+            } else {
+                return new NhsDDClass().getStereotypeForPreview()
+            }
+        }
+        if (path.startsWith("dm:" + NhsDataDictionary.ELEMENTS_MODEL_NAME)) {
+            return new NhsDDElement().getStereotypeForPreview()
+        }
+        if (path.startsWith("fo:" + NhsDataDictionary.DATA_SETS_FOLDER_NAME)) {
+            return new NhsDDDataSet().getStereotypeForPreview()
+        }
+        return ""
     }
 }

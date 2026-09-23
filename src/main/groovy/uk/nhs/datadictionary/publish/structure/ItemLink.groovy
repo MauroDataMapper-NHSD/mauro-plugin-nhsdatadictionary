@@ -92,7 +92,7 @@ class ItemLink implements DitaAware<XRef>, HtmlBuilder, ChangeAware {
         String linkOutputClass = PublishHelper.createItemCssClass(this.outputClass, this.state)
         String urlStereotype = this.outputClass
 
-        String href = "#/preview/${branchId}/${urlStereotype}/${itemId}"
+        String href = "/preview/${branchId}/${urlStereotype}/${itemId}"
 
         builder.a(class: linkOutputClass, title: officialName, href: href) {
             mkp.yield(officialName)

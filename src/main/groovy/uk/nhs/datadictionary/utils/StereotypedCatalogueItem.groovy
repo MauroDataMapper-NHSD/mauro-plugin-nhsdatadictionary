@@ -17,6 +17,7 @@
  */
 package uk.nhs.datadictionary.utils
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import groovy.transform.Sortable
 import org.maurodata.domain.model.AdministeredItem
 import uk.nhs.datadictionary.NhsDDDataSetFolder
@@ -28,12 +29,16 @@ import uk.nhs.datadictionary.NhsDataDictionaryComponent
 @Sortable(includes = 'name')
 class StereotypedCatalogueItem {
 
+    @JsonIgnore
+    AdministeredItem catalogueItem
+
     String name
     String stereotype
     Boolean retired
     String key
     String description
     UUID catalogueItemId
+    String mauroPath
 
     List<StereotypedCatalogueItem> childFolders
     List<StereotypedCatalogueItem> dataSets
@@ -51,6 +56,10 @@ class StereotypedCatalogueItem {
         this.description = catalogueItem.description
         this.name = catalogueItem.label
         this.catalogueItemId = catalogueItem.id
+        this.mauroPath = catalogueItem.path
+        this.catalogueItem = catalogueItem
+        System.err.println("Catalogue Item Path 1: " + this.mauroPath)
+
     }
 
     StereotypedCatalogueItem(NhsDataDictionaryComponent component, String description = null) {
@@ -68,6 +77,8 @@ class StereotypedCatalogueItem {
                 new StereotypedCatalogueItem(it)
             }
         }
+        this.mauroPath = component.getMauroPath()
+        System.err.println("Catalogue Item Path 2: " + this.mauroPath)
     }
 
 }

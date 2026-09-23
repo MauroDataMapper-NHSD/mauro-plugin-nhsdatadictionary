@@ -74,7 +74,7 @@ class HtmlPreviewItemLinkScannerHandler implements ItemLinkScannerHandler {
             // TODO: move calling this code to this class?
             String stereotype = DataDictionaryComponentService.getStereotypeByPath(pathParts)
             String cssClass = stereotype
-            String replacement = """<a class="${cssClass}" href="#/preview/${branchId.toString()}/${stereotype}/${catalogueItemId.toString()}">${text}</a>"""
+            String replacement = """<a class="${cssClass}" href="/preview/${branchId.toString()}/${stereotype}/${catalogueItemId.toString()}">${text}</a>"""
 
             return replacement
         }

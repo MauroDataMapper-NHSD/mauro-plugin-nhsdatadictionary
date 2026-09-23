@@ -73,7 +73,8 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
         //attribute.htmlDescription = convertLinksInDescription(versionedFolderId, attribute.getDescription())
         attribute.codes.each {code ->
             if(code.webPresentation) {
-                code.webPresentation = convertLinksInDescription(versionedFolderId, code.webPresentation)
+                code.definition = code.webPresentation
+                //code.webPresentation = convertLinksInDescription(versionedFolderId, code.webPresentation)
             }
         }
         // ensure no recursion
