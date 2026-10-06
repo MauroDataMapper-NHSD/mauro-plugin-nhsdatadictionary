@@ -53,7 +53,7 @@ class ElementService extends DataDictionaryComponentService<DataElement, NhsDDEl
     DDCodeSetProfileProviderService ddCodeSetProfileProviderService
 
     String getStereotype() {
-        "element"
+        return NhsDataDictionary.ELEMENT_STEREOTYPE_FOR_PREVIEW
     }
 
 

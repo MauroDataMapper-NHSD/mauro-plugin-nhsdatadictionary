@@ -50,7 +50,7 @@ class NhsDDClass extends NhsDataDictionaryComponent <DataClass> {
 
     @Override
     String getStereotypeForPreview() {
-        'class'
+        NhsDataDictionary.CLASS_STEREOTYPE_FOR_PREVIEW
     }
 
     @Override

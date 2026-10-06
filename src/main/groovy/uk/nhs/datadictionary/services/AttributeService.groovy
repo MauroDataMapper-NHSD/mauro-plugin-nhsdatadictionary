@@ -59,7 +59,7 @@ class AttributeService extends DataDictionaryComponentService<DataElement, NhsDD
 
 
     String getStereotype() {
-        return 'attribute'
+        return NhsDataDictionary.ATTRIBUTE_STEREOTYPE_FOR_PREVIEW
     }
 
     @Override

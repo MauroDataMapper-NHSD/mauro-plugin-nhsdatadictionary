@@ -51,7 +51,7 @@ class NhsDDDataSet extends NhsDataDictionaryComponent <DataModel> {
 
     @Override
     String getStereotypeForPreview() {
-        "dataSet"
+        NhsDataDictionary.DATASET_STEREOTYPE_FOR_PREVIEW
     }
 
 

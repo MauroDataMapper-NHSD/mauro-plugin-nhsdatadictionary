@@ -56,7 +56,7 @@ class NhsDDAttribute extends NhsDataDictionaryComponent <DataElement> {
 
     @Override
     String getStereotypeForPreview() {
-        "attribute"
+        NhsDataDictionary.ATTRIBUTE_STEREOTYPE_FOR_PREVIEW
     }
 
     @Override

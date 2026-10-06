@@ -45,7 +45,7 @@ class NhsDDSupportingInformation extends NhsDataDictionaryComponent <Term> {
 
     @Override
     String getStereotypeForPreview() {
-        "supportingInformation"
+        NhsDataDictionary.SUPPORTING_INFORMATION_STEREOTYPE_FOR_PREVIEW
     }
 
 

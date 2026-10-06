@@ -45,7 +45,7 @@ class BusinessDefinitionService extends DataDictionaryComponentService<Term, Nhs
     }
 
     String getStereotype() {
-        "businessDefinition"
+        return NhsDataDictionary.BUSINESS_DEFINITION_STEREOTYPE_FOR_PREVIEW
     }
 
     @Override

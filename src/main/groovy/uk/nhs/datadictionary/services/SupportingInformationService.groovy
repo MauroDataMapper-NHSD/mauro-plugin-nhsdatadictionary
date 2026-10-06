@@ -40,7 +40,7 @@ class SupportingInformationService extends DataDictionaryComponentService<Term, 
     TermCacheableRepository termCacheableRepository
 
     String getStereotype() {
-        "supportingInformation"
+        return NhsDataDictionary.SUPPORTING_INFORMATION_STEREOTYPE_FOR_PREVIEW
     }
 
 

@@ -38,7 +38,7 @@ class NhsDDWebPage extends NhsDataDictionaryComponent <Term> {
 
     @Override
     String getStereotypeForPreview() {
-        "webPage"
+        NhsDataDictionary.WEBPAGE_STEREOTYPE_FOR_PREVIEW
     }
 
     @Override

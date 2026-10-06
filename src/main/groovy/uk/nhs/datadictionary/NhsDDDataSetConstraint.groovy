@@ -44,7 +44,7 @@ class NhsDDDataSetConstraint extends NhsDataDictionaryComponent <Term> {
 
     @Override
     String getStereotypeForPreview() {
-        "xmlSchemaConstraint"
+        NhsDataDictionary.DATASET_CONSTRAINT_STEREOTYPE_FOR_PREVIEW
     }
 
 

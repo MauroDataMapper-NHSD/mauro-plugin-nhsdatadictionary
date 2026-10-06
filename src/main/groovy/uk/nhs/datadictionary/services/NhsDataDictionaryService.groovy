@@ -197,86 +197,99 @@ class NhsDataDictionaryService {
         return versionTreeModelList
 */
     }
-    ListResponse<StereotypedCatalogueItem> allItems(UUID versionedFolderId, String prefix = "", PaginationParams paginationParams = new PaginationParams()){
+    ListResponse<StereotypedCatalogueItem> allItems(UUID versionedFolderId, List<String> stereotypes, String prefix = "", PaginationParams paginationParams = new PaginationParams()){
         // Going to need to build this list quicker than building the whole contents
         List<StereotypedCatalogueItem> response = []
         Folder versionedFolder = folderRepository.readById(versionedFolderId)
         long timestamp = System.currentTimeMillis()
+
         List<Terminology> terminologies = terminologyRepository.readAllByFolderIdIn([versionedFolderId])
         System.err.println("1: ${System.currentTimeMillis() - timestamp}")
         timestamp = System.currentTimeMillis()
-        Terminology supportingInformationTerminology = terminologies
-            .find {it.label == NhsDataDictionary.SUPPORTING_DEFINITIONS_TERMINOLOGY_NAME}
-        List<Term> terms = termCacheableRepository.readAllByTerminologyIdIn([supportingInformationTerminology.id])
-        System.err.println("2: ${System.currentTimeMillis() - timestamp}")
-        timestamp = System.currentTimeMillis()
-        response.addAll(terms.collect {new StereotypedCatalogueItem(it, supportingInformationService.stereotype)})
+        if(!stereotypes || stereotypes.contains(NhsDataDictionary.SUPPORTING_INFORMATION_STEREOTYPE_FOR_PREVIEW)) {
+            Terminology supportingInformationTerminology = terminologies
+                .find {it.label == NhsDataDictionary.SUPPORTING_DEFINITIONS_TERMINOLOGY_NAME}
+            List<Term> terms = termCacheableRepository.readAllByTerminologyIdIn([supportingInformationTerminology.id])
+            System.err.println("2: ${System.currentTimeMillis() - timestamp}")
+            timestamp = System.currentTimeMillis()
+            response.addAll(terms.collect {new StereotypedCatalogueItem(it, supportingInformationService.stereotype)})
+        }
+        if(!stereotypes || stereotypes.contains(NhsDataDictionary.BUSINESS_DEFINITION_STEREOTYPE_FOR_PREVIEW)) {
+            Terminology businessDefinitionTerminology = terminologies
+                .find {it.label == NhsDataDictionary.BUSINESS_DEFINITIONS_TERMINOLOGY_NAME}
+            List<Term> terms = termCacheableRepository.readAllByTerminologyIdIn([businessDefinitionTerminology.id])
+            System.err.println("3: ${System.currentTimeMillis() - timestamp}")
+            timestamp = System.currentTimeMillis()
 
-        Terminology businessDefinitionTerminology = terminologies
-            .find {it.label == NhsDataDictionary.BUSINESS_DEFINITIONS_TERMINOLOGY_NAME}
-        terms = termCacheableRepository.readAllByTerminologyIdIn([businessDefinitionTerminology.id])
-        System.err.println("3: ${System.currentTimeMillis() - timestamp}")
-        timestamp = System.currentTimeMillis()
+            response.addAll(terms.collect {new StereotypedCatalogueItem(it, businessDefinitionService.stereotype)})
+        }
+        if(!stereotypes || stereotypes.contains(NhsDataDictionary.DATASET_CONSTRAINT_STEREOTYPE_FOR_PREVIEW)) {
+            Terminology xmlSchemaConstraintTerminology = terminologies
+                .find {it.label == NhsDataDictionary.DATA_SET_CONSTRAINTS_TERMINOLOGY_NAME}
+            List<Term> terms = termCacheableRepository.readAllByTerminologyIdIn([xmlSchemaConstraintTerminology.id])
+            System.err.println("4: ${System.currentTimeMillis() - timestamp}")
+            timestamp = System.currentTimeMillis()
 
-        response.addAll(terms.collect {new StereotypedCatalogueItem(it, businessDefinitionService.stereotype)})
-
-        Terminology xmlSchemaConstraintTerminology = terminologies
-            .find {it.label == NhsDataDictionary.DATA_SET_CONSTRAINTS_TERMINOLOGY_NAME}
-        terms = termCacheableRepository.readAllByTerminologyIdIn([xmlSchemaConstraintTerminology.id])
-        System.err.println("4: ${System.currentTimeMillis() - timestamp}")
-        timestamp = System.currentTimeMillis()
-
-        response.addAll(terms.collect {new StereotypedCatalogueItem(it, dataSetConstraintService.stereotype)})
+            response.addAll(terms.collect {new StereotypedCatalogueItem(it, dataSetConstraintService.stereotype)})
+        }
 
         List<DataModel> dataModels = dataModelRepository.findAllByFolderId(versionedFolderId)
         System.err.println("5: ${System.currentTimeMillis() - timestamp}")
         timestamp = System.currentTimeMillis()
-        DataModel elementsDataModel = dataModels.find {it.label == NhsDataDictionary.ELEMENTS_MODEL_NAME}
-        List<DataElement> elementDataElements = dataElementRepository.readAllByDataClassDataModelIdInAndLabelContains([elementsDataModel.id], prefix?:"")
-        System.err.println("6: ${System.currentTimeMillis() - timestamp}")
-        timestamp = System.currentTimeMillis()
+        if(!stereotypes || stereotypes.contains(NhsDataDictionary.ELEMENT_STEREOTYPE_FOR_PREVIEW)) {
+            DataModel elementsDataModel = dataModels.find {it.label == NhsDataDictionary.ELEMENTS_MODEL_NAME}
+            List<DataElement> elementDataElements = dataElementRepository.readAllByDataClassDataModelIdInAndLabelContains([elementsDataModel.id], prefix ?: "")
+            System.err.println("6: ${System.currentTimeMillis() - timestamp}")
+            timestamp = System.currentTimeMillis()
 
-        response.addAll(elementDataElements.collect {new StereotypedCatalogueItem(it, elementService.stereotype)})
-
+            response.addAll(elementDataElements.collect {new StereotypedCatalogueItem(it, elementService.stereotype)})
+        }
         DataModel classesDataModel = dataModels.find {it.label == NhsDataDictionary.CLASSES_MODEL_NAME}
-        List<DataElement> attributeDataElements = dataElementRepository.readAllByDataClassDataModelIdInAndLabelContains ([classesDataModel.id], prefix?:"")
-        System.err.println("7: ${System.currentTimeMillis() - timestamp}")
-        timestamp = System.currentTimeMillis()
+        if(!stereotypes || stereotypes.contains(NhsDataDictionary.ATTRIBUTE_STEREOTYPE_FOR_PREVIEW)) {
+            List<DataElement> attributeDataElements = dataElementRepository.readAllByDataClassDataModelIdInAndLabelContains([classesDataModel.id], prefix ?: "")
+            System.err.println("7: ${System.currentTimeMillis() - timestamp}")
+            timestamp = System.currentTimeMillis()
 
-        List<DataType> dataTypes = dataTypeRepository.readAllByDataModel(classesDataModel)
-        Map<UUID, DataType> dataTypeMap  = dataTypes.collectEntries {[(it.id): it]}
+            List<DataType> dataTypes = dataTypeRepository.readAllByDataModel(classesDataModel)
+            Map<UUID, DataType> dataTypeMap = dataTypes.collectEntries {[(it.id): it]}
 
-        response.addAll(attributeDataElements.findAll {dataElement ->
-            dataTypeMap[dataElement.dataType.id].dataTypeKind != DataType.DataTypeKind.REFERENCE_TYPE
-        }.collect {new StereotypedCatalogueItem(it, attributeService.stereotype)})
+            response.addAll(attributeDataElements.findAll {dataElement ->
+                dataTypeMap[dataElement.dataType.id].dataTypeKind != DataType.DataTypeKind.REFERENCE_TYPE
+            }.collect {new StereotypedCatalogueItem(it, attributeService.stereotype)})
+        }
+        if(!stereotypes || stereotypes.contains(NhsDataDictionary.CLASS_STEREOTYPE_FOR_PREVIEW)) {
+            List<DataClass> classDataClasses = dataClassRepository.readAllByDataModel(classesDataModel)
+            System.err.println("8: ${System.currentTimeMillis() - timestamp}")
+            timestamp = System.currentTimeMillis()
 
-        List<DataClass> classDataClasses = dataClassRepository.readAllByDataModel (classesDataModel)
-        System.err.println("8: ${System.currentTimeMillis() - timestamp}")
-        timestamp = System.currentTimeMillis()
-
-        response.addAll(classDataClasses.collect {new StereotypedCatalogueItem(it, classService.stereotype)})
-
-        List<Folder> allDataSetFolders = []
-        List<Folder> nextFolders = []
-        do {
-            if(nextFolders.isEmpty()) {
-                nextFolders = folderRepository.readAllByFolderIdIn([versionedFolderId])
-            } else {
-                nextFolders = folderRepository.readAllByFolderIdIn(nextFolders.id)
+            response.addAll(classDataClasses.collect {new StereotypedCatalogueItem(it, classService.stereotype)})
+        }
+        if(!stereotypes
+            || stereotypes.contains(NhsDataDictionary.DATASET_FOLDER_STEREOTYPE_FOR_PREVIEW)
+            || stereotypes.contains(NhsDataDictionary.DATASET_STEREOTYPE_FOR_PREVIEW)) {
+            List<Folder> allDataSetFolders = []
+            List<Folder> nextFolders = []
+            do {
+                if (nextFolders.isEmpty()) {
+                    nextFolders = folderRepository.readAllByFolderIdIn([versionedFolderId])
+                } else {
+                    nextFolders = folderRepository.readAllByFolderIdIn(nextFolders.id)
+                }
+                allDataSetFolders.addAll(nextFolders)
+            } while (!nextFolders.isEmpty())
+            if (!stereotypes || stereotypes.contains(NhsDataDictionary.DATASET_FOLDER_STEREOTYPE_FOR_PREVIEW)) {
+                response.addAll(nextFolders.collect {new StereotypedCatalogueItem(it, dataSetFolderService.stereotype)})
+                System.err.println("10: ${System.currentTimeMillis() - timestamp}")
+                timestamp = System.currentTimeMillis()
             }
-            allDataSetFolders.addAll(nextFolders)
-        } while(!nextFolders.isEmpty())
-        response.addAll(nextFolders.collect {new StereotypedCatalogueItem(it, dataSetFolderService.stereotype)})
+            if (!stereotypes || stereotypes.contains(NhsDataDictionary.DATASET_STEREOTYPE_FOR_PREVIEW)) {
+                List<DataModel> dataSets = dataModelRepository.readAllByFolderIdIn(allDataSetFolders.id)
+                response.addAll(dataSets.collect {new StereotypedCatalogueItem(it, dataSetService.stereotype)})
 
-        System.err.println("10: ${System.currentTimeMillis() - timestamp}")
-        timestamp = System.currentTimeMillis()
-
-        List<DataModel> dataSets = dataModelRepository.readAllByFolderIdIn(allDataSetFolders.id)
-        response.addAll(dataSets.collect {new StereotypedCatalogueItem(it, dataSetService.stereotype)})
-
-        System.err.println("11: ${System.currentTimeMillis() - timestamp}")
-        timestamp = System.currentTimeMillis()
-
+                System.err.println("11: ${System.currentTimeMillis() - timestamp}")
+                timestamp = System.currentTimeMillis()
+            }
+        }
 
         paginationParams.max = paginationParams.max ?: 100
 
@@ -878,7 +891,7 @@ class NhsDataDictionaryService {
         Folder f = folderRepository.findById(dictionaryId)
         String completePath = "vf:" + f.label + "|" + pathParam
         org.maurodata.domain.model.Path path = new org.maurodata.domain.model.Path(completePath)
-        String stereotype = getStereotypeFromPathParam(pathParam)
+        String stereotype = DataDictionaryComponentService.getStereotypeByPath(pathParam.split('\\|'))
         AdministeredItem retrievedItem = pathRepository.findResourcesByPathFromRootResource(new Folder(id: dictionaryId), path)
 
         return [
@@ -887,31 +900,4 @@ class NhsDataDictionaryService {
         ]
     }
 
-
-    // TODO: Maybe find a better implementation of this
-    static String getStereotypeFromPathParam(String path) {
-        if (path.startsWith("te:" + NhsDataDictionary.BUSINESS_DEFINITIONS_TERMINOLOGY_NAME)) {
-            return new NhsDDBusinessDefinition().getStereotypeForPreview()
-        }
-        if (path.startsWith("te:" + NhsDataDictionary.SUPPORTING_DEFINITIONS_TERMINOLOGY_NAME)) {
-            return new NhsDDSupportingInformation().getStereotypeForPreview()
-        }
-        if (path.startsWith("te:" + NhsDataDictionary.DATA_SET_CONSTRAINTS_TERMINOLOGY_NAME)) {
-            return new NhsDDDataSetConstraint().getStereotypeForPreview()
-        }
-        if (path.startsWith("dm:" + NhsDataDictionary.CLASSES_MODEL_NAME)) {
-            if (path.contains("|de:")) {
-                return new NhsDDAttribute().getStereotypeForPreview()
-            } else {
-                return new NhsDDClass().getStereotypeForPreview()
-            }
-        }
-        if (path.startsWith("dm:" + NhsDataDictionary.ELEMENTS_MODEL_NAME)) {
-            return new NhsDDElement().getStereotypeForPreview()
-        }
-        if (path.startsWith("fo:" + NhsDataDictionary.DATA_SETS_FOLDER_NAME)) {
-            return new NhsDDDataSet().getStereotypeForPreview()
-        }
-        return ""
-    }
 }

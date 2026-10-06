@@ -117,6 +117,16 @@ class NhsDataDictionary {
 
     static final String CHANGE_REQUEST_NUMBER_TOKEN = "{cr_number}"
 
+    static final String DATASET_STEREOTYPE_FOR_PREVIEW = "dataSet"
+    static final String ATTRIBUTE_STEREOTYPE_FOR_PREVIEW = "attribute"
+    static final String BUSINESS_DEFINITION_STEREOTYPE_FOR_PREVIEW = "businessDefinition"
+    static final String CLASS_STEREOTYPE_FOR_PREVIEW = 'class'
+    static final String DATASET_CONSTRAINT_STEREOTYPE_FOR_PREVIEW = "xmlSchemaConstraint"
+    static final String DATASET_FOLDER_STEREOTYPE_FOR_PREVIEW = "dataSet"
+    static final String ELEMENT_STEREOTYPE_FOR_PREVIEW = "element"
+    static final String SUPPORTING_INFORMATION_STEREOTYPE_FOR_PREVIEW = "supportingInformation"
+    static final String WEBPAGE_STEREOTYPE_FOR_PREVIEW = "webPage"
+
     /**
      * This is the HTML link pattern to use when reading the XML ingest files
      */

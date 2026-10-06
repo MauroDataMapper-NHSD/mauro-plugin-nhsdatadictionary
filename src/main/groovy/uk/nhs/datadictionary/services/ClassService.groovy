@@ -49,7 +49,7 @@ class ClassService extends DataDictionaryComponentService<DataClass, NhsDDClass>
     }
 
     String getStereotype() {
-        "class"
+        return NhsDataDictionary.CLASS_STEREOTYPE_FOR_PREVIEW
     }
 
 

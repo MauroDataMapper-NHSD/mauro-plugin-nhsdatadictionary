@@ -47,7 +47,7 @@ class NhsDDBusinessDefinition extends NhsDataDictionaryComponent <Term> {
 
     @Override
     String getStereotypeForPreview() {
-        "businessDefinition"
+        NhsDataDictionary.BUSINESS_DEFINITION_STEREOTYPE_FOR_PREVIEW
     }
 
 

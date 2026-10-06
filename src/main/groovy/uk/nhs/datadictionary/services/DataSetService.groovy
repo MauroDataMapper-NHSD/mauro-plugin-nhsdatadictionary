@@ -57,7 +57,7 @@ class DataSetService extends DataDictionaryComponentService<DataModel, NhsDDData
     }
 
     String getStereotype() {
-        "dataSet"
+        return NhsDataDictionary.DATASET_STEREOTYPE_FOR_PREVIEW
     }
 
 

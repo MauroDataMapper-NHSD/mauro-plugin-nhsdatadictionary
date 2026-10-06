@@ -141,28 +141,28 @@ abstract class DataDictionaryComponentService<T extends AdministeredItem, D exte
 
     static String getStereotypeByPath(String[] path) {
         if (path[0] == "te:${NhsDataDictionary.BUSINESS_DEFINITIONS_TERMINOLOGY_NAME}") {
-            return "businessDefinition"
+            return NhsDataDictionary.BUSINESS_DEFINITION_STEREOTYPE_FOR_PREVIEW
         }
         if (path[0] == "te:${NhsDataDictionary.SUPPORTING_DEFINITIONS_TERMINOLOGY_NAME}") {
-            return "supportingInformation"
+            return NhsDataDictionary.SUPPORTING_INFORMATION_STEREOTYPE_FOR_PREVIEW
         }
         if (path[0] == "te:${NhsDataDictionary.DATA_SET_CONSTRAINTS_TERMINOLOGY_NAME}") {
-            return "xmlSchemaConstraint"
+            return NhsDataDictionary.DATASET_CONSTRAINT_STEREOTYPE_FOR_PREVIEW
         }
         if (path[0] == "dm:${NhsDataDictionary.CLASSES_MODEL_NAME}") {
             if(path[path.size() -1].startsWith("de:")) {
-                return "attribute"
+                return NhsDataDictionary.ATTRIBUTE_STEREOTYPE_FOR_PREVIEW
             }
-            return "class"
+            return NhsDataDictionary.CLASS_STEREOTYPE_FOR_PREVIEW
         }
         if (path[0] == "dm:${NhsDataDictionary.ELEMENTS_MODEL_NAME}") {
-            return "element"
+            return NhsDataDictionary.ELEMENT_STEREOTYPE_FOR_PREVIEW
         }
         if (path[0].startsWith("fo:")) {
             if(path.last().startsWith("fo:")) {
-                return "dataSet"
+                return NhsDataDictionary.DATASET_FOLDER_STEREOTYPE_FOR_PREVIEW
             } else if (path.last().startsWith("dm:")) {
-                return "dataSet"
+                return NhsDataDictionary.DATASET_STEREOTYPE_FOR_PREVIEW
             }
         }
         return null

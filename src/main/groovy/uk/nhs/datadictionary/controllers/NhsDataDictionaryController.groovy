@@ -117,9 +117,9 @@ class NhsDataDictionaryController implements NhsDataDictionaryApi {
 
 
     @Get('/api/nhsdd/{dictionaryId}/allItems{?params}')
-    ListResponse<StereotypedCatalogueItem> allItems(UUID dictionaryId, @Nullable @QueryValue String prefix, @Nullable @QueryValue PaginationParams params = new PaginationParams()) {
+    ListResponse<StereotypedCatalogueItem> allItems(UUID dictionaryId, @Nullable @QueryValue List<String> stereotype, @Nullable @QueryValue String prefix, @Nullable @QueryValue PaginationParams params = new PaginationParams()) {
         checkAccessRights(dictionaryId)
-        nhsDataDictionaryService.allItems(dictionaryId, prefix, params)
+        nhsDataDictionaryService.allItems(dictionaryId, stereotype, prefix, params)
     }
 
     @Get('/api/nhsdd/{dictionaryId}/publish/changePaper')
