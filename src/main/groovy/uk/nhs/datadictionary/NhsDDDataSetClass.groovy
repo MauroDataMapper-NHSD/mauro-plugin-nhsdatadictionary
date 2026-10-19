@@ -493,7 +493,7 @@ class NhsDDDataSetClass implements NhsDDDataSetComponent {
                                 }
                             }
                             entry(align: Align.CENTER) {
-                                p groupRepeats
+                                p groupRepeats?:""
                             }
                             entry(namest: "col3", nameend: "col${totalDepth * 2 + 4}") {
                                 p {

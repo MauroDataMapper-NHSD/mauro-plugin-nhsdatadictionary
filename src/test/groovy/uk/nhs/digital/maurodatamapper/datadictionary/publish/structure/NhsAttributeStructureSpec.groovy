@@ -451,7 +451,7 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
             descriptionHtml == """<div class="- topic/body body">
   <div class="- topic/div div">
     <p class="- topic/p p"><p>The date, month, year and century, or any combination of these elements, that is of relevance to an 
-<a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/79ab1e21-4407-4aae-b777-7b7920fa1963">ACTIVITY</a>.</p></p>
+<a class="class" href="/preview/782602d4-e153-45d8-a271-eb42396804da/class/79ab1e21-4407-4aae-b777-7b7920fa1963">ACTIVITY</a>.</p></p>
   </div>
 </div>"""
         }
@@ -504,10 +504,10 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
   <div>
     <ul class="- topic/ul ul">
       <li class="- topic/li li">
-        <a class="element" title="ACTIVITY DATE (CRITICAL CARE)" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/b5170409-97aa-464e-9aad-657c8b2e00f8">ACTIVITY DATE (CRITICAL CARE)</a>
+        <a class="element" title="ACTIVITY DATE (CRITICAL CARE)" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/b5170409-97aa-464e-9aad-657c8b2e00f8">ACTIVITY DATE (CRITICAL CARE)</a>
       </li>
       <li class="- topic/li li">
-        <a class="element" title="ATTENDANCE DATE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ATTENDANCE DATE</a>
+        <a class="element" title="ATTENDANCE DATE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ATTENDANCE DATE</a>
       </li>
     </ul>
   </div>
@@ -570,14 +570,14 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
         <tr class="- topic/strow strow">
           <td class="- topic/stentry stentry">Data Element</td>
           <td class="- topic/stentry stentry">
-            <a class="element" title="ACTIVITY DATE (CRITICAL CARE)" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/b5170409-97aa-464e-9aad-657c8b2e00f8">ACTIVITY DATE (CRITICAL CARE)</a>
+            <a class="element" title="ACTIVITY DATE (CRITICAL CARE)" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/b5170409-97aa-464e-9aad-657c8b2e00f8">ACTIVITY DATE (CRITICAL CARE)</a>
           </td>
           <td class="- topic/stentry stentry">references in description ACTIVITY DATE</td>
         </tr>
         <tr class="- topic/strow strow">
           <td class="- topic/stentry stentry">Class</td>
           <td class="- topic/stentry stentry">
-            <a class="class" title="ACTIVITY DATE TIME" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/542a6963-cce2-4c8f-b60d-b86b13d43bbe">ACTIVITY DATE TIME</a>
+            <a class="class" title="ACTIVITY DATE TIME" href="/preview/782602d4-e153-45d8-a271-eb42396804da/class/542a6963-cce2-4c8f-b60d-b86b13d43bbe">ACTIVITY DATE TIME</a>
           </td>
           <td class="- topic/stentry stentry">references in description ACTIVITY DATE</td>
         </tr>
@@ -721,7 +721,7 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
   <div>
     <div class="new">
       <p><p>The date, month, year and century, or any combination of these elements, that is of relevance to an 
-<a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/79ab1e21-4407-4aae-b777-7b7920fa1963">ACTIVITY</a>.</p></p>
+<a class="class" href="/preview/782602d4-e153-45d8-a271-eb42396804da/class/79ab1e21-4407-4aae-b777-7b7920fa1963">ACTIVITY</a>.</p></p>
     </div>
     <p>
       <b>National Codes</b>
@@ -781,10 +781,10 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
       </p>
       <ul>
         <li class="new">
-          <a class="element" title="ACTIVITY DATE (CRITICAL CARE)" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/b5170409-97aa-464e-9aad-657c8b2e00f8">ACTIVITY DATE (CRITICAL CARE)</a>
+          <a class="element" title="ACTIVITY DATE (CRITICAL CARE)" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/b5170409-97aa-464e-9aad-657c8b2e00f8">ACTIVITY DATE (CRITICAL CARE)</a>
         </li>
         <li class="new">
-          <a class="element" title="ATTENDANCE DATE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ATTENDANCE DATE</a>
+          <a class="element" title="ATTENDANCE DATE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ATTENDANCE DATE</a>
         </li>
       </ul>
     </div>
@@ -1233,10 +1233,10 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
       </p>
       <ul>
         <li class="new">
-          <a class="element" title="ACTIVITY DATE (CRITICAL CARE)" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/b5170409-97aa-464e-9aad-657c8b2e00f8">ACTIVITY DATE (CRITICAL CARE)</a>
+          <a class="element" title="ACTIVITY DATE (CRITICAL CARE)" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/b5170409-97aa-464e-9aad-657c8b2e00f8">ACTIVITY DATE (CRITICAL CARE)</a>
         </li>
         <li class="new">
-          <a class="element" title="ATTENDANCE DATE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ATTENDANCE DATE</a>
+          <a class="element" title="ATTENDANCE DATE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ATTENDANCE DATE</a>
         </li>
       </ul>
     </div>
@@ -1270,7 +1270,7 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
   <div>
     <div>
       <p><p>The date, month, year and century, or any combination of these elements, that is of relevance to an 
-<a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/79ab1e21-4407-4aae-b777-7b7920fa1963">ACTIVITY</a>.</p></p>
+<a class="class" href="/preview/782602d4-e153-45d8-a271-eb42396804da/class/79ab1e21-4407-4aae-b777-7b7920fa1963">ACTIVITY</a>.</p></p>
     </div>
     <p>
       <b>National Codes</b>
@@ -1338,10 +1338,10 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
       </p>
       <ul>
         <li class="new">
-          <a class="element" title="ACTIVITY DATE (CRITICAL CARE)" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/b5170409-97aa-464e-9aad-657c8b2e00f8">ACTIVITY DATE (CRITICAL CARE)</a>
+          <a class="element" title="ACTIVITY DATE (CRITICAL CARE)" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/b5170409-97aa-464e-9aad-657c8b2e00f8">ACTIVITY DATE (CRITICAL CARE)</a>
         </li>
         <li class="new">
-          <a class="element" title="ATTENDANCE DATE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ATTENDANCE DATE</a>
+          <a class="element" title="ATTENDANCE DATE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ATTENDANCE DATE</a>
         </li>
       </ul>
     </div>
@@ -1444,10 +1444,10 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
       </p>
       <ul>
         <li class="new">
-          <a class="element" title="ACTIVITY DATE (CRITICAL CARE)" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/b5170409-97aa-464e-9aad-657c8b2e00f8">ACTIVITY DATE (CRITICAL CARE)</a>
+          <a class="element" title="ACTIVITY DATE (CRITICAL CARE)" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/b5170409-97aa-464e-9aad-657c8b2e00f8">ACTIVITY DATE (CRITICAL CARE)</a>
         </li>
         <li class="new">
-          <a class="element" title="ATTENDANCE DATE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ATTENDANCE DATE</a>
+          <a class="element" title="ATTENDANCE DATE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ATTENDANCE DATE</a>
         </li>
       </ul>
     </div>
@@ -1649,10 +1649,10 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
       </p>
       <ul>
         <li class="new">
-          <a class="element" title="ACTIVITY DATE (CRITICAL CARE)" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/b5170409-97aa-464e-9aad-657c8b2e00f8">ACTIVITY DATE (CRITICAL CARE)</a>
+          <a class="element" title="ACTIVITY DATE (CRITICAL CARE)" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/b5170409-97aa-464e-9aad-657c8b2e00f8">ACTIVITY DATE (CRITICAL CARE)</a>
         </li>
         <li class="new">
-          <a class="element" title="ATTENDANCE DATE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ATTENDANCE DATE</a>
+          <a class="element" title="ATTENDANCE DATE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ATTENDANCE DATE</a>
         </li>
       </ul>
     </div>
@@ -1841,13 +1841,13 @@ class NhsAttributeStructureSpec extends DataDictionaryComponentStructureSpec<Nhs
       </p>
       <ul>
         <li class="new">
-          <a class="element" title="ACTIVITY DATE (CRITICAL CARE)" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/b5170409-97aa-464e-9aad-657c8b2e00f8">ACTIVITY DATE (CRITICAL CARE)</a>
+          <a class="element" title="ACTIVITY DATE (CRITICAL CARE)" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/b5170409-97aa-464e-9aad-657c8b2e00f8">ACTIVITY DATE (CRITICAL CARE)</a>
         </li>
         <li>
-          <a class="element" title="ATTENDANCE DATE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ATTENDANCE DATE</a>
+          <a class="element" title="ATTENDANCE DATE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ATTENDANCE DATE</a>
         </li>
         <li class="deleted">
-          <a class="element" title="BABY FIRST FEED DATE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/abf8bdcb-5659-4811-b888-51aaba8d15d7">BABY FIRST FEED DATE</a>
+          <a class="element" title="BABY FIRST FEED DATE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/abf8bdcb-5659-4811-b888-51aaba8d15d7">BABY FIRST FEED DATE</a>
         </li>
       </ul>
     </div>

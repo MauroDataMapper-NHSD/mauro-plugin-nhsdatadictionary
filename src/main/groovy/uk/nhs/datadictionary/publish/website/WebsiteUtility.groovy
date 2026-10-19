@@ -42,16 +42,15 @@ class WebsiteUtility {
         DitaProject ditaProject = new DitaProject("NHS Data Model and Dictionary", "nhs_data_dictionary")
         ditaProject.useTopicsFolder = false
 
+        List<NhsDataDictionaryComponent> allComponents = dataDictionary.getAllComponents().sort {it.ditaKey}
 
-        dataDictionary.getAllComponents().
-            sort { it.ditaKey }.
-            each { component ->
+        for(component in allComponents) {
             component.dataDictionary = dataDictionary
             ditaProject.addExternalKey(component.getDitaKey(), component.otherProperties["ddUrl"])
             dataDictionary.pathLookup[component.getMauroPath()] = component
         }
 
-        dataDictionary.getAllComponents().each { component ->
+        for(component in allComponents) {
             if(!component.isCommissioningDataSetFolder()) {
                 component.calculateWhereUsed()
             }
@@ -76,18 +75,16 @@ class WebsiteUtility {
         generateIndexTopics(dataDictionary, ditaProject, parameters)
         generateAllItemsIndex(dataDictionary, ditaProject, parameters)
 
-        dataDictionary.allComponents.
-            sort {it.name }.
-            each {component ->
-                if(!(component instanceof NhsDDDataSet || component instanceof  NhsDDDataSetFolder)) {
-                    if (parameters.isPublishableComponent(component)) {
-                        String path = "${component.getPluralStereotypeForWebsite()}"
+        for(component in allComponents) {
+            if(!(component instanceof NhsDDDataSet || component instanceof  NhsDDDataSetFolder)) {
+                if (parameters.isPublishableComponent(component)) {
+                    String path = "${component.getPluralStereotypeForWebsite()}"
                         ditaProject.registerTopic(path, component.generateTopic(), component.getNameWithoutNonAlphaNumerics().toLowerCase())
                     }
                 }
             }
 
-        Map<String, ByteArrayOutputStream> staticContentMap = GitHubStaticContentHelperService.getGithubDirAsMap()
+        Map<String, ByteArrayOutputStream> staticContentMap = [:] //GitHubStaticContentHelperService.getGithubDirAsMap()
         ByteArrayOutputStream zipContents = ditaProject.writeToZip(staticContentMap)
 
 

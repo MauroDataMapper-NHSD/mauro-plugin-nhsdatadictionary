@@ -99,15 +99,6 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
     }
 
     @JsonIgnore
-    String getHtmlDescription() {
-        if(!dataDictionaryComponentService) {
-            log.error("dataDictionaryComponentService is not set for: ${getStereotype()} ${getName()}")
-            return ""
-        }
-        dataDictionaryComponentService.convertLinksInDescription(branchId, getDescription())
-    }
-
-    @JsonIgnore
     Map<String, String> getOtherProperties() {
         catalogueItem.metadata.findAll {metadata ->
             metadata.namespace == getMetadataNamespace()
@@ -149,7 +140,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
         if(otherProperties["shortDescription"] && isActivePage()){
             return otherProperties["shortDescription"]
         } else {
-            return calculateShortDescription()
+            return calculateShortDescription()?:""
         }
     }
 
@@ -769,7 +760,7 @@ abstract class NhsDataDictionaryComponent <T extends AdministeredItem >  impleme
     List<Edit> getMergeEditsForChangeLog() {
         if(catalogueItem) {
             return catalogueItem.edits.findAll {
-                it.title = EditType.MERGE
+                it.title == EditType.MERGE
             }
         }
         return []

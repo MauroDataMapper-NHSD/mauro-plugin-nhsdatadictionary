@@ -255,7 +255,7 @@ class DataSetService extends DataDictionaryComponentService<DataModel, NhsDDData
             DDElement ddElement = dataDictionary.elements[uin]
             String retValue
             if (ddElement) {
-                retValue = "<p><a class='element' href='#/preview/element/${ddElement.catalogueItem.id.toString()}'></a>${ddElement.name}</p>"
+                retValue = "<p><a class='element' href='/preview/element/${ddElement.catalogueItem.id.toString()}'></a>${ddElement.name}</p>"
             } else {
                 log.debug("Cannot find uin: ${dataElement.label}, ${uin}")
                 retValue = "<p>${dataElement.label}</p>"
@@ -314,7 +314,7 @@ class DataSetService extends DataDictionaryComponentService<DataModel, NhsDDData
                 result.append "<td style='text-align: center'>${DataSetParser.getMRO(dataClass)}</td>"
                 result.append "<td style='text-align: center'>${DataSetParser.getGroupRepeats(dataClass)}</td>"
                 result.append "<td colspan='${totalDepth * 2 + 3}'><p> <b>Data Group:</b><p>" +
-                              "<a href='#/preview/dataSet/${linkedDataSet.catalogueItem.id}' class='dataSet'>${linkedDataSet.name}</a></p></td>"
+                              "<a href='/preview/dataSet/${linkedDataSet.catalogueItem.id}' class='dataSet'>${linkedDataSet.name}</a></p></td>"
                 result.append "</table>"
             } else {
                 String label = dataClass.label
@@ -481,7 +481,7 @@ class DataSetService extends DataDictionaryComponentService<DataModel, NhsDDData
                         result.append "<td style='text-align: center'>${DataSetParser.getMRO(child)}</td>"
                         result.append "<td style='text-align: center'>${DataSetParser.getGroupRepeats(child)}</td>"
                         result.append "<td colspan='${(totalDepth - currentDepth) * 2 + 1}'>" +
-                                      "<a href='#/preview/elements/${ddElement.catalogueItem.id.toString()}'>${ddElement.name}</a></td>"
+                                      "<a href='/preview/elements/${ddElement.catalogueItem.id.toString()}'>${ddElement.name}</a></td>"
                         result.append "<td style='text-align: center'>${DataSetParser.getRules(child).replaceAll("\\n", "<br/>")}</td>"
                         result.append "</tr>"
 
@@ -519,7 +519,7 @@ class DataSetService extends DataDictionaryComponentService<DataModel, NhsDDData
                             rules += "<p>${DataSetParser.getRules(childDataElement)?.replaceAll("\\n", "<br/>") ?: ""}</p>"
 
                             if (ddElement) {
-                                xRefs += "<p><a href='#/preview/elements/${ddElement.catalogueItem.id.toString()}' " +
+                                xRefs += "<p><a href='/preview/elements/${ddElement.catalogueItem.id.toString()}' " +
                                          "class='element'>${ddElement.name}</a></p>"
                             } else {
                                 xRefs += "<p>${childDataElement.label}</p>"

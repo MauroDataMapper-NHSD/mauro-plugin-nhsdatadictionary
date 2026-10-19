@@ -156,7 +156,7 @@ class PreviewSpec extends Specification {
         response.dataElements.size() == 1
         response.dataElements[0].name == "ABDOMINAL X-RAY PERFORMED REASON"
         response.dataElements[0].stereotype == "Data Element"
-        response.htmlDescription == "<p>The reason why an     <a class=\"businessDefinition\" href=\"#/preview/${branchId}/businessDefinition/${busDefId}\">Abdominal X-Ray</a> was performed.  </p>"
+        response.description == "<p>The reason why an     <a class=\"businessDefinition\" href=\"/preview/${branchId}/businessDefinition/${busDefId}\">Abdominal X-Ray</a> was performed.  </p>"
         response.alsoKnownAs.size() == 1
         response.alsoKnownAs['Plural'] == "ABDOMINAL X-RAY PERFORMED REASONS"
     }
@@ -194,7 +194,7 @@ class PreviewSpec extends Specification {
         response.allAttributesForElement.size() == 1
         response.allAttributesForElement[0].stereotype == "Attribute"
         response.allAttributesForElement[0].name == "PERSON SCORE"
-        response.htmlDescription == "<a class=\"element\" href=\"#/preview/$branchId/element/$elementId\">ABBREVIATED MENTAL TEST SCORE</a> is the same as attribute <a class=\"attribute\" href=\"#/preview/$branchId/attribute/${response.allAttributesForElement[0].catalogueItemId}\">PERSON SCORE</a>. <p>    <a class=\"element\" href=\"#/preview/${branchId}/element/${elementId}\">ABBREVIATED MENTAL TEST SCORE</a> is recorded during a     <a class=\"businessDefinition\" href=\"#/preview/$branchId/businessDefinition/${busDefId}\">Breast Cancer Care Spell</a> where the     <a class=\"class\" href=\"#/preview/$branchId/class/$classId\">ASSESSMENT TOOL</a> is     <em>'      <a class=\"businessDefinition\" href=\"#/preview/$branchId/businessDefinition/${busDefId2}\">Abbreviated Mental Test Score</a>'    </em>.  </p>  <p>The score is in the range 0 to 10.</p>"
+        response.description == "<a class=\"element\" href=\"/preview/$branchId/element/$elementId\">ABBREVIATED MENTAL TEST SCORE</a> is the same as attribute <a class=\"attribute\" href=\"/preview/$branchId/attribute/${response.allAttributesForElement[0].catalogueItemId}\">PERSON SCORE</a>. <p>    <a class=\"element\" href=\"/preview/${branchId}/element/${elementId}\">ABBREVIATED MENTAL TEST SCORE</a> is recorded during a     <a class=\"businessDefinition\" href=\"/preview/$branchId/businessDefinition/${busDefId}\">Breast Cancer Care Spell</a> where the     <a class=\"class\" href=\"/preview/$branchId/class/$classId\">ASSESSMENT TOOL</a> is     <em>'      <a class=\"businessDefinition\" href=\"/preview/$branchId/businessDefinition/${busDefId2}\">Abbreviated Mental Test Score</a>'    </em>.  </p>  <p>The score is in the range 0 to 10.</p>"
         response.alsoKnownAs.size() == 1
         response.alsoKnownAs['Plural'] == "ABBREVIATED MENTAL TEST SCORES"
     }

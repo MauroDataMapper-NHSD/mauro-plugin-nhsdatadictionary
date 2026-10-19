@@ -421,11 +421,11 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
             descriptionHtml == """<div class="- topic/body body">
   <div class="- topic/div div">
     <p class="- topic/p p"><p>
-    A <a class="businessDefinition" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/901c2d3d-0111-41d1-acc9-5b501c1dc397">Baby First Feed</a>
-    is a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/a57843dd-c1a7-4d37-996c-fcb67e496cb9">PERSON PROPERTY</a>
+    A <a class="businessDefinition" href="/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/901c2d3d-0111-41d1-acc9-5b501c1dc397">Baby First Feed</a>
+    is a <a class="class" href="/preview/782602d4-e153-45d8-a271-eb42396804da/class/a57843dd-c1a7-4d37-996c-fcb67e496cb9">PERSON PROPERTY</a>
     . </p>
 <p>
-    A <a class="businessDefinition" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/901c2d3d-0111-41d1-acc9-5b501c1dc397">Baby First Feed</a>
+    A <a class="businessDefinition" href="/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/901c2d3d-0111-41d1-acc9-5b501c1dc397">Baby First Feed</a>
     is the first feed given to a baby. </p></p>
   </div>
 </div>"""
@@ -488,28 +488,28 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
         <tr class="- topic/strow strow">
           <td class="- topic/stentry stentry">Attribute</td>
           <td class="- topic/stentry stentry">
-            <a class="attribute" title="BABY FIRST FEED BREAST MILK INDICATION CODE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/cc9b5d18-12a0-4c53-b06e-fa5c649494f2">BABY FIRST FEED BREAST MILK INDICATION CODE</a>
+            <a class="attribute" title="BABY FIRST FEED BREAST MILK INDICATION CODE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/cc9b5d18-12a0-4c53-b06e-fa5c649494f2">BABY FIRST FEED BREAST MILK INDICATION CODE</a>
           </td>
           <td class="- topic/stentry stentry">references in description Baby First Feed</td>
         </tr>
         <tr class="- topic/strow strow">
           <td class="- topic/stentry stentry">Data Element</td>
           <td class="- topic/stentry stentry">
-            <a class="element" title="BABY FIRST FEED DATE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/542a6963-cce2-4c8f-b60d-b86b13d43bbe">BABY FIRST FEED DATE</a>
+            <a class="element" title="BABY FIRST FEED DATE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/542a6963-cce2-4c8f-b60d-b86b13d43bbe">BABY FIRST FEED DATE</a>
           </td>
           <td class="- topic/stentry stentry">references in description Baby First Feed</td>
         </tr>
         <tr class="- topic/strow strow">
           <td class="- topic/stentry stentry">Data Element</td>
           <td class="- topic/stentry stentry">
-            <a class="element" title="BABY FIRST FEED TIME" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/b5170409-97aa-464e-9aad-657c8b2e00f8">BABY FIRST FEED TIME</a>
+            <a class="element" title="BABY FIRST FEED TIME" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/b5170409-97aa-464e-9aad-657c8b2e00f8">BABY FIRST FEED TIME</a>
           </td>
           <td class="- topic/stentry stentry">references in description Baby First Feed</td>
         </tr>
         <tr class="- topic/strow strow">
           <td class="- topic/stentry stentry">NHS Business Definition</td>
           <td class="- topic/stentry stentry">
-            <a class="businessDefinition" title="Baby First Feed" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/901c2d3d-0111-41d1-acc9-5b501c1dc397">Baby First Feed</a>
+            <a class="businessDefinition" title="Baby First Feed" href="/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/901c2d3d-0111-41d1-acc9-5b501c1dc397">Baby First Feed</a>
           </td>
           <td class="- topic/stentry stentry">references in description Baby First Feed</td>
         </tr>
@@ -908,11 +908,11 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
   <div>
     <div class="new">
       <p><p>
-    A <a class="businessDefinition" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/901c2d3d-0111-41d1-acc9-5b501c1dc397">Baby First Feed</a>
-    is a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/a57843dd-c1a7-4d37-996c-fcb67e496cb9">PERSON PROPERTY</a>
+    A <a class="businessDefinition" href="/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/901c2d3d-0111-41d1-acc9-5b501c1dc397">Baby First Feed</a>
+    is a <a class="class" href="/preview/782602d4-e153-45d8-a271-eb42396804da/class/a57843dd-c1a7-4d37-996c-fcb67e496cb9">PERSON PROPERTY</a>
     . </p>
 <p>
-    A <a class="businessDefinition" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/901c2d3d-0111-41d1-acc9-5b501c1dc397">Baby First Feed</a>
+    A <a class="businessDefinition" href="/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/901c2d3d-0111-41d1-acc9-5b501c1dc397">Baby First Feed</a>
     is the first feed given to a baby. </p></p>
     </div>
     <p>This NHS Business Definition is also known by these names:</p>
@@ -1075,11 +1075,11 @@ class NhsBusinessDefinitionStructureSpec extends DataDictionaryComponentStructur
   <div>
     <div>
       <p><p>
-    A <a class="businessDefinition" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/901c2d3d-0111-41d1-acc9-5b501c1dc397">Baby First Feed</a>
-    is a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/a57843dd-c1a7-4d37-996c-fcb67e496cb9">PERSON PROPERTY</a>
+    A <a class="businessDefinition" href="/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/901c2d3d-0111-41d1-acc9-5b501c1dc397">Baby First Feed</a>
+    is a <a class="class" href="/preview/782602d4-e153-45d8-a271-eb42396804da/class/a57843dd-c1a7-4d37-996c-fcb67e496cb9">PERSON PROPERTY</a>
     . </p>
 <p>
-    A <a class="businessDefinition" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/901c2d3d-0111-41d1-acc9-5b501c1dc397">Baby First Feed</a>
+    A <a class="businessDefinition" href="/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/901c2d3d-0111-41d1-acc9-5b501c1dc397">Baby First Feed</a>
     is the first feed given to a baby. </p></p>
     </div>
     <p>This NHS Business Definition is also known by these names:</p>

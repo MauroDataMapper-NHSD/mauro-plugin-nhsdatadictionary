@@ -11,18 +11,9 @@ version = '0.0.1-SNAPSHOT'
 
 repositories {
     mavenLocal()
-    maven { url "https://mauro-repository.com/libs-snapshot-local" }
-    maven { url "https://mauro-repository.com/libs-release-local" }
-
-    // For DaisyDiff
-    maven {url "https://packages.atlassian.com/mvn/maven-atlassian-external"}
-    // For org.cyberneko:html
-    maven {url "https://repository.ow2.org/nexus/content/repositories/public/"}
-
     mavenCentral()
+    //maven {url 'https://mauro-repository.com/libs-release-local'}
 
-    // For snapshot versions of mauro-domain
-    // maven {url "https://mauro-repository.com/libs-snapshot-local"}
 }
 
 
@@ -63,7 +54,7 @@ dependencies {
     implementation('commons-io:commons-io:2.20.0')
     implementation('org.apache.commons:commons-lang3:3.18.0')
 
-    implementation("org.maurodata:dita-dsl-base:2.0.0-SNAPSHOT")
+    implementation("org.maurodata:dita-groovy-dsl-base:2.0.1-SNAPSHOT")
 
     implementation("org.maurodata:iso11179-domain:2.0.0-SNAPSHOT") {
         exclude group: "com.sun.xml.bind", module: "jaxb-impl"

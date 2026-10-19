@@ -268,7 +268,7 @@ class NhsDDDataSet extends NhsDataDictionaryComponent <DataModel> {
     void loadDataModelMergeEdits(List<Edit> allMergeEdits, DataModel item) {
         log.trace("Getting merge edits for data model '$item.label'")
         List<Edit> mergeEdits = item.edits.findAll {
-            it.title = EditType.MERGE
+            it.title == EditType.MERGE
         }
         if (mergeEdits.empty) {
             return
@@ -280,7 +280,7 @@ class NhsDDDataSet extends NhsDataDictionaryComponent <DataModel> {
     void loadDataClassMergeEdits(List<Edit> allMergeEdits, DataClass item) {
         log.trace("Getting merge edits for data class '$item.label'")
         List<Edit> mergeEdits = item.edits.findAll {
-            it.title = EditType.MERGE
+            it.title == EditType.MERGE
         }
         if (mergeEdits.empty) {
             return
@@ -300,7 +300,7 @@ class NhsDDDataSet extends NhsDataDictionaryComponent <DataModel> {
     void loadDataElementMergeEdits(List<Edit> allMergeEdits, DataElement item) {
         log.trace("Getting merge edits for data element '$item.label'")
         List<Edit> mergeEdits = item.edits.findAll {
-            it.title = EditType.MERGE
+            it.title == EditType.MERGE
         }
         if (mergeEdits.empty) {
             return

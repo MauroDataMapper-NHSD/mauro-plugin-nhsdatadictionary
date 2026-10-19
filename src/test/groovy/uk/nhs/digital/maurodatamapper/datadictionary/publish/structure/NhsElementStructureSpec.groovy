@@ -572,7 +572,7 @@ during a Liver Cancer Care Spell.</p>"""
             descriptionHtml
             descriptionHtml == """<div class="- topic/body body">
   <div class="- topic/div div">
-    <p class="- topic/p p"><a class="element" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/901c2d3d-0111-41d1-acc9-5b501c1dc397">ABLATIVE THERAPY TYPE</a> is the same as attribute <a class="attribute" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ABLATIVE THERAPY TYPE</a>. <p>The type of Ablative Therapy given to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6">PATIENT</a> 
+    <p class="- topic/p p"><a class="element" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/901c2d3d-0111-41d1-acc9-5b501c1dc397">ABLATIVE THERAPY TYPE</a> is the same as attribute <a class="attribute" href="/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ABLATIVE THERAPY TYPE</a>. <p>The type of Ablative Therapy given to a <a class="class" href="/preview/782602d4-e153-45d8-a271-eb42396804da/class/ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6">PATIENT</a> 
 during a Liver Cancer Care Spell.</p></p>
   </div>
 </div>"""
@@ -613,7 +613,7 @@ during a Liver Cancer Care Spell.</p></p>
       <tbody>
         <tr class="- topic/strow strow">
           <td class="- topic/stentry stentry">R</td>
-          <td class="- topic/stentry stentry"><a class="businessDefinition" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/685a7609-a5ba-4112-bbd3-d8d5df0cdf4f">Radiofrequency Ablation</a></td>
+          <td class="- topic/stentry stentry"><a class="businessDefinition" href="/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/685a7609-a5ba-4112-bbd3-d8d5df0cdf4f">Radiofrequency Ablation</a></td>
         </tr>
         <tr class="- topic/strow strow">
           <td class="- topic/stentry stentry">M</td>
@@ -635,7 +635,7 @@ during a Liver Cancer Care Spell.</p></p>
   <div>
     <ul class="- topic/ul ul">
       <li class="- topic/li li">
-        <a class="attribute" title="ABLATIVE THERAPY TYPE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ABLATIVE THERAPY TYPE</a>
+        <a class="attribute" title="ABLATIVE THERAPY TYPE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ABLATIVE THERAPY TYPE</a>
       </li>
     </ul>
   </div>
@@ -698,14 +698,14 @@ during a Liver Cancer Care Spell.</p></p>
         <tr class="- topic/strow strow">
           <td class="- topic/stentry stentry">Data Element</td>
           <td class="- topic/stentry stentry">
-            <a class="element" title="ABLATIVE THERAPY TYPE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/901c2d3d-0111-41d1-acc9-5b501c1dc397">ABLATIVE THERAPY TYPE</a>
+            <a class="element" title="ABLATIVE THERAPY TYPE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/901c2d3d-0111-41d1-acc9-5b501c1dc397">ABLATIVE THERAPY TYPE</a>
           </td>
           <td class="- topic/stentry stentry">references in description ABLATIVE THERAPY TYPE</td>
         </tr>
         <tr class="- topic/strow strow">
           <td class="- topic/stentry stentry">Data Set</td>
           <td class="- topic/stentry stentry">
-            <a class="dataSet" title="Cancer Outcomes and Services Data Set - Liver" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/dataSet/542a6963-cce2-4c8f-b60d-b86b13d43bbe">Cancer Outcomes and Services Data Set - Liver</a>
+            <a class="dataSet" title="Cancer Outcomes and Services Data Set - Liver" href="/preview/782602d4-e153-45d8-a271-eb42396804da/dataSet/542a6963-cce2-4c8f-b60d-b86b13d43bbe">Cancer Outcomes and Services Data Set - Liver</a>
           </td>
           <td class="- topic/stentry stentry">references in description ABLATIVE THERAPY TYPE</td>
         </tr>
@@ -1266,7 +1266,7 @@ during a Liver Cancer Care Spell.</p></p>
       <p class="new">an1</p>
     </div>
     <div class="new">
-      <p><a class="element" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/901c2d3d-0111-41d1-acc9-5b501c1dc397">ABLATIVE THERAPY TYPE</a> is the same as attribute <a class="attribute" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ABLATIVE THERAPY TYPE</a>. <p>The type of Ablative Therapy given to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6">PATIENT</a> 
+      <p><a class="element" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/901c2d3d-0111-41d1-acc9-5b501c1dc397">ABLATIVE THERAPY TYPE</a> is the same as attribute <a class="attribute" href="/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ABLATIVE THERAPY TYPE</a>. <p>The type of Ablative Therapy given to a <a class="class" href="/preview/782602d4-e153-45d8-a271-eb42396804da/class/ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6">PATIENT</a> 
 during a Liver Cancer Care Spell.</p></p>
     </div>
     <p>
@@ -1287,7 +1287,7 @@ during a Liver Cancer Care Spell.</p></p>
         <tbody>
           <tr>
             <td class="new">R</td>
-            <td class="new"><a class="businessDefinition" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/685a7609-a5ba-4112-bbd3-d8d5df0cdf4f">Radiofrequency Ablation</a></td>
+            <td class="new"><a class="businessDefinition" href="/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/685a7609-a5ba-4112-bbd3-d8d5df0cdf4f">Radiofrequency Ablation</a></td>
           </tr>
           <tr>
             <td class="new">M</td>
@@ -1346,7 +1346,7 @@ during a Liver Cancer Care Spell.</p></p>
       </p>
       <ul>
         <li class="new">
-          <a class="attribute" title="ABLATIVE THERAPY TYPE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ABLATIVE THERAPY TYPE</a>
+          <a class="attribute" title="ABLATIVE THERAPY TYPE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ABLATIVE THERAPY TYPE</a>
         </li>
       </ul>
     </div>
@@ -1407,7 +1407,7 @@ during a Liver Cancer Care Spell.</p></p>
         <tbody>
           <tr>
             <td class="new">R</td>
-            <td class="new"><a class="businessDefinition" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/685a7609-a5ba-4112-bbd3-d8d5df0cdf4f">Radiofrequency Ablation</a></td>
+            <td class="new"><a class="businessDefinition" href="/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/685a7609-a5ba-4112-bbd3-d8d5df0cdf4f">Radiofrequency Ablation</a></td>
           </tr>
           <tr>
             <td class="new">M</td>
@@ -1466,7 +1466,7 @@ during a Liver Cancer Care Spell.</p></p>
       </p>
       <ul>
         <li class="new">
-          <a class="attribute" title="ABLATIVE THERAPY TYPE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ABLATIVE THERAPY TYPE</a>
+          <a class="attribute" title="ABLATIVE THERAPY TYPE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ABLATIVE THERAPY TYPE</a>
         </li>
       </ul>
     </div>
@@ -1529,7 +1529,7 @@ during a Liver Cancer Care Spell.</p></p>
         <tbody>
           <tr>
             <td class="new">R</td>
-            <td class="new"><a class="businessDefinition" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/685a7609-a5ba-4112-bbd3-d8d5df0cdf4f">Radiofrequency Ablation</a></td>
+            <td class="new"><a class="businessDefinition" href="/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/685a7609-a5ba-4112-bbd3-d8d5df0cdf4f">Radiofrequency Ablation</a></td>
           </tr>
           <tr>
             <td class="new">M</td>
@@ -1596,7 +1596,7 @@ during a Liver Cancer Care Spell.</p></p>
       </p>
       <ul>
         <li class="new">
-          <a class="attribute" title="ABLATIVE THERAPY TYPE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ABLATIVE THERAPY TYPE</a>
+          <a class="attribute" title="ABLATIVE THERAPY TYPE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ABLATIVE THERAPY TYPE</a>
         </li>
       </ul>
     </div>
@@ -1658,7 +1658,7 @@ during a Liver Cancer Care Spell.</p></p>
         <tbody>
           <tr>
             <td class="new">R</td>
-            <td class="new"><a class="businessDefinition" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/685a7609-a5ba-4112-bbd3-d8d5df0cdf4f">Radiofrequency Ablation</a></td>
+            <td class="new"><a class="businessDefinition" href="/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/685a7609-a5ba-4112-bbd3-d8d5df0cdf4f">Radiofrequency Ablation</a></td>
           </tr>
           <tr>
             <td class="new">M</td>
@@ -1725,7 +1725,7 @@ during a Liver Cancer Care Spell.</p></p>
       </p>
       <ul>
         <li class="new">
-          <a class="attribute" title="ABLATIVE THERAPY TYPE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ABLATIVE THERAPY TYPE</a>
+          <a class="attribute" title="ABLATIVE THERAPY TYPE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ABLATIVE THERAPY TYPE</a>
         </li>
       </ul>
     </div>
@@ -1901,7 +1901,7 @@ during a Liver Cancer Care Spell.</p></p>
         <tbody>
           <tr>
             <td>R</td>
-            <td><a class="businessDefinition" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/685a7609-a5ba-4112-bbd3-d8d5df0cdf4f">Radiofrequency Ablation</a></td>
+            <td><a class="businessDefinition" href="/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/685a7609-a5ba-4112-bbd3-d8d5df0cdf4f">Radiofrequency Ablation</a></td>
           </tr>
           <tr>
             <td class="new">M</td>
@@ -1968,7 +1968,7 @@ during a Liver Cancer Care Spell.</p></p>
       </p>
       <ul>
         <li class="new">
-          <a class="attribute" title="ABLATIVE THERAPY TYPE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ABLATIVE THERAPY TYPE</a>
+          <a class="attribute" title="ABLATIVE THERAPY TYPE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ABLATIVE THERAPY TYPE</a>
         </li>
       </ul>
     </div>
@@ -2139,7 +2139,7 @@ during a Liver Cancer Care Spell.</p></p>
         <tbody>
           <tr>
             <td class="new">R</td>
-            <td class="new"><a class="businessDefinition" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/685a7609-a5ba-4112-bbd3-d8d5df0cdf4f">Radiofrequency Ablation</a></td>
+            <td class="new"><a class="businessDefinition" href="/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/685a7609-a5ba-4112-bbd3-d8d5df0cdf4f">Radiofrequency Ablation</a></td>
           </tr>
           <tr>
             <td class="new">M</td>
@@ -2198,10 +2198,10 @@ during a Liver Cancer Care Spell.</p></p>
       </p>
       <ul>
         <li>
-          <a class="attribute" title="ABLATIVE THERAPY TYPE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ABLATIVE THERAPY TYPE</a>
+          <a class="attribute" title="ABLATIVE THERAPY TYPE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ABLATIVE THERAPY TYPE</a>
         </li>
         <li class="deleted">
-          <a class="attribute" title="BINET STAGE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/94f02a26-1db9-45f2-9dfa-9a588c961b13">BINET STAGE</a>
+          <a class="attribute" title="BINET STAGE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/94f02a26-1db9-45f2-9dfa-9a588c961b13">BINET STAGE</a>
         </li>
       </ul>
     </div>
@@ -2372,7 +2372,7 @@ during a Liver Cancer Care Spell.</p></p>
         <tbody>
           <tr>
             <td class="new">R</td>
-            <td class="new"><a class="businessDefinition" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/685a7609-a5ba-4112-bbd3-d8d5df0cdf4f">Radiofrequency Ablation</a></td>
+            <td class="new"><a class="businessDefinition" href="/preview/782602d4-e153-45d8-a271-eb42396804da/businessDefinition/685a7609-a5ba-4112-bbd3-d8d5df0cdf4f">Radiofrequency Ablation</a></td>
           </tr>
           <tr>
             <td class="new">M</td>
@@ -2431,7 +2431,7 @@ during a Liver Cancer Care Spell.</p></p>
       </p>
       <ul>
         <li class="new">
-          <a class="attribute" title="ABLATIVE THERAPY TYPE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ABLATIVE THERAPY TYPE</a>
+          <a class="attribute" title="ABLATIVE THERAPY TYPE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/faff11f5-cbfb-4faa-84d8-6d3b1eccd03b">ABLATIVE THERAPY TYPE</a>
         </li>
       </ul>
     </div>

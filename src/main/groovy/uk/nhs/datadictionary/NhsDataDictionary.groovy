@@ -262,7 +262,7 @@ class NhsDataDictionary {
             log.info("Building ${componentClassName}...")
             Instant componentStartTime = Instant.now()
             if(parameters.isPublishableComponent(dummyComponent)) {
-                xml[dummyComponent.getXmlNodeName()] /*.sort {it.name.text()} */.each {node ->
+                for (Node node : xml[dummyComponent.getXmlNodeName()]) /*.sort {it.name.text()} */ {
                     NhsDataDictionaryComponent component = (NhsDataDictionaryComponent) Class.forName(componentNameWithPackage).getConstructor()
                         .newInstance()
                     if (component.isValidXmlNode(node)) {

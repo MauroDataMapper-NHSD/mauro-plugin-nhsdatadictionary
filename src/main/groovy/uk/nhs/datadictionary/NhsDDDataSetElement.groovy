@@ -103,7 +103,7 @@ class NhsDDDataSetElement implements NhsDDDataSetComponent {
     }
 
     def createHtmlLink(MarkupBuilder markupBuilder) {
-        String link = "#/preview/${dataDictionary.containingVersionedFolder.id.toString()}/element/${elementId.toString()}"
+        String link = "/preview/${dataDictionary.containingVersionedFolder.id.toString()}/element/${elementId.toString()}"
         markupBuilder.a (href: link, class: "element") {
             mkp.yield(name)
         }

@@ -495,9 +495,9 @@ to a <a href="dm:Classes and Attributes|dc:PATIENT">PATIENT</a> by one or more
             descriptionHtml
             descriptionHtml == """<div class="- topic/body body">
   <div class="- topic/div div">
-    <p class="- topic/p p"><p>A provision of <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/79ab1e21-4407-4aae-b777-7b7920fa1963">SERVICES</a> 
-to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6">PATIENT</a> by one or more 
-<a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/9ac6a0b2-b4bf-48af-ad4d-0ecfe268df57">CARE PROFESSIONALS</a>.</p></p>
+    <p class="- topic/p p"><p>A provision of <a class="class" href="/preview/782602d4-e153-45d8-a271-eb42396804da/class/79ab1e21-4407-4aae-b777-7b7920fa1963">SERVICES</a> 
+to a <a class="class" href="/preview/782602d4-e153-45d8-a271-eb42396804da/class/ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6">PATIENT</a> by one or more 
+<a class="class" href="/preview/782602d4-e153-45d8-a271-eb42396804da/class/9ac6a0b2-b4bf-48af-ad4d-0ecfe268df57">CARE PROFESSIONALS</a>.</p></p>
   </div>
 </div>"""
         }
@@ -525,19 +525,19 @@ to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class
         <tr class="- topic/strow strow">
           <td class="- topic/stentry stentry">Key</td>
           <td class="- topic/stentry stentry">
-            <a class="attribute" title="ACTIVITY IDENTIFIER" href="#/preview/null/attribute/null">ACTIVITY IDENTIFIER</a>
+            <a class="attribute" title="ACTIVITY IDENTIFIER" href="/preview/null/attribute/null">ACTIVITY IDENTIFIER</a>
           </td>
         </tr>
         <tr class="- topic/strow strow">
           <td class="- topic/stentry stentry"></td>
           <td class="- topic/stentry stentry">
-            <a class="attribute" title="ACTIVITY COUNT" href="#/preview/null/attribute/null">ACTIVITY COUNT</a>
+            <a class="attribute" title="ACTIVITY COUNT" href="/preview/null/attribute/null">ACTIVITY COUNT</a>
           </td>
         </tr>
         <tr class="- topic/strow strow">
           <td class="- topic/stentry stentry"></td>
           <td class="- topic/stentry stentry">
-            <a class="attribute" title="ACTIVITY DURATION" href="#/preview/null/attribute/null">ACTIVITY DURATION</a>
+            <a class="attribute" title="ACTIVITY DURATION" href="/preview/null/attribute/null">ACTIVITY DURATION</a>
           </td>
         </tr>
       </tbody>
@@ -573,14 +573,14 @@ to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class
           <td class="- topic/stentry stentry">Key</td>
           <td class="- topic/stentry stentry">supplied by</td>
           <td class="- topic/stentry stentry">
-            <a class="class" title="ORGANISATION" href="#/preview/null/class/null">ORGANISATION</a>
+            <a class="class" title="ORGANISATION" href="/preview/null/class/null">ORGANISATION</a>
           </td>
         </tr>
         <tr class="- topic/strow strow">
           <td class="- topic/stentry stentry"></td>
           <td class="- topic/stentry stentry">located at</td>
           <td class="- topic/stentry stentry">
-            <a class="class" title="ADDRESS" href="#/preview/null/class/null">ADDRESS</a>
+            <a class="class" title="ADDRESS" href="/preview/null/class/null">ADDRESS</a>
           </td>
         </tr>
       </tbody>
@@ -645,21 +645,21 @@ to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class
         <tr class="- topic/strow strow">
           <td class="- topic/stentry stentry">Class</td>
           <td class="- topic/stentry stentry">
-            <a class="class" title="ACTIVITY" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/901c2d3d-0111-41d1-acc9-5b501c1dc397">ACTIVITY</a>
+            <a class="class" title="ACTIVITY" href="/preview/782602d4-e153-45d8-a271-eb42396804da/class/901c2d3d-0111-41d1-acc9-5b501c1dc397">ACTIVITY</a>
           </td>
           <td class="- topic/stentry stentry">references in description ACTIVITY</td>
         </tr>
         <tr class="- topic/strow strow">
           <td class="- topic/stentry stentry">Attribute</td>
           <td class="- topic/stentry stentry">
-            <a class="attribute" title="ACTIVITY COUNT" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/b5170409-97aa-464e-9aad-657c8b2e00f8">ACTIVITY COUNT</a>
+            <a class="attribute" title="ACTIVITY COUNT" href="/preview/782602d4-e153-45d8-a271-eb42396804da/attribute/b5170409-97aa-464e-9aad-657c8b2e00f8">ACTIVITY COUNT</a>
           </td>
           <td class="- topic/stentry stentry">references in description ACTIVITY</td>
         </tr>
         <tr class="- topic/strow strow">
           <td class="- topic/stentry stentry">Data Element</td>
           <td class="- topic/stentry stentry">
-            <a class="element" title="ACTIVITY COUNT (POINT OF DELIVERY)" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/542a6963-cce2-4c8f-b60d-b86b13d43bbe">ACTIVITY COUNT (POINT OF DELIVERY)</a>
+            <a class="element" title="ACTIVITY COUNT (POINT OF DELIVERY)" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/542a6963-cce2-4c8f-b60d-b86b13d43bbe">ACTIVITY COUNT (POINT OF DELIVERY)</a>
           </td>
           <td class="- topic/stentry stentry">references in description ACTIVITY</td>
         </tr>
@@ -1204,9 +1204,9 @@ to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class
   <h4>Change to Class: New</h4>
   <div>
     <div class="new">
-      <p><p>A provision of <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/79ab1e21-4407-4aae-b777-7b7920fa1963">SERVICES</a> 
-to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6">PATIENT</a> by one or more 
-<a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/9ac6a0b2-b4bf-48af-ad4d-0ecfe268df57">CARE PROFESSIONALS</a>.</p></p>
+      <p><p>A provision of <a class="class" href="/preview/782602d4-e153-45d8-a271-eb42396804da/class/79ab1e21-4407-4aae-b777-7b7920fa1963">SERVICES</a> 
+to a <a class="class" href="/preview/782602d4-e153-45d8-a271-eb42396804da/class/ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6">PATIENT</a> by one or more 
+<a class="class" href="/preview/782602d4-e153-45d8-a271-eb42396804da/class/9ac6a0b2-b4bf-48af-ad4d-0ecfe268df57">CARE PROFESSIONALS</a>.</p></p>
     </div>
     <p>Attributes of this Class are:</p>
     <div>
@@ -1225,19 +1225,19 @@ to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class
           <tr>
             <td class="new">Key</td>
             <td class="new">
-              <a class="attribute" title="ACTIVITY IDENTIFIER" href="#/preview/null/attribute/null">ACTIVITY IDENTIFIER</a>
+              <a class="attribute" title="ACTIVITY IDENTIFIER" href="/preview/null/attribute/null">ACTIVITY IDENTIFIER</a>
             </td>
           </tr>
           <tr>
             <td class="new"></td>
             <td class="new">
-              <a class="attribute" title="ACTIVITY COUNT" href="#/preview/null/attribute/null">ACTIVITY COUNT</a>
+              <a class="attribute" title="ACTIVITY COUNT" href="/preview/null/attribute/null">ACTIVITY COUNT</a>
             </td>
           </tr>
           <tr>
             <td class="new"></td>
             <td class="new">
-              <a class="attribute" title="ACTIVITY DURATION" href="#/preview/null/attribute/null">ACTIVITY DURATION</a>
+              <a class="attribute" title="ACTIVITY DURATION" href="/preview/null/attribute/null">ACTIVITY DURATION</a>
             </td>
           </tr>
         </tbody>
@@ -1263,14 +1263,14 @@ to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class
             <td class="new">Key</td>
             <td class="new">supplied by</td>
             <td class="new">
-              <a class="class" title="ORGANISATION" href="#/preview/null/class/null">ORGANISATION</a>
+              <a class="class" title="ORGANISATION" href="/preview/null/class/null">ORGANISATION</a>
             </td>
           </tr>
           <tr>
             <td class="new"></td>
             <td class="new">located at</td>
             <td class="new">
-              <a class="class" title="ADDRESS" href="#/preview/null/class/null">ADDRESS</a>
+              <a class="class" title="ADDRESS" href="/preview/null/class/null">ADDRESS</a>
             </td>
           </tr>
         </tbody>
@@ -1347,19 +1347,19 @@ to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class
           <tr>
             <td class="new">Key</td>
             <td class="new">
-              <a class="attribute" title="ACTIVITY IDENTIFIER" href="#/preview/null/attribute/null">ACTIVITY IDENTIFIER</a>
+              <a class="attribute" title="ACTIVITY IDENTIFIER" href="/preview/null/attribute/null">ACTIVITY IDENTIFIER</a>
             </td>
           </tr>
           <tr>
             <td class="new"></td>
             <td class="new">
-              <a class="attribute" title="ACTIVITY COUNT" href="#/preview/null/attribute/null">ACTIVITY COUNT</a>
+              <a class="attribute" title="ACTIVITY COUNT" href="/preview/null/attribute/null">ACTIVITY COUNT</a>
             </td>
           </tr>
           <tr>
             <td class="new"></td>
             <td class="new">
-              <a class="attribute" title="ACTIVITY DURATION" href="#/preview/null/attribute/null">ACTIVITY DURATION</a>
+              <a class="attribute" title="ACTIVITY DURATION" href="/preview/null/attribute/null">ACTIVITY DURATION</a>
             </td>
           </tr>
         </tbody>
@@ -1385,14 +1385,14 @@ to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class
             <td class="new">Key</td>
             <td class="new">supplied by</td>
             <td class="new">
-              <a class="class" title="ORGANISATION" href="#/preview/null/class/null">ORGANISATION</a>
+              <a class="class" title="ORGANISATION" href="/preview/null/class/null">ORGANISATION</a>
             </td>
           </tr>
           <tr>
             <td class="new"></td>
             <td class="new">located at</td>
             <td class="new">
-              <a class="class" title="ADDRESS" href="#/preview/null/class/null">ADDRESS</a>
+              <a class="class" title="ADDRESS" href="/preview/null/class/null">ADDRESS</a>
             </td>
           </tr>
         </tbody>
@@ -1448,9 +1448,9 @@ to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class
   <h4>Change to Class: Changed attributes, Changed relationships, Aliases</h4>
   <div>
     <div>
-      <p><p>A provision of <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/79ab1e21-4407-4aae-b777-7b7920fa1963">SERVICES</a> 
-to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6">PATIENT</a> by one or more 
-<a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/9ac6a0b2-b4bf-48af-ad4d-0ecfe268df57">CARE PROFESSIONALS</a>.</p></p>
+      <p><p>A provision of <a class="class" href="/preview/782602d4-e153-45d8-a271-eb42396804da/class/79ab1e21-4407-4aae-b777-7b7920fa1963">SERVICES</a> 
+to a <a class="class" href="/preview/782602d4-e153-45d8-a271-eb42396804da/class/ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6">PATIENT</a> by one or more 
+<a class="class" href="/preview/782602d4-e153-45d8-a271-eb42396804da/class/9ac6a0b2-b4bf-48af-ad4d-0ecfe268df57">CARE PROFESSIONALS</a>.</p></p>
     </div>
     <p>Attributes of this Class are:</p>
     <div>
@@ -1469,19 +1469,19 @@ to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class
           <tr>
             <td class="new">Key</td>
             <td class="new">
-              <a class="attribute" title="ACTIVITY IDENTIFIER" href="#/preview/null/attribute/null">ACTIVITY IDENTIFIER</a>
+              <a class="attribute" title="ACTIVITY IDENTIFIER" href="/preview/null/attribute/null">ACTIVITY IDENTIFIER</a>
             </td>
           </tr>
           <tr>
             <td class="new"></td>
             <td class="new">
-              <a class="attribute" title="ACTIVITY COUNT" href="#/preview/null/attribute/null">ACTIVITY COUNT</a>
+              <a class="attribute" title="ACTIVITY COUNT" href="/preview/null/attribute/null">ACTIVITY COUNT</a>
             </td>
           </tr>
           <tr>
             <td class="new"></td>
             <td class="new">
-              <a class="attribute" title="ACTIVITY DURATION" href="#/preview/null/attribute/null">ACTIVITY DURATION</a>
+              <a class="attribute" title="ACTIVITY DURATION" href="/preview/null/attribute/null">ACTIVITY DURATION</a>
             </td>
           </tr>
         </tbody>
@@ -1507,14 +1507,14 @@ to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class
             <td class="new">Key</td>
             <td class="new">supplied by</td>
             <td class="new">
-              <a class="class" title="ORGANISATION" href="#/preview/null/class/null">ORGANISATION</a>
+              <a class="class" title="ORGANISATION" href="/preview/null/class/null">ORGANISATION</a>
             </td>
           </tr>
           <tr>
             <td class="new"></td>
             <td class="new">located at</td>
             <td class="new">
-              <a class="class" title="ADDRESS" href="#/preview/null/class/null">ADDRESS</a>
+              <a class="class" title="ADDRESS" href="/preview/null/class/null">ADDRESS</a>
             </td>
           </tr>
         </tbody>
@@ -1599,19 +1599,19 @@ to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class
           <tr>
             <td class="new">Key</td>
             <td class="new">
-              <a class="attribute" title="ACTIVITY IDENTIFIER" href="#/preview/null/attribute/null">ACTIVITY IDENTIFIER</a>
+              <a class="attribute" title="ACTIVITY IDENTIFIER" href="/preview/null/attribute/null">ACTIVITY IDENTIFIER</a>
             </td>
           </tr>
           <tr>
             <td class="new"></td>
             <td class="new">
-              <a class="attribute" title="ACTIVITY COUNT" href="#/preview/null/attribute/null">ACTIVITY COUNT</a>
+              <a class="attribute" title="ACTIVITY COUNT" href="/preview/null/attribute/null">ACTIVITY COUNT</a>
             </td>
           </tr>
           <tr>
             <td class="new"></td>
             <td class="new">
-              <a class="attribute" title="ACTIVITY DURATION" href="#/preview/null/attribute/null">ACTIVITY DURATION</a>
+              <a class="attribute" title="ACTIVITY DURATION" href="/preview/null/attribute/null">ACTIVITY DURATION</a>
             </td>
           </tr>
         </tbody>
@@ -1637,14 +1637,14 @@ to a <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class
             <td class="new">Key</td>
             <td class="new">supplied by</td>
             <td class="new">
-              <a class="class" title="ORGANISATION" href="#/preview/null/class/null">ORGANISATION</a>
+              <a class="class" title="ORGANISATION" href="/preview/null/class/null">ORGANISATION</a>
             </td>
           </tr>
           <tr>
             <td class="new"></td>
             <td class="new">located at</td>
             <td class="new">
-              <a class="class" title="ADDRESS" href="#/preview/null/class/null">ADDRESS</a>
+              <a class="class" title="ADDRESS" href="/preview/null/class/null">ADDRESS</a>
             </td>
           </tr>
         </tbody>

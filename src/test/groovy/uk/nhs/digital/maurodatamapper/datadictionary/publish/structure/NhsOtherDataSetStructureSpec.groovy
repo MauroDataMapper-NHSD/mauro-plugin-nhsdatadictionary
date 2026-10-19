@@ -1293,7 +1293,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             descriptionHtml
             descriptionHtml == """<div class="- topic/body body">
   <div class="- topic/div div">
-    <p class="- topic/p p"><p>The Diagnostic Data Set contains <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6">PATIENTS</a> holding data.</p></p>
+    <p class="- topic/p p"><p>The Diagnostic Data Set contains <a class="class" href="/preview/782602d4-e153-45d8-a271-eb42396804da/class/ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6">PATIENTS</a> holding data.</p></p>
   </div>
 </div>"""
         }
@@ -1335,7 +1335,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
           </td>
           <td class="- topic/entry entry">
             <p class="- topic/p p">
-              <a class="element" title="NHS NUMBER" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
+              <a class="element" title="NHS NUMBER" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
             </p>
           </td>
         </tr>
@@ -1345,7 +1345,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
           </td>
           <td class="- topic/entry entry">
             <p class="- topic/p p">
-              <a class="element" title="PERSON GIVEN NAME" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
+              <a class="element" title="PERSON GIVEN NAME" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
             </p>
           </td>
         </tr>
@@ -1355,7 +1355,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
           </td>
           <td class="- topic/entry entry">
             <p class="- topic/p p">
-              <a class="element" title="DISEASE TYPE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
+              <a class="element" title="DISEASE TYPE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
             </p>
             <p class="- topic/p p">Multiple occurrences of this item are permitted</p>
           </td>
@@ -1366,7 +1366,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
           </td>
           <td class="- topic/entry entry">
             <p class="- topic/p p">
-              <a class="element retired" title="REFERRER CODE (Retired)" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/8df9772d-bdb5-45a7-b77a-334e83e012af">REFERRER CODE (Retired)</a>
+              <a class="element retired" title="REFERRER CODE (Retired)" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/8df9772d-bdb5-45a7-b77a-334e83e012af">REFERRER CODE (Retired)</a>
             </p>
           </td>
         </tr>
@@ -1403,7 +1403,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
           </td>
           <td class="- topic/entry entry">
             <p class="- topic/p p">
-              <a class="element" title="NHS NUMBER" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
+              <a class="element" title="NHS NUMBER" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
             </p>
           </td>
         </tr>
@@ -1413,7 +1413,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
           </td>
           <td class="- topic/entry entry">
             <p class="- topic/p p">
-              <a class="element" title="PERSON BIRTH DATE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/01c9734f-85e4-4fcf-a881-983621414673">PERSON BIRTH DATE</a>
+              <a class="element" title="PERSON BIRTH DATE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/01c9734f-85e4-4fcf-a881-983621414673">PERSON BIRTH DATE</a>
             </p>
           </td>
         </tr>
@@ -1437,7 +1437,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
           </td>
           <td class="- topic/entry entry">
             <p class="- topic/p p">
-              <a class="element" title="DISEASE TYPE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
+              <a class="element" title="DISEASE TYPE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
             </p>
             <p class="- topic/p p">Multiple occurrences of this item are permitted</p>
           </td>
@@ -1475,7 +1475,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
           </td>
           <td class="- topic/entry entry">
             <p class="- topic/p p">
-              <a class="element" title="NHS NUMBER" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
+              <a class="element" title="NHS NUMBER" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
             </p>
           </td>
         </tr>
@@ -1485,7 +1485,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
           </td>
           <td class="- topic/entry entry">
             <p class="- topic/p p">
-              <a class="element" title="PERSON BIRTH DATE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/01c9734f-85e4-4fcf-a881-983621414673">PERSON BIRTH DATE</a>
+              <a class="element" title="PERSON BIRTH DATE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/01c9734f-85e4-4fcf-a881-983621414673">PERSON BIRTH DATE</a>
             </p>
           </td>
         </tr>
@@ -1509,7 +1509,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
           </td>
           <td class="- topic/entry entry">
             <p class="- topic/p p">
-              <a class="element" title="DISEASE TYPE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
+              <a class="element" title="DISEASE TYPE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
             </p>
             <p class="- topic/p p">Multiple occurrences of this item are permitted</p>
           </td>
@@ -1546,7 +1546,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
           </td>
           <td class="- topic/entry entry">
             <p class="- topic/p p">
-              <a class="element" title="PERSON GIVEN NAME" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
+              <a class="element" title="PERSON GIVEN NAME" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
             </p>
           </td>
         </tr>
@@ -1556,11 +1556,11 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
           </td>
           <td class="- topic/entry entry">
             <p class="- topic/p p">
-              <a class="element" title="NHS NUMBER" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
+              <a class="element" title="NHS NUMBER" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
             </p>
             <p class="- topic/p p">Or</p>
             <p class="- topic/p p">
-              <a class="element" title="PERSON GIVEN NAME" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
+              <a class="element" title="PERSON GIVEN NAME" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
             </p>
           </td>
         </tr>
@@ -1570,11 +1570,11 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
           </td>
           <td class="- topic/entry entry">
             <p class="- topic/p p">
-              <a class="element" title="PERSON GIVEN NAME" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
+              <a class="element" title="PERSON GIVEN NAME" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
             </p>
             <p class="- topic/p p">And</p>
             <p class="- topic/p p">
-              <a class="element" title="DISEASE TYPE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
+              <a class="element" title="DISEASE TYPE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
             </p>
             <p class="- topic/p p">Multiple occurrences of this item are permitted</p>
           </td>
@@ -1585,15 +1585,15 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
           </td>
           <td class="- topic/entry entry">
             <p class="- topic/p p">
-              <a class="element" title="NHS NUMBER" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
+              <a class="element" title="NHS NUMBER" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
             </p>
             <p class="- topic/p p">And/Or</p>
             <p class="- topic/p p">
-              <a class="element" title="PERSON GIVEN NAME" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
+              <a class="element" title="PERSON GIVEN NAME" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
             </p>
             <p class="- topic/p p">And/Or</p>
             <p class="- topic/p p">
-              <a class="element" title="DISEASE TYPE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
+              <a class="element" title="DISEASE TYPE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
             </p>
             <p class="- topic/p p">Multiple occurrences of this item are permitted</p>
           </td>
@@ -1604,12 +1604,12 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
           </td>
           <td class="- topic/entry entry">
             <p class="- topic/p p">
-              <a class="element" title="PATIENT USUAL ADDRESS" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/d76f35ec-7fa6-47a3-ae4c-db246714ba8c">PATIENT USUAL ADDRESS</a> - 
+              <a class="element" title="PATIENT USUAL ADDRESS" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/d76f35ec-7fa6-47a3-ae4c-db246714ba8c">PATIENT USUAL ADDRESS</a> - 
               <a class="class" title="ADDRESS STRUCTURED" href="https://datadictionary.nhs.uk/classes/address_structured.html">ADDRESS STRUCTURED</a>
             </p>
             <p class="- topic/p p">Or</p>
             <p class="- topic/p p">
-              <a class="element" title="PATIENT USUAL ADDRESS" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/d76f35ec-7fa6-47a3-ae4c-db246714ba8c">PATIENT USUAL ADDRESS</a> - 
+              <a class="element" title="PATIENT USUAL ADDRESS" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/d76f35ec-7fa6-47a3-ae4c-db246714ba8c">PATIENT USUAL ADDRESS</a> - 
               <a class="class" title="ADDRESS UNSTRUCTURED" href="https://datadictionary.nhs.uk/classes/address_unstructured.html">ADDRESS UNSTRUCTURED</a>
             </p>
           </td>
@@ -2148,7 +2148,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
   <h4>Change to Data Set: New</h4>
   <div>
     <div class="new">
-      <p><p>The Diagnostic Data Set contains <a class="class" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/class/ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6">PATIENTS</a> holding data.</p></p>
+      <p><p>The Diagnostic Data Set contains <a class="class" href="/preview/782602d4-e153-45d8-a271-eb42396804da/class/ae2f2b7b-c136-4cc7-9b71-872ee4efb3a6">PATIENTS</a> holding data.</p></p>
     </div>
     <div>
       <table class="new">
@@ -2179,7 +2179,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="NHS NUMBER" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
+                <a class="element" title="NHS NUMBER" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
               </p>
             </td>
           </tr>
@@ -2189,7 +2189,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="PERSON GIVEN NAME" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
+                <a class="element" title="PERSON GIVEN NAME" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
               </p>
             </td>
           </tr>
@@ -2199,7 +2199,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="DISEASE TYPE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
+                <a class="element" title="DISEASE TYPE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
               </p>
               <p>Multiple occurrences of this item are permitted</p>
             </td>
@@ -2210,7 +2210,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element retired" title="REFERRER CODE (Retired)" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/8df9772d-bdb5-45a7-b77a-334e83e012af">REFERRER CODE (Retired)</a>
+                <a class="element retired" title="REFERRER CODE (Retired)" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/8df9772d-bdb5-45a7-b77a-334e83e012af">REFERRER CODE (Retired)</a>
               </p>
             </td>
           </tr>
@@ -2247,7 +2247,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="NHS NUMBER" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
+                <a class="element" title="NHS NUMBER" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
               </p>
             </td>
           </tr>
@@ -2257,7 +2257,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="PERSON BIRTH DATE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/01c9734f-85e4-4fcf-a881-983621414673">PERSON BIRTH DATE</a>
+                <a class="element" title="PERSON BIRTH DATE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/01c9734f-85e4-4fcf-a881-983621414673">PERSON BIRTH DATE</a>
               </p>
             </td>
           </tr>
@@ -2281,7 +2281,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="DISEASE TYPE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
+                <a class="element" title="DISEASE TYPE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
               </p>
               <p>Multiple occurrences of this item are permitted</p>
             </td>
@@ -2319,7 +2319,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="NHS NUMBER" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
+                <a class="element" title="NHS NUMBER" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
               </p>
             </td>
           </tr>
@@ -2329,7 +2329,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="PERSON BIRTH DATE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/01c9734f-85e4-4fcf-a881-983621414673">PERSON BIRTH DATE</a>
+                <a class="element" title="PERSON BIRTH DATE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/01c9734f-85e4-4fcf-a881-983621414673">PERSON BIRTH DATE</a>
               </p>
             </td>
           </tr>
@@ -2353,7 +2353,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="DISEASE TYPE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
+                <a class="element" title="DISEASE TYPE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
               </p>
               <p>Multiple occurrences of this item are permitted</p>
             </td>
@@ -2390,7 +2390,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="PERSON GIVEN NAME" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
+                <a class="element" title="PERSON GIVEN NAME" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
               </p>
             </td>
           </tr>
@@ -2400,11 +2400,11 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="NHS NUMBER" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
+                <a class="element" title="NHS NUMBER" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
               </p>
               <p>Or</p>
               <p>
-                <a class="element" title="PERSON GIVEN NAME" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
+                <a class="element" title="PERSON GIVEN NAME" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
               </p>
             </td>
           </tr>
@@ -2414,11 +2414,11 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="PERSON GIVEN NAME" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
+                <a class="element" title="PERSON GIVEN NAME" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
               </p>
               <p>And</p>
               <p>
-                <a class="element" title="DISEASE TYPE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
+                <a class="element" title="DISEASE TYPE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
               </p>
               <p>Multiple occurrences of this item are permitted</p>
             </td>
@@ -2429,15 +2429,15 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="NHS NUMBER" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
+                <a class="element" title="NHS NUMBER" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
               </p>
               <p>And/Or</p>
               <p>
-                <a class="element" title="PERSON GIVEN NAME" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
+                <a class="element" title="PERSON GIVEN NAME" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
               </p>
               <p>And/Or</p>
               <p>
-                <a class="element" title="DISEASE TYPE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
+                <a class="element" title="DISEASE TYPE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
               </p>
               <p>Multiple occurrences of this item are permitted</p>
             </td>
@@ -2448,12 +2448,12 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="PATIENT USUAL ADDRESS" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/d76f35ec-7fa6-47a3-ae4c-db246714ba8c">PATIENT USUAL ADDRESS</a> - 
+                <a class="element" title="PATIENT USUAL ADDRESS" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/d76f35ec-7fa6-47a3-ae4c-db246714ba8c">PATIENT USUAL ADDRESS</a> - 
                 <a class="class" title="ADDRESS STRUCTURED" href="https://datadictionary.nhs.uk/classes/address_structured.html">ADDRESS STRUCTURED</a>
               </p>
               <p>Or</p>
               <p>
-                <a class="element" title="PATIENT USUAL ADDRESS" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/d76f35ec-7fa6-47a3-ae4c-db246714ba8c">PATIENT USUAL ADDRESS</a> - 
+                <a class="element" title="PATIENT USUAL ADDRESS" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/d76f35ec-7fa6-47a3-ae4c-db246714ba8c">PATIENT USUAL ADDRESS</a> - 
                 <a class="class" title="ADDRESS UNSTRUCTURED" href="https://datadictionary.nhs.uk/classes/address_unstructured.html">ADDRESS UNSTRUCTURED</a>
               </p>
             </td>
@@ -2707,11 +2707,11 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="NHS NUMBER" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
+                <a class="element" title="NHS NUMBER" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
               </p>
               <p>Or</p>
               <p>
-                <a class="element" title="PERSON GIVEN NAME" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
+                <a class="element" title="PERSON GIVEN NAME" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
               </p>
             </td>
           </tr>
@@ -2721,7 +2721,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="DISEASE TYPE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
+                <a class="element" title="DISEASE TYPE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
               </p>
             </td>
           </tr>
@@ -2731,7 +2731,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="NHS NUMBER" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
+                <a class="element" title="NHS NUMBER" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
               </p>
             </td>
           </tr>
@@ -2741,7 +2741,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="DISEASE TYPE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
+                <a class="element" title="DISEASE TYPE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
               </p>
               <p>Multiple occurrences of this item are permitted</p>
             </td>
@@ -2937,7 +2937,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="PERSON BIRTH DATE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/01c9734f-85e4-4fcf-a881-983621414673">PERSON BIRTH DATE</a>
+                <a class="element" title="PERSON BIRTH DATE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/01c9734f-85e4-4fcf-a881-983621414673">PERSON BIRTH DATE</a>
               </p>
             </td>
           </tr>
@@ -2947,7 +2947,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="NHS NUMBER" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
+                <a class="element" title="NHS NUMBER" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
               </p>
             </td>
           </tr>
@@ -2957,7 +2957,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="DISEASE TYPE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
+                <a class="element" title="DISEASE TYPE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
               </p>
               <p>Multiple occurrences of this item are permitted</p>
             </td>
@@ -2968,7 +2968,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="PERSON GIVEN NAME" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
+                <a class="element" title="PERSON GIVEN NAME" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
               </p>
             </td>
           </tr>
@@ -2978,7 +2978,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="DISEASE TYPE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
+                <a class="element" title="DISEASE TYPE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
               </p>
               <p>Multiple occurrences of this item are permitted</p>
             </td>
@@ -2989,7 +2989,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element retired" title="REFERRER CODE (Retired)" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/8df9772d-bdb5-45a7-b77a-334e83e012af">REFERRER CODE (Retired)</a>
+                <a class="element retired" title="REFERRER CODE (Retired)" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/8df9772d-bdb5-45a7-b77a-334e83e012af">REFERRER CODE (Retired)</a>
               </p>
             </td>
           </tr>
@@ -3198,7 +3198,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="DISEASE TYPE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
+                <a class="element" title="DISEASE TYPE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/875b1b59-9c9d-452f-9cfb-354409f441a3">DISEASE TYPE</a>
               </p>
             </td>
           </tr>
@@ -3222,7 +3222,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="PERSON GIVEN NAME" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
+                <a class="element" title="PERSON GIVEN NAME" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
               </p>
             </td>
           </tr>
@@ -3246,7 +3246,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="NHS NUMBER" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
+                <a class="element" title="NHS NUMBER" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
               </p>
             </td>
           </tr>
@@ -3470,7 +3470,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="PERSON GIVEN NAME" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
+                <a class="element" title="PERSON GIVEN NAME" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/7e9642c3-14ae-4b59-bd3d-0160ea7f7616">PERSON GIVEN NAME</a>
               </p>
             </td>
           </tr>
@@ -3506,7 +3506,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="PERSON BIRTH DATE" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/01c9734f-85e4-4fcf-a881-983621414673">PERSON BIRTH DATE</a>
+                <a class="element" title="PERSON BIRTH DATE" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/01c9734f-85e4-4fcf-a881-983621414673">PERSON BIRTH DATE</a>
               </p>
             </td>
           </tr>
@@ -3542,7 +3542,7 @@ class NhsOtherDataSetStructureSpec extends DataDictionaryComponentStructureSpec<
             </td>
             <td>
               <p>
-                <a class="element" title="NHS NUMBER" href="#/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
+                <a class="element" title="NHS NUMBER" href="/preview/782602d4-e153-45d8-a271-eb42396804da/element/dcdbc88d-d20e-49a8-bb2b-450bbf56900a">NHS NUMBER</a>
               </p>
             </td>
           </tr>
